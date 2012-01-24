@@ -34,6 +34,26 @@ stream is a Microsoft Publisher Document that libmspub is able to parse
 */
 bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 {
+  if (!input->isOLEStream())
+    return false;
+  WPXInputStream *tmpStream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
+  if (tmpStream == 0)
+    return false;
+  delete tmpStream;
+  tmpStream = input->getDocumentOLEStream("Escher/EscherStm");
+  if (tmpStream == 0)
+    return false;
+  delete tmpStream;
+  tmpStream = input->getDocumentOLEStream("Contents");
+  if (tmpStream == 0)
+    return false;
+  // Check the magic signature at the beginning of the Contents stream
+  if (0xe8 == readU8(tmpStream) && 0xac == readU8(tmpStream) && 0x2c == readU8(tmpStream) && 0x00 == readU8(tmpStream))
+  {
+    delete tmpStream;
+    return true;
+  }
+  delete tmpStream;
   return false;
 }
 

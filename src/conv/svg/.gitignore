@@ -1,0 +1,11 @@
+.deps
+.libs
+*.lo
+*.la
+Makefile
+Makefile.in
+pub2svg
+pub2svg.exe
+pub2xhtml
+pub2xhtml.exe
+*.rc

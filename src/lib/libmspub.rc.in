@@ -1,0 +1,31 @@
+#include <winver.h>
+
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION @MSPUB_MAJOR_VERSION@,@MSPUB_MINOR_VERSION@,@MSPUB_MICRO_VERSION@,BUILDNUMBER
+  PRODUCTVERSION @MSPUB_MAJOR_VERSION@,@MSPUB_MINOR_VERSION@,@MSPUB_MICRO_VERSION@,0
+  FILEFLAGSMASK 0
+  FILEFLAGS 0
+  FILEOS VOS__WINDOWS32
+  FILETYPE VFT_DLL
+  FILESUBTYPE VFT2_UNKNOWN
+  BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+      BLOCK "040904B0"
+      BEGIN
+	VALUE "CompanyName", "The libmspub developer community"
+	VALUE "FileDescription", "libmspub"
+	VALUE "FileVersion", "@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.@MSPUB_MICRO_VERSION@.BUILDNUMBER"
+	VALUE "InternalName", "libmspub-0.1"
+	VALUE "LegalCopyright", "Copyright (C) 2004 Marc Oude Kotte, other contributers"
+	VALUE "OriginalFilename", "libmspub-0.1.dll"
+	VALUE "ProductName", "libmspub"
+	VALUE "ProductVersion", "@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.@MSPUB_MICRO_VERSION@"
+      END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+      VALUE "Translation", 0x409, 1200
+    END
+  END
+

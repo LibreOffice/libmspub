@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# Build runtime and developer zipfiles for libmspub on Win32.
+
+ZIP=libmspub-@MSPUB_VERSION@-MinGW.zip
+DEVZIP=libmspub-devel-@MSPUB_VERSION@-MinGW.zip
+TOOLSZIP=libmspub-tools-@MSPUB_VERSION@.zip
+
+cd $DESTDIR@prefix@
+
+DLLDIR=lib
+[ -f bin/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.dll ] && \
+DLLDIR=bin
+
+@STRIP@ --strip-all \
+$DLLDIR/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.dll \
+bin/pub2raw.exe \
+bin/pub2xhtml.exe
+
+upx -qqq --best \
+$DLLDIR/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.dll \
+bin/pub2raw.exe \
+bin/pub2xhtml.exe
+
+rm -f $ZIP
+zip -q -r $ZIP -@ <<EOF
+$DLLDIR/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.dll
+EOF
+
+rm -f $DEVZIP
+zip -q -r $DEVZIP -@ <<EOF
+include/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@
+lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.dll.a
+lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.a
+lib/pkgconfig/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.pc
+EOF
+
+rm -f $TOOLSZIP
+zip -q -r -j $TOOLSZIP -@ <<EOF
+bin/pub2raw.exe
+bin/pub2xhtml.exe
+bin/pub2xhtmlbatch.exe
+EOF
+
+rm -f $TOOLSZIP
+zip -q -r -j $TOOLSZIP -@ <<EOF
+bin/pub2raw.exe
+bin/pub2xhtml.exe
+bin/pub2xhtmlbatch.pl
+EOF

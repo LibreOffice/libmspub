@@ -18,12 +18,6 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02111-1301 USA
- *
- * For further information visit http://libmspub.sourceforge.net
- */
-
-/* "This product is not manufactured, approved, or supported by
- * Corel Corporation or Corel Corporation Limited."
  */
 
 #include <stdio.h>
@@ -220,7 +214,7 @@ namespace
 
 int printUsage()
 {
-  printf("Usage: pub2raw [OPTION] <Corel Draw Document>\n");
+  printf("Usage: pub2raw [OPTION] <Microsoft Publisher Document>\n");
   printf("\n");
   printf("Options:\n");
   printf("--help                Shows this help message\n");

@@ -17,12 +17,6 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA  02111-1301 USA
- *
- * For further information visit http://libmspub.sourceforge.net
- */
-
-/* "This product is not manufactured, approved, or supported by
- * Corel Corporation or Corel Corporation Limited."
  */
 
 #include <sstream>
@@ -36,7 +30,7 @@
 Analyzes the content of an input stream to see if it can be parsed
 \param input The input stream
 \return A value that indicates whether the content from the input
-stream is a Corel Draw Document that libmspub is able to parse
+stream is a Microsoft Publisher Document that libmspub is able to parse
 */
 bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 {

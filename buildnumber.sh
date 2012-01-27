@@ -5,7 +5,6 @@
 
 { perl ./createBuildNumber.pl \
 	src/lib/libmspub-build.stamp \
-	src/lib/libmspub-stream-build.stamp \
 	src/conv/raw/pub2raw-build.stamp \
 	src/conv/svg/pub2xhtml-build.stamp
 #Success

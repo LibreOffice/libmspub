@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
                                                                        
-Name: libvisio-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@
+Name: libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@
 Description: Library for parsing the Microsoft Publisher file format structure
 Version: @VERSION@
 Requires: libwpd-0.9 libwpd-stream-0.9 libwpg-0.2

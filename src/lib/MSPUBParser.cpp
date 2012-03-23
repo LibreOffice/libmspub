@@ -48,20 +48,20 @@ bool libmspub::MSPUBParser::parse()
     return false;
   WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
   if (!quill)
-  	return false;
+    return false;
   if (!parseQuill(quill, m_collector))
   {
-  	delete quill;
-	return false;
+    delete quill;
+    return false;
   }
   delete quill;
   WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
   if (!escher)
-  	return false;
+    return false;
   if (!parseEscher(escher, m_collector))
   {
-  	delete escher;
-	return false;
+    delete escher;
+    return false;
   }
   delete escher;
   WPXInputStream *contents = m_input->getDocumentOLEStream("CONTENTS");
@@ -70,7 +70,7 @@ bool libmspub::MSPUBParser::parse()
   if (!parseContents(contents, m_collector))
   {
     delete contents;
-	return false;
+    return false;
   }
   delete contents;
   return true;

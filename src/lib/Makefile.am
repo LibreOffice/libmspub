@@ -17,11 +17,13 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LIBADD  = $(LIBMSPUB_LIB
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_DEPENDENCIES = @LIBMSPUB_WIN32_RESOURCE@
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LDFLAGS = $(version_info) -export-dynamic -no_undefined
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
+	MSPUBCollector.cpp \
 	MSPUBDocument.cpp \
 	MSPUBParser.cpp \
 	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
 	libmspub_utils.cpp \
+	MSPUBCollector.h \
 	MSPUBParser.h \
 	MSPUBSVGGenerator.h \
 	libmspub_utils.h 

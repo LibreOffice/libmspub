@@ -29,9 +29,9 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <libwpd-stream/WPXStream.h>
 #include "MSPUBParser.h"
-#include "MSPUBSVGGenerator.h"
-#include "libmspub_utils.h"
+#include "MSPUBCollector.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector)

@@ -8,7 +8,8 @@ lib_LTLIBRARIES = libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_includedir = $(includedir)/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@/libmspub
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_include_HEADERS = \
 	libmspub.h \
-	MSPUBDocument.h
+	MSPUBDocument.h \
+	MSPUBStringVector.h
 
 AM_CXXFLAGS = $(LIBMSPUB_CXXFLAGS) $(DEBUG_CXXFLAGS)
 
@@ -17,10 +18,13 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_DEPENDENCIES = @LIBMSPUB
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LDFLAGS = $(version_info) -export-dynamic -no_undefined
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBDocument.cpp \
+	MSPUBParser.cpp \
+	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
 	libmspub_utils.cpp \
+	MSPUBParser.h \
 	MSPUBSVGGenerator.h \
-	libmspub_utils.h
+	libmspub_utils.h 
 
 if OS_WIN32
 

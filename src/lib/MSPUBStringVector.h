@@ -22,33 +22,39 @@
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPLv2+"), or
  * the GNU Lesser General Public License Version 2 or later (the "LGPLv2+"),
- * in which case the procdrns of the GPLv2+ or the LGPLv2+ are applicable
+ * in which case the provisions of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
 
-#ifndef __MSPUBDOCUMENT_H__
-#define __MSPUBDOCUMENT_H__
+#ifndef __MSPUBSTRINGVECTOR_H__
+#define __MSPUBSTRINGVECTOR_H__
 
 #include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
-#include "MSPUBStringVector.h"
-
-class WPXInputStream;
 
 namespace libmspub
 {
-class MSPUBDocument
+class MSPUBStringVectorImpl;
+
+class MSPUBStringVector
 {
 public:
+  MSPUBStringVector();
+  MSPUBStringVector(const MSPUBStringVector &vec);
+  ~MSPUBStringVector();
 
-  static bool isSupported(WPXInputStream *input);
+  MSPUBStringVector &operator=(const MSPUBStringVector &vec);
 
-  static bool parse(WPXInputStream *input, libwpg::WPGPaintInterface *painter);
+  unsigned size() const;
+  bool empty() const;
+  const WPXString &operator[](unsigned idx) const;
+  void append(const WPXString &str);
+  void clear();
 
-  static bool generateSVG(::WPXInputStream *input, MSPUBStringVector &output);
+private:
+  MSPUBStringVectorImpl *m_pImpl;
 };
 
 } // namespace libmspub
 
-#endif //  __MSPUBRAPHICS_H__
+#endif /* __MSPUBSTRINGVECTOR_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

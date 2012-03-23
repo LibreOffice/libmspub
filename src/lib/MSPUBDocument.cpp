@@ -77,15 +77,10 @@ Provided as a convenience function for applications that support SVG internally.
 \param output The output string whose content is the resulting SVG
 \return A value that indicates whether the SVG generation was successful.
 */
-bool libmspub::MSPUBDocument::generateSVG(::WPXInputStream *input, WPXString &output)
+bool libmspub::MSPUBDocument::generateSVG(::WPXInputStream *input, libmspub::MSPUBStringVector &output)
 {
-  std::ostringstream tmpOutputStream;
-  libmspub::MSPUBSVGGenerator generator(tmpOutputStream);
+  libmspub::MSPUBSVGGenerator generator(output);
   bool result = libmspub::MSPUBDocument::parse(input, &generator);
-  if (result)
-    output = WPXString(tmpOutputStream.str().c_str());
-  else
-    output = WPXString("");
   return result;
 }
 

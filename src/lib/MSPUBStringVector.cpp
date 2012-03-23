@@ -15,6 +15,7 @@
  * Major Contributor(s):
  * Copyright (C) 2012 Fridrich Strba <fridrich.strba@bluewin.ch>
  *
+ *
  * All Rights Reserved.
  *
  * For minor contributions see the git repository.
@@ -26,29 +27,67 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBDOCUMENT_H__
-#define __MSPUBDOCUMENT_H__
-
-#include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
+#include <vector>
 #include "MSPUBStringVector.h"
-
-class WPXInputStream;
 
 namespace libmspub
 {
-class MSPUBDocument
+class MSPUBStringVectorImpl
 {
 public:
-
-  static bool isSupported(WPXInputStream *input);
-
-  static bool parse(WPXInputStream *input, libwpg::WPGPaintInterface *painter);
-
-  static bool generateSVG(::WPXInputStream *input, MSPUBStringVector &output);
+  MSPUBStringVectorImpl() : m_strings() {}
+  MSPUBStringVectorImpl(const MSPUBStringVectorImpl &impl) : m_strings(impl.m_strings) {}
+  ~MSPUBStringVectorImpl() {}
+  std::vector<WPXString> m_strings;
 };
 
 } // namespace libmspub
 
-#endif //  __MSPUBRAPHICS_H__
+libmspub::MSPUBStringVector::MSPUBStringVector()
+  : m_pImpl(new MSPUBStringVectorImpl())
+{
+}
+
+libmspub::MSPUBStringVector::MSPUBStringVector(const MSPUBStringVector &vec)
+  : m_pImpl(new MSPUBStringVectorImpl(*(vec.m_pImpl)))
+{
+}
+
+libmspub::MSPUBStringVector::~MSPUBStringVector()
+{
+}
+
+libmspub::MSPUBStringVector &libmspub::MSPUBStringVector::operator=(const MSPUBStringVector &vec)
+{
+  if (m_pImpl)
+    delete m_pImpl;
+  m_pImpl = new MSPUBStringVectorImpl(*(vec.m_pImpl));
+  return *this;
+}
+
+unsigned libmspub::MSPUBStringVector::size() const
+{
+  return (unsigned)(m_pImpl->m_strings.size());
+}
+
+bool libmspub::MSPUBStringVector::empty() const
+{
+  return m_pImpl->m_strings.empty();
+}
+
+const WPXString &libmspub::MSPUBStringVector::operator[](unsigned idx) const
+{
+  return m_pImpl->m_strings[idx];
+}
+
+void libmspub::MSPUBStringVector::append(const WPXString &str)
+{
+  m_pImpl->m_strings.push_back(str);
+}
+
+void libmspub::MSPUBStringVector::clear()
+{
+  m_pImpl->m_strings.clear();
+}
+
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

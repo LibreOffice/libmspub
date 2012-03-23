@@ -16,7 +16,6 @@
  * Copyright (C) 2011 Fridrich Strba <fridrich.strba@bluewin.ch>
  * Copyright (C) 2011 Eilidh McAdam <tibbylickle@gmail.com>
  *
- *
  * All Rights Reserved.
  *
  * For minor contributions see the git repository.
@@ -24,7 +23,7 @@
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPLv2+"), or
  * the GNU Lesser General Public License Version 2 or later (the "LGPLv2+"),
- * in which case the promspubns of the GPLv2+ or the LGPLv2+ are applicable
+ * in which case the procdrns of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
 
@@ -33,8 +32,10 @@
 
 #include <stdio.h>
 #include <iostream>
+#include <sstream>
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
+#include "MSPUBStringVector.h"
 
 namespace libmspub
 {
@@ -42,7 +43,7 @@ namespace libmspub
 class MSPUBSVGGenerator : public libwpg::WPGPaintInterface
 {
 public:
-  MSPUBSVGGenerator(std::ostream &output_sink);
+  MSPUBSVGGenerator(MSPUBStringVector &vec);
   ~MSPUBSVGGenerator();
 
   void startGraphics(const ::WPXPropertyList &propList);
@@ -72,12 +73,13 @@ private:
   ::WPXPropertyListVector m_gradient;
   ::WPXPropertyList m_style;
   int m_gradientIndex;
+  int m_patternIndex;
   int m_shadowIndex;
-  bool m_isFirstPage;
   void writeStyle(bool isClosed=true);
   void drawPolySomething(const ::WPXPropertyListVector &vertices, bool isClosed);
 
-  std::ostream &m_outputSink;
+  std::ostringstream m_outputSink;
+  MSPUBStringVector &m_vec;
 };
 
 } // namespace libmspub

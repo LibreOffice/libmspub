@@ -13,9 +13,8 @@
  * License.
  *
  * Major Contributor(s):
- * Copyright (C) 2011 Fridrich Strba <fridrich.strba@bluewin.ch>
+ * Copyright (C) 2012 Fridrich Strba <fridrich.strba@bluewin.ch>
  * Copyright (C) 2011 Eilidh McAdam <tibbylickle@gmail.com>
- *
  *
  * All Rights Reserved.
  *
@@ -24,7 +23,7 @@
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPLv2+"), or
  * the GNU Lesser General Public License Version 2 or later (the "LGPLv2+"),
- * in which case the promspubns of the GPLv2+ or the LGPLv2+ are applicable
+ * in which case the procdrns of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
 
@@ -74,7 +73,7 @@ static unsigned stringToColour(const ::WPXString &s)
   return val;
 }
 
-libmspub::MSPUBSVGGenerator::MSPUBSVGGenerator(std::ostream &output_sink): m_gradient(), m_style(), m_gradientIndex(1), m_shadowIndex(1), m_isFirstPage(true), m_outputSink(output_sink)
+libmspub::MSPUBSVGGenerator::MSPUBSVGGenerator(libmspub::MSPUBStringVector &vec): m_gradient(), m_style(), m_gradientIndex(1), m_patternIndex(1), m_shadowIndex(1), m_outputSink(), m_vec(vec)
 {
 }
 
@@ -84,17 +83,6 @@ libmspub::MSPUBSVGGenerator::~MSPUBSVGGenerator()
 
 void libmspub::MSPUBSVGGenerator::startGraphics(const WPXPropertyList &propList)
 {
-  if (m_isFirstPage)
-    m_isFirstPage = false;
-  else
-    m_outputSink << "<hr/>\n";
-
-  m_outputSink << "<!-- \n";
-  m_outputSink << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-  m_outputSink << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"";
-  m_outputSink << " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-  m_outputSink << " -->\n";
-
   m_outputSink << "<svg:svg version=\"1.1\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" ";
   if (propList["svg:width"])
     m_outputSink << "width=\"" << doubleToString(72*(propList["svg:width"]->getDouble())) << "\" ";
@@ -106,6 +94,8 @@ void libmspub::MSPUBSVGGenerator::startGraphics(const WPXPropertyList &propList)
 void libmspub::MSPUBSVGGenerator::endGraphics()
 {
   m_outputSink << "</svg:svg>\n";
+  m_vec.append(m_outputSink.str().c_str());
+  m_outputSink.str("");
 }
 
 void libmspub::MSPUBSVGGenerator::setStyle(const ::WPXPropertyList &propList, const ::WPXPropertyListVector &gradient)
@@ -299,6 +289,50 @@ void libmspub::MSPUBSVGGenerator::setStyle(const ::WPXPropertyList &propList, co
       }
     }
   }
+  else if(m_style["draw:fill"] && m_style["draw:fill"]->getStr() == "bitmap")
+  {
+    if (m_style["draw:fill-image"] && m_style["libwpg:mime-type"])
+    {
+      m_outputSink << "<svg:defs>\n";
+      m_outputSink << "  <svg:pattern id=\"img" << m_patternIndex++ << "\" patternUnits=\"userSpaceOnUse\" ";
+      if (m_style["svg:width"])
+        m_outputSink << "width=\"" << doubleToString(72*(m_style["svg:width"]->getDouble())) << "\" ";
+      else
+        m_outputSink << "width=\"100\" ";
+
+      if (m_style["svg:height"])
+        m_outputSink << "height=\"" << doubleToString(72*(m_style["svg:height"]->getDouble())) << "\">" << std::endl;
+      else
+        m_outputSink << "height=\"100\">" << std::endl;
+      m_outputSink << "<svg:image ";
+
+      if (m_style["svg:x"])
+        m_outputSink << "x=\"" << doubleToString(72*(m_style["svg:x"]->getDouble())) << "\" ";
+      else
+        m_outputSink << "x=\"0\" ";
+
+      if (m_style["svg:y"])
+        m_outputSink << "y=\"" << doubleToString(72*(m_style["svg:y"]->getDouble())) << "\" ";
+      else
+        m_outputSink << "y=\"0\" ";
+
+      if (m_style["svg:width"])
+        m_outputSink << "width=\"" << doubleToString(72*(m_style["svg:width"]->getDouble())) << "\" ";
+      else
+        m_outputSink << "width=\"100\" ";
+
+      if (m_style["svg:height"])
+        m_outputSink << "height=\"" << doubleToString(72*(m_style["svg:height"]->getDouble())) << "\" ";
+      else
+        m_outputSink << "height=\"100\" ";
+
+      m_outputSink << "xlink:href=\"data:" << m_style["libwpg:mime-type"]->getStr().cstr() << ";base64,";
+      m_outputSink << m_style["draw:fill-image"]->getStr().cstr();
+      m_outputSink << "\" />\n";
+      m_outputSink << "  </svg:pattern>\n";
+      m_outputSink << "</svg:defs>\n";
+    }
+  }
 }
 
 void libmspub::MSPUBSVGGenerator::startLayer(const ::WPXPropertyList &propList)
@@ -408,6 +442,12 @@ void libmspub::MSPUBSVGGenerator::drawPath(const ::WPXPropertyListVector &path)
       m_outputSink << doubleToString(72*(propList["svg:x2"]->getDouble())) << "," << doubleToString(72*(propList["svg:y2"]->getDouble())) << " ";
       m_outputSink << doubleToString(72*(propList["svg:x"]->getDouble())) << "," << doubleToString(72*(propList["svg:y"]->getDouble()));
     }
+    else if (propList["libwpg:path-action"] && propList["libwpg:path-action"]->getStr() == "Q")
+    {
+      m_outputSink << "\nQ";
+      m_outputSink << doubleToString(72*(propList["svg:x1"]->getDouble())) << "," << doubleToString(72*(propList["svg:y1"]->getDouble())) << " ";
+      m_outputSink << doubleToString(72*(propList["svg:x"]->getDouble())) << "," << doubleToString(72*(propList["svg:y"]->getDouble()));
+    }
     else if (propList["libwpg:path-action"] && propList["libwpg:path-action"]->getStr() == "A")
     {
       m_outputSink << "\nA";
@@ -504,8 +544,12 @@ void libmspub::MSPUBSVGGenerator::writeStyle(bool /* isClosed */)
   m_outputSink << "style=\"";
 
   if (m_style["svg:stroke-width"])
-    m_outputSink << "stroke-width: " << doubleToString(72*m_style["svg:stroke-width"]->getDouble()) << "; ";
-
+  {
+    double width = m_style["svg:stroke-width"]->getDouble();
+    if (width == 0.0 && m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() != "none")
+      width = 0.2 / 72.0; // reasonable hairline
+    m_outputSink << "stroke-width: " << doubleToString(72*width) << "; ";
+  }
   if ((m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() != "none"))
   {
     if (m_style["svg:stroke-color"])
@@ -555,6 +599,9 @@ void libmspub::MSPUBSVGGenerator::writeStyle(bool /* isClosed */)
 
   if(m_style["draw:fill"] && m_style["draw:fill"]->getStr() == "gradient")
     m_outputSink << "fill: url(#grad" << m_gradientIndex-1 << "); ";
+
+  if(m_style["draw:fill"] && m_style["draw:fill"]->getStr() == "bitmap")
+    m_outputSink << "fill: url(#img" << m_patternIndex-1 << "); ";
 
   if(m_style["draw:shadow"] && m_style["draw:shadow"]->getStr() == "visible")
     m_outputSink << "filter:url(#shadow" << m_shadowIndex-1 << "); ";

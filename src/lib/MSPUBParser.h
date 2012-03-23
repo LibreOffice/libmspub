@@ -26,26 +26,34 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBDOCUMENT_H__
-#define __MSPUBDOCUMENT_H__
+#ifndef __MSPUBPARSER_H__
+#define __MSPUBPARSER_H__
 
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
-#include "MSPUBStringVector.h"
 
 class WPXInputStream;
 
 namespace libmspub
 {
-class MSPUBDocument
+class MSPUBCollector;
+
+class MSPUBParser
 {
 public:
+  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector);
+  virtual ~MSPUBParser();
+  bool parse();
+private:
+  MSPUBParser();
+  MSPUBParser(const MSPUBParser &);
+  MSPUBParser &operator=(const MSPUBParser &);
+  bool parseContents(WPXInputStream *input, MSPUBCollector *collector);
+  bool parseQuill(WPXInputStream *input, MSPUBCollector *collector);
+  bool parseEscher(WPXInputStream *input, MSPUBCollector *collector);
 
-  static bool isSupported(WPXInputStream *input);
-
-  static bool parse(WPXInputStream *input, libwpg::WPGPaintInterface *painter);
-
-  static bool generateSVG(::WPXInputStream *input, MSPUBStringVector &output);
+  WPXInputStream *m_input;
+  MSPUBCollector *m_collector;
 };
 
 } // namespace libmspub

@@ -94,7 +94,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
     MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%x, id %i, type 0x%x, length 0x%x\n", i+1, startPosition, id, type, blockLength));
     if (type == 0x90)
     {
-      while (input->tell() >= 0 && input->tell() < startPosition + blockLength)
+      while (input->tell() >= 0 && (unsigned)input->tell() < startPosition + blockLength)
         m_blockInfo.push_back(parseBlock(input));
     }
   }

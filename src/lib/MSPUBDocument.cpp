@@ -24,6 +24,8 @@
 #include <string.h>
 #include "MSPUBDocument.h"
 #include "MSPUBSVGGenerator.h"
+#include "MSPUBCollector.h"
+#include "MSPUBParser.h"
 #include "libmspub_utils.h"
 
 /**
@@ -47,6 +49,7 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
   tmpStream = input->getDocumentOLEStream("Contents");
   if (tmpStream == 0)
     return false;
+  tmpStream->seek(0, WPX_SEEK_SET);
   // Check the magic signature at the beginning of the Contents stream
   if (0xe8 == readU8(tmpStream) && 0xac == readU8(tmpStream) && 0x2c == readU8(tmpStream) && 0x00 == readU8(tmpStream))
   {
@@ -67,7 +70,10 @@ MSPUBPaintInterface class implementation when needed. This is often commonly cal
 */
 bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInterface *painter)
 {
-  return false;
+  MSPUBCollector collector(painter);
+  input->seek(0, WPX_SEEK_SET);
+  MSPUBParser parser(input, &collector);
+  return parser.parse();
 }
 
 /**

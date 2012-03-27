@@ -32,9 +32,10 @@
 #include <libwpd-stream/WPXStream.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
+#include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector)
+  : m_input(input), m_collector(collector), m_blockInfo()
 {
 }
 
@@ -49,7 +50,7 @@ bool libmspub::MSPUBParser::parse()
   WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
   if (!quill)
     return false;
-  if (!parseQuill(quill, m_collector))
+  if (!parseQuill(quill))
   {
     delete quill;
     return false;
@@ -58,16 +59,16 @@ bool libmspub::MSPUBParser::parse()
   WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
   if (!escher)
     return false;
-  if (!parseEscher(escher, m_collector))
+  if (!parseEscher(escher))
   {
     delete escher;
     return false;
   }
   delete escher;
-  WPXInputStream *contents = m_input->getDocumentOLEStream("CONTENTS");
+  WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
   if (!contents)
     return false;
-  if (!parseContents(contents, m_collector))
+  if (!parseContents(contents))
   {
     delete contents;
     return false;
@@ -76,19 +77,60 @@ bool libmspub::MSPUBParser::parse()
   return true;
 }
 
-bool libmspub::MSPUBParser::parseContents(WPXInputStream *input, libmspub::MSPUBCollector *collector)
+bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
 {
+  MSPUB_DEBUG_MSG(("MSPUBParser::parseContents\n"));
+  input->seek(0x1a, WPX_SEEK_SET);
+  unsigned trailerOffset = readU32(input);
+  MSPUB_DEBUG_MSG(("MSPUBParser: trailerOffset %.8x\n", trailerOffset));
+  input->seek(trailerOffset, WPX_SEEK_SET);
+  unsigned trailerLength = readU32(input);
+  for (unsigned i=0; i<3; i++)
+  {
+    unsigned startPosition = input->tell();
+    unsigned char id = readU8(input);
+    unsigned char type = readU8(input);
+    unsigned blockLength = readU32(input);
+    MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%x, id %i, type 0x%x, length 0x%x\n", i+1, startPosition, id, type, blockLength));
+    if (type == 0x90)
+    {
+      while (input->tell() >= 0 && input->tell() < startPosition + blockLength)
+        m_blockInfo.push_back(parseBlock(input));
+    }
+  }
+  input->seek(trailerOffset + trailerLength, WPX_SEEK_SET);
+
   return true;
 }
 
-bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input, libmspub::MSPUBCollector *collector)
+bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
 {
+  MSPUB_DEBUG_MSG(("MSPUBParser::parseQuill\n"));
   return true;
 }
 
-bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input, libmspub::MSPUBCollector *collector)
+bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
 {
+  MSPUB_DEBUG_MSG(("MSPUBParser::parseEscher\n"));
   return true;
+}
+
+libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input)
+{
+  libmspub::MSPUBBlockInfo info;
+  info.id = readU8(input);
+  info.type = readU8(input);
+  unsigned startPosition = input->tell();
+  if (info.id != 0 || info.type != 0x78)
+    info.length=readU32(input);
+  else
+    info.length=0;
+  MSPUB_DEBUG_MSG(("parseBlock startPosition 0x%x, id 0x%x, type 0x%x\n", startPosition, info.id, info.type));
+  if (info.length)
+  {
+    input->seek(startPosition+info.length, WPX_SEEK_SET);
+  }
+  return info;
 }
 
 

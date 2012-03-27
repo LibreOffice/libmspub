@@ -26,6 +26,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBCollector.h \
 	MSPUBParser.h \
 	MSPUBSVGGenerator.h \
+	MSPUBTypes.h \
 	libmspub_utils.h 
 
 if OS_WIN32

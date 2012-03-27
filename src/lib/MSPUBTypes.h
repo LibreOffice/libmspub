@@ -26,42 +26,22 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBPARSER_H__
-#define __MSPUBPARSER_H__
+#ifndef __MSPUBTYPES_H__
+#define __MSPUBTYPES_H__
 
-#include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
-
-#include "MSPUBTypes.h"
-
-class WPXInputStream;
+#include <vector>
 
 namespace libmspub
 {
-class MSPUBCollector;
 
-class MSPUBParser
+struct MSPUBBlockInfo
 {
-public:
-  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector);
-  virtual ~MSPUBParser();
-  bool parse();
-private:
-  MSPUBParser();
-  MSPUBParser(const MSPUBParser &);
-  MSPUBParser &operator=(const MSPUBParser &);
-  bool parseContents(WPXInputStream *input);
-  bool parseQuill(WPXInputStream *input);
-  bool parseEscher(WPXInputStream *input);
-
-  MSPUBBlockInfo parseBlock(WPXInputStream *input);
-
-  WPXInputStream *m_input;
-  MSPUBCollector *m_collector;
-  std::vector<MSPUBBlockInfo> m_blockInfo;
+  unsigned char id;
+  unsigned char type;
+  unsigned short length;
 };
 
 } // namespace libmspub
 
-#endif //  __MSPUBRAPHICS_H__
+#endif /* __MSPUBTYPES_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

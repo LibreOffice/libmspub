@@ -125,7 +125,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
     info.length=readU32(input);
   else
     info.length=0;
-  MSPUB_DEBUG_MSG(("parseBlock startPosition 0x%x, id 0x%x, type 0x%x\n", startPosition, info.id, info.type));
+  MSPUB_DEBUG_MSG(("parseBlock startPosition 0x%x, id 0x%x, type 0x%x, length 0x%x\n", startPosition, info.id, info.type, info.length));
   if (info.length)
   {
     input->seek(startPosition+info.length, WPX_SEEK_SET);

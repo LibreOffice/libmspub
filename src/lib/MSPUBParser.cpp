@@ -88,7 +88,10 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
   for (unsigned i=0; i<3; i++)
   {
     unsigned startPosition = input->tell();
-    unsigned char id = readU8(input);
+#ifdef DEBUG
+    unsigned char id = 
+#endif
+	readU8(input);
     unsigned char type = readU8(input);
     unsigned blockLength = readU32(input);
     MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%x, id %i, type 0x%x, length 0x%x\n", i+1, startPosition, id, type, blockLength));

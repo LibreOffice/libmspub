@@ -222,9 +222,9 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
 bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
-  unsigned type;
-  unsigned long offset;
-  unsigned parentSeqNum;
+  unsigned type = 0;
+  unsigned long offset = 0;
+  unsigned parentSeqNum = 0;
   bool seenType = false;
   bool seenOffset = false;
   bool seenParentSeqNum = false;

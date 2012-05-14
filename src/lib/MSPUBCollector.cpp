@@ -38,15 +38,15 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-libmspub::ChunkReference::ChunkReference(unsigned type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
+libmspub::ChunkReference::ChunkReference(libmspub::MSPUBChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
   type(type), offset(offset), end(end), seqNum(seqNum), parentSeqNum(parentSeqNum)
 {
 }
 
-bool libmspub::MSPUBCollector::addChunkReference(unsigned type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum)
+bool libmspub::MSPUBCollector::addChunkReference(libmspub::MSPUBChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum)
 {
   static bool first = true;
-  static unsigned lastType;
+  static libmspub::MSPUBChunkType lastType;
   static unsigned lastOffset;
   static unsigned lastSeqNum;
   static unsigned lastParentSeqNum;
@@ -65,7 +65,7 @@ bool libmspub::MSPUBCollector::addChunkReference(unsigned type, unsigned long of
 bool libmspub::MSPUBCollector::chunkReferencesOver(unsigned long end)
 {
   //FIXME: Assert that this hasn't been called already.
-  addChunkReference(0, end, 0, 0); //the three zeroes are ignored; this just causes the last chunk reference to be added to the list.
+  addChunkReference((libmspub::MSPUBChunkType)0, end, 0, 0); //the three zeroes are ignored; this just causes the last chunk reference to be added to the list.
   return true;
 }
 

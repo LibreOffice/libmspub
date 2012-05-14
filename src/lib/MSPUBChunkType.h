@@ -13,7 +13,7 @@
  * License.
  *
  * Major Contributor(s):
- * Copyright (C) 2012 Fridrich Strba <fridrich.strba@bluewin.ch>
+ * Copyright (C) 2012 Brennan Vincent <brennanv@email.arizona.edu>
  *
  * All Rights Reserved.
  *
@@ -26,52 +26,17 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBCOLLECTOR_H__
-#define __MSPUBCOLLECTOR_H__
-
-#include <list>
-#include <libwpd/WPXPropertyList.h>
-#include <libwpg/WPGPaintInterface.h>
-
-#include "MSPUBTypes.h"
-#include "MSPUBChunkType.h"
+#ifndef __MSPUBCHUNKTYPE_H__
+#define __MSPUBCHUNKTYPE_H__
 
 namespace libmspub
 {
-
-class MSPUBCollector
+enum MSPUBChunkType //Please fill this in and replace magic constants in MSPUBParser accordingly as you discover what a given chunk type means!
 {
-public:
-  typedef std::list<ChunkReference>::const_iterator cr_iterator_t;
-
-  MSPUBCollector(::libwpg::WPGPaintInterface *painter);
-  virtual ~MSPUBCollector();
-
-  // collector functions
-  bool addChunkReference(MSPUBChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum);
-  bool chunkReferencesOver(unsigned long end);
-  bool addPage();
-  bool pagesOver();
-
-  void setWidthInEmu(unsigned long);
-  void setHeightInEmu(unsigned long);
-  const std::list<ChunkReference>& getChunkReferences();
-
-private:
-  MSPUBCollector(const MSPUBCollector &);
-  MSPUBCollector &operator=(const MSPUBCollector &);
-
-  // helper functions
-
-  libwpg::WPGPaintInterface *m_painter;
-  std::list<ChunkReference> chunkReferences;
-  unsigned long m_width, m_height;
-  bool m_widthSet, m_heightSet;
-  WPXPropertyList m_commonProperties;
-  unsigned short m_numPages;
+  DOCUMENT = 0x44,
+  PAGE     = 0x43
 };
-
 } // namespace libmspub
 
-#endif /* __MSPUBCOLLECTOR_H__ */
+#endif /* __MSPUBCHUNKTYPE_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

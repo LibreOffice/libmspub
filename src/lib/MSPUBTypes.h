@@ -30,15 +30,18 @@
 #define __MSPUBTYPES_H__
 
 #include <vector>
+#include "MSPUBBlockType.h"
+#include "MSPUBBlockID.h"
+#include "MSPUBChunkType.h"
 
 namespace libmspub
 {
 
 struct MSPUBBlockInfo
 {
-  MSPUBBlockInfo() : id(0), type(0), startPosition(0), dataOffset(0), dataLength(0), data(0), stringData() { }
-  unsigned char id;
-  unsigned char type;
+  MSPUBBlockInfo() : id((MSPUBBlockID)0), type((MSPUBBlockType)0), startPosition(0), dataOffset(0), dataLength(0), data(0), stringData() { }
+  MSPUBBlockID id;
+  MSPUBBlockType type;
   unsigned long startPosition;
   unsigned long dataOffset;
   unsigned long dataLength;
@@ -48,8 +51,8 @@ struct MSPUBBlockInfo
 
 struct ChunkReference
 {
-  ChunkReference(unsigned type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
-  unsigned type;
+  ChunkReference(MSPUBChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
+  MSPUBChunkType type;
   unsigned long offset;
   unsigned long end; //offset of the last element plus one.
   unsigned seqNum;
@@ -60,7 +63,7 @@ enum PageType
 {
   MASTER,
   NORMAL,
-  DUMMY
+  DUMMY_PAGE
 };
 
 } // namespace libmspub

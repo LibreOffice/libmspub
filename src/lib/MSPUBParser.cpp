@@ -32,6 +32,9 @@
 #include <libwpd-stream/WPXStream.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
+#include "MSPUBBlockID.h"
+#include "MSPUBBlockType.h"
+#include "MSPUBChunkType.h"
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
@@ -47,7 +50,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
 {
   switch(type)
   {
-  case 0x78:
+  case DUMMY:
   case 0x5:
   case 0x8:
   case 0xa:
@@ -69,10 +72,10 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
     return 16;
   case 0x48:
     return 24;
-  case 0xc0:
+  case STRING_CONTAINER:
   case 0x80:
   case 0x82:
-  case 0x88:
+  case GENERAL_CONTAINER:
   case 0x8a:
   case 0x90:
   case 0x98:
@@ -85,6 +88,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
 
 bool libmspub::MSPUBParser::parse()
 {
+  MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBChunkType.h\n*****\n"));
   if (!m_input->isOLEStream())
     return false;
   WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
@@ -130,20 +134,20 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
   {
     libmspub::MSPUBBlockInfo trailerPart = parseBlock(input);
     MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%lx, id %i, type 0x%x, dataLength 0x%lx\n", i+1, trailerPart.startPosition, trailerPart.id, trailerPart.type, trailerPart.dataLength));
-    if (trailerPart.type == 0x90)
+    if (trailerPart.type == TRAILER_DIRECTORY)
     {
       while (input->tell() >= 0 && (unsigned)input->tell() < trailerPart.dataOffset + trailerPart.dataLength)
       {
         m_blockInfo.push_back(parseBlock(input));
         ++m_lastSeenSeqNum;
-        if (m_blockInfo.back().type == 0x88)
+        if (m_blockInfo.back().type == GENERAL_CONTAINER)
         {
           parseChunkReference(input, m_blockInfo.back());
         }
       }
       for (MSPUBCollector::cr_iterator_t i = m_collector->getChunkReferences().begin(); i != m_collector->getChunkReferences().end(); ++i)
       {
-        if (i->type == 0x44)
+        if (i->type == DOCUMENT)
         {
           input->seek(i->offset, WPX_SEEK_SET);
           if (!parseDocumentChunk(input, *i))
@@ -151,7 +155,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
             return false;
           }
         }
-        else if (i->type == 0x43)
+        else if (i->type == PAGE)
         {
           input->seek(i->offset, WPX_SEEK_SET);
           if (!parsePageChunk(input, *i))
@@ -174,16 +178,16 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Chun
   while (input->tell() >= 0 && (unsigned)input->tell() < chunk.end)
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
-    if (info.id == 0x12)
+    if (info.id == DOCUMENT_SIZE)
     {
       while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
       {
         libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
-        if (subInfo.id == 0x1)
+        if (subInfo.id == DOCUMENT_WIDTH)
         {
           m_collector->setWidthInEmu(subInfo.data);
         }
-        else if (subInfo.id == 0x2)
+        else if (subInfo.id == DOCUMENT_HEIGHT)
         {
           m_collector->setHeightInEmu(subInfo.data);
         }
@@ -223,7 +227,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
 bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
-  unsigned type = 0;
+  libmspub::MSPUBChunkType type = (libmspub::MSPUBChunkType)0;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;
@@ -233,17 +237,17 @@ bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const lib
   {
     libmspub::MSPUBBlockInfo subBlock = parseBlock(input);
     //FIXME: Warn if multiple of these blocks seen.
-    if (subBlock.id == 0x2)
+    if (subBlock.id == CHUNK_TYPE)
     {
-      type = (unsigned)subBlock.data;
+      type = (libmspub::MSPUBChunkType)subBlock.data;
       seenType = true;
     }
-    else if (subBlock.id == 0x4)
+    else if (subBlock.id == CHUNK_OFFSET)
     {
       offset = subBlock.data;
       seenOffset = true;
     }
-    else if (subBlock.id == 0x5)
+    else if (subBlock.id == CHUNK_PARENT_SEQNUM)
     {
       parentSeqNum = subBlock.data;
       seenParentSeqNum = true;
@@ -259,7 +263,7 @@ bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const lib
 
 bool libmspub::MSPUBParser::isBlockDataString(unsigned type)
 {
-  return type == 0xc0;
+  return type == STRING_CONTAINER;
 }
 void libmspub::MSPUBParser::skipBlock(WPXInputStream *input, libmspub::MSPUBBlockInfo block)
 {
@@ -269,8 +273,8 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
 {
   libmspub::MSPUBBlockInfo info;
   info.startPosition = input->tell();
-  info.id = readU8(input);
-  info.type = readU8(input);
+  info.id = (MSPUBBlockID)readU8(input);
+  info.type = (MSPUBBlockType)readU8(input);
   info.dataOffset = input->tell();
   int len = getBlockDataLength(info.type);
   bool varLen = len < 0;
@@ -323,7 +327,7 @@ libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
   case 0x110:
   case 0x113:
   case 0x117:
-    return DUMMY;
+    return DUMMY_PAGE;
   default:
     return NORMAL;
   }

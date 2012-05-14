@@ -120,7 +120,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseContents\n"));
   input->seek(0x1a, WPX_SEEK_SET);
-  
+
   unsigned trailerOffset = readU32(input);
   MSPUB_DEBUG_MSG(("MSPUBParser: trailerOffset %.8x\n", trailerOffset));
   input->seek(trailerOffset, WPX_SEEK_SET);
@@ -167,7 +167,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ChunkReference& chunk)
+bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ChunkReference &chunk)
 {
   readU32(input); //FIXME: This is the length. Might want to verify that it matches the length we got from subtracting the start of this chunk from the start of the next one.
   while (input->tell() >= 0 && (unsigned)input->tell() < chunk.end)
@@ -197,7 +197,7 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Chun
 }
 
 
-bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ChunkReference& chunk)
+bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parsePageChunk: offset 0x%lx, end 0x%lx, seqnum 0x%x, parent 0x%x\n", input->tell(), chunk.end, chunk.seqNum, chunk.parentSeqNum));
   if (getPageTypeBySeqNum(chunk.seqNum) == NORMAL)
@@ -291,7 +291,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
     info.data = 0;
   }
   else
-  { 
+  {
     info.dataLength = len;
     switch (info.dataLength)
     {

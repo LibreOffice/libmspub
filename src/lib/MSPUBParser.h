@@ -55,10 +55,10 @@ private:
   bool parseEscher(WPXInputStream *input);
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
- 
+
   bool parseChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
-  bool parseDocumentChunk(WPXInputStream *input, const ChunkReference& chunk);
-  bool parsePageChunk(WPXInputStream* input, const ChunkReference& chunk);
+  bool parseDocumentChunk(WPXInputStream *input, const ChunkReference &chunk);
+  bool parsePageChunk(WPXInputStream *input, const ChunkReference &chunk);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
 
   WPXInputStream *m_input;

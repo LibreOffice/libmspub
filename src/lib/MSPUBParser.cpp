@@ -60,7 +60,6 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
   case 0x20:
   case 0x22:
   case 0x28:
-  case 0x48:
   case 0x58:
   case 0x68:
   case 0x70:
@@ -68,6 +67,8 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
     return 4;
   case 0x38:
     return 16;
+  case 0x48:
+    return 24;
   case 0xc0:
   case 0x80:
   case 0x82:

@@ -56,9 +56,9 @@ private:
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
 
-  bool parseChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
-  bool parseDocumentChunk(WPXInputStream *input, const ChunkReference &chunk);
-  bool parsePageChunk(WPXInputStream *input, const ChunkReference &chunk);
+  bool parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
+  bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
+  bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
 
   WPXInputStream *m_input;

@@ -34,7 +34,7 @@
 #include <libwpg/WPGPaintInterface.h>
 
 #include "MSPUBTypes.h"
-#include "MSPUBChunkType.h"
+#include "MSPUBContentChunkType.h"
 
 namespace libmspub
 {
@@ -42,20 +42,20 @@ namespace libmspub
 class MSPUBCollector
 {
 public:
-  typedef std::list<ChunkReference>::const_iterator cr_iterator_t;
+  typedef std::list<ContentChunkReference>::const_iterator cr_iterator_t;
 
   MSPUBCollector(::libwpg::WPGPaintInterface *painter);
   virtual ~MSPUBCollector();
 
   // collector functions
-  bool addChunkReference(MSPUBChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum);
-  bool chunkReferencesOver(unsigned long end);
+  bool addContentChunkReference(MSPUBContentChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum);
+  bool contentContentChunkReferencesOver(unsigned long end);
   bool addPage();
   bool pagesOver();
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
-  const std::list<ChunkReference>& getChunkReferences();
+  const std::list<ContentChunkReference>& getContentChunkReferences();
 
 private:
   MSPUBCollector(const MSPUBCollector &);
@@ -64,7 +64,7 @@ private:
   // helper functions
 
   libwpg::WPGPaintInterface *m_painter;
-  std::list<ChunkReference> chunkReferences;
+  std::list<ContentChunkReference> contentContentChunkReferences;
   unsigned long m_width, m_height;
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonProperties;

@@ -30,7 +30,7 @@
 #include "MSPUBCollector.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), chunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonProperties(), m_numPages(0)
+  m_painter(painter), contentContentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonProperties(), m_numPages(0)
 {
 }
 
@@ -38,21 +38,21 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-libmspub::ChunkReference::ChunkReference(libmspub::MSPUBChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
+libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
   type(type), offset(offset), end(end), seqNum(seqNum), parentSeqNum(parentSeqNum)
 {
 }
 
-bool libmspub::MSPUBCollector::addChunkReference(libmspub::MSPUBChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum)
+bool libmspub::MSPUBCollector::addContentChunkReference(libmspub::MSPUBContentChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum)
 {
   static bool first = true;
-  static libmspub::MSPUBChunkType lastType;
+  static libmspub::MSPUBContentChunkType lastType;
   static unsigned lastOffset;
   static unsigned lastSeqNum;
   static unsigned lastParentSeqNum;
   if (!first)
   {
-    chunkReferences.push_back(libmspub::ChunkReference(lastType, lastOffset, offset, lastSeqNum, lastParentSeqNum));
+    contentContentChunkReferences.push_back(libmspub::ContentChunkReference(lastType, lastOffset, offset, lastSeqNum, lastParentSeqNum));
   }
   first = false;
   lastType = type;
@@ -62,17 +62,17 @@ bool libmspub::MSPUBCollector::addChunkReference(libmspub::MSPUBChunkType type, 
   return true;
 }
 
-bool libmspub::MSPUBCollector::chunkReferencesOver(unsigned long end)
+bool libmspub::MSPUBCollector::contentContentChunkReferencesOver(unsigned long end)
 {
   //FIXME: Assert that this hasn't been called already.
-  addChunkReference((libmspub::MSPUBChunkType)0, end, 0, 0); //the three zeroes are ignored; this just causes the last chunk reference to be added to the list.
+  addContentChunkReference((libmspub::MSPUBContentChunkType)0, end, 0, 0); //the three zeroes are ignored; this just causes the last chunk reference to be added to the list.
   return true;
 }
 
-const std::list<libmspub::ChunkReference>& libmspub::MSPUBCollector::getChunkReferences()
+const std::list<libmspub::ContentChunkReference>& libmspub::MSPUBCollector::getContentChunkReferences()
 {
-  //FIXME: Assert that chunkReferencesOver has been called.
-  return chunkReferences;
+  //FIXME: Assert that contentContentChunkReferencesOver has been called.
+  return contentContentChunkReferences;
 }
 
 bool libmspub::MSPUBCollector::addPage()

@@ -34,7 +34,7 @@
 #include "MSPUBCollector.h"
 #include "MSPUBBlockID.h"
 #include "MSPUBBlockType.h"
-#include "MSPUBChunkType.h"
+#include "MSPUBContentChunkType.h"
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
@@ -88,7 +88,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
 
 bool libmspub::MSPUBParser::parse()
 {
-  MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBChunkType.h\n*****\n"));
+  MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isOLEStream())
     return false;
   WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
@@ -142,10 +142,10 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
         ++m_lastSeenSeqNum;
         if (m_blockInfo.back().type == GENERAL_CONTAINER)
         {
-          parseChunkReference(input, m_blockInfo.back());
+          parseContentChunkReference(input, m_blockInfo.back());
         }
       }
-      for (MSPUBCollector::cr_iterator_t i = m_collector->getChunkReferences().begin(); i != m_collector->getChunkReferences().end(); ++i)
+      for (MSPUBCollector::cr_iterator_t i = m_collector->getContentChunkReferences().begin(); i != m_collector->getContentChunkReferences().end(); ++i)
       {
         if (i->type == DOCUMENT)
         {
@@ -172,7 +172,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ChunkReference &chunk)
+bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk)
 {
   readU32(input); //FIXME: This is the length. Might want to verify that it matches the length we got from subtracting the start of this chunk from the start of the next one.
   while (input->tell() >= 0 && (unsigned)input->tell() < chunk.end)
@@ -202,7 +202,7 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Chun
 }
 
 
-bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ChunkReference &chunk)
+bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parsePageChunk: offset 0x%lx, end 0x%lx, seqnum 0x%x, parent 0x%x\n", input->tell(), chunk.end, chunk.seqNum, chunk.parentSeqNum));
   if (getPageTypeBySeqNum(chunk.seqNum) == NORMAL)
@@ -224,10 +224,10 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
+bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
-  libmspub::MSPUBChunkType type = (libmspub::MSPUBChunkType)0;
+  libmspub::MSPUBContentChunkType type = (libmspub::MSPUBContentChunkType)0;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;
@@ -239,7 +239,7 @@ bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const lib
     //FIXME: Warn if multiple of these blocks seen.
     if (subBlock.id == CHUNK_TYPE)
     {
-      type = (libmspub::MSPUBChunkType)subBlock.data;
+      type = (libmspub::MSPUBContentChunkType)subBlock.data;
       seenType = true;
     }
     else if (subBlock.id == CHUNK_OFFSET)
@@ -255,7 +255,7 @@ bool libmspub::MSPUBParser::parseChunkReference(WPXInputStream *input, const lib
   }
   if (seenType && seenOffset)
   {
-    m_collector->addChunkReference(type, offset, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0);
+    m_collector->addContentChunkReference(type, offset, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0);
     return true;
   }
   return false;

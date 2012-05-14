@@ -32,7 +32,7 @@
 #include <vector>
 #include "MSPUBBlockType.h"
 #include "MSPUBBlockID.h"
-#include "MSPUBChunkType.h"
+#include "MSPUBContentChunkType.h"
 
 namespace libmspub
 {
@@ -49,10 +49,10 @@ struct MSPUBBlockInfo
   std::vector<char> stringData;
 };
 
-struct ChunkReference
+struct ContentChunkReference
 {
-  ChunkReference(MSPUBChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
-  MSPUBChunkType type;
+  ContentChunkReference(MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
+  MSPUBContentChunkType type;
   unsigned long offset;
   unsigned long end; //offset of the last element plus one.
   unsigned seqNum;

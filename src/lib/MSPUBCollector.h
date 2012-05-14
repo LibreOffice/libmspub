@@ -1,4 +1,5 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */ /* libmspub
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
+/* libmspub
  * Version: MPL 1.1 / GPLv2+ / LGPLv2+
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -34,16 +35,8 @@
 
 #include "MSPUBTypes.h"
 
-namespace libwpg
-{
-
-
-} // namespace libwpg
-
 namespace libmspub
 {
-
-
 
 class MSPUBCollector
 {
@@ -75,8 +68,6 @@ private:
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonProperties;
   unsigned short m_numPages;
-
-  
 };
 
 } // namespace libmspub

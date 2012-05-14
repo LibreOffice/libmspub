@@ -1,5 +1,4 @@
-/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* libmspub
+/* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */ /* libmspub
  * Version: MPL 1.1 / GPLv2+ / LGPLv2+
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -29,23 +28,40 @@
 #ifndef __MSPUBCOLLECTOR_H__
 #define __MSPUBCOLLECTOR_H__
 
+#include <list>
+#include <libwpd/WPXPropertyList.h>
+#include <libwpg/WPGPaintInterface.h>
+
+#include "MSPUBTypes.h"
+
 namespace libwpg
 {
 
-class WPGPaintInterface;
 
 } // namespace libwpg
 
 namespace libmspub
 {
 
+
+
 class MSPUBCollector
 {
 public:
+  typedef std::list<ChunkReference>::const_iterator cr_iterator_t;
+
   MSPUBCollector(::libwpg::WPGPaintInterface *painter);
   virtual ~MSPUBCollector();
 
   // collector functions
+  bool addChunkReference(unsigned type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum);
+  bool chunkReferencesOver(unsigned long end);
+  bool addPage();
+  bool pagesOver();
+
+  void setWidthInEmu(unsigned long);
+  void setHeightInEmu(unsigned long);
+  const std::list<ChunkReference>& getChunkReferences();
 
 private:
   MSPUBCollector(const MSPUBCollector &);
@@ -54,6 +70,13 @@ private:
   // helper functions
 
   libwpg::WPGPaintInterface *m_painter;
+  std::list<ChunkReference> chunkReferences;
+  unsigned long m_width, m_height;
+  bool m_widthSet, m_heightSet;
+  WPXPropertyList m_commonProperties;
+  unsigned short m_numPages;
+
+  
 };
 
 } // namespace libmspub

@@ -54,11 +54,21 @@ private:
   bool parseQuill(WPXInputStream *input);
   bool parseEscher(WPXInputStream *input);
 
-  MSPUBBlockInfo parseBlock(WPXInputStream *input);
+  MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
+ 
+  bool parseChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
+  bool parseDocumentChunk(WPXInputStream *input, const ChunkReference& chunk);
+  bool parsePageChunk(WPXInputStream* input, const ChunkReference& chunk);
+  void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
   std::vector<MSPUBBlockInfo> m_blockInfo;
+  int m_lastSeenSeqNum;
+
+  static short getBlockDataLength(unsigned type);
+  static bool isBlockDataString(unsigned type);
+  static PageType getPageTypeBySeqNum(unsigned seqNum);
 };
 
 } // namespace libmspub

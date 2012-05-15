@@ -402,8 +402,8 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
         std::vector<unsigned char> text(2 * *i);
         for (unsigned j = 0; j < *i; ++j)
         {
-          text[j] = readU8(input);
-          text[j+1] = readU8(input);
+          text[2*j] = readU8(input);
+          text[2*j+1] = readU8(input);
         }
         m_collector->addTextString(text, *id);
       }

@@ -30,7 +30,7 @@
 #define __LIBMSPUB_UTILS_H__
 
 #include <stdio.h>
-#include <string>
+#include <vector>
 #include <libwpd/libwpd.h>
 #include <libwpd-stream/libwpd-stream.h>
 
@@ -83,6 +83,8 @@ uint16_t readU16(WPXInputStream *input);
 uint32_t readU32(WPXInputStream *input);
 uint64_t readU64(WPXInputStream *input);
 int32_t readS32(WPXInputStream *input);
+
+void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
 
 class EndOfStreamException
 {

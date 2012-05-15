@@ -64,12 +64,13 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
     return 2;
   case 0x20:
   case 0x22:
-  case 0x28:
   case 0x58:
   case 0x68:
   case 0x70:
   case 0xb8:
     return 4;
+  case 0x28: //ask Valek about this
+    return 8;
   case 0x38:
     return 16;
   case 0x48:
@@ -190,8 +191,9 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
 bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
-  readU32(input); //FIXME: This is the length. Might want to verify that it matches the length we got from subtracting the start of this chunk from the start of the next one.
-  while (input->tell() >= 0 && (unsigned)input->tell() < chunk.end)
+  unsigned long begin = input->tell();
+  unsigned long len = readU32(input); 
+  while (input->tell() >= 0 && (unsigned)input->tell() < begin + len)
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
     if (info.id == DOCUMENT_SIZE)
@@ -521,6 +523,10 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
     case 4:
       info.data = readU32(input);
       break;
+    case 8:
+    case 16:
+      //FIXME: Not doing anything with this data for now.
+      skipBlock(input, info);
     default:
       info.data = 0;
     }

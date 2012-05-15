@@ -23,7 +23,10 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
 	libmspub_utils.cpp \
+	MSPUBBlockID.h \
+	MSPUBBlockType.h \
 	MSPUBCollector.h \
+	MSPUBContentChunkType.h \
 	MSPUBParser.h \
 	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \

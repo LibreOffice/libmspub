@@ -376,7 +376,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
     {
       input->seek(i->offset, WPX_SEEK_SET);
       unsigned numLengths = readU32(input); //Assuming the first DWORD is the number of children and that the next is the remaining length before children start. We are unsure that this is correct.
-      input->seek(4 + i->offset + readU32(input), WPX_SEEK_SET); 
+      input->seek(4 + i->offset + readU32(input), WPX_SEEK_SET);
       for (unsigned i = 0; i < numLengths; ++i)
       {
         textLengths.push_back(readU32(input));

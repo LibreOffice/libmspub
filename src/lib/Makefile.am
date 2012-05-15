@@ -26,6 +26,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBBlockID.h \
 	MSPUBBlockType.h \
 	MSPUBCollector.h \
+	MSPUBConstants.h \
 	MSPUBContentChunkType.h \
 	MSPUBParser.h \
 	MSPUBSVGGenerator.h \

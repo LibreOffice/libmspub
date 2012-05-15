@@ -32,7 +32,7 @@
 #include "MSPUBConstants.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), contentContentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonProperties(), m_numPages(0), idsToTextStrings(), pagesBySeqNum()
+  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonProperties(), m_numPages(0), idsToTextStrings(), pagesBySeqNum()
 {
 }
 
@@ -47,8 +47,8 @@ libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChu
 
 const std::list<libmspub::ContentChunkReference>& libmspub::MSPUBCollector::getContentChunkReferences()
 {
-  //FIXME: Assert that contentContentChunkReferencesOver has been called.
-  return contentContentChunkReferences;
+  //FIXME: Assert that contentChunkReferencesOver has been called.
+  return contentChunkReferences;
 }
 
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)

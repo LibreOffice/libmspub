@@ -80,7 +80,7 @@ private:
   // helper functions
 
   libwpg::WPGPaintInterface *m_painter;
-  std::list<ContentChunkReference> contentContentChunkReferences;
+  std::list<ContentChunkReference> contentChunkReferences;
   unsigned long m_width, m_height;
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonProperties;

@@ -45,12 +45,6 @@ libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChu
 {
 }
 
-const std::list<libmspub::ContentChunkReference>& libmspub::MSPUBCollector::getContentChunkReferences()
-{
-  //FIXME: Assert that contentChunkReferencesOver has been called.
-  return contentChunkReferences;
-}
-
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
 {
   if (! (m_widthSet && m_heightSet) )

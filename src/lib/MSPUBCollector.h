@@ -56,7 +56,6 @@ public:
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
-  const std::list<ContentChunkReference>& getContentChunkReferences();
 
   bool go();
 private:

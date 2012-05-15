@@ -36,9 +36,13 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   DOCUMENT_SIZE = 0x12,
   DOCUMENT_WIDTH = 0x1,
   DOCUMENT_HEIGHT = 0x2,
+  PAGE_SHAPES = 0x2,
   CHUNK_TYPE = 0x2,
   CHUNK_OFFSET = 0x4,
-  CHUNK_PARENT_SEQNUM = 0x5
+  CHUNK_PARENT_SEQNUM = 0x5,
+  SHAPE_WIDTH = 0xaa,
+  SHAPE_HEIGHT = 0xab,
+  SHAPE_TEXT_ID = 0x27
 };
 } // namespace libmspub
 

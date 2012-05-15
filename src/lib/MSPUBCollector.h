@@ -30,6 +30,8 @@
 #define __MSPUBCOLLECTOR_H__
 
 #include <list>
+#include <vector>
+#include <map>
 #include <libwpd/WPXPropertyList.h>
 #include <libwpg/WPGPaintInterface.h>
 
@@ -42,22 +44,36 @@ namespace libmspub
 class MSPUBCollector
 {
 public:
-  typedef std::list<ContentChunkReference>::const_iterator cr_iterator_t;
+  typedef std::list<ContentChunkReference>::const_iterator ccr_iterator_t;
 
   MSPUBCollector(::libwpg::WPGPaintInterface *painter);
   virtual ~MSPUBCollector();
 
   // collector functions
-  bool addContentChunkReference(MSPUBContentChunkType type, unsigned long offset, unsigned seqNum, unsigned parentSeqNum);
-  bool contentContentChunkReferencesOver(unsigned long end);
-  bool addPage();
-  bool pagesOver();
+  bool addPage(unsigned seqNum);
+  bool addTextString(const std::vector<unsigned char> &str, unsigned id);
+  bool addTextShape(unsigned id, unsigned pageSeqNum, unsigned long width, unsigned long height);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
   const std::list<ContentChunkReference>& getContentChunkReferences();
 
+  bool go();
 private:
+
+  struct TextShapeInfo
+  {
+    TextShapeInfo(std::vector<unsigned char> str, unsigned long width, unsigned long height) : str(str), width(width), height(height) { }
+    std::vector<unsigned char> str;
+    unsigned long width;
+    unsigned long height;
+  };
+  struct PageInfo
+  {
+    PageInfo() : textShapes() { }
+    std::vector<TextShapeInfo> textShapes;
+  };
+
   MSPUBCollector(const MSPUBCollector &);
   MSPUBCollector &operator=(const MSPUBCollector &);
 
@@ -69,6 +85,8 @@ private:
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonProperties;
   unsigned short m_numPages;
+  std::map<unsigned, std::vector<unsigned char> > idsToTextStrings;
+  std::map<unsigned, PageInfo> pagesBySeqNum;
 };
 
 } // namespace libmspub

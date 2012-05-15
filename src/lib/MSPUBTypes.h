@@ -30,6 +30,7 @@
 #define __MSPUBTYPES_H__
 
 #include <vector>
+#include <string>
 #include "MSPUBBlockType.h"
 #include "MSPUBBlockID.h"
 #include "MSPUBContentChunkType.h"
@@ -46,17 +47,28 @@ struct MSPUBBlockInfo
   unsigned long dataOffset;
   unsigned long dataLength;
   unsigned long data;
-  std::vector<char> stringData;
+  std::vector<unsigned char> stringData;
 };
 
 struct ContentChunkReference
 {
+  ContentChunkReference() : type((MSPUBContentChunkType)0), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
   ContentChunkReference(MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
   MSPUBContentChunkType type;
   unsigned long offset;
   unsigned long end; //offset of the last element plus one.
   unsigned seqNum;
   unsigned parentSeqNum;
+};
+
+struct QuillChunkReference
+{
+  QuillChunkReference() : length(0), offset(0), id(0), name(), name2() { }
+  unsigned long length;
+  unsigned long offset;
+  unsigned short id;
+  std::string name;
+  std::string name2;
 };
 
 enum PageType

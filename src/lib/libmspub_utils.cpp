@@ -88,7 +88,10 @@ static void _appendUCS4(WPXString &text, unsigned ucs4Character)
 uint8_t libmspub::readU8(WPXInputStream *input)
 {
   if (!input || input->atEOS())
+  {
+    MSPUB_DEBUG_MSG(("Something bad happened here!\n"));
     throw EndOfStreamException();
+  }
   unsigned long numBytesRead;
   uint8_t const *p = input->read(sizeof(uint8_t), numBytesRead);
 

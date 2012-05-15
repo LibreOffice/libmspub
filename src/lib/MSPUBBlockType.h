@@ -36,7 +36,8 @@ enum MSPUBBlockType //Please fill this in and replace magic constants in MSPUBPa
   TRAILER_DIRECTORY = 0x90,
   GENERAL_CONTAINER = 0x88,
   STRING_CONTAINER  = 0xc0,
-  DUMMY             = 0x78
+  DUMMY             = 0x78,
+  SHAPE_SEQNUM      = 0x70
 };
 } // namespace libmspub
 

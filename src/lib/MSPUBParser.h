@@ -29,6 +29,10 @@
 #ifndef __MSPUBPARSER_H__
 #define __MSPUBPARSER_H__
 
+#include <map>
+#include <vector>
+#include <memory>
+
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
 
@@ -47,6 +51,8 @@ public:
   virtual ~MSPUBParser();
   bool parse();
 private:
+  typedef std::vector<ContentChunkReference>::const_iterator ccr_iterator_t;
+
   MSPUBParser();
   MSPUBParser(const MSPUBParser &);
   MSPUBParser &operator=(const MSPUBParser &);
@@ -56,15 +62,23 @@ private:
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
 
-  bool parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
+  ContentChunkReference *parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
+  QuillChunkReference parseQuillChunkReference(WPXInputStream *input);
   bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
+  bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
+  bool parseShape(WPXInputStream *input, unsigned pageSeqNum);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
   std::vector<MSPUBBlockInfo> m_blockInfo;
+  std::vector<ContentChunkReference> m_pageChunks;
+  std::vector<ContentChunkReference> m_shapeChunks;
+  std::vector<ContentChunkReference> m_unknownChunks;
+  ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
+  bool m_seenDocumentChunk;
 
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);

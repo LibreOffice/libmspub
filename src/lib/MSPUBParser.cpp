@@ -409,6 +409,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
         }
         m_collector->addTextString(text, *id);
       }
+      textChunkReference = chunkReferences.end();
     }
   }
   return true;

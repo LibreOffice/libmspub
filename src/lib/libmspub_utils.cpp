@@ -89,7 +89,7 @@ uint8_t libmspub::readU8(WPXInputStream *input)
 {
   if (!input || input->atEOS())
   {
-    MSPUB_DEBUG_MSG(("Something bad happened here!\n"));
+    MSPUB_DEBUG_MSG(("Something bad happened here!Tell: %ld\n", input->tell()));
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;
@@ -188,6 +188,11 @@ void libmspub::appendCharacters(WPXString &text, std::vector<unsigned char> char
 
     _appendUCS4(text, ucs4Character);
   }
+}
+
+bool libmspub::stillReading(WPXInputStream *input, unsigned long until)
+{
+  return (!input->atEOS()) && input->tell() >= 0 && (unsigned)input->tell() < until;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

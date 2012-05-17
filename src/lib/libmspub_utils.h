@@ -86,6 +86,8 @@ int32_t readS32(WPXInputStream *input);
 
 void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
 
+bool stillReading(WPXInputStream *input, unsigned long until);
+
 class EndOfStreamException
 {
 };

@@ -61,14 +61,17 @@ private:
   bool parseEscher(WPXInputStream *input);
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
+  EscherContainerInfo parseEscherContainer(WPXInputStream *input);
 
   ContentChunkReference *parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
   QuillChunkReference parseQuillChunkReference(WPXInputStream *input);
   bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
-  bool parseShape(WPXInputStream *input, unsigned pageSeqNum);
+  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
+  bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
+  bool extractEscherValue32(WPXInputStream *input, const EscherContainerInfo &record, int *out, unsigned short offset);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
@@ -83,6 +86,7 @@ private:
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);
   static PageType getPageTypeBySeqNum(unsigned seqNum);
+  static unsigned getEscherElementTailLength(unsigned short type);
 };
 
 } // namespace libmspub

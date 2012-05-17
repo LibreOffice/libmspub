@@ -52,7 +52,9 @@ public:
   // collector functions
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<unsigned char> &str, unsigned id);
-  bool addTextShape(unsigned id, unsigned pageSeqNum, unsigned long width, unsigned long height);
+  bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
+
+  bool setShapeCoordinatesInEmu(unsigned short seqNum, long xs, long ys, long xe, long ye);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
@@ -62,30 +64,28 @@ private:
 
   struct TextShapeInfo
   {
-    TextShapeInfo(std::vector<unsigned char> str, unsigned long width, unsigned long height) : str(str), width(width), height(height) { }
+    TextShapeInfo(std::vector<unsigned char> str) : str(str), props() { }
     std::vector<unsigned char> str;
-    unsigned long width;
-    unsigned long height;
+    WPXPropertyList props;
   };
   struct PageInfo
   {
-    PageInfo() : textShapes() { }
-    std::vector<TextShapeInfo> textShapes;
+    PageInfo() : textShapeReferences() { }
+    std::vector<std::map<unsigned, TextShapeInfo>::const_iterator> textShapeReferences;
   };
 
   MSPUBCollector(const MSPUBCollector &);
   MSPUBCollector &operator=(const MSPUBCollector &);
 
-  // helper functions
-
   libwpg::WPGPaintInterface *m_painter;
   std::list<ContentChunkReference> contentChunkReferences;
   unsigned long m_width, m_height;
   bool m_widthSet, m_heightSet;
-  WPXPropertyList m_commonProperties;
+  WPXPropertyList m_commonPageProperties;
   unsigned short m_numPages;
-  std::map<unsigned, std::vector<unsigned char> > idsToTextStrings;
+  std::map<unsigned, std::vector<unsigned char> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
+  std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
 };
 
 } // namespace libmspub

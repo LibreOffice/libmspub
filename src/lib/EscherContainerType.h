@@ -26,10 +26,15 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBCONSTANTS_H__
-#define __MSPUBCONSTANTS_H__
+#ifndef __ESCHERCONTAINERTYPE_H__
+#define __ESCHERCONTAINERTYPE_H__
 
-#define EMUS_IN_INCH 914400
+#define OFFICE_ART_DGG_CONTAINER  0xF000
+#define OFFICE_ART_DG_CONTAINER   0xF002
+#define OFFICE_ART_SPGR_CONTAINER 0xF003
+#define OFFICE_ART_SP_CONTAINER   0xF004
+#define OFFICE_ART_CLIENT_DATA    0xF011
+#define OFFICE_ART_CLIENT_ANCHOR  0xF010
 
-#endif /* __MSPUBCONSTANTS_H__ */
+#endif /* __ESCHERCONTAINERTYPE_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

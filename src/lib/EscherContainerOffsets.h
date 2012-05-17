@@ -26,10 +26,14 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBCONSTANTS_H__
-#define __MSPUBCONSTANTS_H__
+#ifndef __ESCHERCONTAINEROFFSETS_H__
+#define __ESCHERCONTAINEROFFSETS_H__
 
-#define EMUS_IN_INCH 914400
+#define OFFSET_SHAPE_ID    0x06
+#define OFFSET_XS          0x06
+#define OFFSET_YS          0x0C
+#define OFFSET_XE          0x12
+#define OFFSET_YE          0x18
 
-#endif /* __MSPUBCONSTANTS_H__ */
+#endif /* __ESCHERCONTAINEROFFSETS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

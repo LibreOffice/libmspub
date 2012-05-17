@@ -38,6 +38,14 @@
 namespace libmspub
 {
 
+struct EscherContainerInfo
+{
+  unsigned short initial;
+  unsigned short type;
+  unsigned long contentsLength;
+  unsigned long contentsOffset;
+};
+
 struct MSPUBBlockInfo
 {
   MSPUBBlockInfo() : id((MSPUBBlockID)0), type((MSPUBBlockType)0), startPosition(0), dataOffset(0), dataLength(0), data(0), stringData() { }

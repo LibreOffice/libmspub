@@ -36,6 +36,8 @@
 #include "MSPUBBlockID.h"
 #include "MSPUBBlockType.h"
 #include "MSPUBContentChunkType.h"
+#include "EscherContainerType.h"
+#include "EscherContainerOffsets.h"
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
@@ -104,15 +106,6 @@ bool libmspub::MSPUBParser::parse()
     return false;
   }
   delete quill;
-  WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
-  if (!escher)
-    return false;
-  if (!parseEscher(escher))
-  {
-    delete escher;
-    return false;
-  }
-  delete escher;
   WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
   if (!contents)
     return false;
@@ -122,6 +115,15 @@ bool libmspub::MSPUBParser::parse()
     return false;
   }
   delete contents;
+  WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
+  if (!escher)
+    return false;
+  if (!parseEscher(escher))
+  {
+    delete escher;
+    return false;
+  }
+  delete escher;
 
   return m_collector->go();
 }
@@ -142,7 +144,9 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
     if (trailerPart.type == TRAILER_DIRECTORY)
     {
       ContentChunkReference *lastSeen = NULL;
-      while (input->tell() >= 0 && (unsigned)input->tell() < trailerPart.dataOffset + trailerPart.dataLength)
+
+      //while (input->tell() >= 0 && (unsigned)input->tell() < trailerPart.dataOffset + trailerPart.dataLength)
+      while (stillReading(input, trailerPart.dataOffset + trailerPart.dataLength))
       {
         m_blockInfo.push_back(parseBlock(input));
         ++m_lastSeenSeqNum;
@@ -193,12 +197,14 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
   unsigned long begin = input->tell();
   unsigned long len = readU32(input); 
-  while (input->tell() >= 0 && (unsigned)input->tell() < begin + len)
+  //while (input->tell() >= 0 && (unsigned)input->tell() < begin + len)
+  while (stillReading(input, begin + len))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
     if (info.id == DOCUMENT_SIZE)
     {
-      while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
+      //while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
+      while (stillReading(input, info.dataOffset + info.dataLength))
       {
         libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
         if (subInfo.id == DOCUMENT_WIDTH)
@@ -228,7 +234,8 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   {
     m_collector->addPage(chunk.seqNum);
   }
-  while (input->tell() >= 0 && (unsigned)input->tell() < chunk.offset + length)
+  //while (input->tell() >= 0 && (unsigned)input->tell() < chunk.offset + length)
+  while (stillReading(input, chunk.offset + length))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
     if (info.id == PAGE_SHAPES)
@@ -257,7 +264,8 @@ public:
 bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parseShapes: page seqnum 0x%x\n", pageSeqNum));
-  while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
+  //while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
+  while (stillReading(input, info.dataOffset + info.dataLength))
   {
     libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
     if (subInfo.type == SHAPE_SEQNUM)
@@ -272,7 +280,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         MSPUB_DEBUG_MSG(("Shape of seqnum 0x%lx found\n", subInfo.data));
         unsigned long pos = input->tell();
         input->seek(ref->offset, WPX_SEEK_SET);
-        parseShape(input, pageSeqNum);
+        parseShape(input, subInfo.data, pageSeqNum);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -280,7 +288,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned pageSeqNum)
+bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parseShape: pageSeqNum 0x%x\n", pageSeqNum));
   // need more info on ESCHER to do anything useful with this.
@@ -290,7 +298,8 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned pageSeqNu
   unsigned height = 0;
   bool isText = false;
   unsigned textId = 0;
-  while (input->tell() >= 0 && (unsigned)input->tell() < pos + length)
+  //while (input->tell() >= 0 && (unsigned)input->tell() < pos + length)
+  while (stillReading(input, pos + length))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input, true);
     if (info.id == SHAPE_WIDTH)
@@ -311,7 +320,8 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned pageSeqNu
   {
     if (isText)
     {
-      m_collector->addTextShape(textId, pageSeqNum, width, height);
+      //FIXME : Should we do something with this redundant height and width? Or at least assert that it is equal?
+      m_collector->addTextShape(textId, seqNum, pageSeqNum);
     }
     else
     {
@@ -418,8 +428,89 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
 bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseEscher\n"));
+  libmspub::EscherContainerInfo fakeroot;
+  fakeroot.initial = 0;
+  fakeroot.type = 0;
+  fakeroot.contentsOffset = input->tell();
+  fakeroot.contentsLength = (unsigned)-1; //FIXME: Get the actual length
+  libmspub::EscherContainerInfo dg;
+  while (findEscherContainer(input, fakeroot, &dg, OFFICE_ART_DG_CONTAINER))
+  {
+    libmspub::EscherContainerInfo spgr;
+    while (findEscherContainer(input, dg, &spgr, OFFICE_ART_SPGR_CONTAINER))
+    {
+      libmspub::EscherContainerInfo sp;
+      while (findEscherContainer(input, spgr, &sp, OFFICE_ART_SP_CONTAINER))
+      {
+        libmspub::EscherContainerInfo cData;
+        libmspub::EscherContainerInfo cAnchor;
+        if (findEscherContainer(input, sp, &cData, OFFICE_ART_CLIENT_DATA))
+        {
+          unsigned shapeSeqNum = 0;
+          if (extractEscherValue32(input, cData, (int*)&shapeSeqNum, OFFSET_SHAPE_ID))
+          {
+            input->seek(sp.contentsOffset, WPX_SEEK_SET);
+            if (findEscherContainer(input, sp, &cAnchor, OFFICE_ART_CLIENT_ANCHOR))
+            {
+              MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", shapeSeqNum));
+              int Xs = 0, Ys = 0, Xe = 0, Ye = 0;
+              extractEscherValue32(input, cAnchor, &Xs, OFFSET_XS);
+              extractEscherValue32(input, cAnchor, &Ys, OFFSET_YS);
+              extractEscherValue32(input, cAnchor, &Xe, OFFSET_XE);
+              extractEscherValue32(input, cAnchor, &Ye, OFFSET_YE);
+              m_collector->setShapeCoordinatesInEmu(shapeSeqNum, Xs, Ys, Xe, Ye);
+              input->seek(sp.contentsOffset + sp.contentsLength + getEscherElementTailLength(sp.type), WPX_SEEK_SET);
+            }
+          }
+        }
+      }
+    }
+    input->seek(input->tell() + getEscherElementTailLength(OFFICE_ART_DG_CONTAINER), WPX_SEEK_SET);
+  }
   return true;
 }
+
+unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)
+{
+  switch (type)
+  {
+  case OFFICE_ART_DGG_CONTAINER:
+  case OFFICE_ART_DG_CONTAINER:
+    return 4;
+  default:
+    return 0;
+  }
+}
+
+bool libmspub::MSPUBParser::findEscherContainer(WPXInputStream *input, const libmspub::EscherContainerInfo &parent, libmspub::EscherContainerInfo *out, unsigned short desiredType)
+{
+  MSPUB_DEBUG_MSG(("At offset 0x%lx, attempting to find escher container of type 0x%x\n", input->tell(), desiredType));
+  //while (input->tell() >= 0 && (unsigned)input->tell() < parent.contentsOffset + parent.contentsLength)
+  while (stillReading(input, parent.contentsOffset + parent.contentsLength))
+  {
+    libmspub::EscherContainerInfo next = parseEscherContainer(input);
+    if (next.type == desiredType)
+    {
+      *out = next;
+      return true;
+    }
+    input->seek(next.contentsOffset + next.contentsLength + getEscherElementTailLength(next.type), WPX_SEEK_SET);
+  }
+  return false;
+}
+
+bool libmspub::MSPUBParser::extractEscherValue32(WPXInputStream *input, const libmspub::EscherContainerInfo &record, int *out, unsigned short offset)
+{
+  if (record.contentsLength >= (unsigned)(offset + 4))
+  {
+    input->seek(record.contentsOffset + offset, WPX_SEEK_SET);
+    *out = readS32(input);
+    return true;
+  }
+  return false;
+}
+
+
 
 libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
 {
@@ -431,7 +522,8 @@ libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReferen
   bool seenType = false;
   bool seenOffset = false;
   bool seenParentSeqNum = false;
-  while (input->tell() >= 0 && (unsigned)input->tell() < block.dataOffset + block.dataLength)
+  //while (input->tell() >= 0 && (unsigned)input->tell() < block.dataOffset + block.dataLength)
+  while (stillReading(input, block.dataOffset + block.dataLength))
   {
     libmspub::MSPUBBlockInfo subBlock = parseBlock(input, true);
     //FIXME: Warn if multiple of these blocks seen.
@@ -484,6 +576,18 @@ void libmspub::MSPUBParser::skipBlock(WPXInputStream *input, libmspub::MSPUBBloc
 {
   input->seek(block.dataOffset + block.dataLength, WPX_SEEK_SET);
 }
+
+libmspub::EscherContainerInfo libmspub::MSPUBParser::parseEscherContainer(WPXInputStream *input)
+{
+  libmspub::EscherContainerInfo info;
+  info.initial = readU16(input);
+  info.type = readU16(input);
+  info.contentsLength = readU32(input);
+  info.contentsOffset = input->tell();
+  MSPUB_DEBUG_MSG(("Parsed escher container: type 0x%x, contentsOffset 0x%lx, contentsLength 0x%lx\n", info.type, info.contentsOffset, info.contentsLength));
+  return info;
+}
+
 libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input, bool skipHierarchicalData)
 {
   libmspub::MSPUBBlockInfo info;

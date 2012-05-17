@@ -73,7 +73,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned id, unsigned pageSeqNum, un
     }
     else
     {
-      MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x, pageSeqNum 0x%x\n, width 0x%lx, height 0x%lx", id, pageSeqNum, width, height));
+      MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x, pageSeqNum 0x%x, width 0x%lx, height 0x%lx\n", id, pageSeqNum, width, height));
       i_page->second.textShapes.push_back(TextShapeInfo(i_str->second, width, height));
       return true;
     }

@@ -59,6 +59,7 @@ private:
   bool parseContents(WPXInputStream *input);
   bool parseQuill(WPXInputStream *input);
   bool parseEscher(WPXInputStream *input);
+  bool parseEscherDelay(WPXInputStream *input);
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
   EscherContainerInfo parseEscherContainer(WPXInputStream *input);
@@ -71,7 +72,7 @@ private:
   bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
-  bool extractEscherValue32(WPXInputStream *input, const EscherContainerInfo &record, int *out, unsigned short offset);
+  std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
@@ -81,12 +82,14 @@ private:
   std::vector<ContentChunkReference> m_unknownChunks;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
+  unsigned m_lastAddedImage;
   bool m_seenDocumentChunk;
 
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);
   static PageType getPageTypeBySeqNum(unsigned seqNum);
   static unsigned getEscherElementTailLength(unsigned short type);
+  static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
 };
 
 } // namespace libmspub

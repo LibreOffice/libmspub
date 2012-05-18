@@ -35,6 +35,8 @@
 #define OFFICE_ART_SP_CONTAINER   0xF004
 #define OFFICE_ART_CLIENT_DATA    0xF011
 #define OFFICE_ART_CLIENT_ANCHOR  0xF010
+#define OFFICE_ART_BLIP_PNG       0xF01E
+#define OFFICE_ART_FOPT           0xF00B
 
 #endif /* __ESCHERCONTAINERTYPE_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

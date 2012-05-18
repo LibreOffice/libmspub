@@ -26,14 +26,15 @@
  * instead of those above.
  */
 
-#ifndef __ESCHERCONTAINEROFFSETS_H__
-#define __ESCHERCONTAINEROFFSETS_H__
+#ifndef __ESCHERFIELDIDS_H__
+#define __ESCHERFIELDIDS_H__
 
-#define OFFSET_SHAPE_ID    0x06
-#define OFFSET_XS          0x06
-#define OFFSET_YS          0x0C
-#define OFFSET_XE          0x12
-#define OFFSET_YE          0x18
+#define FIELDID_XS 0x2001
+#define FIELDID_YS 0x2002
+#define FIELDID_XE 0x2003
+#define FIELDID_YE 0x2004
+#define FIELDID_PXID 0x4104
+#define FIELDID_SHAPE_ID 0x6801
 
-#endif /* __ESCHERCONTAINEROFFSETS_H__ */
+#endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

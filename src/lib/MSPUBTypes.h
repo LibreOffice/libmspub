@@ -86,6 +86,12 @@ enum PageType
   DUMMY_PAGE
 };
 
+enum ImgType
+{
+  UNKNOWN,
+  PNG
+};
+
 } // namespace libmspub
 
 #endif /* __MSPUBTYPES_H__ */

@@ -37,11 +37,11 @@
 #include "MSPUBBlockType.h"
 #include "MSPUBContentChunkType.h"
 #include "EscherContainerType.h"
-#include "EscherContainerOffsets.h"
+#include "EscherFieldIds.h"
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(), m_unknownChunks(), m_documentChunk(), m_lastSeenSeqNum(-1), m_seenDocumentChunk(false)
+  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(), m_unknownChunks(), m_documentChunk(), m_lastSeenSeqNum(-1), m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
 }
 
@@ -115,6 +115,15 @@ bool libmspub::MSPUBParser::parse()
     return false;
   }
   delete contents;
+  WPXInputStream *escherDelay = m_input->getDocumentOLEStream("Escher/EscherDelayStm");
+  if (!escherDelay)
+    return false;
+  if (!parseEscherDelay(escherDelay))
+  {
+    delete escherDelay;
+    return false;
+  }
+  delete escherDelay;
   WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
   if (!escher)
     return false;
@@ -126,6 +135,33 @@ bool libmspub::MSPUBParser::parse()
   delete escher;
 
   return m_collector->go();
+}
+
+bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
+{
+  while (stillReading (input, (unsigned long)-1))
+  {
+    EscherContainerInfo info = parseEscherContainer(input);
+    if (info.type == OFFICE_ART_BLIP_PNG)
+    {
+      WPXBinaryData img;
+      unsigned long toRead = info.contentsLength;
+      while (toRead > 0 && stillReading(input, (unsigned long)-1))
+      {
+        input->seek(input->tell() + 17, WPX_SEEK_SET);
+        unsigned long howManyRead = 0;
+        const unsigned char *buf = input->read(toRead, howManyRead);
+        img.append(buf, howManyRead);
+        toRead -= howManyRead;
+      }
+      m_collector->addImage(++m_lastAddedImage, PNG, img);
+    }
+    else
+    {
+      input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
+    }
+  }
+  return true;
 }
 
 bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
@@ -291,7 +327,6 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
 bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parseShape: pageSeqNum 0x%x\n", pageSeqNum));
-  // need more info on ESCHER to do anything useful with this.
   unsigned long pos = input->tell();
   unsigned length = readU32(input);
   unsigned width = 0;
@@ -323,10 +358,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       //FIXME : Should we do something with this redundant height and width? Or at least assert that it is equal?
       m_collector->addTextShape(textId, seqNum, pageSeqNum);
     }
-    else
-    {
-      MSPUB_DEBUG_MSG(("Non-text shape seen: we are not handling this yet.\n"));
-    }
+    m_collector->addShape(seqNum, pageSeqNum);
   }
   else
   {
@@ -444,21 +476,29 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
       {
         libmspub::EscherContainerInfo cData;
         libmspub::EscherContainerInfo cAnchor;
+        libmspub::EscherContainerInfo cFopt;
         if (findEscherContainer(input, sp, &cData, OFFICE_ART_CLIENT_DATA))
         {
-          unsigned shapeSeqNum = 0;
-          if (extractEscherValue32(input, cData, (int*)&shapeSeqNum, OFFSET_SHAPE_ID))
+          std::map<unsigned short, unsigned> dataValues = extractEscherValues(input, cData);
+          std::map<unsigned short, unsigned>::const_iterator i_shapeSeqNum = dataValues.find(FIELDID_SHAPE_ID);
+          if (i_shapeSeqNum != dataValues.end())
           {
             input->seek(sp.contentsOffset, WPX_SEEK_SET);
             if (findEscherContainer(input, sp, &cAnchor, OFFICE_ART_CLIENT_ANCHOR))
             {
-              MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", shapeSeqNum));
-              int Xs = 0, Ys = 0, Xe = 0, Ye = 0;
-              extractEscherValue32(input, cAnchor, &Xs, OFFSET_XS);
-              extractEscherValue32(input, cAnchor, &Ys, OFFSET_YS);
-              extractEscherValue32(input, cAnchor, &Xe, OFFSET_XE);
-              extractEscherValue32(input, cAnchor, &Ye, OFFSET_YE);
-              m_collector->setShapeCoordinatesInEmu(shapeSeqNum, Xs, Ys, Xe, Ye);
+              MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", i_shapeSeqNum->second));
+              input->seek(sp.contentsOffset, WPX_SEEK_SET);
+              if (findEscherContainer(input, sp, &cFopt, OFFICE_ART_FOPT))
+              {
+                std::map<unsigned short, unsigned> foptValues = extractEscherValues(input, cFopt);
+                std::map<unsigned short, unsigned>::const_iterator i_pxId = foptValues.find(FIELDID_PXID);
+                if (i_pxId != foptValues.end())
+                {
+                  m_collector->setShapeImgIndex(i_shapeSeqNum->second, i_pxId->second);
+                }
+              }
+              std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
+              m_collector->setShapeCoordinatesInEmu(i_shapeSeqNum->second, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
               input->seek(sp.contentsOffset + sp.contentsLength + getEscherElementTailLength(sp.type), WPX_SEEK_SET);
             }
           }
@@ -482,6 +522,17 @@ unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)
   }
 }
 
+unsigned libmspub::MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned short type)
+{
+  switch (type)
+  {
+  case OFFICE_ART_CLIENT_ANCHOR:
+  case OFFICE_ART_CLIENT_DATA: //account for the fact that the length appears twice, for whatever reason
+    return 4;
+  }
+  return 0;
+}
+
 bool libmspub::MSPUBParser::findEscherContainer(WPXInputStream *input, const libmspub::EscherContainerInfo &parent, libmspub::EscherContainerInfo *out, unsigned short desiredType)
 {
   MSPUB_DEBUG_MSG(("At offset 0x%lx, attempting to find escher container of type 0x%x\n", input->tell(), desiredType));
@@ -499,17 +550,18 @@ bool libmspub::MSPUBParser::findEscherContainer(WPXInputStream *input, const lib
   return false;
 }
 
-bool libmspub::MSPUBParser::extractEscherValue32(WPXInputStream *input, const libmspub::EscherContainerInfo &record, int *out, unsigned short offset)
+std::map<unsigned short, unsigned> libmspub::MSPUBParser::extractEscherValues(WPXInputStream *input, const libmspub::EscherContainerInfo &record)
 {
-  if (record.contentsLength >= (unsigned)(offset + 4))
+  std::map<unsigned short, unsigned> ret;
+  input->seek(record.contentsOffset + getEscherElementAdditionalHeaderLength(record.type), WPX_SEEK_SET);
+  while (stillReading(input, record.contentsOffset + record.contentsLength))
   {
-    input->seek(record.contentsOffset + offset, WPX_SEEK_SET);
-    *out = readS32(input);
-    return true;
+    unsigned short id = readU16(input);
+    unsigned value = readU32(input);
+    ret[id] = value;
   }
-  return false;
+  return ret;
 }
-
 
 
 libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)

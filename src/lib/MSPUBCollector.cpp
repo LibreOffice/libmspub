@@ -32,7 +32,7 @@
 #include "MSPUBConstants.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum()
+  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes()
 {
 }
 
@@ -51,6 +51,7 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   {
     return false;
   }
+  MSPUB_DEBUG_MSG(("Adding page of seqnum 0x%x\n", seqNum));
   pagesBySeqNum[seqNum] = PageInfo();
   return true;
 }
@@ -86,27 +87,72 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
   }
 }
 
-bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned short seqNum, long xs, long ys, long xe, long ye)
+bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
+{
+  std::map<unsigned, UnknownShapeInfo>::iterator i = possibleImageShapes.find(seqNum);
+  if (i != possibleImageShapes.end())
+  {
+    i->second.imgIndex = index;
+    return true;
+  }
+  return false;
+}
+
+bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
 {
   if (! (m_widthSet && m_heightSet))
   {
     return false;
   }
+  WPXPropertyList *propsToEdit;
   std::map<unsigned, TextShapeInfo>::iterator elt = textShapesBySeqNum.find(seqNum);
-  double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
-  double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
   if (elt != textShapesBySeqNum.end())
   {
-    elt->second.props.insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
-    elt->second.props.insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
-    elt->second.props.insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
-    elt->second.props.insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
+    propsToEdit = &(elt->second.props);
   }
+  else
+  {
+    std::map<unsigned, UnknownShapeInfo>::iterator elt = possibleImageShapes.find(seqNum);
+    if (elt != possibleImageShapes.end())
+    {
+      propsToEdit = &(elt->second.props);
+    }
+    else
+    {
+      return false;
+    }
+  }
+  double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
+  double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
+  propsToEdit->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
+  propsToEdit->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
+  propsToEdit->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
+  propsToEdit->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
   return true;
+}
+
+void libmspub::MSPUBCollector::assignImages()
+{
+  for (std::map<unsigned, UnknownShapeInfo>::const_iterator i = possibleImageShapes.begin(); i != possibleImageShapes.end(); ++i)
+  {
+    if (i->second.imgIndex > 0 && i->second.imgIndex <= images.size())
+    {
+      std::pair<std::map<unsigned, ImgShapeInfo>::iterator, bool> result = imgShapesBySeqNum.insert(std::pair<unsigned, ImgShapeInfo>(i->first, ImgShapeInfo(images[i->second.imgIndex - 1].first, images[i->second.imgIndex - 1].second, i->second.props)));
+      if (result.second)
+      {
+        std::map<unsigned, PageInfo>::iterator i_pg = pagesBySeqNum.find(i->second.pageSeqNum);
+        if (i_pg != pagesBySeqNum.end())
+        {
+          i_pg->second.imgShapeReferences.push_back(result.first);
+        }
+      }
+    }
+  }
 }
 
 bool libmspub::MSPUBCollector::go()
 {
+  assignImages();
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
     m_painter->startGraphics(m_commonPageProperties);
@@ -119,6 +165,10 @@ bool libmspub::MSPUBCollector::go()
       m_painter->insertText(text);
       m_painter->endTextLine();
       m_painter->endTextObject();
+    }
+    for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin(); j != i->second.imgShapeReferences.end(); ++j)
+    {
+      m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
     }
     m_painter->endGraphics();
   }
@@ -147,6 +197,50 @@ void libmspub::MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
   m_height = heightInEmu;
   m_commonPageProperties.insert("svg:height", ((double)heightInEmu)/EMUS_IN_INCH);
   m_heightSet = true;
+}
+
+bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryData img)
+{
+  MSPUB_DEBUG_MSG(("Image at index %d and of type 0x%x added.\n", index, type));
+  while (images.size() < index)
+  {
+    images.push_back(std::pair<ImgType, WPXBinaryData>(UNKNOWN, WPXBinaryData()));
+  }
+  images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
+  return true;
+}
+
+bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
+{
+  /*std::map<unsigned, unsigned>::const_iterator i_ind = imgIndicesByShapeSeqNum.find(seqNum);
+  if (i_ind == imgIndicesByShapeSeqNum.end())
+  {
+    MSPUB_DEBUG_MSG(("Didn't find which embedded image index corresponds to shape 0x%x before trying to add the shape in addImageShape!\n", seqNum));
+    return false;
+  }
+  unsigned imgIndex = i_ind->second;
+  std::map<unsigned, PageInfo>::iterator i_page = pagesBySeqNum.find(pageSeqNum);
+  if (i_page == pagesBySeqNum.end())
+  {
+    MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in addImageShape!\n", pageSeqNum));
+    return false;
+  }
+  if (imgIndex > images.size() || images[imgIndex - 1].first == UNKNOWN)
+  {
+    MSPUB_DEBUG_MSG(("Valid image of index %d not found in addImageShape!\n", imgIndex));
+    return false;
+  }
+  std::pair<std::map<unsigned, ImgShapeInfo>::const_iterator, bool> result = imgShapesBySeqNum.insert(std::pair<const unsigned, ImgShapeInfo>(seqNum, ImgShapeInfo(images[imgIndex - 1].first, images[imgIndex - 1].second)));
+  if (result.second)
+  {
+    i_page->second.imgShapeReferences.push_back(result.first);
+    MSPUB_DEBUG_MSG(("addImageShape succeeded with id 0x%x", imgIndex));
+    return true;
+  }
+  MSPUB_DEBUG_MSG(("already tried to add the image shape of seqnum 0x%x to this page!\n", seqNum));
+  return false;*/
+  possibleImageShapes.insert(std::pair<unsigned, UnknownShapeInfo>(seqNum, UnknownShapeInfo(pageSeqNum)));
+  return true;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

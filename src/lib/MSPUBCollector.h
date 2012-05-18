@@ -36,6 +36,7 @@
 #include <libwpg/WPGPaintInterface.h>
 
 #include "MSPUBTypes.h"
+#include "libmspub_utils.h"
 #include "MSPUBContentChunkType.h"
 
 namespace libmspub
@@ -53,8 +54,11 @@ public:
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<unsigned char> &str, unsigned id);
   bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
+  bool addImage(unsigned index, ImgType type, WPXBinaryData img);
+  bool addShape(unsigned seqNum, unsigned pageSeqNum);
 
-  bool setShapeCoordinatesInEmu(unsigned short seqNum, long xs, long ys, long xe, long ye);
+  bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
+  bool setShapeImgIndex(unsigned seqNum, unsigned index);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
@@ -68,10 +72,38 @@ private:
     std::vector<unsigned char> str;
     WPXPropertyList props;
   };
+  struct UnknownShapeInfo
+  {
+    UnknownShapeInfo(unsigned pageSeqNum) : pageSeqNum(pageSeqNum), imgIndex(0), props() { }
+    unsigned pageSeqNum;
+    unsigned imgIndex;
+    WPXPropertyList props;
+  };
+  struct ImgShapeInfo
+  {
+    ImgShapeInfo(ImgType type, WPXBinaryData img, WPXPropertyList props) : img(img), props(props)
+    { 
+      const char *mime;
+      switch (type)
+      {
+      case PNG:
+        mime = "image/png";
+        break;
+      default:
+        mime = "";
+        MSPUB_DEBUG_MSG(("Unknown image type %d passed to ImgShapeInfo constructor!\n", type));
+      }
+      this->props.insert("libwpg:mime-type", mime);
+    }
+
+    WPXBinaryData img;
+    WPXPropertyList props;
+  };
   struct PageInfo
   {
-    PageInfo() : textShapeReferences() { }
+    PageInfo() : textShapeReferences(), imgShapeReferences() { }
     std::vector<std::map<unsigned, TextShapeInfo>::const_iterator> textShapeReferences;
+    std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator> imgShapeReferences;
   };
 
   MSPUBCollector(const MSPUBCollector &);
@@ -86,6 +118,14 @@ private:
   std::map<unsigned, std::vector<unsigned char> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
   std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
+  std::map<unsigned, ImgShapeInfo> imgShapesBySeqNum;
+
+  std::vector<std::pair<ImgType, WPXBinaryData> > images;
+  std::map<unsigned, UnknownShapeInfo> possibleImageShapes;
+
+  // helper functions
+  void assignImages();
+  
 };
 
 } // namespace libmspub

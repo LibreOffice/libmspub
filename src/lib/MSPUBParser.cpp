@@ -137,12 +137,24 @@ bool libmspub::MSPUBParser::parse()
   return m_collector->go();
 }
 
+libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
+{
+  switch (type)
+  {
+  case OFFICE_ART_BLIP_PNG:
+    return PNG;
+  case OFFICE_ART_BLIP_JPEG:
+    return JPEG;
+  }
+  return UNKNOWN;
+}
+
 bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
 {
   while (stillReading (input, (unsigned long)-1))
   {
     EscherContainerInfo info = parseEscherContainer(input);
-    if (info.type == OFFICE_ART_BLIP_PNG)
+    if (imgTypeByBlipType(info.type) != UNKNOWN)
     {
       WPXBinaryData img;
       unsigned long toRead = info.contentsLength;
@@ -154,12 +166,9 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
         img.append(buf, howManyRead);
         toRead -= howManyRead;
       }
-      m_collector->addImage(++m_lastAddedImage, PNG, img);
+      m_collector->addImage(++m_lastAddedImage, imgTypeByBlipType(info.type), img);
     }
-    else
-    {
-      input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
-    }
+    input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
   }
   return true;
 }

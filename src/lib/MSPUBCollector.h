@@ -89,6 +89,9 @@ private:
       case PNG:
         mime = "image/png";
         break;
+      case JPEG:
+        mime = "image/jpeg";
+        break;
       default:
         mime = "";
         MSPUB_DEBUG_MSG(("Unknown image type %d passed to ImgShapeInfo constructor!\n", type));

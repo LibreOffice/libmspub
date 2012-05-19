@@ -89,7 +89,8 @@ enum PageType
 enum ImgType
 {
   UNKNOWN,
-  PNG
+  PNG,
+  JPEG
 };
 
 } // namespace libmspub

@@ -78,7 +78,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
       if (result.second)
       {
         i_page->second.textShapeReferences.push_back(result.first);
-        MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x", stringId));
+        MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x\n", stringId));
         return true;
       }
       MSPUB_DEBUG_MSG(("already tried to add the text shape of seqnum 0x%x to this page!\n", seqNum));
@@ -89,6 +89,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
 
 bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
 {
+  MSPUB_DEBUG_MSG(("Setting image index of shape with seqnum 0x%x to 0x%x\n", seqNum, index));
   std::map<unsigned, UnknownShapeInfo>::iterator i = possibleImageShapes.find(seqNum);
   if (i != possibleImageShapes.end())
   {

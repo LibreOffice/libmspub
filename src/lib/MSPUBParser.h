@@ -90,6 +90,7 @@ private:
   static PageType getPageTypeBySeqNum(unsigned seqNum);
   static unsigned getEscherElementTailLength(unsigned short type);
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
+  static ImgType imgTypeByBlipType(unsigned short type);
 };
 
 } // namespace libmspub

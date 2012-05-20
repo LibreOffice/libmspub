@@ -29,7 +29,10 @@ INCPRE+=$(SOLARVER)$/$(INPATH)$/inc$/libwpg
 .ENDIF
 
 SLOFILES= \
+        $(SLO)$/MSPUBCollector.obj \
         $(SLO)$/MSPUBDocument.obj \
+		$(SLO)$/MSPUBParser.obj \
+		$(SLO)$/MSPUBStringVector.obj \
 		$(SLO)$/MSPUBSVGGenerator.obj \
 		$(SLO)$/libmspub_utils.obj
 

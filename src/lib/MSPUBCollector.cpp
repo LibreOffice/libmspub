@@ -166,6 +166,10 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("style:text-underline-type", "single");
   }
+  if (style.textSizeInPt != -1)
+  {
+    ret.insert("fo:font-size", style.textSizeInPt);
+  }
   return ret;
 }
 

@@ -36,6 +36,7 @@
 #include "MSPUBBlockID.h"
 #include "MSPUBBlockType.h"
 #include "MSPUBContentChunkType.h"
+#include "MSPUBConstants.h"
 #include "EscherContainerType.h"
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
@@ -454,7 +455,8 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
     else if (i->name == "FDPC")
     {
       input->seek(i->offset, WPX_SEEK_SET);
-      spans = parseCharacterStyles(input, *i);
+      std::vector<TextSpanReference> thisBlockSpans = parseCharacterStyles(input, *i);
+      spans.insert(spans.end(), thisBlockSpans.begin(), thisBlockSpans.end());
       parsedFdpc = true;
     }
     if (parsedStrs && parsedSyid && parsedFdpc && textChunkReference != chunkReferences.end())
@@ -516,6 +518,7 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
   {
     input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
     bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
+    int textSize1 = -1, textSize2 = -1;
     unsigned len = readU32(input);
     while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
     {
@@ -537,11 +540,17 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
       case UNDERLINE_ID:
         seenUnderline = true;
         break;
+      case TEXT_SIZE_1_ID:
+        textSize1 = info.data;
+        break;
+      case TEXT_SIZE_2_ID:
+        textSize2 = info.data;
+        break;
       default:
         break;
       }
     }
-    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2)));
+    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1)));
     currentSpanBegin = textOffsets[i] + 1;
   }
   return ret;

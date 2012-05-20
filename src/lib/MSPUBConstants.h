@@ -30,6 +30,7 @@
 #define __MSPUBCONSTANTS_H__
 
 #define EMUS_IN_INCH 914400
+#define POINTS_IN_INCH 72
 
 #endif /* __MSPUBCONSTANTS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -81,10 +81,11 @@ struct QuillChunkReference
 
 struct CharacterStyle
 {
-  CharacterStyle(bool underline, bool italic, bool bold) : underline(underline), italic(italic), bold(bold) { }
+  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt) { }
   bool underline;
   bool italic;
   bool bold;
+  int textSizeInPt; // -1 to use the default size.
 };
 
 struct TextSpan

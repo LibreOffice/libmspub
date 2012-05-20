@@ -52,7 +52,7 @@ public:
 
   // collector functions
   bool addPage(unsigned seqNum);
-  bool addTextString(const std::vector<unsigned char> &str, unsigned id);
+  bool addTextString(const std::vector<TextSpan> &str, unsigned id);
   bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   bool addShape(unsigned seqNum, unsigned pageSeqNum);
@@ -68,8 +68,8 @@ private:
 
   struct TextShapeInfo
   {
-    TextShapeInfo(std::vector<unsigned char> str) : str(str), props() { }
-    std::vector<unsigned char> str;
+    TextShapeInfo(std::vector<TextSpan> str) : str(str), props() { }
+    std::vector<TextSpan> str;
     WPXPropertyList props;
   };
   struct UnknownShapeInfo
@@ -118,7 +118,7 @@ private:
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonPageProperties;
   unsigned short m_numPages;
-  std::map<unsigned, std::vector<unsigned char> > textStringsById;
+  std::map<unsigned, std::vector<TextSpan> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
   std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
   std::map<unsigned, ImgShapeInfo> imgShapesBySeqNum;
@@ -128,7 +128,7 @@ private:
 
   // helper functions
   void assignImages();
-  
+  WPXPropertyList getCharStyleProps(const CharacterStyle &);
 };
 
 } // namespace libmspub

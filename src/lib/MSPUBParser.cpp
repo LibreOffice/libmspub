@@ -116,14 +116,11 @@ bool libmspub::MSPUBParser::parse()
   }
   delete contents;
   WPXInputStream *escherDelay = m_input->getDocumentOLEStream("Escher/EscherDelayStm");
-  if (!escherDelay)
-    return false;
-  if (!parseEscherDelay(escherDelay))
+  if (escherDelay)
   {
+    parseEscherDelay(escherDelay);
     delete escherDelay;
-    return false;
   }
-  delete escherDelay;
   WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
   if (!escher)
     return false;
@@ -167,6 +164,11 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
         toRead -= howManyRead;
       }
       m_collector->addImage(++m_lastAddedImage, imgTypeByBlipType(info.type), img);
+    }
+    else
+    {
+      ++m_lastAddedImage;
+      MSPUB_DEBUG_MSG(("Image of unknown type at index 0x%x\n", m_lastAddedImage));
     }
     input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
   }
@@ -417,8 +419,10 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   std::list<QuillChunkReference>::const_iterator textChunkReference = chunkReferences.end();
   bool parsedStrs = false;
   bool parsedSyid = false;
+  bool parsedFdpc = false;
   std::list<unsigned> textLengths;
   std::list<unsigned> textIDs;
+  std::vector<TextSpanReference> spans;
   for (std::list<QuillChunkReference>::const_iterator i = chunkReferences.begin(); i != chunkReferences.end(); ++i)
   {
     if (i->name == "TEXT")
@@ -447,23 +451,100 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       }
       parsedSyid = true;
     }
-    if (parsedStrs && parsedSyid && textChunkReference != chunkReferences.end())
+    else if (i->name == "FDPC")
+    {
+      input->seek(i->offset, WPX_SEEK_SET);
+      spans = parseCharacterStyles(input, *i);
+      parsedFdpc = true;
+    }
+    if (parsedStrs && parsedSyid && parsedFdpc && textChunkReference != chunkReferences.end())
     {
       input->seek(textChunkReference->offset, WPX_SEEK_SET);
+      unsigned bytesRead = 0;
+      std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
       for (std::list<unsigned>::const_iterator i = textLengths.begin(), id = textIDs.begin(); i != textLengths.end() && id != textIDs.end(); ++i, ++id)
       {
-        std::vector<unsigned char> text(2 * *i);
+        MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
+        std::vector<TextSpan> readSpans;
+        std::vector<unsigned char> text;
         for (unsigned j = 0; j < *i; ++j)
         {
-          text[2*j] = readU8(input);
-          text[2*j+1] = readU8(input);
+          text.push_back(readU8(input));
+          text.push_back(readU8(input));
+          bytesRead += 2;
+          if (bytesRead >= currentTextSpan->last - textChunkReference->offset)
+          {
+            if (text.size() > 0)
+            {
+              readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+              MSPUB_DEBUG_MSG(("Saw text span %d in the current text block.\n", (unsigned)readSpans.size()));
+            }
+            ++currentTextSpan;
+            text.clear();
+          }
         }
-        m_collector->addTextString(text, *id);
+        if (text.size() > 0)
+        {
+          readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+          MSPUB_DEBUG_MSG(("Saw text span %d in the current text block.\n", (unsigned)readSpans.size()));
+        } 
+        m_collector->addTextString(readSpans, *id);
       }
       textChunkReference = chunkReferences.end();
     }
   }
   return true;
+}
+
+std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk)
+{
+  unsigned short numEntries = readU16(input);
+  input->seek(input->tell() + 6, WPX_SEEK_SET);
+  std::vector<unsigned> textOffsets(numEntries);
+  std::vector<unsigned short> chunkOffsets(numEntries);
+  std::vector<TextSpanReference> ret;
+  for (unsigned short i = 0; i < numEntries; ++i)
+  {
+    textOffsets[i] = readU32(input);
+  }
+  for (unsigned short i = 0; i < numEntries; ++i)
+  {
+    chunkOffsets[i] = readU16(input);
+  }
+  unsigned currentSpanBegin = 0;
+  for (unsigned short i = 0; i < numEntries; ++i)
+  {
+    input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
+    bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
+    unsigned len = readU32(input);
+    while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
+    {
+      libmspub::MSPUBBlockInfo info = parseBlock(input);
+      switch (info.id)
+      {
+      case BOLD_1_ID:
+        seenBold1 = true;
+        break;
+      case BOLD_2_ID:
+        seenBold2 = true;
+        break;
+      case ITALIC_1_ID:
+        seenItalic1 = true;
+        break;
+      case ITALIC_2_ID:
+        seenItalic2 = true;
+        break;
+      case UNDERLINE_ID:
+        seenUnderline = true;
+        break;
+      default:
+        break;
+      }
+    }
+    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2)));
+    currentSpanBegin = textOffsets[i] + 1;
+  }
+  return ret;
 }
 
 bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)

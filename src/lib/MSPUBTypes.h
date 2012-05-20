@@ -79,6 +79,21 @@ struct QuillChunkReference
   std::string name2;
 };
 
+struct CharacterStyle
+{
+  CharacterStyle(bool underline, bool italic, bool bold) : underline(underline), italic(italic), bold(bold) { }
+  bool underline;
+  bool italic;
+  bool bold;
+};
+
+struct TextSpan
+{
+  TextSpan(std::vector<unsigned char> chars, CharacterStyle style) : chars(chars), style(style) { }
+  std::vector<unsigned char> chars;
+  CharacterStyle style;
+};
+
 enum PageType
 {
   MASTER,

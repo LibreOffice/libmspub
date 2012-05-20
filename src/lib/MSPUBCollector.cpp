@@ -66,7 +66,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
   }
   else
   {
-    std::map<unsigned, std::vector<unsigned char> >::iterator i_str = textStringsById.find(stringId);
+    std::map<unsigned, std::vector<TextSpan> >::iterator i_str = textStringsById.find(stringId);
     if (i_str == textStringsById.end())
     {
       MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in addTextShape!\n", stringId));
@@ -151,6 +151,24 @@ void libmspub::MSPUBCollector::assignImages()
   }
 }
 
+WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle& style)
+{
+  WPXPropertyList ret;
+  if (style.italic)
+  {
+    ret.insert("fo:font-style", "italic");
+  }
+  if (style.bold)
+  {
+    ret.insert("fo:font-weight", "bold");
+  }
+  if (style.underline)
+  {
+    ret.insert("style:text-underline-type", "single");
+  }
+  return ret;
+}
+
 bool libmspub::MSPUBCollector::go()
 {
   assignImages();
@@ -159,11 +177,17 @@ bool libmspub::MSPUBCollector::go()
     m_painter->startGraphics(m_commonPageProperties);
     for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin(); j != i->second.textShapeReferences.end(); ++j)
     {
-      WPXString text;
-      appendCharacters(text, (*j)->second.str);
       m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
       m_painter->startTextLine(WPXPropertyList());
-      m_painter->insertText(text);
+      for (std::vector<TextSpan>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
+      {
+        WPXString text;
+        appendCharacters(text, k->chars);
+        WPXPropertyList props = getCharStyleProps(k->style);
+        m_painter->startTextSpan(props);
+        m_painter->insertText(text);
+        m_painter->endTextSpan();
+      }
       m_painter->endTextLine();
       m_painter->endTextObject();
     }
@@ -177,7 +201,7 @@ bool libmspub::MSPUBCollector::go()
 }
 
 
-bool libmspub::MSPUBCollector::addTextString(const std::vector<unsigned char> &str, unsigned id)
+bool libmspub::MSPUBCollector::addTextString(const std::vector<TextSpan> &str, unsigned id)
 {
   MSPUB_DEBUG_MSG(("addTextString, id: 0x%x\n", id));
   textStringsById[id] = str;

@@ -42,7 +42,12 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   CHUNK_PARENT_SEQNUM = 0x5,
   SHAPE_WIDTH = 0xaa,
   SHAPE_HEIGHT = 0xab,
-  SHAPE_TEXT_ID = 0x27
+  SHAPE_TEXT_ID = 0x27,
+  BOLD_1_ID = 0x02,
+  BOLD_2_ID = 0x37,
+  ITALIC_1_ID = 0x03,
+  ITALIC_2_ID = 0x38,
+  UNDERLINE_ID = 0x1E 
 };
 } // namespace libmspub
 

@@ -51,6 +51,15 @@ public:
   virtual ~MSPUBParser();
   bool parse();
 private:
+  
+  struct TextSpanReference
+  {
+    TextSpanReference(unsigned short first, unsigned short last, CharacterStyle charStyle) : first(first), last(last), charStyle(charStyle) { }
+    unsigned short first;
+    unsigned short last;
+    CharacterStyle charStyle;
+  };
+
   typedef std::vector<ContentChunkReference>::const_iterator ccr_iterator_t;
 
   MSPUBParser();
@@ -73,6 +82,7 @@ private:
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
   std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);
+  std::vector<TextSpanReference> parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

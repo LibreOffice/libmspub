@@ -23,6 +23,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
 	libmspub_utils.cpp \
+	EscherContainerType.h \
+	EscherFieldIds.h \
 	MSPUBBlockID.h \
 	MSPUBBlockType.h \
 	MSPUBCollector.h \

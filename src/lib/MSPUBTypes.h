@@ -38,6 +38,14 @@
 namespace libmspub
 {
 
+enum Alignment
+{
+  LEFT = 0,
+  CENTER = 2,
+  RIGHT = 1,
+  JUSTIFY = 6
+};
+
 struct EscherContainerInfo
 {
   unsigned short initial;
@@ -89,11 +97,24 @@ struct CharacterStyle
   int colorIndex;
 };
 
+struct ParagraphStyle
+{
+  ParagraphStyle(Alignment align) : align(align) { }
+  Alignment align;
+};
+
 struct TextSpan
 {
   TextSpan(std::vector<unsigned char> chars, CharacterStyle style) : chars(chars), style(style) { }
   std::vector<unsigned char> chars;
   CharacterStyle style;
+};
+
+struct TextParagraph
+{
+  TextParagraph(std::vector<TextSpan> spans, ParagraphStyle style) : spans(spans), style(style) { }
+  std::vector<TextSpan> spans;
+  ParagraphStyle style;
 };
 
 struct Color

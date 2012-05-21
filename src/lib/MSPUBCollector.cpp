@@ -70,7 +70,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
   }
   else
   {
-    std::map<unsigned, std::vector<TextSpan> >::iterator i_str = textStringsById.find(stringId);
+    std::map<unsigned, std::vector<TextParagraph> >::iterator i_str = textStringsById.find(stringId);
     if (i_str == textStringsById.end())
     {
       MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in addTextShape!\n", stringId));
@@ -155,6 +155,29 @@ void libmspub::MSPUBCollector::assignImages()
   }
 }
 
+WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle& style)
+{
+  WPXPropertyList ret;
+  switch (style.align)
+  {
+  
+  case RIGHT:
+    ret.insert("fo:text-align", "right");
+    break;
+  case CENTER:
+    ret.insert("fo:text-align", "center");
+    break;
+  case JUSTIFY:
+    ret.insert("fo:text-align", "justify");
+    break;
+  case LEFT:
+  default:
+    ret.insert("fo:text-align", "left");
+    break;
+  }
+  return ret;
+}
+
 WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle& style)
 {
   WPXPropertyList ret;
@@ -198,17 +221,21 @@ bool libmspub::MSPUBCollector::go()
     for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin(); j != i->second.textShapeReferences.end(); ++j)
     {
       m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
-      m_painter->startTextLine(WPXPropertyList());
-      for (std::vector<TextSpan>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
+      for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
       {
-        WPXString text;
-        appendCharacters(text, k->chars);
-        WPXPropertyList props = getCharStyleProps(k->style);
-        m_painter->startTextSpan(props);
-        m_painter->insertText(text);
-        m_painter->endTextSpan();
+        WPXPropertyList paraProps = getParaStyleProps(k->style);
+        m_painter->startTextLine(paraProps);
+        for (std::vector<TextSpan>::const_iterator l = k->spans.begin(); l != k->spans.end(); ++l)
+        {
+          WPXString text;
+          appendCharacters(text, l->chars);
+          WPXPropertyList charProps = getCharStyleProps(l->style);
+          m_painter->startTextSpan(charProps);
+          m_painter->insertText(text);
+          m_painter->endTextSpan();
+        }
+        m_painter->endTextLine();
       }
-      m_painter->endTextLine();
       m_painter->endTextObject();
     }
     for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin(); j != i->second.imgShapeReferences.end(); ++j)
@@ -221,7 +248,7 @@ bool libmspub::MSPUBCollector::go()
 }
 
 
-bool libmspub::MSPUBCollector::addTextString(const std::vector<TextSpan> &str, unsigned id)
+bool libmspub::MSPUBCollector::addTextString(const std::vector<TextParagraph> &str, unsigned id)
 {
   MSPUB_DEBUG_MSG(("addTextString, id: 0x%x\n", id));
   textStringsById[id] = str;

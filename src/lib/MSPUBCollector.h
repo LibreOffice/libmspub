@@ -53,7 +53,7 @@ public:
 
   // collector functions
   bool addPage(unsigned seqNum);
-  bool addTextString(const std::vector<TextSpan> &str, unsigned id);
+  bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   bool addShape(unsigned seqNum, unsigned pageSeqNum);
@@ -71,8 +71,8 @@ private:
 
   struct TextShapeInfo
   {
-    TextShapeInfo(std::vector<TextSpan> str) : str(str), props() { }
-    std::vector<TextSpan> str;
+    TextShapeInfo(std::vector<TextParagraph> str) : str(str), props() { }
+    std::vector<TextParagraph> str;
     WPXPropertyList props;
   };
   struct UnknownShapeInfo
@@ -121,7 +121,7 @@ private:
   bool m_widthSet, m_heightSet;
   WPXPropertyList m_commonPageProperties;
   unsigned short m_numPages;
-  std::map<unsigned, std::vector<TextSpan> > textStringsById;
+  std::map<unsigned, std::vector<TextParagraph> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
   std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
   std::map<unsigned, ImgShapeInfo> imgShapesBySeqNum;
@@ -132,6 +132,7 @@ private:
   // helper functions
   void assignImages();
   WPXPropertyList getCharStyleProps(const CharacterStyle &);
+  WPXPropertyList getParaStyleProps(const ParagraphStyle &);
   static std::string getColorString(const Color &);
 };
 

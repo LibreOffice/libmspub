@@ -60,6 +60,14 @@ private:
     CharacterStyle charStyle;
   };
 
+  struct TextParagraphReference
+  {
+    TextParagraphReference(unsigned short first, unsigned short last, ParagraphStyle paraStyle) : first(first), last(last), paraStyle(paraStyle) { }
+    unsigned short first;
+    unsigned short last;
+    ParagraphStyle paraStyle;
+  };
+
   typedef std::vector<ContentChunkReference>::const_iterator ccr_iterator_t;
 
   MSPUBParser();
@@ -84,6 +92,7 @@ private:
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
   std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);
   std::vector<TextSpanReference> parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk);
+  std::vector<TextParagraphReference> parseParagraphStyles(WPXInputStream *input, const QuillChunkReference &chunk);
   int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
 
   WPXInputStream *m_input;

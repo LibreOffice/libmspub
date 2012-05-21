@@ -502,6 +502,12 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
           }
           if (bytesRead >= currentTextPara->last - textChunkReference->offset)
           {
+            if (text.size() > 0)
+            {
+              readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+              MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
+            }
+            text.clear();
             if (readSpans.size() > 0)
             {
               readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
@@ -511,11 +517,17 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
             readSpans.clear();
           }
         }
-        if (text.size() > 0)
+        if (readSpans.size() > 0)
         {
-          readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
-          MSPUB_DEBUG_MSG(("Saw text span %d in the current text block.\n", (unsigned)readSpans.size()));
-        } 
+          if (text.size() > 0)
+          {
+            readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+            MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
+          }
+          text.clear();
+          readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
+          MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
+        }
         m_collector->addTextString(readParas, *id);
       }
       textChunkReference = chunkReferences.end();

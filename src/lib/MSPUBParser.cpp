@@ -422,10 +422,12 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   bool parsedSyid = false;
   bool parsedFdpc = false;
   bool parsedFdpp = false;
+  bool parsedStsh = false;
   std::list<unsigned> textLengths;
   std::list<unsigned> textIDs;
   std::vector<TextSpanReference> spans;
   std::vector<TextParagraphReference> paras;
+  unsigned whichStsh = 0;
   for (std::list<QuillChunkReference>::const_iterator i = chunkReferences.begin(); i != chunkReferences.end(); ++i)
   {
     if (i->name == "TEXT")
@@ -473,7 +475,16 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       paras.insert(paras.end(), thisBlockParas.begin(), thisBlockParas.end());
       parsedFdpp = true;
     }
-    if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && textChunkReference != chunkReferences.end())
+    else if (i->name == "STSH" && i->name2 == "STSH")
+    {
+      if (whichStsh++ == 1)
+      {
+        input->seek(i->offset, WPX_SEEK_SET);
+        parseDefaultStyle(input, *i);
+        parsedStsh = true;
+      }
+    }
+    if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && textChunkReference != chunkReferences.end())
     {
       input->seek(textChunkReference->offset, WPX_SEEK_SET);
       unsigned bytesRead = 0;
@@ -535,6 +546,32 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   }
   return true;
 }
+
+void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk)
+{
+  readU32(input);
+  unsigned numElements = readU32(input);
+  input->seek(input->tell() + 12, WPX_SEEK_SET);
+  std::vector<unsigned> offsets;
+  offsets.reserve(numElements);
+  for (unsigned i = 0; i < numElements; ++i)
+  {
+    offsets.push_back(readU32(input));
+  }
+  for (unsigned i = 0; i < numElements; ++i)
+  {
+    input->seek(chunk.offset + 20 + offsets[i], WPX_SEEK_SET);
+    readU16(input);
+    if (i == 0)
+    {
+      //FIXME: Some PUBs have more than one piece with style information.
+      //Cf. 3oval4rects_tb_etc2.pub
+      //So far we are only taking into account the first one; we will have to understand what STSH is better before doing more.
+      m_collector->setDefaultCharacterStyle(getCharacterStyle(input));
+    }
+  }
+}
+
 
 void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkReference &chunk)
 {
@@ -619,10 +656,19 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
   for (unsigned short i = 0; i < numEntries; ++i)
   {
     input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
+    CharacterStyle style = getCharacterStyle(input);
+    currentSpanBegin = textOffsets[i] + 1;
+    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], style));
+  }
+  return ret;
+}
+libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input)
+{
     bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
     int textSize1 = -1, textSize2 = -1, colorIndex = -1;
+    unsigned offset = input->tell();
     unsigned len = readU32(input);
-    while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
+    while (stillReading(input, offset + len))
     {
       libmspub::MSPUBBlockInfo info = parseBlock(input, true);
       switch (info.id)
@@ -655,12 +701,8 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
         break;
       }
     }
-    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex)));
-    currentSpanBegin = textOffsets[i] + 1;
-  }
-  return ret;
+    return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex);
 }
-
 int libmspub::MSPUBParser::getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info)
 {
   input->seek(info.dataOffset + 4, WPX_SEEK_SET);

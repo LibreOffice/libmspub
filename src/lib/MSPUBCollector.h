@@ -66,6 +66,8 @@ public:
 
   void addColor(unsigned char r, unsigned char g, unsigned char b);
 
+  void setDefaultCharacterStyle(const CharacterStyle &style);
+
   bool go();
 private:
 
@@ -128,6 +130,7 @@ private:
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
   std::map<unsigned, UnknownShapeInfo> possibleImageShapes;
   std::vector<Color> colors;
+  CharacterStyle defaultCharStyle;
 
   // helper functions
   void assignImages();

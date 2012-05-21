@@ -36,7 +36,7 @@
 #include "MSPUBTypes.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes(), colors()
+  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), defaultCharStyle(false, false, false, -1, -1)
 {
 }
 
@@ -47,6 +47,11 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
   type(type), offset(offset), end(end), seqNum(seqNum), parentSeqNum(parentSeqNum)
 {
+}
+
+void libmspub::MSPUBCollector::setDefaultCharacterStyle(const CharacterStyle &st)
+{
+  defaultCharStyle = st;
 }
 
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
@@ -196,6 +201,10 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   if (style.textSizeInPt != -1)
   {
     ret.insert("fo:font-size", style.textSizeInPt);
+  }
+  else if (defaultCharStyle.textSizeInPt != -1)
+  {
+    ret.insert("fo:font-size", defaultCharStyle.textSizeInPt);
   }
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
   {

@@ -54,7 +54,7 @@ struct MSPUBBlockInfo
   unsigned long startPosition;
   unsigned long dataOffset;
   unsigned long dataLength;
-  unsigned long data;
+  unsigned data;
   std::vector<unsigned char> stringData;
 };
 
@@ -81,11 +81,12 @@ struct QuillChunkReference
 
 struct CharacterStyle
 {
-  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt) { }
+  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt, int colorIndex) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt), colorIndex(colorIndex) { }
   bool underline;
   bool italic;
   bool bold;
-  int textSizeInPt; // -1 to use the default size.
+  int textSizeInPt; // -1 to use the default
+  int colorIndex;
 };
 
 struct TextSpan
@@ -93,6 +94,12 @@ struct TextSpan
   TextSpan(std::vector<unsigned char> chars, CharacterStyle style) : chars(chars), style(style) { }
   std::vector<unsigned char> chars;
   CharacterStyle style;
+};
+
+struct Color
+{
+  Color(unsigned char r, unsigned char g, unsigned char b) : r(r), g(g), b(b) { }
+  unsigned char r, g, b;
 };
 
 enum PageType

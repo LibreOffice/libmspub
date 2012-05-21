@@ -321,11 +321,11 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
       std::vector<libmspub::ContentChunkReference>::const_iterator ref = std::find_if(m_shapeChunks.begin(), m_shapeChunks.end(), FindBySeqNum(subInfo.data));
       if (ref == m_shapeChunks.end())
       {
-        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%lx not found!\n", subInfo.data));
+        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x not found!\n", subInfo.data));
       }
       else
       {
-        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%lx found\n", subInfo.data));
+        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x found\n", subInfo.data));
         unsigned long pos = input->tell();
         input->seek(ref->offset, WPX_SEEK_SET);
         parseShape(input, subInfo.data, pageSeqNum);
@@ -452,6 +452,11 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       }
       parsedSyid = true;
     }
+    else if (i->name == "PL  ")
+    {
+      input->seek(i->offset, WPX_SEEK_SET);
+      parseColors(input, *i);
+    }
     else if (i->name == "FDPC")
     {
       input->seek(i->offset, WPX_SEEK_SET);
@@ -498,6 +503,27 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   return true;
 }
 
+void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkReference &chunk)
+{
+  unsigned numEntries = readU32(input);
+  input->seek(input->tell() + 8, WPX_SEEK_SET);
+  for (unsigned i = 0; i < numEntries; ++i)
+  {
+    unsigned blocksOffset = input->tell();
+    unsigned len = readU32(input);
+    while (stillReading(input, blocksOffset + len))
+    {
+      MSPUBBlockInfo info = parseBlock(input, true);
+      if (info.id == 0x01)
+      {
+        //FIXME : Will this fail on big-endian systems?
+        MSPUB_DEBUG_MSG(("Found color 0x%x\n", info.data));
+        m_collector->addColor(info.data & 0xFF, (info.data >> 8) & 0xFF, (info.data >> 16) & 0Xff);
+      }
+    }
+  }
+}
+
 std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk)
 {
   unsigned short numEntries = readU16(input);
@@ -518,11 +544,11 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
   {
     input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
     bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
-    int textSize1 = -1, textSize2 = -1;
+    int textSize1 = -1, textSize2 = -1, colorIndex = -1;
     unsigned len = readU32(input);
     while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
     {
-      libmspub::MSPUBBlockInfo info = parseBlock(input);
+      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
       switch (info.id)
       {
       case BOLD_1_ID:
@@ -546,14 +572,34 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
       case TEXT_SIZE_2_ID:
         textSize2 = info.data;
         break;
+      case COLOR_INDEX_CONTAINER_ID:
+        colorIndex = getColorIndex(input, info);
+        break;
       default:
         break;
       }
     }
-    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1)));
+    ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex)));
     currentSpanBegin = textOffsets[i] + 1;
   }
   return ret;
+}
+
+int libmspub::MSPUBParser::getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info)
+{
+  input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+  while (stillReading(input, info.dataOffset + info.dataLength))
+  {
+    MSPUBBlockInfo subInfo = parseBlock(input, true);
+    if (subInfo.id == COLOR_INDEX_ID)
+    {
+      skipBlock(input, info);
+      MSPUB_DEBUG_MSG(("Found color index 0x%x\n", (unsigned)subInfo.data));
+      return subInfo.data;
+    }
+  }
+  MSPUB_DEBUG_MSG(("Failed to find color index!\n"));
+  return -1;
 }
 
 bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
@@ -787,7 +833,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
       info.data = 0;
     }
   }
-  MSPUB_DEBUG_MSG(("parseBlock dataOffset 0x%lx, id 0x%x, type 0x%x, dataLength 0x%lx, integral data 0x%lx\n", info.dataOffset, info.id, info.type, info.dataLength, info.data));
+  MSPUB_DEBUG_MSG(("parseBlock dataOffset 0x%lx, id 0x%x, type 0x%x, dataLength 0x%lx, integral data 0x%x\n", info.dataOffset, info.id, info.type, info.dataLength, info.data));
   return info;
 }
 

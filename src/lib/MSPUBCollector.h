@@ -32,6 +32,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <string>
 #include <libwpd/WPXPropertyList.h>
 #include <libwpg/WPGPaintInterface.h>
 
@@ -62,6 +63,8 @@ public:
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
+
+  void addColor(unsigned char r, unsigned char g, unsigned char b);
 
   bool go();
 private:
@@ -122,13 +125,14 @@ private:
   std::map<unsigned, PageInfo> pagesBySeqNum;
   std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
   std::map<unsigned, ImgShapeInfo> imgShapesBySeqNum;
-
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
   std::map<unsigned, UnknownShapeInfo> possibleImageShapes;
+  std::vector<Color> colors;
 
   // helper functions
   void assignImages();
   WPXPropertyList getCharStyleProps(const CharacterStyle &);
+  static std::string getColorString(const Color &);
 };
 
 } // namespace libmspub

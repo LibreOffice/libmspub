@@ -49,7 +49,9 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   ITALIC_2_ID = 0x38,
   UNDERLINE_ID = 0x1E,
   TEXT_SIZE_1_ID = 0x0C,
-  TEXT_SIZE_2_ID = 0x39
+  TEXT_SIZE_2_ID = 0x39,
+  COLOR_INDEX_CONTAINER_ID = 0x44,
+  COLOR_INDEX_ID = 0x0
 };
 } // namespace libmspub
 

@@ -79,10 +79,12 @@ private:
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
   bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
+  void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
   std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);
   std::vector<TextSpanReference> parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk);
+  int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

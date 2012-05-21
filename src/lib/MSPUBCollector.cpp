@@ -27,12 +27,16 @@
  * instead of those above.
  */
 
+#include <sstream>
+#include <iomanip>
+
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
+#include "MSPUBTypes.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes()
+  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes(), colors()
 {
 }
 
@@ -170,7 +174,19 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("fo:font-size", style.textSizeInPt);
   }
+  if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
+  {
+    ret.insert("fo:color", getColorString(colors[style.colorIndex]).c_str());
+  }
   return ret;
+}
+
+std::string libmspub::MSPUBCollector::getColorString(const Color &color)
+{
+  std::stringstream ret;
+  ret << '#' << std::hex << std::setfill('0') << std::setw(2) << (unsigned)color.r << std::setw(2) << (unsigned)color.g << std::setw(2) << (unsigned)color.b;
+  MSPUB_DEBUG_MSG(("String for r: 0x%x, g: 0x%x, b: 0x%x is %s\n", color.r, color.g, color.b, ret.str().c_str()));
+  return ret.str();
 }
 
 bool libmspub::MSPUBCollector::go()
@@ -270,6 +286,11 @@ bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
   return false;*/
   possibleImageShapes.insert(std::pair<unsigned, UnknownShapeInfo>(seqNum, UnknownShapeInfo(pageSeqNum)));
   return true;
+}
+
+void libmspub::MSPUBCollector::addColor(unsigned char r, unsigned char g, unsigned char b)
+{
+  colors.push_back(Color(r, g, b));
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

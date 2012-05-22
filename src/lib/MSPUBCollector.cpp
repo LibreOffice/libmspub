@@ -27,16 +27,17 @@
  * instead of those above.
  */
 
-#include <sstream>
-#include <iomanip>
-
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
-  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0), m_widthSet(false), m_heightSet(false), m_commonPageProperties(), m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(), imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), defaultCharStyle(false, false, false, -1, -1)
+  m_painter(painter), contentChunkReferences(), m_width(0), m_height(0),
+  m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
+  m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
+  imgShapesBySeqNum(), images(), possibleImageShapes(), colors(),
+  defaultCharStyle(false, false, false, -1, -1)
 {
 }
 
@@ -44,7 +45,9 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum) :
+libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type,
+    unsigned long offset, unsigned long end,
+    unsigned seqNum, unsigned parentSeqNum) :
   type(type), offset(offset), end(end), seqNum(seqNum), parentSeqNum(parentSeqNum)
 {
 }
@@ -83,7 +86,8 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
     }
     else
     {
-      std::pair<std::map<unsigned, TextShapeInfo>::iterator, bool> result = textShapesBySeqNum.insert(std::pair<const unsigned, TextShapeInfo>(seqNum, TextShapeInfo(i_str->second)));
+      std::pair<std::map<unsigned, TextShapeInfo>::iterator, bool> result =
+        textShapesBySeqNum.insert(std::pair<const unsigned, TextShapeInfo>(seqNum, TextShapeInfo(i_str->second)));
       if (result.second)
       {
         i_page->second.textShapeReferences.push_back(result.first);
@@ -147,7 +151,8 @@ void libmspub::MSPUBCollector::assignImages()
   {
     if (i->second.imgIndex > 0 && i->second.imgIndex <= images.size())
     {
-      std::pair<std::map<unsigned, ImgShapeInfo>::iterator, bool> result = imgShapesBySeqNum.insert(std::pair<unsigned, ImgShapeInfo>(i->first, ImgShapeInfo(images[i->second.imgIndex - 1].first, images[i->second.imgIndex - 1].second, i->second.props)));
+      std::pair<std::map<unsigned, ImgShapeInfo>::iterator, bool> result =
+        imgShapesBySeqNum.insert(std::pair<unsigned, ImgShapeInfo>(i->first, ImgShapeInfo(images[i->second.imgIndex - 1].first, images[i->second.imgIndex - 1].second, i->second.props)));
       if (result.second)
       {
         std::map<unsigned, PageInfo>::iterator i_pg = pagesBySeqNum.find(i->second.pageSeqNum);
@@ -160,12 +165,12 @@ void libmspub::MSPUBCollector::assignImages()
   }
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle& style)
+WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style)
 {
   WPXPropertyList ret;
   switch (style.align)
   {
-  
+
   case RIGHT:
     ret.insert("fo:text-align", "right");
     break;
@@ -183,7 +188,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   return ret;
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle& style)
+WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style)
 {
   WPXPropertyList ret;
   if (style.italic)
@@ -208,17 +213,17 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   }
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
   {
-    ret.insert("fo:color", getColorString(colors[style.colorIndex]).c_str());
+    ret.insert("fo:color", getColorString(colors[style.colorIndex]));
   }
   return ret;
 }
 
-std::string libmspub::MSPUBCollector::getColorString(const Color &color)
+WPXString libmspub::MSPUBCollector::getColorString(const Color &color)
 {
-  std::stringstream ret;
-  ret << '#' << std::hex << std::setfill('0') << std::setw(2) << (unsigned)color.r << std::setw(2) << (unsigned)color.g << std::setw(2) << (unsigned)color.b;
-  MSPUB_DEBUG_MSG(("String for r: 0x%x, g: 0x%x, b: 0x%x is %s\n", color.r, color.g, color.b, ret.str().c_str()));
-  return ret.str();
+  WPXString ret;
+  ret.sprintf("#%.2x%.2x%.2x",(unsigned char)color.r, (unsigned char)color.g, (unsigned char)color.b);
+  MSPUB_DEBUG_MSG(("String for r: 0x%x, g: 0x%x, b: 0x%x is %s\n", color.r, color.g, color.b, ret.cstr()));
+  return ret;
 }
 
 bool libmspub::MSPUBCollector::go()
@@ -227,7 +232,8 @@ bool libmspub::MSPUBCollector::go()
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
     m_painter->startGraphics(m_commonPageProperties);
-    for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin(); j != i->second.textShapeReferences.end(); ++j)
+    for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin();
+         j != i->second.textShapeReferences.end(); ++j)
     {
       m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
       for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
@@ -247,7 +253,8 @@ bool libmspub::MSPUBCollector::go()
       }
       m_painter->endTextObject();
     }
-    for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin(); j != i->second.imgShapeReferences.end(); ++j)
+    for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin();
+         j != i->second.imgShapeReferences.end(); ++j)
     {
       m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
     }

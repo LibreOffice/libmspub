@@ -244,7 +244,7 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
 {
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
   unsigned long begin = input->tell();
-  unsigned long len = readU32(input); 
+  unsigned long len = readU32(input);
   //while (input->tell() >= 0 && (unsigned)input->tell() < begin + len)
   while (stillReading(input, begin + len))
   {
@@ -664,44 +664,44 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
 }
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input)
 {
-    bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
-    int textSize1 = -1, textSize2 = -1, colorIndex = -1;
-    unsigned offset = input->tell();
-    unsigned len = readU32(input);
-    while (stillReading(input, offset + len))
+  bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
+  int textSize1 = -1, textSize2 = -1, colorIndex = -1;
+  unsigned offset = input->tell();
+  unsigned len = readU32(input);
+  while (stillReading(input, offset + len))
+  {
+    libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+    switch (info.id)
     {
-      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
-      switch (info.id)
-      {
-      case BOLD_1_ID:
-        seenBold1 = true;
-        break;
-      case BOLD_2_ID:
-        seenBold2 = true;
-        break;
-      case ITALIC_1_ID:
-        seenItalic1 = true;
-        break;
-      case ITALIC_2_ID:
-        seenItalic2 = true;
-        break;
-      case UNDERLINE_ID:
-        seenUnderline = true;
-        break;
-      case TEXT_SIZE_1_ID:
-        textSize1 = info.data;
-        break;
-      case TEXT_SIZE_2_ID:
-        textSize2 = info.data;
-        break;
-      case COLOR_INDEX_CONTAINER_ID:
-        colorIndex = getColorIndex(input, info);
-        break;
-      default:
-        break;
-      }
+    case BOLD_1_ID:
+      seenBold1 = true;
+      break;
+    case BOLD_2_ID:
+      seenBold2 = true;
+      break;
+    case ITALIC_1_ID:
+      seenItalic1 = true;
+      break;
+    case ITALIC_2_ID:
+      seenItalic2 = true;
+      break;
+    case UNDERLINE_ID:
+      seenUnderline = true;
+      break;
+    case TEXT_SIZE_1_ID:
+      textSize1 = info.data;
+      break;
+    case TEXT_SIZE_2_ID:
+      textSize2 = info.data;
+      break;
+    case COLOR_INDEX_CONTAINER_ID:
+      colorIndex = getColorIndex(input, info);
+      break;
+    default:
+      break;
     }
-    return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex);
+  }
+  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex);
 }
 int libmspub::MSPUBParser::getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info)
 {

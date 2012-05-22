@@ -51,7 +51,7 @@ public:
   virtual ~MSPUBParser();
   bool parse();
 private:
-  
+
   struct TextSpanReference
   {
     TextSpanReference(unsigned short first, unsigned short last, CharacterStyle charStyle) : first(first), last(last), charStyle(charStyle) { }

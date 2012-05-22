@@ -33,8 +33,8 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <libwpd/WPXPropertyList.h>
-#include <libwpg/WPGPaintInterface.h>
+#include <libwpd/libwpd.h>
+#include <libwpg/libwpg.h>
 
 #include "MSPUBTypes.h"
 #include "libmspub_utils.h"
@@ -87,7 +87,7 @@ private:
   struct ImgShapeInfo
   {
     ImgShapeInfo(ImgType type, WPXBinaryData img, WPXPropertyList props) : img(img), props(props)
-    { 
+    {
       const char *mime;
       switch (type)
       {
@@ -136,7 +136,7 @@ private:
   void assignImages();
   WPXPropertyList getCharStyleProps(const CharacterStyle &);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &);
-  static std::string getColorString(const Color &);
+  static WPXString getColorString(const Color &);
 };
 
 } // namespace libmspub

@@ -728,7 +728,32 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
   fakeroot.type = 0;
   fakeroot.contentsOffset = input->tell();
   fakeroot.contentsLength = (unsigned)-1; //FIXME: Get the actual length
-  libmspub::EscherContainerInfo dg;
+  libmspub::EscherContainerInfo dg, dgg;
+  std::vector<int> escherDelayIndices;
+  //Note: this assumes that dgg comes before any dg with images.
+  if (findEscherContainer(input, fakeroot, &dgg, OFFICE_ART_DGG_CONTAINER))
+  {
+    libmspub::EscherContainerInfo bsc;
+    if (findEscherContainer(input, fakeroot, &bsc, OFFICE_ART_B_STORE_CONTAINER))
+    {
+      unsigned short currentDelayIndex = 1;
+      while (stillReading(input, bsc.contentsOffset + bsc.contentsLength))
+      {
+        unsigned begin = input->tell();
+        input->seek(begin + 10, WPX_SEEK_SET);
+        if (! (readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0))
+        {
+          escherDelayIndices.push_back(currentDelayIndex++);
+        }
+        else
+        {
+          escherDelayIndices.push_back(-1);
+        }
+        input->seek(begin + 44, WPX_SEEK_SET);
+      }
+    }
+    input->seek(dgg.contentsOffset + dgg.contentsLength + getEscherElementTailLength(OFFICE_ART_DGG_CONTAINER), WPX_SEEK_SET);
+  }
   while (findEscherContainer(input, fakeroot, &dg, OFFICE_ART_DG_CONTAINER))
   {
     libmspub::EscherContainerInfo spgr;
@@ -757,7 +782,15 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 std::map<unsigned short, unsigned>::const_iterator i_pxId = foptValues.find(FIELDID_PXID);
                 if (i_pxId != foptValues.end())
                 {
-                  m_collector->setShapeImgIndex(i_shapeSeqNum->second, i_pxId->second);
+                  MSPUB_DEBUG_MSG(("Current Escher shape has pxId %d\n", i_pxId->second));
+                  if (i_pxId->second <= escherDelayIndices.size() && escherDelayIndices[i_pxId->second - 1] >= 0)
+                  {
+                    m_collector->setShapeImgIndex(i_shapeSeqNum->second, escherDelayIndices[i_pxId->second - 1]);
+                  }
+                  else
+                  {
+                    MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
+                  }
                 }
               }
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);

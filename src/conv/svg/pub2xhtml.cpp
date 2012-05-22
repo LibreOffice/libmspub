@@ -30,6 +30,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <stdio.h>
 #include <string.h>
 #include "libmspub.h"
@@ -55,20 +56,32 @@ int main(int argc, char *argv[])
   if (argc < 2)
     return printUsage();
 
-  char *file = 0;
+  char *in_file = 0, *out_file = 0;
 
   for (int i = 1; i < argc; i++)
   {
-    if (!file && strncmp(argv[i], "--", 2))
-      file = argv[i];
+    if (!in_file)
+    {
+      if (strncmp(argv[i], "--", 2))
+        in_file = argv[i];
+    }
+    else if (!out_file)
+    {
+      if (strncmp(argv[i], "--", 2))
+        out_file = argv[i];
+    }
     else
       return printUsage();
   }
 
-  if (!file)
+  if (!in_file)
     return printUsage();
 
-  WPXFileStream input(file);
+  WPXFileStream input(in_file);
+  std::ofstream o;
+  if (out_file)
+    o.open(out_file);
+  std::ostream &output = out_file ? o : std::cout;
 
   if (!libmspub::MSPUBDocument::isSupported(&input))
   {
@@ -76,41 +89,41 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  libmspub::MSPUBStringVector output;
-  if (!libmspub::MSPUBDocument::generateSVG(&input, output))
+  libmspub::MSPUBStringVector outputStrings;
+  if (!libmspub::MSPUBDocument::generateSVG(&input, outputStrings))
   {
     std::cerr << "ERROR: SVG Generation failed!" << std::endl;
     return 1;
   }
 
-  if (output.empty())
+  if (outputStrings.empty())
   {
     std::cerr << "ERROR: No SVG document generated!" << std::endl;
     return 1;
   }
 
-  std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
-  std::cout << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" << std::endl;
-  std::cout << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
-  std::cout << "<body>" << std::endl;
-  std::cout << "<?import namespace=\"svg\" urn=\"http://www.w3.org/2000/svg\"?>" << std::endl;
+  output << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << std::endl;
+  output << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" << std::endl;
+  output << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:svg=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">" << std::endl;
+  output << "<body>" << std::endl;
+  output << "<?import namespace=\"svg\" urn=\"http://www.w3.org/2000/svg\"?>" << std::endl;
 
-  for (unsigned k = 0; k<output.size(); ++k)
+  for (unsigned k = 0; k<outputStrings.size(); ++k)
   {
     if (k>0)
-      std::cout << "<hr/>\n";
+      output << "<hr/>\n";
 
-    std::cout << "<!-- \n";
-    std::cout << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
-    std::cout << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"";
-    std::cout << " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
-    std::cout << " -->\n";
+    output << "<!-- \n";
+    output << "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n";
+    output << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"";
+    output << " \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
+    output << " -->\n";
 
-    std::cout << output[k].cstr() << std::endl;
+    output << outputStrings[k].cstr() << std::endl;
   }
 
-  std::cout << "</body>" << std::endl;
-  std::cout << "</html>" << std::endl;
+  output << "</body>" << std::endl;
+  output << "</html>" << std::endl;
 
   return 0;
 }

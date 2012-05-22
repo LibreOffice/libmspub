@@ -42,7 +42,7 @@ namespace
 
 int printUsage()
 {
-  printf("Usage: vsd2xhtml [OPTION] <Microsoft Publisher Document>\n");
+  printf("Usage: pub2xhtml [OPTION] <Microsoft Publisher Document> [<Output filename>]\n");
   printf("\n");
   printf("Options:\n");
   printf("--help                Shows this help message\n");

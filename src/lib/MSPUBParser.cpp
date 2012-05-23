@@ -696,7 +696,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     switch(info.id)
     {
     case PARAGRAPH_ALIGNMENT:
-      align = (Alignment)info.data;
+      align = (Alignment)(info.data & 0xFF); // Is this correct?
       break;
     case PARAGRAPH_DEFAULT_CHAR_STYLE:
       defaultCharStyleIndex = info.data;

@@ -88,6 +88,7 @@ private:
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
   bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
+  void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo *out, unsigned short type);
@@ -95,7 +96,8 @@ private:
   std::vector<TextSpanReference> parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk);
   std::vector<TextParagraphReference> parseParagraphStyles(WPXInputStream *input, const QuillChunkReference &chunk);
   int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
-  CharacterStyle getCharacterStyle(WPXInputStream *input);
+  unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
+  CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

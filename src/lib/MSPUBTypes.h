@@ -89,12 +89,13 @@ struct QuillChunkReference
 
 struct CharacterStyle
 {
-  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt, int colorIndex) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt), colorIndex(colorIndex) { }
+  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt = -1, int colorIndex = -1, unsigned fontIndex = 0) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt), colorIndex(colorIndex), fontIndex(fontIndex) { }
   bool underline;
   bool italic;
   bool bold;
-  int textSizeInPt; // -1 to use the default
+  int textSizeInPt;
   int colorIndex;
+  unsigned fontIndex;
 };
 
 struct ParagraphStyle

@@ -134,6 +134,15 @@ uint64_t libmspub::readU64(WPXInputStream *input)
   return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
 }
 
+void libmspub::readNBytes(WPXInputStream *input, unsigned length, std::vector<unsigned char> *out)
+{
+  out->reserve(length);
+  for (unsigned i = 0; i < length; ++i)
+  {
+    out->push_back(readU8(input));
+  }
+}
+
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 void libmspub::appendCharacters(WPXString &text, std::vector<unsigned char> characters)

@@ -65,6 +65,7 @@ public:
   void setHeightInEmu(unsigned long);
 
   void addColor(unsigned char r, unsigned char g, unsigned char b);
+  void addFont(std::vector<unsigned char> name);
 
   void setDefaultCharacterStyle(const CharacterStyle &style);
 
@@ -130,6 +131,7 @@ private:
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
   std::map<unsigned, UnknownShapeInfo> possibleImageShapes;
   std::vector<Color> colors;
+  std::vector<std::vector<unsigned char> > fonts;
   CharacterStyle defaultCharStyle;
 
   // helper functions

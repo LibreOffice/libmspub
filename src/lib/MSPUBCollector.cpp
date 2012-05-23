@@ -36,7 +36,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
   m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
-  imgShapesBySeqNum(), images(), possibleImageShapes(), colors(),
+  imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), fonts(),
   defaultCharStyle(false, false, false, -1, -1)
 {
 }
@@ -145,6 +145,11 @@ bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs,
   return true;
 }
 
+void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
+{
+  fonts.push_back(name);
+}
+
 void libmspub::MSPUBCollector::assignImages()
 {
   for (std::map<unsigned, UnknownShapeInfo>::const_iterator i = possibleImageShapes.begin(); i != possibleImageShapes.end(); ++i)
@@ -214,6 +219,12 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
   {
     ret.insert("fo:color", getColorString(colors[style.colorIndex]));
+  }
+  if (style.fontIndex < fonts.size())
+  {
+    WPXString str;
+    appendCharacters(str, fonts[style.fontIndex]);
+    ret.insert("style:font-name", str);
   }
   return ret;
 }

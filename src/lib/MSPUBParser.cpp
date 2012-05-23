@@ -423,6 +423,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   bool parsedFdpc = false;
   bool parsedFdpp = false;
   bool parsedStsh = false;
+  bool parsedFont = false;
   std::list<unsigned> textLengths;
   std::list<unsigned> textIDs;
   std::vector<TextSpanReference> spans;
@@ -475,7 +476,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       paras.insert(paras.end(), thisBlockParas.begin(), thisBlockParas.end());
       parsedFdpp = true;
     }
-    else if (i->name == "STSH" && i->name2 == "STSH")
+    else if (i->name == "STSH")
     {
       if (whichStsh++ == 1)
       {
@@ -484,7 +485,13 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
         parsedStsh = true;
       }
     }
-    if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && textChunkReference != chunkReferences.end())
+    else if (i->name == "FONT")
+    {
+      input->seek(i->offset, WPX_SEEK_SET);
+      parseFonts(input, *i);
+      parsedFont = true;
+    }
+    if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && parsedFont && textChunkReference != chunkReferences.end())
     {
       input->seek(textChunkReference->offset, WPX_SEEK_SET);
       unsigned bytesRead = 0;
@@ -547,6 +554,21 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   return true;
 }
 
+void libmspub::MSPUBParser::parseFonts(WPXInputStream *input, const QuillChunkReference &chunk)
+{
+  readU32(input);
+  unsigned numElements = readU32(input);
+  input->seek(input->tell() + 12 + 4 * numElements, WPX_SEEK_SET);
+  for (unsigned i = 0; i < numElements; ++i)
+  {
+    unsigned short nameLength = readU16(input);
+    std::vector<unsigned char> name;
+    readNBytes(input, nameLength * 2, &name);
+    m_collector->addFont(name);
+    readU32(input);
+  }
+}
+
 void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk)
 {
   readU32(input);
@@ -567,7 +589,7 @@ void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const Quill
       //FIXME: Some PUBs have more than one piece with style information.
       //Cf. 3oval4rects_tb_etc2.pub
       //So far we are only taking into account the first one; we will have to understand what STSH is better before doing more.
-      m_collector->setDefaultCharacterStyle(getCharacterStyle(input));
+      m_collector->setDefaultCharacterStyle(getCharacterStyle(input, true));
     }
   }
 }
@@ -662,10 +684,11 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
   }
   return ret;
 }
-libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input)
+libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
 {
   bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
   int textSize1 = -1, textSize2 = -1, colorIndex = -1;
+  unsigned fontIndex = 0;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
@@ -697,12 +720,39 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
     case COLOR_INDEX_CONTAINER_ID:
       colorIndex = getColorIndex(input, info);
       break;
+    case FONT_INDEX_CONTAINER_ID:
+      if (! inStsh)
+      {
+        fontIndex = getFontIndex(input, info);
+      }
+      break;
     default:
       break;
     }
   }
-  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex);
+  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex, fontIndex);
 }
+
+unsigned libmspub::MSPUBParser::getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info)
+{
+  MSPUB_DEBUG_MSG(("In getFontIndex\n"));
+  input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+  while (stillReading(input, info.dataOffset + info.dataLength))
+  {
+    MSPUBBlockInfo subInfo = parseBlock(input, true);
+    if (subInfo.type == GENERAL_CONTAINER)
+    {
+      input->seek(subInfo.dataOffset + 4, WPX_SEEK_SET);
+      if (stillReading(input, subInfo.dataOffset + subInfo.dataLength))
+      {
+        MSPUBBlockInfo subSubInfo = parseBlock(input, true);
+        return subSubInfo.data;
+      }
+    }
+  }
+  return 0;
+}
+
 int libmspub::MSPUBParser::getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info)
 {
   input->seek(info.dataOffset + 4, WPX_SEEK_SET);
@@ -950,11 +1000,8 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
     info.dataLength = readU32(input);
     if (isBlockDataString(info.type))
     {
-      info.stringData = std::vector<unsigned char>(info.dataLength - 4);
-      for (unsigned i = 0; i < info.dataLength - 4; ++i)
-      {
-        info.stringData[i] = readU8(input);
-      }
+      info.stringData = std::vector<unsigned char>();
+      readNBytes(input, info.dataLength - 4, &info.stringData);
     }
     else if (skipHierarchicalData)
     {

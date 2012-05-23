@@ -323,33 +323,6 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
 {
-  /*std::map<unsigned, unsigned>::const_iterator i_ind = imgIndicesByShapeSeqNum.find(seqNum);
-  if (i_ind == imgIndicesByShapeSeqNum.end())
-  {
-    MSPUB_DEBUG_MSG(("Didn't find which embedded image index corresponds to shape 0x%x before trying to add the shape in addImageShape!\n", seqNum));
-    return false;
-  }
-  unsigned imgIndex = i_ind->second;
-  std::map<unsigned, PageInfo>::iterator i_page = pagesBySeqNum.find(pageSeqNum);
-  if (i_page == pagesBySeqNum.end())
-  {
-    MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in addImageShape!\n", pageSeqNum));
-    return false;
-  }
-  if (imgIndex > images.size() || images[imgIndex - 1].first == UNKNOWN)
-  {
-    MSPUB_DEBUG_MSG(("Valid image of index %d not found in addImageShape!\n", imgIndex));
-    return false;
-  }
-  std::pair<std::map<unsigned, ImgShapeInfo>::const_iterator, bool> result = imgShapesBySeqNum.insert(std::pair<const unsigned, ImgShapeInfo>(seqNum, ImgShapeInfo(images[imgIndex - 1].first, images[imgIndex - 1].second)));
-  if (result.second)
-  {
-    i_page->second.imgShapeReferences.push_back(result.first);
-    MSPUB_DEBUG_MSG(("addImageShape succeeded with id 0x%x", imgIndex));
-    return true;
-  }
-  MSPUB_DEBUG_MSG(("already tried to add the image shape of seqnum 0x%x to this page!\n", seqNum));
-  return false;*/
   possibleImageShapes.insert(std::pair<unsigned, UnknownShapeInfo>(seqNum, UnknownShapeInfo(pageSeqNum)));
   return true;
 }

@@ -29,7 +29,7 @@
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include <string.h> //why?
+#include <string.h>
 #include <libwpd-stream/WPXStream.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
@@ -63,7 +63,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
   case 0x12:
   case 0x18:
   case 0x1a:
-  case 0x07: //ask Valek about this
+  case 0x07:
     return 2;
   case 0x20:
   case 0x22:
@@ -72,7 +72,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
   case 0x70:
   case 0xb8:
     return 4;
-  case 0x28: //ask Valek about this
+  case 0x28:
     return 8;
   case 0x38:
     return 16;
@@ -205,7 +205,6 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
     {
       ContentChunkReference *lastSeen = NULL;
 
-      //while (input->tell() >= 0 && (unsigned)input->tell() < trailerPart.dataOffset + trailerPart.dataLength)
       while (stillReading(input, trailerPart.dataOffset + trailerPart.dataLength))
       {
         m_blockInfo.push_back(parseBlock(input));
@@ -257,13 +256,11 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
   unsigned long begin = input->tell();
   unsigned long len = readU32(input);
-  //while (input->tell() >= 0 && (unsigned)input->tell() < begin + len)
   while (stillReading(input, begin + len))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
     if (info.id == DOCUMENT_SIZE)
     {
-      //while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
       while (stillReading(input, info.dataOffset + info.dataLength))
       {
         libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
@@ -294,7 +291,6 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   {
     m_collector->addPage(chunk.seqNum);
   }
-  //while (input->tell() >= 0 && (unsigned)input->tell() < chunk.offset + length)
   while (stillReading(input, chunk.offset + length))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
@@ -324,7 +320,6 @@ public:
 bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parseShapes: page seqnum 0x%x\n", pageSeqNum));
-  //while (input->tell() >= 0 && (unsigned)input->tell() < info.dataOffset + info.dataLength)
   while (stillReading(input, info.dataOffset + info.dataLength))
   {
     libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
@@ -357,7 +352,6 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
   unsigned height = 0;
   bool isText = false;
   unsigned textId = 0;
-  //while (input->tell() >= 0 && (unsigned)input->tell() < pos + length)
   while (stillReading(input, pos + length))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input, true);
@@ -394,7 +388,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
 libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(WPXInputStream *input)
 {
   libmspub::QuillChunkReference ret;
-  readU16(input); //FIXME: Can we do something sensibile if this is not 0x18 ?
+  readU16(input); //FIXME: Can we do something sensible if this is not 0x18 ?
   char name[5];
   for (int i = 0; i < 4; ++i)
   {
@@ -911,7 +905,6 @@ unsigned libmspub::MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned 
 bool libmspub::MSPUBParser::findEscherContainer(WPXInputStream *input, const libmspub::EscherContainerInfo &parent, libmspub::EscherContainerInfo *out, unsigned short desiredType)
 {
   MSPUB_DEBUG_MSG(("At offset 0x%lx, attempting to find escher container of type 0x%x\n", input->tell(), desiredType));
-  //while (input->tell() >= 0 && (unsigned)input->tell() < parent.contentsOffset + parent.contentsLength)
   while (stillReading(input, parent.contentsOffset + parent.contentsLength))
   {
     libmspub::EscherContainerInfo next = parseEscherContainer(input);
@@ -949,7 +942,6 @@ libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReferen
   bool seenType = false;
   bool seenOffset = false;
   bool seenParentSeqNum = false;
-  //while (input->tell() >= 0 && (unsigned)input->tell() < block.dataOffset + block.dataLength)
   while (stillReading(input, block.dataOffset + block.dataLength))
   {
     libmspub::MSPUBBlockInfo subBlock = parseBlock(input, true);

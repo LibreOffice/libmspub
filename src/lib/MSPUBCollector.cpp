@@ -37,7 +37,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
   m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
   imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), fonts(),
-  defaultCharStyles()
+  defaultCharStyles(), defaultParaStyles()
 {
 }
 
@@ -55,6 +55,11 @@ libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChu
 void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
 {
   defaultCharStyles.push_back(st);
+}
+
+void libmspub::MSPUBCollector::addDefaultParagraphStyle(const ParagraphStyle &st)
+{
+  defaultParaStyles.push_back(st);
 }
 
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
@@ -170,12 +175,14 @@ void libmspub::MSPUBCollector::assignImages()
   }
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style)
+WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, unsigned defaultParaStyleIndex)
 {
+  ParagraphStyle _nothing;
+  const ParagraphStyle &defaultParaStyle = defaultParaStyleIndex < defaultParaStyles.size() ? defaultParaStyles[defaultParaStyleIndex] : _nothing;
   WPXPropertyList ret;
-  switch (style.align)
+  Alignment align = style.align >= 0 ? style.align : defaultParaStyle.align;
+  switch (align)
   {
-
   case RIGHT:
     ret.insert("fo:text-align", "right");
     break;
@@ -251,7 +258,7 @@ bool libmspub::MSPUBCollector::go()
       m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
       for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
       {
-        WPXPropertyList paraProps = getParaStyleProps(k->style);
+        WPXPropertyList paraProps = getParaStyleProps(k->style, k->style.defaultCharStyleIndex);
         m_painter->startTextLine(paraProps);
         for (std::vector<TextSpan>::const_iterator l = k->spans.begin(); l != k->spans.end(); ++l)
         {

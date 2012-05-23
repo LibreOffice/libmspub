@@ -589,6 +589,10 @@ void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const Quill
       //FIXME: Does STSH2 hold information for associating style indices in FDPP to indices in STSH1 ?
       m_collector->addDefaultCharacterStyle(getCharacterStyle(input, true));
     }
+    else
+    {
+      m_collector->addDefaultParagraphStyle(getParagraphStyle(input));
+    }
   }
 }
 
@@ -635,25 +639,8 @@ std::vector<libmspub::MSPUBParser::TextParagraphReference> libmspub::MSPUBParser
   for (unsigned short i = 0; i < numEntries; ++i)
   {
     input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
-    Alignment align = LEFT;
-    unsigned defaultCharStyleIndex = 0;
-    unsigned len = readU32(input);
-    while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
-    {
-      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
-      switch(info.id)
-      {
-      case PARAGRAPH_ALIGNMENT:
-        align = (Alignment)info.data;
-        break;
-      case PARAGRAPH_DEFAULT_CHAR_STYLE:
-        defaultCharStyleIndex = info.data;
-        break;
-      default:
-        break;
-      }
-    }
-    ret.push_back(TextParagraphReference(currentSpanBegin, textOffsets[i], ParagraphStyle(align, defaultCharStyleIndex)));
+    ParagraphStyle style = getParagraphStyle(input);
+    ret.push_back(TextParagraphReference(currentSpanBegin, textOffsets[i], style));
     currentSpanBegin = textOffsets[i] + 1;
   }
   return ret;
@@ -685,6 +672,29 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
     ret.push_back(TextSpanReference(currentSpanBegin, textOffsets[i], style));
   }
   return ret;
+}
+libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream *input)
+{
+  Alignment align = (Alignment)-1;
+  unsigned defaultCharStyleIndex = 0;
+  unsigned offset = input->tell();
+  unsigned len = readU32(input);
+  while (stillReading(input, offset + len))
+  {
+    libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+    switch(info.id)
+    {
+    case PARAGRAPH_ALIGNMENT:
+      align = (Alignment)info.data;
+      break;
+    case PARAGRAPH_DEFAULT_CHAR_STYLE:
+      defaultCharStyleIndex = info.data;
+      break;
+    default:
+      break;
+    }
+  }
+  return ParagraphStyle(align, defaultCharStyleIndex);
 }
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
 {

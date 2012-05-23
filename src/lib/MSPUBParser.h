@@ -98,6 +98,7 @@ private:
   int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
+  ParagraphStyle getParagraphStyle(WPXInputStream *input);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

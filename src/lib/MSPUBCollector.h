@@ -68,6 +68,7 @@ public:
   void addFont(std::vector<unsigned char> name);
 
   void addDefaultCharacterStyle(const CharacterStyle &style);
+  void addDefaultParagraphStyle(const ParagraphStyle &style);
 
   bool go();
 private:
@@ -133,11 +134,12 @@ private:
   std::vector<Color> colors;
   std::vector<std::vector<unsigned char> > fonts;
   std::vector<CharacterStyle> defaultCharStyles;
+  std::vector<ParagraphStyle> defaultParaStyles;
 
   // helper functions
   void assignImages();
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
-  WPXPropertyList getParaStyleProps(const ParagraphStyle &);
+  WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);
 };
 

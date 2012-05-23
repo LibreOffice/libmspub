@@ -251,34 +251,37 @@ bool libmspub::MSPUBCollector::go()
   assignImages();
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
-    m_painter->startGraphics(m_commonPageProperties);
-    for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin();
-         j != i->second.textShapeReferences.end(); ++j)
+    if (i->second.textShapeReferences.size() >  0 || i->second.imgShapeReferences.size() > 0)
     {
-      m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
-      for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
+      m_painter->startGraphics(m_commonPageProperties);
+      for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin();
+           j != i->second.textShapeReferences.end(); ++j)
       {
-        WPXPropertyList paraProps = getParaStyleProps(k->style, k->style.defaultCharStyleIndex);
-        m_painter->startTextLine(paraProps);
-        for (std::vector<TextSpan>::const_iterator l = k->spans.begin(); l != k->spans.end(); ++l)
+        m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
+        for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
         {
-          WPXString text;
-          appendCharacters(text, l->chars);
-          WPXPropertyList charProps = getCharStyleProps(l->style, k->style.defaultCharStyleIndex);
-          m_painter->startTextSpan(charProps);
-          m_painter->insertText(text);
-          m_painter->endTextSpan();
+          WPXPropertyList paraProps = getParaStyleProps(k->style, k->style.defaultCharStyleIndex);
+          m_painter->startTextLine(paraProps);
+          for (std::vector<TextSpan>::const_iterator l = k->spans.begin(); l != k->spans.end(); ++l)
+          {
+            WPXString text;
+            appendCharacters(text, l->chars);
+            WPXPropertyList charProps = getCharStyleProps(l->style, k->style.defaultCharStyleIndex);
+            m_painter->startTextSpan(charProps);
+            m_painter->insertText(text);
+            m_painter->endTextSpan();
+          }
+          m_painter->endTextLine();
         }
-        m_painter->endTextLine();
+        m_painter->endTextObject();
       }
-      m_painter->endTextObject();
+      for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin();
+           j != i->second.imgShapeReferences.end(); ++j)
+      {
+        m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
+      }
+      m_painter->endGraphics();
     }
-    for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin();
-         j != i->second.imgShapeReferences.end(); ++j)
-    {
-      m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
-    }
-    m_painter->endGraphics();
   }
   return true;
 }

@@ -100,18 +100,26 @@ bool libmspub::MSPUBParser::parse()
     return false;
   WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
   if (!quill)
+  {
+    MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));
     return false;
+  }
   if (!parseQuill(quill))
   {
+    MSPUB_DEBUG_MSG(("Couldn't parse quill stream.\n"));
     delete quill;
     return false;
   }
   delete quill;
   WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
   if (!contents)
+  {
+    MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
     return false;
+  }
   if (!parseContents(contents))
   {
+    MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
     delete contents;
     return false;
   }
@@ -124,9 +132,13 @@ bool libmspub::MSPUBParser::parse()
   }
   WPXInputStream *escher = m_input->getDocumentOLEStream("Escher/EscherStm");
   if (!escher)
+  {
+    MSPUB_DEBUG_MSG(("Couldn't get escher stream.\n"));
     return false;
+  }
   if (!parseEscher(escher))
   {
+    MSPUB_DEBUG_MSG(("Couldn't parse escher stream.\n"));
     delete escher;
     return false;
   }
@@ -407,15 +419,20 @@ libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(WP
 bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseQuill\n"));
-  input->seek(0x1a, WPX_SEEK_SET);
-  unsigned short numChunks = readU16(input);
-  input->seek(0x20, WPX_SEEK_SET);
+  unsigned chunkReferenceListOffset = 0x18;
   std::list<QuillChunkReference> chunkReferences;
-  for (unsigned i = 0; i < numChunks; ++i)
+  while (chunkReferenceListOffset != 0xffffffff)
   {
-    libmspub::QuillChunkReference quillChunkReference = parseQuillChunkReference(input);
-    chunkReferences.push_back(quillChunkReference);
+    input->seek(chunkReferenceListOffset + 2, WPX_SEEK_SET);
+    unsigned short numChunks = readU16(input);
+    chunkReferenceListOffset = readU32(input);
+    for (unsigned i = 0; i < numChunks; ++i)
+    {
+      libmspub::QuillChunkReference quillChunkReference = parseQuillChunkReference(input);
+      chunkReferences.push_back(quillChunkReference);
+    }
   }
+  MSPUB_DEBUG_MSG(("Found %ld Quill chunks\n", chunkReferences.size()));
   //Make sure we parse the STRS chunk before the TEXT chunk
   std::list<QuillChunkReference>::const_iterator textChunkReference = chunkReferences.end();
   bool parsedStrs = false;

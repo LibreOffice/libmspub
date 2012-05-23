@@ -584,12 +584,10 @@ void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const Quill
   {
     input->seek(chunk.offset + 20 + offsets[i], WPX_SEEK_SET);
     readU16(input);
-    if (i == 0)
+    if (i % 2 == 0)
     {
-      //FIXME: Some PUBs have more than one piece with style information.
-      //Cf. 3oval4rects_tb_etc2.pub
-      //So far we are only taking into account the first one; we will have to understand what STSH is better before doing more.
-      m_collector->setDefaultCharacterStyle(getCharacterStyle(input, true));
+      //FIXME: Does STSH2 hold information for associating style indices in FDPP to indices in STSH1 ?
+      m_collector->addDefaultCharacterStyle(getCharacterStyle(input, true));
     }
   }
 }
@@ -638,6 +636,7 @@ std::vector<libmspub::MSPUBParser::TextParagraphReference> libmspub::MSPUBParser
   {
     input->seek(chunk.offset + chunkOffsets[i], WPX_SEEK_SET);
     Alignment align = LEFT;
+    unsigned defaultCharStyleIndex = 0;
     unsigned len = readU32(input);
     while (stillReading(input, chunk.offset + chunkOffsets[i] + len))
     {
@@ -647,11 +646,14 @@ std::vector<libmspub::MSPUBParser::TextParagraphReference> libmspub::MSPUBParser
       case PARAGRAPH_ALIGNMENT:
         align = (Alignment)info.data;
         break;
+      case PARAGRAPH_DEFAULT_CHAR_STYLE:
+        defaultCharStyleIndex = info.data;
+        break;
       default:
         break;
       }
     }
-    ret.push_back(TextParagraphReference(currentSpanBegin, textOffsets[i], ParagraphStyle(align)));
+    ret.push_back(TextParagraphReference(currentSpanBegin, textOffsets[i], ParagraphStyle(align, defaultCharStyleIndex)));
     currentSpanBegin = textOffsets[i] + 1;
   }
   return ret;

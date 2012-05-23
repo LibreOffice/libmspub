@@ -37,7 +37,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
   m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
   imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), fonts(),
-  defaultCharStyle(false, false, false, -1, -1)
+  defaultCharStyles()
 {
 }
 
@@ -52,9 +52,9 @@ libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChu
 {
 }
 
-void libmspub::MSPUBCollector::setDefaultCharacterStyle(const CharacterStyle &st)
+void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
 {
-  defaultCharStyle = st;
+  defaultCharStyles.push_back(st);
 }
 
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
@@ -193,8 +193,10 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   return ret;
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style)
+WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, unsigned defaultCharStyleIndex)
 {
+  CharacterStyle _nothing = CharacterStyle(false, false, false);
+  const CharacterStyle &defaultCharStyle = defaultCharStyleIndex < defaultCharStyles.size() ? defaultCharStyles[defaultCharStyleIndex] : _nothing;
   WPXPropertyList ret;
   if (style.italic)
   {
@@ -255,7 +257,7 @@ bool libmspub::MSPUBCollector::go()
         {
           WPXString text;
           appendCharacters(text, l->chars);
-          WPXPropertyList charProps = getCharStyleProps(l->style);
+          WPXPropertyList charProps = getCharStyleProps(l->style, k->style.defaultCharStyleIndex);
           m_painter->startTextSpan(charProps);
           m_painter->insertText(text);
           m_painter->endTextSpan();

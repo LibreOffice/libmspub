@@ -100,8 +100,9 @@ struct CharacterStyle
 
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment align) : align(align) { }
+  ParagraphStyle(Alignment align, unsigned defaultCharStyleIndex = 0) : align(align), defaultCharStyleIndex(defaultCharStyleIndex) { }
   Alignment align;
+  unsigned defaultCharStyleIndex;
 };
 
 struct TextSpan

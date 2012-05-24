@@ -85,8 +85,10 @@ private:
   QuillChunkReference parseQuillChunkReference(WPXInputStream *input);
   bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
+  bool parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
   bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
+  void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk);
@@ -100,12 +102,18 @@ private:
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
 
+  void addAllColors();
+
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
   std::vector<MSPUBBlockInfo> m_blockInfo;
   std::vector<ContentChunkReference> m_pageChunks;
   std::vector<ContentChunkReference> m_shapeChunks;
+  std::vector<ContentChunkReference> m_paletteChunks;
   std::vector<ContentChunkReference> m_unknownChunks;
+  std::vector<Color> m_colors;
+  std::vector<std::pair<unsigned, unsigned> > m_paletteColorReferences;
+  std::vector<Color> m_paletteColors;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;

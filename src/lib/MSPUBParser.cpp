@@ -42,7 +42,10 @@
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(), m_unknownChunks(), m_documentChunk(), m_lastSeenSeqNum(-1), m_lastAddedImage(0), m_seenDocumentChunk(false)
+  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(), 
+    m_paletteChunks(), m_unknownChunks(), m_colors(), m_paletteColorReferences(),
+    m_paletteColors(), m_documentChunk(), m_lastSeenSeqNum(-1), 
+    m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
 }
 
@@ -231,6 +234,15 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
       {
         return false;
       }
+      for (ccr_iterator_t i = m_paletteChunks.begin(); i != m_paletteChunks.end(); ++i)
+      {
+        input->seek(i->offset, WPX_SEEK_SET);
+        if (! parsePaletteChunk(input, *i))
+        {
+          return false;
+        }
+      }
+      addAllColors();
       input->seek(m_documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, m_documentChunk))
       {
@@ -621,9 +633,17 @@ void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkR
       MSPUBBlockInfo info = parseBlock(input, true);
       if (info.id == 0x01)
       {
-        //FIXME : Will this fail on big-endian systems?
+        //FIXME : Will all of this fail on big-endian systems?
         MSPUB_DEBUG_MSG(("Found color 0x%x\n", info.data));
-        m_collector->addColor(info.data & 0xFF, (info.data >> 8) & 0xFF, (info.data >> 16) & 0Xff);
+        unsigned char colorType = (info.data >> 24) & 0xFF;
+        if (colorType == 0x08)
+        {
+          m_paletteColorReferences.push_back(std::pair<unsigned, unsigned>(m_colors.size(), info.data & 0xFFFFFF));
+        }
+        else
+        {
+          m_colors.push_back(Color(info.data & 0xFF, (info.data >> 8) & 0xFF, (info.data >> 16) & 0xFF));
+        }
       }
     }
   }
@@ -970,17 +990,23 @@ libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReferen
       m_pageChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
       return &m_pageChunks.back();
     }
-    if (type == DOCUMENT)
+    else if (type == DOCUMENT)
     {
       MSPUB_DEBUG_MSG(("document chunk: offset 0x%lx, seqnum 0x%x\n", offset, m_lastSeenSeqNum));
       m_documentChunk = ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0);
       m_seenDocumentChunk = true;
       return &m_documentChunk;
     }
-    if (type == SHAPE)
+    else if (type == SHAPE)
     {
       MSPUB_DEBUG_MSG(("shape chunk: offset 0x%lx, seqnum 0x%x, parent seqnum: 0x%x\n", offset, m_lastSeenSeqNum, parentSeqNum));
       m_shapeChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      return &m_shapeChunks.back();
+    }
+    else if (type == PALETTE)
+    {
+      m_paletteChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      return &m_paletteChunks.back();
     }
     m_unknownChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
   }
@@ -1072,5 +1098,74 @@ libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
   }
 }
 
+bool libmspub::MSPUBParser::parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk)
+{
+  unsigned length = readU32(input);
+  while (stillReading(input, chunk.offset + length))
+  {
+    MSPUBBlockInfo info = parseBlock(input);
+    if (info.type == 0xA0)
+    {
+      while (stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo subInfo = parseBlock(input);
+        if (subInfo.type == GENERAL_CONTAINER)
+        {
+          parsePaletteEntry(input, subInfo);
+        }
+        skipBlock(input, subInfo);
+      }
+    }
+    skipBlock(input, info);
+  }
+  return true;
+}
+
+void libmspub::MSPUBParser::parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo info)
+{
+  while (stillReading(input, info.dataOffset + info.dataLength))
+  {
+    MSPUBBlockInfo subInfo = parseBlock(input, true);
+    if (subInfo.id == 0x01)
+    {
+      m_paletteColors.push_back(Color(subInfo.data & 0xFF, (subInfo.data >> 8) & 0xFF, (subInfo.data >> 16) & 0xFF));
+    }
+  }
+}
+
+void libmspub::MSPUBParser::addAllColors()
+{
+  std::vector<std::pair<unsigned, unsigned> >::const_iterator i_paletteReference = m_paletteColorReferences.begin();
+  for (std::vector<Color>::const_iterator i_real = m_colors.begin(); i_real != m_colors.end(); ++i_real)
+  {
+    while (i_paletteReference != m_paletteColorReferences.end() && i_paletteReference->first <= i_real - m_colors.begin())
+    {
+      if (i_paletteReference->second > 0 && i_paletteReference->second < m_paletteColors.size())
+      {
+        const Color& c = m_paletteColors[i_paletteReference->second - 1];
+        m_collector->addColor(c.r, c.g, c.b);
+      }
+      else
+      {
+        m_collector->addColor(0, 0, 0);
+      }
+      ++i_paletteReference;
+    }
+    m_collector->addColor(i_real->r, i_real->g, i_real->b);
+  }
+  while (i_paletteReference != m_paletteColorReferences.end())
+  {
+    if (i_paletteReference->second > 0 && i_paletteReference->second <= m_paletteColors.size())
+    {
+      const Color& c = m_paletteColors[i_paletteReference->second - 1];
+      m_collector->addColor(c.r, c.g, c.b);
+    }
+    else
+    {
+      m_collector->addColor(0, 0, 0);
+    }
+    ++i_paletteReference;
+  }
+}
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

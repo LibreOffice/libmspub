@@ -35,7 +35,8 @@ enum MSPUBContentChunkType //Please fill this in and replace magic constants in 
 {
   SHAPE    = 0x01,
   DOCUMENT = 0x44,
-  PAGE     = 0x43
+  PAGE     = 0x43,
+  PALETTE  = 0x5C
 };
 } // namespace libmspub
 

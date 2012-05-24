@@ -235,6 +235,10 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("fo:color", getColorString(colors[style.colorIndex]));
   }
+  else if (defaultCharStyle.colorIndex >= 0 && (size_t)defaultCharStyle.colorIndex < colors.size())
+  {
+    ret.insert("fo:color", getColorString(colors[defaultCharStyle.colorIndex]));
+  }
   else
   {
     ret.insert("fo:color", getColorString(defaultColor));

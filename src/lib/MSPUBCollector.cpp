@@ -51,13 +51,6 @@ void libmspub::MSPUBCollector::setDefaultColor(unsigned char r, unsigned char g,
   defaultColor = Color(r, g, b);
 }
 
-libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type,
-    unsigned long offset, unsigned long end,
-    unsigned seqNum, unsigned parentSeqNum) :
-  type(type), offset(offset), end(end), seqNum(seqNum), parentSeqNum(parentSeqNum)
-{
-}
-
 void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
 {
   defaultCharStyles.push_back(st);
@@ -137,10 +130,10 @@ bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs,
   }
   else
   {
-    std::map<unsigned, UnknownShapeInfo>::iterator elt = possibleImageShapes.find(seqNum);
-    if (elt != possibleImageShapes.end())
+    std::map<unsigned, UnknownShapeInfo>::iterator elt1 = possibleImageShapes.find(seqNum);
+    if (elt1 != possibleImageShapes.end())
     {
-      propsToEdit = &(elt->second.props);
+      propsToEdit = &(elt1->second.props);
     }
     else
     {

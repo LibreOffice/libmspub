@@ -42,9 +42,9 @@
 #include "libmspub_utils.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(), 
+  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(), m_colors(), m_paletteColorReferences(),
-    m_paletteColors(), m_documentChunk(), m_lastSeenSeqNum(-1), 
+    m_paletteColors(), m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
 }
@@ -234,10 +234,10 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
       {
         return false;
       }
-      for (ccr_iterator_t i = m_paletteChunks.begin(); i != m_paletteChunks.end(); ++i)
+      for (ccr_iterator_t iter1 = m_paletteChunks.begin(); iter1 != m_paletteChunks.end(); ++iter1)
       {
-        input->seek(i->offset, WPX_SEEK_SET);
-        if (! parsePaletteChunk(input, *i))
+        input->seek(iter1->offset, WPX_SEEK_SET);
+        if (! parsePaletteChunk(input, *iter1))
         {
           return false;
         }
@@ -252,10 +252,10 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
       {
         return false;
       }
-      for (ccr_iterator_t i = m_pageChunks.begin(); i != m_pageChunks.end(); ++i)
+      for (ccr_iterator_t iter2 = m_pageChunks.begin(); iter2 != m_pageChunks.end(); ++iter2)
       {
-        input->seek(i->offset, WPX_SEEK_SET);
-        if (!parsePageChunk(input, *i))
+        input->seek(iter2->offset, WPX_SEEK_SET);
+        if (!parsePageChunk(input, *iter2))
         {
           return false;
         }
@@ -267,7 +267,11 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
   return true;
 }
 
+#ifdef DEBUG
 bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk)
+#else
+bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &)
+#endif
 {
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
   unsigned long begin = input->tell();
@@ -326,7 +330,7 @@ class FindBySeqNum
 {
   unsigned seqNum;
 public:
-  FindBySeqNum(unsigned seqNum) : seqNum(seqNum) { }
+  FindBySeqNum(unsigned sn) : seqNum(sn) { }
   bool operator()(const libmspub::ContentChunkReference &ref)
   {
     return ref.seqNum == seqNum;
@@ -467,7 +471,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       input->seek(i->offset, WPX_SEEK_SET);
       unsigned numLengths = readU32(input); //Assuming the first DWORD is the number of children and that the next is the remaining length before children start. We are unsure that this is correct.
       input->seek(4 + i->offset + readU32(input), WPX_SEEK_SET);
-      for (unsigned i = 0; i < numLengths; ++i)
+      for (unsigned j = 0; j < numLengths; ++j)
       {
         textLengths.push_back(readU32(input));
       }
@@ -478,7 +482,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       input->seek(i->offset, WPX_SEEK_SET);
       readU32(input); // Don't know what the first DWORD means.
       unsigned numIDs = readU32(input);
-      for (unsigned i = 0; i < numIDs; ++i)
+      for (unsigned j = 0; j < numIDs; ++j)
       {
         textIDs.push_back(readU32(input));
       }
@@ -524,13 +528,13 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       unsigned bytesRead = 0;
       std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
       std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
-      for (std::list<unsigned>::const_iterator i = textLengths.begin(), id = textIDs.begin(); i != textLengths.end() && id != textIDs.end(); ++i, ++id)
+      for (std::list<unsigned>::const_iterator iter = textLengths.begin(), id = textIDs.begin(); iter != textLengths.end() && id != textIDs.end(); ++iter, ++id)
       {
         MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
         std::vector<TextParagraph> readParas;
         std::vector<TextSpan> readSpans;
         std::vector<unsigned char> text;
-        for (unsigned j = 0; j < *i; ++j)
+        for (unsigned j = 0; j < *iter; ++j)
         {
           text.push_back(readU8(input));
           text.push_back(readU8(input));
@@ -581,7 +585,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   return true;
 }
 
-void libmspub::MSPUBParser::parseFonts(WPXInputStream *input, const QuillChunkReference &chunk)
+void libmspub::MSPUBParser::parseFonts(WPXInputStream *input, const QuillChunkReference &)
 {
   readU32(input);
   unsigned numElements = readU32(input);
@@ -624,7 +628,7 @@ void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const Quill
 }
 
 
-void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkReference &chunk)
+void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkReference &)
 {
   unsigned numEntries = readU32(input);
   input->seek(input->tell() + 8, WPX_SEEK_SET);
@@ -1146,7 +1150,7 @@ void libmspub::MSPUBParser::addAllColors()
     {
       if (i_paletteReference->second < m_paletteColors.size())
       {
-        const Color& c = m_paletteColors[i_paletteReference->second];
+        const Color &c = m_paletteColors[i_paletteReference->second];
         m_collector->addColor(c.r, c.g, c.b);
       }
       else
@@ -1161,7 +1165,7 @@ void libmspub::MSPUBParser::addAllColors()
   {
     if (i_paletteReference->second < m_paletteColors.size())
     {
-      const Color& c = m_paletteColors[i_paletteReference->second];
+      const Color &c = m_paletteColors[i_paletteReference->second];
       m_collector->addColor(c.r, c.g, c.b);
     }
     else

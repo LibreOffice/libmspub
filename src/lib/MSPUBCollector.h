@@ -76,20 +76,20 @@ private:
 
   struct TextShapeInfo
   {
-    TextShapeInfo(std::vector<TextParagraph> str) : str(str), props() { }
+    TextShapeInfo(std::vector<TextParagraph> s) : str(s), props() { }
     std::vector<TextParagraph> str;
     WPXPropertyList props;
   };
   struct UnknownShapeInfo
   {
-    UnknownShapeInfo(unsigned pageSeqNum) : pageSeqNum(pageSeqNum), imgIndex(0), props() { }
+    UnknownShapeInfo(unsigned psn) : pageSeqNum(psn), imgIndex(0), props() { }
     unsigned pageSeqNum;
     unsigned imgIndex;
     WPXPropertyList props;
   };
   struct ImgShapeInfo
   {
-    ImgShapeInfo(ImgType type, WPXBinaryData img, WPXPropertyList props) : img(img), props(props)
+    ImgShapeInfo(ImgType type, WPXBinaryData i, WPXPropertyList p) : img(i), props(p)
     {
       const char *mime;
       switch (type)

@@ -69,7 +69,8 @@ struct MSPUBBlockInfo
 struct ContentChunkReference
 {
   ContentChunkReference() : type((MSPUBContentChunkType)0), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
-  ContentChunkReference(MSPUBContentChunkType type, unsigned long offset, unsigned long end, unsigned seqNum, unsigned parentSeqNum);
+  ContentChunkReference(MSPUBContentChunkType t, unsigned long o, unsigned long e, unsigned sn, unsigned psn) :
+    type(t), offset(o), end(e), seqNum(sn), parentSeqNum(psn) {}
   MSPUBContentChunkType type;
   unsigned long offset;
   unsigned long end; //offset of the last element plus one.
@@ -89,7 +90,8 @@ struct QuillChunkReference
 
 struct CharacterStyle
 {
-  CharacterStyle(bool underline, bool italic, bool bold, int textSizeInPt = -1, int colorIndex = -1, unsigned fontIndex = 0) : underline(underline), italic(italic), bold(bold), textSizeInPt(textSizeInPt), colorIndex(colorIndex), fontIndex(fontIndex) { }
+  CharacterStyle(bool u, bool i, bool b, int tSIP = -1, int cI = -1, unsigned fI = 0) :
+    underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI) { }
   bool underline;
   bool italic;
   bool bold;
@@ -100,28 +102,28 @@ struct CharacterStyle
 
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment align = (Alignment)-1, unsigned defaultCharStyleIndex = 0) : align(align), defaultCharStyleIndex(defaultCharStyleIndex) { }
+  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0) : align(a), defaultCharStyleIndex(dCSI) { }
   Alignment align;
   unsigned defaultCharStyleIndex;
 };
 
 struct TextSpan
 {
-  TextSpan(std::vector<unsigned char> chars, CharacterStyle style) : chars(chars), style(style) { }
+  TextSpan(std::vector<unsigned char> c, CharacterStyle s) : chars(c), style(s) { }
   std::vector<unsigned char> chars;
   CharacterStyle style;
 };
 
 struct TextParagraph
 {
-  TextParagraph(std::vector<TextSpan> spans, ParagraphStyle style) : spans(spans), style(style) { }
+  TextParagraph(std::vector<TextSpan> sp, ParagraphStyle st) : spans(sp), style(st) { }
   std::vector<TextSpan> spans;
   ParagraphStyle style;
 };
 
 struct Color
 {
-  Color(unsigned char r, unsigned char g, unsigned char b) : r(r), g(g), b(b) { }
+  Color(unsigned char red, unsigned char green, unsigned char blue) : r(red), g(green), b(blue) { }
   unsigned char r, g, b;
 };
 

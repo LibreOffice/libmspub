@@ -242,6 +242,10 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           return false;
         }
       }
+      if (m_paletteColors.size() < 8)
+      {
+        m_paletteColors.insert(m_paletteColors.begin(), Color(0, 0, 0));
+      }
       addAllColors();
       input->seek(m_documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, m_documentChunk))
@@ -1140,9 +1144,9 @@ void libmspub::MSPUBParser::addAllColors()
   {
     while (i_paletteReference != m_paletteColorReferences.end() && i_paletteReference->first <= i_real - m_colors.begin())
     {
-      if (i_paletteReference->second > 0 && i_paletteReference->second < m_paletteColors.size())
+      if (i_paletteReference->second < m_paletteColors.size())
       {
-        const Color& c = m_paletteColors[i_paletteReference->second - 1];
+        const Color& c = m_paletteColors[i_paletteReference->second];
         m_collector->addColor(c.r, c.g, c.b);
       }
       else
@@ -1155,9 +1159,9 @@ void libmspub::MSPUBParser::addAllColors()
   }
   while (i_paletteReference != m_paletteColorReferences.end())
   {
-    if (i_paletteReference->second > 0 && i_paletteReference->second <= m_paletteColors.size())
+    if (i_paletteReference->second < m_paletteColors.size())
     {
-      const Color& c = m_paletteColors[i_paletteReference->second - 1];
+      const Color& c = m_paletteColors[i_paletteReference->second];
       m_collector->addColor(c.r, c.g, c.b);
     }
     else
@@ -1165,6 +1169,10 @@ void libmspub::MSPUBParser::addAllColors()
       m_collector->addColor(0, 0, 0);
     }
     ++i_paletteReference;
+  }
+  if (m_paletteColors.size() > 0)
+  {
+    m_collector->setDefaultColor(m_paletteColors[0].r, m_paletteColors[0].g, m_paletteColors[0].b);
   }
 }
 

@@ -36,13 +36,19 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
   m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
-  imgShapesBySeqNum(), images(), possibleImageShapes(), colors(), fonts(),
+  imgShapesBySeqNum(), images(), possibleImageShapes(),
+  colors(), defaultColor(0, 0, 0), fonts(),
   defaultCharStyles(), defaultParaStyles()
 {
 }
 
 libmspub::MSPUBCollector::~MSPUBCollector()
 {
+}
+
+void libmspub::MSPUBCollector::setDefaultColor(unsigned char r, unsigned char g, unsigned char b)
+{
+  defaultColor = Color(r, g, b);
 }
 
 libmspub::ContentChunkReference::ContentChunkReference(libmspub::MSPUBContentChunkType type,
@@ -228,6 +234,10 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
   {
     ret.insert("fo:color", getColorString(colors[style.colorIndex]));
+  }
+  else
+  {
+    ret.insert("fo:color", getColorString(defaultColor));
   }
   if (style.fontIndex < fonts.size())
   {

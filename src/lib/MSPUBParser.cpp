@@ -1149,7 +1149,7 @@ void libmspub::MSPUBParser::parsePaletteEntry(WPXInputStream *input, MSPUBBlockI
   }
 }
 
-void libmspub::MSPUBParser::addAllColors()
+void libmspub::MSPUBParser::addAllColors() const
 {
   std::vector<std::pair<unsigned, unsigned> >::const_iterator i_paletteReference = m_paletteColorReferences.begin();
   for (unsigned i = 0; i < m_colors.size(); ++i)

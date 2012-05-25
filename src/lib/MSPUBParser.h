@@ -102,7 +102,7 @@ private:
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
 
-  void addAllColors();
+  void addAllColors() const;
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

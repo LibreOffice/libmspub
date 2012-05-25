@@ -901,7 +901,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
               {
                 m_collector->setShapeType(i_shapeSeqNum->second, (ShapeType)(cFsp.initial >> 4));
               }
-              
+
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
               m_collector->setShapeCoordinatesInEmu(i_shapeSeqNum->second, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
               input->seek(sp.contentsOffset + sp.contentsLength + getEscherElementTailLength(sp.type), WPX_SEEK_SET);

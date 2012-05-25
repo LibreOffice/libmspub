@@ -151,8 +151,8 @@ private:
 
   // helper functions
   void assignImages();
-  void setRectCoordProps(Coordinate, WPXPropertyList*);
-  void setEllipseCoordProps(Coordinate, WPXPropertyList*);
+  void setRectCoordProps(Coordinate, WPXPropertyList *);
+  void setEllipseCoordProps(Coordinate, WPXPropertyList *);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);

@@ -47,7 +47,7 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type) 
+bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
 {
   return shapeTypesBySeqNum.insert(std::pair<const unsigned, ShapeType>(seqNum, type)).second;
 }
@@ -297,7 +297,7 @@ bool libmspub::MSPUBCollector::go()
         m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
       }
       for (std::vector<std::map<unsigned, UnknownShapeInfo>::iterator>::const_iterator j = i->second.geometricShapeReferences.begin();
-          j != i->second.geometricShapeReferences.end(); ++j)
+           j != i->second.geometricShapeReferences.end(); ++j)
       {
         switch (shapeTypesBySeqNum[(*j)->first])
         {

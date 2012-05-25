@@ -294,6 +294,7 @@ bool libmspub::MSPUBCollector::go()
       for (std::vector<std::map<unsigned, ImgShapeInfo>::iterator>::const_iterator j = i->second.imgShapeReferences.begin();
            j != i->second.imgShapeReferences.end(); ++j)
       {
+        setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
         m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
       }
       for (std::vector<std::map<unsigned, UnknownShapeInfo>::iterator>::const_iterator j = i->second.geometricShapeReferences.begin();

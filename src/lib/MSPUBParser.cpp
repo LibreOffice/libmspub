@@ -40,6 +40,7 @@
 #include "EscherContainerType.h"
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
+#include "ShapeType.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
@@ -866,6 +867,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
         libmspub::EscherContainerInfo cData;
         libmspub::EscherContainerInfo cAnchor;
         libmspub::EscherContainerInfo cFopt;
+        libmspub::EscherContainerInfo cFsp;
         if (findEscherContainer(input, sp, &cData, OFFICE_ART_CLIENT_DATA))
         {
           std::map<unsigned short, unsigned> dataValues = extractEscherValues(input, cData);
@@ -894,6 +896,12 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   }
                 }
               }
+              input->seek(sp.contentsOffset, WPX_SEEK_SET);
+              if (findEscherContainer(input, sp, &cFsp, OFFICE_ART_FSP))
+              {
+                m_collector->setShapeType(i_shapeSeqNum->second, (ShapeType)(cFsp.initial >> 4));
+              }
+              
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
               m_collector->setShapeCoordinatesInEmu(i_shapeSeqNum->second, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
               input->seek(sp.contentsOffset + sp.contentsLength + getEscherElementTailLength(sp.type), WPX_SEEK_SET);

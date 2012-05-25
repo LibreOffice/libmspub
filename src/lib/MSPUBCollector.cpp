@@ -38,12 +38,18 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
   imgShapesBySeqNum(), images(), possibleImageShapes(),
   colors(), defaultColor(0, 0, 0), fonts(),
-  defaultCharStyles(), defaultParaStyles()
+  defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
+  shapeCoordinatesBySeqNum()
 {
 }
 
 libmspub::MSPUBCollector::~MSPUBCollector()
 {
+}
+
+bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type) 
+{
+  return shapeTypesBySeqNum.insert(std::pair<const unsigned, ShapeType>(seqNum, type)).second;
 }
 
 void libmspub::MSPUBCollector::setDefaultColor(unsigned char r, unsigned char g, unsigned char b)
@@ -116,37 +122,31 @@ bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   return false;
 }
 
-bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
+void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
 {
-  if (! (m_widthSet && m_heightSet))
-  {
-    return false;
-  }
-  WPXPropertyList *propsToEdit;
-  std::map<unsigned, TextShapeInfo>::iterator elt = textShapesBySeqNum.find(seqNum);
-  if (elt != textShapesBySeqNum.end())
-  {
-    propsToEdit = &(elt->second.props);
-  }
-  else
-  {
-    std::map<unsigned, UnknownShapeInfo>::iterator elt1 = possibleImageShapes.find(seqNum);
-    if (elt1 != possibleImageShapes.end())
-    {
-      propsToEdit = &(elt1->second.props);
-    }
-    else
-    {
-      return false;
-    }
-  }
+  int xs = coord.xs, ys = coord.ys, xe = coord.xe, ye = coord.ye;
   double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
   double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
-  propsToEdit->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
-  propsToEdit->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
-  propsToEdit->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
-  propsToEdit->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
-  return true;
+  props->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
+  props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
+  props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
+  props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
+}
+
+void libmspub::MSPUBCollector::setEllipseCoordProps(Coordinate coord, WPXPropertyList *props)
+{
+  int xs = coord.xs, ys = coord.ys, xe = coord.xe, ye = coord.ye;
+  double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
+  double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
+  props->insert("svg:cx", x_center + ((double)xs + (double)xe)/(2 * EMUS_IN_INCH));
+  props->insert("svg:cy", y_center + ((double)ys + (double)ye)/(2 * EMUS_IN_INCH));
+  props->insert("svg:rx", (double)(xe - xs)/(2 * EMUS_IN_INCH));
+  props->insert("svg:ry", (double)(ye - ys)/(2 * EMUS_IN_INCH));
+}
+
+bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
+{
+  return shapeCoordinatesBySeqNum.insert(std::pair<const unsigned, Coordinate>(seqNum, Coordinate(xs, ys, xe, ye))).second;
 }
 
 void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
@@ -156,7 +156,7 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
 
 void libmspub::MSPUBCollector::assignImages()
 {
-  for (std::map<unsigned, UnknownShapeInfo>::const_iterator i = possibleImageShapes.begin(); i != possibleImageShapes.end(); ++i)
+  for (std::map<unsigned, UnknownShapeInfo>::iterator i = possibleImageShapes.begin(); i != possibleImageShapes.end(); ++i)
   {
     if (i->second.imgIndex > 0 && i->second.imgIndex <= images.size())
     {
@@ -169,6 +169,14 @@ void libmspub::MSPUBCollector::assignImages()
         {
           i_pg->second.imgShapeReferences.push_back(result.first);
         }
+      }
+    }
+    else
+    {
+      std::map<unsigned, PageInfo>::iterator i_pg = pagesBySeqNum.find(i->second.pageSeqNum);
+      if (i_pg != pagesBySeqNum.end())
+      {
+        i_pg->second.geometricShapeReferences.push_back(i);
       }
     }
   }
@@ -258,12 +266,13 @@ bool libmspub::MSPUBCollector::go()
   assignImages();
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
-    if (i->second.textShapeReferences.size() >  0 || i->second.imgShapeReferences.size() > 0)
+    if (i->second.textShapeReferences.size() >  0 || i->second.imgShapeReferences.size() > 0 || i->second.geometricShapeReferences.size() > 0)
     {
       m_painter->startGraphics(m_commonPageProperties);
-      for (std::vector<std::map<unsigned, TextShapeInfo>::const_iterator>::const_iterator j = i->second.textShapeReferences.begin();
+      for (std::vector<std::map<unsigned, TextShapeInfo>::iterator>::const_iterator j = i->second.textShapeReferences.begin();
            j != i->second.textShapeReferences.end(); ++j)
       {
+        setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
         m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
         for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
         {
@@ -282,10 +291,27 @@ bool libmspub::MSPUBCollector::go()
         }
         m_painter->endTextObject();
       }
-      for (std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator>::const_iterator j = i->second.imgShapeReferences.begin();
+      for (std::vector<std::map<unsigned, ImgShapeInfo>::iterator>::const_iterator j = i->second.imgShapeReferences.begin();
            j != i->second.imgShapeReferences.end(); ++j)
       {
         m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
+      }
+      for (std::vector<std::map<unsigned, UnknownShapeInfo>::iterator>::const_iterator j = i->second.geometricShapeReferences.begin();
+          j != i->second.geometricShapeReferences.end(); ++j)
+      {
+        switch (shapeTypesBySeqNum[(*j)->first])
+        {
+        case RECTANGLE:
+          setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
+          m_painter->drawRectangle((*j)->second.props);
+          break;
+        case ELLIPSE:
+          setEllipseCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
+          m_painter->drawEllipse((*j)->second.props);
+          break;
+        default:
+          break;
+        }
       }
       m_painter->endGraphics();
     }

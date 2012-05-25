@@ -29,12 +29,13 @@
 #ifndef __ESCHERFIELDIDS_H__
 #define __ESCHERFIELDIDS_H__
 
-#define FIELDID_XS 0x2001
-#define FIELDID_YS 0x2002
-#define FIELDID_XE 0x2003
-#define FIELDID_YE 0x2004
-#define FIELDID_PXID 0x4104
-#define FIELDID_SHAPE_ID 0x6801
+#define FIELDID_XS         0x2001
+#define FIELDID_YS         0x2002
+#define FIELDID_XE         0x2003
+#define FIELDID_YE         0x2004
+#define FIELDID_PXID       0x4104
+#define FIELDID_SHAPE_ID   0x6801
+
 
 #endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

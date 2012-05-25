@@ -39,6 +39,7 @@
 #include "MSPUBTypes.h"
 #include "libmspub_utils.h"
 #include "MSPUBContentChunkType.h"
+#include "ShapeType.h"
 
 namespace libmspub
 {
@@ -58,6 +59,7 @@ public:
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   bool addShape(unsigned seqNum, unsigned pageSeqNum);
 
+  bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
 
@@ -74,6 +76,12 @@ public:
   bool go();
 private:
 
+  struct Coordinate
+  {
+    Coordinate(int xs, int ys, int xe, int ye) : xs(xs), ys(ys), xe(xe), ye(ye) { }
+    Coordinate() : xs(0), ys(0), xe(0), ye(0) { }
+    int xs, ys, xe, ye;
+  };
   struct TextShapeInfo
   {
     TextShapeInfo(std::vector<TextParagraph> s) : str(s), props() { }
@@ -112,9 +120,10 @@ private:
   };
   struct PageInfo
   {
-    PageInfo() : textShapeReferences(), imgShapeReferences() { }
-    std::vector<std::map<unsigned, TextShapeInfo>::const_iterator> textShapeReferences;
-    std::vector<std::map<unsigned, ImgShapeInfo>::const_iterator> imgShapeReferences;
+    PageInfo() : textShapeReferences(), imgShapeReferences(), geometricShapeReferences() { }
+    std::vector<std::map<unsigned, TextShapeInfo>::iterator> textShapeReferences;
+    std::vector<std::map<unsigned, ImgShapeInfo>::iterator> imgShapeReferences;
+    std::vector<std::map<unsigned, UnknownShapeInfo>::iterator> geometricShapeReferences;
   };
 
   MSPUBCollector(const MSPUBCollector &);
@@ -137,9 +146,13 @@ private:
   std::vector<std::vector<unsigned char> > fonts;
   std::vector<CharacterStyle> defaultCharStyles;
   std::vector<ParagraphStyle> defaultParaStyles;
+  std::map<unsigned, ShapeType> shapeTypesBySeqNum;
+  std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
 
   // helper functions
   void assignImages();
+  void setRectCoordProps(Coordinate, WPXPropertyList*);
+  void setEllipseCoordProps(Coordinate, WPXPropertyList*);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);

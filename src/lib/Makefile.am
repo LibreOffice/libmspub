@@ -33,7 +33,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBParser.h \
 	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \
-	libmspub_utils.h 
+	libmspub_utils.h \
+	ShapeType.h
 
 if OS_WIN32
 

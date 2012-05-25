@@ -1144,9 +1144,9 @@ void libmspub::MSPUBParser::parsePaletteEntry(WPXInputStream *input, MSPUBBlockI
 void libmspub::MSPUBParser::addAllColors()
 {
   std::vector<std::pair<unsigned, unsigned> >::const_iterator i_paletteReference = m_paletteColorReferences.begin();
-  for (std::vector<Color>::const_iterator i_real = m_colors.begin(); i_real != m_colors.end(); ++i_real)
+  for (unsigned i = 0; i < m_colors.size(); ++i)
   {
-    while (i_paletteReference != m_paletteColorReferences.end() && i_paletteReference->first <= i_real - m_colors.begin())
+    while (i_paletteReference != m_paletteColorReferences.end() && i_paletteReference->first <= i)
     {
       if (i_paletteReference->second < m_paletteColors.size())
       {
@@ -1159,7 +1159,7 @@ void libmspub::MSPUBParser::addAllColors()
       }
       ++i_paletteReference;
     }
-    m_collector->addColor(i_real->r, i_real->g, i_real->b);
+    m_collector->addColor(m_colors[i].r, m_colors[i].g, m_colors[i].b);
   }
   while (i_paletteReference != m_paletteColorReferences.end())
   {

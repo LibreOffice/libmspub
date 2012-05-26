@@ -31,6 +31,8 @@
 
 #include <stdio.h>
 #include <vector>
+#include <map>
+#include <boost/ptr_container/ptr_map.hpp>
 #include <libwpd/libwpd.h>
 #include <libwpd-stream/libwpd-stream.h>
 
@@ -96,6 +98,18 @@ void readNBytes(WPXInputStream *input, unsigned length, std::vector<unsigned cha
 void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
 
 bool stillReading(WPXInputStream *input, unsigned long until);
+
+template <class MapT> typename MapT::mapped_type *getIfExists(MapT &map, const typename MapT::key_type &key)
+{
+  typename MapT::iterator i = map.find(key);
+  return i == map.end() ? NULL : &(i->second);
+}
+
+template <class MapT> typename MapT::mapped_type ptr_getIfExists(MapT &map, const typename MapT::key_type &key)
+{
+  typename MapT::iterator i = map.find(key);
+  return i == map.end() ? NULL : i->second;
+}
 
 class EndOfStreamException
 {

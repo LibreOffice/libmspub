@@ -35,12 +35,105 @@
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
-  m_numPages(0), textStringsById(), pagesBySeqNum(), textShapesBySeqNum(),
-  imgShapesBySeqNum(), images(), possibleImageShapes(),
+  m_numPages(0), textStringsById(), pagesBySeqNum(),
+  shapesBySeqNum(), images(),
   colors(), defaultColor(0, 0, 0), fonts(),
   defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
+  possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
   shapeCoordinatesBySeqNum()
 {
+}
+
+void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
+{
+  setCoordProps(coord);
+  write(painter);
+}
+
+void libmspub::MSPUBCollector::Shape::setCoordProps(Coordinate coord)
+{
+  owner->setRectCoordProps(coord, &props);
+}
+
+void libmspub::MSPUBCollector::TextShape::write(libwpg::WPGPaintInterface *painter)
+{
+  painter->startTextObject(props, WPXPropertyListVector());
+  for (unsigned i_lines = 0; i_lines < str.size(); ++i_lines)
+  {
+    WPXPropertyList paraProps = owner->getParaStyleProps(str[i_lines].style, str[i_lines].style.defaultCharStyleIndex);
+    painter->startTextLine(paraProps);
+    for (unsigned i_spans = 0; i_spans < str[i_lines].spans.size(); ++i_spans)
+    {
+      WPXString text;
+      appendCharacters(text, str[i_lines].spans[i_spans].chars);
+      WPXPropertyList charProps = owner->getCharStyleProps(str[i_lines].spans[i_spans].style, str[i_lines].style.defaultCharStyleIndex);
+      painter->startTextSpan(charProps);
+      painter->insertText(text);
+      painter->endTextSpan();
+    }
+    painter->endTextLine();
+  }
+  painter->endTextObject();
+}
+
+
+void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
+{
+  switch (type)
+  {
+  case ELLIPSE:
+    owner->setEllipseCoordProps(coord, &props);
+    break;
+  case RECTANGLE:
+  default:
+    owner->setRectCoordProps(coord, &props);
+    break;
+  };
+}
+
+void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *painter)
+{
+  switch(type)
+  {
+  case RECTANGLE:
+    painter->drawRectangle(props);
+    break;
+  case ELLIPSE:
+    painter->drawEllipse(props);
+    break;
+  default:
+    break;
+  }
+}
+
+libmspub::MSPUBCollector::ImgShape::ImgShape(GeometricShape from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) : 
+  GeometricShape(from.pageSeqNum, o), img(i)
+{
+  this->type = from.type;
+  this->props = from.props;
+  setMime_(imgType);
+}
+
+void libmspub::MSPUBCollector::ImgShape::setMime_(ImgType imgType)
+{
+  const char *mime;
+  switch (imgType)
+  {
+  case PNG:
+    mime = "image/png";
+    break;
+  case JPEG:
+    mime = "image/jpeg";
+    break;
+  default:
+    mime = "";
+    MSPUB_DEBUG_MSG(("Unknown image type %d passed to ImgShape constructor!\n", type));
+  }
+  props.insert("libwpg:mime-type", mime);
+}
+void libmspub::MSPUBCollector::ImgShape::write(libwpg::WPGPaintInterface *painter)
+{
+  painter->drawGraphicObject(props, img);
 }
 
 libmspub::MSPUBCollector::~MSPUBCollector()
@@ -80,27 +173,26 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
 
 bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
 {
-  std::map<unsigned, PageInfo>::iterator i_page = pagesBySeqNum.find(pageSeqNum);
-  if (i_page == pagesBySeqNum.end())
+  PageInfo *page = getIfExists(pagesBySeqNum, pageSeqNum);
+  if (!page)
   {
     MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in addTextShape!\n", pageSeqNum));
     return false;
   }
   else
   {
-    std::map<unsigned, std::vector<TextParagraph> >::iterator i_str = textStringsById.find(stringId);
-    if (i_str == textStringsById.end())
+    std::vector<TextParagraph> *str = getIfExists(textStringsById, stringId);
+    if (!str)
     {
       MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in addTextShape!\n", stringId));
       return false;
     }
     else
     {
-      std::pair<std::map<unsigned, TextShapeInfo>::iterator, bool> result =
-        textShapesBySeqNum.insert(std::pair<const unsigned, TextShapeInfo>(seqNum, TextShapeInfo(i_str->second)));
-      if (result.second)
+      if (! ptr_getIfExists(shapesBySeqNum, seqNum))
       {
-        i_page->second.textShapeReferences.push_back(result.first);
+        shapesBySeqNum.insert(seqNum, new TextShape(*str, this));
+        page->shapeSeqNums.push_back(seqNum);
         MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x\n", stringId));
         return true;
       }
@@ -113,13 +205,7 @@ bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, 
 bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
 {
   MSPUB_DEBUG_MSG(("Setting image index of shape with seqnum 0x%x to 0x%x\n", seqNum, index));
-  std::map<unsigned, UnknownShapeInfo>::iterator i = possibleImageShapes.find(seqNum);
-  if (i != possibleImageShapes.end())
-  {
-    i->second.imgIndex = index;
-    return true;
-  }
-  return false;
+  return shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
 }
 
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
@@ -156,27 +242,31 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
 
 void libmspub::MSPUBCollector::assignImages()
 {
-  for (std::map<unsigned, UnknownShapeInfo>::iterator i = possibleImageShapes.begin(); i != possibleImageShapes.end(); ++i)
+  for (unsigned i = 0; i < possibleImageShapeSeqNums.size(); ++i)
   {
-    if (i->second.imgIndex > 0 && i->second.imgIndex <= images.size())
+    unsigned *index = getIfExists(shapeImgIndicesBySeqNum, possibleImageShapeSeqNums[i]);
+    GeometricShape *shape = (GeometricShape *)ptr_getIfExists(shapesBySeqNum, possibleImageShapeSeqNums[i]);
+    if (!shape)
     {
-      std::pair<std::map<unsigned, ImgShapeInfo>::iterator, bool> result =
-        imgShapesBySeqNum.insert(std::pair<unsigned, ImgShapeInfo>(i->first, ImgShapeInfo(images[i->second.imgIndex - 1].first, images[i->second.imgIndex - 1].second, i->second.props)));
-      if (result.second)
-      {
-        std::map<unsigned, PageInfo>::iterator i_pg = pagesBySeqNum.find(i->second.pageSeqNum);
-        if (i_pg != pagesBySeqNum.end())
-        {
-          i_pg->second.imgShapeReferences.push_back(result.first);
-        }
-      }
+      MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", possibleImageShapeSeqNums[i]));
+      return;
+    }
+    if (index && *index - 1 < images.size())
+    {
+      ImgShape *toInsert = new ImgShape(*shape, images[*index - 1].first, images[*index - 1].second, this);
+      shapesBySeqNum.erase(possibleImageShapeSeqNums[i]);
+      shapesBySeqNum.insert(possibleImageShapeSeqNums[i], toInsert);
     }
     else
     {
-      std::map<unsigned, PageInfo>::iterator i_pg = pagesBySeqNum.find(i->second.pageSeqNum);
-      if (i_pg != pagesBySeqNum.end())
+      ShapeType *type = getIfExists(shapeTypesBySeqNum, possibleImageShapeSeqNums[i]);
+      if (type)
       {
-        i_pg->second.geometricShapeReferences.push_back(i);
+        shape->type = *type;
+      }
+      else
+      {
+        MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", possibleImageShapeSeqNums[i]));
       }
     }
   }
@@ -266,52 +356,28 @@ bool libmspub::MSPUBCollector::go()
   assignImages();
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
-    if (i->second.textShapeReferences.size() >  0 || i->second.imgShapeReferences.size() > 0 || i->second.geometricShapeReferences.size() > 0)
+    const std::vector<unsigned> &shapeSeqNums = i->second.shapeSeqNums; // for readability
+    if (shapeSeqNums.size() > 0)
     {
       m_painter->startGraphics(m_commonPageProperties);
-      for (std::vector<std::map<unsigned, TextShapeInfo>::iterator>::const_iterator j = i->second.textShapeReferences.begin();
-           j != i->second.textShapeReferences.end(); ++j)
+      for (unsigned i_seqNums = 0; i_seqNums < shapeSeqNums.size(); ++i_seqNums)
       {
-        setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
-        m_painter->startTextObject((*j)->second.props, WPXPropertyListVector());
-        for (std::vector<TextParagraph>::const_iterator k = (*j)->second.str.begin(); k != (*j)->second.str.end(); ++k)
+        Shape *shape = ptr_getIfExists(shapesBySeqNum, shapeSeqNums[i_seqNums]);
+        if (shape)
         {
-          WPXPropertyList paraProps = getParaStyleProps(k->style, k->style.defaultCharStyleIndex);
-          m_painter->startTextLine(paraProps);
-          for (std::vector<TextSpan>::const_iterator l = k->spans.begin(); l != k->spans.end(); ++l)
+          Coordinate *coord = getIfExists(shapeCoordinatesBySeqNum, shapeSeqNums[i_seqNums]);
+          if (coord)
           {
-            WPXString text;
-            appendCharacters(text, l->chars);
-            WPXPropertyList charProps = getCharStyleProps(l->style, k->style.defaultCharStyleIndex);
-            m_painter->startTextSpan(charProps);
-            m_painter->insertText(text);
-            m_painter->endTextSpan();
+            shape->output(m_painter, *coord);
           }
-          m_painter->endTextLine();
+          else
+          {
+            MSPUB_DEBUG_MSG(("Could not output shape of seqnum 0x%x: no coordinates provided\n", shapeSeqNums[i_seqNums]));
+          }
         }
-        m_painter->endTextObject();
-      }
-      for (std::vector<std::map<unsigned, ImgShapeInfo>::iterator>::const_iterator j = i->second.imgShapeReferences.begin();
-           j != i->second.imgShapeReferences.end(); ++j)
-      {
-        setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
-        m_painter->drawGraphicObject((*j)->second.props, (*j)->second.img);
-      }
-      for (std::vector<std::map<unsigned, UnknownShapeInfo>::iterator>::const_iterator j = i->second.geometricShapeReferences.begin();
-           j != i->second.geometricShapeReferences.end(); ++j)
-      {
-        switch (shapeTypesBySeqNum[(*j)->first])
+        else
         {
-        case RECTANGLE:
-          setRectCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
-          m_painter->drawRectangle((*j)->second.props);
-          break;
-        case ELLIPSE:
-          setEllipseCoordProps(shapeCoordinatesBySeqNum[(*j)->first], &((*j)->second.props));
-          m_painter->drawEllipse((*j)->second.props);
-          break;
-        default:
-          break;
+          MSPUB_DEBUG_MSG(("No shape with seqnum 0x%x found in collector\n", shapeSeqNums[i_seqNums]));
         }
       }
       m_painter->endGraphics();
@@ -357,7 +423,13 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
 {
-  possibleImageShapes.insert(std::pair<unsigned, UnknownShapeInfo>(seqNum, UnknownShapeInfo(pageSeqNum)));
+  shapesBySeqNum.insert(seqNum, new GeometricShape(pageSeqNum, this));
+  possibleImageShapeSeqNums.push_back(seqNum);
+  PageInfo *page = getIfExists(pagesBySeqNum, pageSeqNum);
+  if (page)
+  {
+    page->shapeSeqNums.push_back(seqNum);
+  }
   return true;
 }
 

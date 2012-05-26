@@ -46,6 +46,9 @@ namespace libmspub
 
 class MSPUBCollector
 {
+  friend class Shape;
+  friend class TextShape;
+  friend class GeometricShape;
 public:
   typedef std::list<ContentChunkReference>::const_iterator ccr_iterator_t;
 
@@ -82,48 +85,53 @@ private:
     Coordinate() : xs(0), ys(0), xe(0), ye(0) { }
     int xs, ys, xe, ye;
   };
-  struct TextShapeInfo
+  struct Shape
   {
-    TextShapeInfo(std::vector<TextParagraph> s) : str(s), props() { }
-    std::vector<TextParagraph> str;
+    Shape(MSPUBCollector *o) : props(), owner(o) { }
+    void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
+    virtual ~Shape()
+    {
+    }
     WPXPropertyList props;
+  protected:
+    virtual void setCoordProps(Coordinate coord);
+    virtual void write(libwpg::WPGPaintInterface *painter) = 0;
+    MSPUBCollector *owner;
   };
-  struct UnknownShapeInfo
+  struct TextShape : public Shape
   {
-    UnknownShapeInfo(unsigned psn) : pageSeqNum(psn), imgIndex(0), props() { }
+    TextShape(std::vector<TextParagraph> s, MSPUBCollector *o) : Shape(o), str(s) { }
+    std::vector<TextParagraph> str;
+  protected:
+    void write(libwpg::WPGPaintInterface *painter);
+  };
+  struct GeometricShape : public Shape
+  {
+    GeometricShape(unsigned psn, MSPUBCollector *o) : Shape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE) { }
     unsigned pageSeqNum;
     unsigned imgIndex;
-    WPXPropertyList props;
+    ShapeType type;
+  protected:
+    void setCoordProps(Coordinate coord);
+    virtual void write(libwpg::WPGPaintInterface *painter);
   };
-  struct ImgShapeInfo
+  struct ImgShape : public GeometricShape
   {
-    ImgShapeInfo(ImgType type, WPXBinaryData i, WPXPropertyList p) : img(i), props(p)
+    ImgShape(GeometricShape from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
+    ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList p, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
     {
-      const char *mime;
-      switch (type)
-      {
-      case PNG:
-        mime = "image/png";
-        break;
-      case JPEG:
-        mime = "image/jpeg";
-        break;
-      default:
-        mime = "";
-        MSPUB_DEBUG_MSG(("Unknown image type %d passed to ImgShapeInfo constructor!\n", type));
-      }
-      this->props.insert("libwpg:mime-type", mime);
+      setMime_(type);
     }
-
     WPXBinaryData img;
-    WPXPropertyList props;
+  protected:
+    virtual void write(libwpg::WPGPaintInterface *painter);
+  private:
+    void setMime_(ImgType type);
   };
   struct PageInfo
   {
-    PageInfo() : textShapeReferences(), imgShapeReferences(), geometricShapeReferences() { }
-    std::vector<std::map<unsigned, TextShapeInfo>::iterator> textShapeReferences;
-    std::vector<std::map<unsigned, ImgShapeInfo>::iterator> imgShapeReferences;
-    std::vector<std::map<unsigned, UnknownShapeInfo>::iterator> geometricShapeReferences;
+    PageInfo() : shapeSeqNums() { }
+    std::vector<unsigned> shapeSeqNums;
   };
 
   MSPUBCollector(const MSPUBCollector &);
@@ -137,16 +145,16 @@ private:
   unsigned short m_numPages;
   std::map<unsigned, std::vector<TextParagraph> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
-  std::map<unsigned, TextShapeInfo> textShapesBySeqNum;
-  std::map<unsigned, ImgShapeInfo> imgShapesBySeqNum;
+  boost::ptr_map<unsigned, Shape> shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
-  std::map<unsigned, UnknownShapeInfo> possibleImageShapes;
   std::vector<Color> colors;
   Color defaultColor;
   std::vector<std::vector<unsigned char> > fonts;
   std::vector<CharacterStyle> defaultCharStyles;
   std::vector<ParagraphStyle> defaultParaStyles;
   std::map<unsigned, ShapeType> shapeTypesBySeqNum;
+  std::vector<unsigned> possibleImageShapeSeqNums;
+  std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
 
   // helper functions

@@ -106,7 +106,7 @@ void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *
   }
 }
 
-libmspub::MSPUBCollector::ImgShape::ImgShape(GeometricShape from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) : 
+libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) : 
   GeometricShape(from.pageSeqNum, o), img(i)
 {
   this->type = from.type;

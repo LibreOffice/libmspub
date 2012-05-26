@@ -33,6 +33,9 @@
 #include <vector>
 #include <map>
 #include <string>
+
+#include <boost/ptr_container/ptr_map.hpp>
+
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
 
@@ -97,6 +100,11 @@ private:
     virtual void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter) = 0;
     MSPUBCollector *owner;
+  protected:
+    Shape() : props(), owner(NULL) { }
+  private:
+    Shape(const Shape &) : props(), owner(NULL) { }
+    Shape &operator=(const Shape &) { return *this; }
   };
   struct TextShape : public Shape
   {
@@ -104,6 +112,9 @@ private:
     std::vector<TextParagraph> str;
   protected:
     void write(libwpg::WPGPaintInterface *painter);
+  private:
+    TextShape(const TextShape &) : str() { }
+    TextShape &operator=(const TextShape &) { return *this; }
   };
   struct GeometricShape : public Shape
   {
@@ -114,10 +125,14 @@ private:
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
+    GeometricShape() : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
+  private:
+    GeometricShape(const GeometricShape &) : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
+    GeometricShape &operator=(const GeometricShape &) { return *this; }
   };
   struct ImgShape : public GeometricShape
   {
-    ImgShape(GeometricShape from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
+    ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
     ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList p, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
     {
       setMime_(type);
@@ -127,6 +142,8 @@ private:
     virtual void write(libwpg::WPGPaintInterface *painter);
   private:
     void setMime_(ImgType type);
+    ImgShape(const ImgShape &) : img() { }
+    ImgShape &operator=(const ImgShape &) { return *this; }
   };
   struct PageInfo
   {

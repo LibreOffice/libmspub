@@ -54,6 +54,18 @@ PKG_CHECK_MODULES([ZLIB],[zlib],[],[
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 
+
+# ===========================
+# Find required boost headers
+# ===========================
+
+AC_CHECK_HEADER(
+	boost/ptr_container/ptr_map.hpp,
+	[],
+	[AC_MSG_ERROR(boost/ptr_container/ptr_map.hpp not found. install boost)],
+	[]
+)
+
 # =================================
 # Libtool/Version Makefile settings
 # =================================

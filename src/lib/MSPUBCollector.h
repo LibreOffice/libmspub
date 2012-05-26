@@ -104,7 +104,10 @@ private:
     Shape() : props(), owner(NULL) { }
   private:
     Shape(const Shape &) : props(), owner(NULL) { }
-    Shape &operator=(const Shape &) { return *this; }
+    Shape &operator=(const Shape &)
+    {
+      return *this;
+    }
   };
   struct TextShape : public Shape
   {
@@ -114,7 +117,10 @@ private:
     void write(libwpg::WPGPaintInterface *painter);
   private:
     TextShape(const TextShape &) : str() { }
-    TextShape &operator=(const TextShape &) { return *this; }
+    TextShape &operator=(const TextShape &)
+    {
+      return *this;
+    }
   };
   struct GeometricShape : public Shape
   {
@@ -128,7 +134,10 @@ private:
     GeometricShape() : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
   private:
     GeometricShape(const GeometricShape &) : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
-    GeometricShape &operator=(const GeometricShape &) { return *this; }
+    GeometricShape &operator=(const GeometricShape &)
+    {
+      return *this;
+    }
   };
   struct ImgShape : public GeometricShape
   {
@@ -143,7 +152,10 @@ private:
   private:
     void setMime_(ImgType type);
     ImgShape(const ImgShape &) : img() { }
-    ImgShape &operator=(const ImgShape &) { return *this; }
+    ImgShape &operator=(const ImgShape &)
+    {
+      return *this;
+    }
   };
   struct PageInfo
   {

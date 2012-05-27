@@ -37,11 +37,17 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
   m_numPages(0), textStringsById(), pagesBySeqNum(),
   shapesBySeqNum(), images(),
-  colors(), defaultColor(0, 0, 0), fonts(),
+  textColors(), defaultColor(0, 0, 0), fonts(),
   defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
-  shapeCoordinatesBySeqNum(), shapeLineAndFillColorsBySeqNum()
+  shapeCoordinatesBySeqNum(), shapeLineAndFillColorsBySeqNum(),
+  paletteColors()
 {
+}
+
+void libmspub::MSPUBCollector::addPaletteColor(Color c)
+{
+  paletteColors.push_back(c);
 }
 
 void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
@@ -107,8 +113,10 @@ void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *
   }
 }
 
-void libmspub::MSPUBCollector::GeometricShape::setColorProps(Color line, Color fill)
+void libmspub::MSPUBCollector::GeometricShape::setColorProps(unsigned lineReference, unsigned fillReference)
 {
+  Color line = owner->getColorByReference(lineReference);
+  Color fill = owner->getColorByReference(fillReference);
   graphicsProps.insert("draw:fill", "solid");
   graphicsProps.insert("draw:fill-color", getColorString(fill));
   graphicsProps.insert("draw:stroke", "solid");
@@ -217,10 +225,10 @@ bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   return shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
 }
 
-bool libmspub::MSPUBCollector::setShapeColors(unsigned seqNum, Color line, Color fill)
+bool libmspub::MSPUBCollector::setShapeColors(unsigned seqNum, unsigned line, unsigned fill)
 {
-  return shapeLineAndFillColorsBySeqNum.insert(std::pair<const unsigned, std::pair<Color, Color> >(
-           seqNum, std::pair<Color, Color>(line, fill))).second;
+  return shapeLineAndFillColorsBySeqNum.insert(std::pair<const unsigned, std::pair<unsigned, unsigned> >(
+           seqNum, std::pair<unsigned, unsigned>(line, fill))).second;
 }
 
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
@@ -283,7 +291,7 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", possibleImageShapeSeqNums[i]));
       }
-      std::pair<Color, Color> *colors = getIfExists(shapeLineAndFillColorsBySeqNum, possibleImageShapeSeqNums[i]);
+      std::pair<unsigned, unsigned> *colors = getIfExists(shapeLineAndFillColorsBySeqNum, possibleImageShapeSeqNums[i]);
       if (colors)
       {
         shape->setColorProps(colors->first, colors->second);
@@ -342,13 +350,13 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("fo:font-size", defaultCharStyle.textSizeInPt);
   }
-  if (style.colorIndex >= 0 && (size_t)style.colorIndex < colors.size())
+  if (style.colorIndex >= 0 && (size_t)style.colorIndex < textColors.size())
   {
-    ret.insert("fo:color", getColorString(colors[style.colorIndex]));
+    ret.insert("fo:color", getColorString(getColorByReference(textColors[style.colorIndex])));
   }
-  else if (defaultCharStyle.colorIndex >= 0 && (size_t)defaultCharStyle.colorIndex < colors.size())
+  else if (defaultCharStyle.colorIndex >= 0 && (size_t)defaultCharStyle.colorIndex < textColors.size())
   {
-    ret.insert("fo:color", getColorString(colors[defaultCharStyle.colorIndex]));
+    ret.insert("fo:color", getColorString(getColorByReference(textColors[defaultCharStyle.colorIndex])));
   }
   else
   {
@@ -373,6 +381,10 @@ WPXString libmspub::MSPUBCollector::getColorString(const Color &color)
 
 bool libmspub::MSPUBCollector::go()
 {
+  if (paletteColors.size() < 8)
+  {
+    paletteColors.insert(paletteColors.begin(), Color());
+  }
   assignImages();
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
@@ -453,9 +465,23 @@ bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::addColor(unsigned char r, unsigned char g, unsigned char b)
+void libmspub::MSPUBCollector::addTextColor(unsigned c)
 {
-  colors.push_back(Color(r, g, b));
+  textColors.push_back(c);
+}
+
+libmspub::Color libmspub::MSPUBCollector::getColorByReference(unsigned c) const
+{
+  unsigned char type = (c >> 24) & 0xFF;
+  if (type == 0x08)
+  {
+    if ((c & 0xFFFFFF) >= paletteColors.size())
+    {
+      return defaultColor;
+    }
+    return paletteColors[c & 0xFFFFFF];
+  }
+  return Color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF);
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -68,17 +68,18 @@ public:
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
-  bool setShapeColors(unsigned seqNum, Color line, Color fill);
+  bool setShapeColors(unsigned seqNum, unsigned line, unsigned fill);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
 
-  void addColor(unsigned char r, unsigned char g, unsigned char b);
+  void addTextColor(unsigned c);
   void setDefaultColor(unsigned char r, unsigned char g, unsigned char b);
   void addFont(std::vector<unsigned char> name);
 
   void addDefaultCharacterStyle(const CharacterStyle &style);
   void addDefaultParagraphStyle(const ParagraphStyle &style);
+  void addPaletteColor(Color);
 
   bool go();
 private:
@@ -130,7 +131,7 @@ private:
     unsigned pageSeqNum;
     unsigned imgIndex;
     ShapeType type;
-    void setColorProps(Color line, Color fill);
+    void setColorProps(unsigned line, unsigned fill);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
@@ -179,7 +180,7 @@ private:
   std::map<unsigned, PageInfo> pagesBySeqNum;
   boost::ptr_map<unsigned, Shape> shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
-  std::vector<Color> colors;
+  std::vector<unsigned> textColors;
   Color defaultColor;
   std::vector<std::vector<unsigned char> > fonts;
   std::vector<CharacterStyle> defaultCharStyles;
@@ -188,7 +189,8 @@ private:
   std::vector<unsigned> possibleImageShapeSeqNums;
   std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
-  std::map<unsigned, std::pair<Color, Color> > shapeLineAndFillColorsBySeqNum;
+  std::map<unsigned, std::pair<unsigned, unsigned> > shapeLineAndFillColorsBySeqNum;
+  std::vector<Color> paletteColors;
 
   // helper functions
   void assignImages();
@@ -197,6 +199,7 @@ private:
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);
+  Color getColorByReference(unsigned c) const;
 };
 
 } // namespace libmspub

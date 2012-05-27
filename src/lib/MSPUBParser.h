@@ -102,7 +102,6 @@ private:
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
 
-  void addAllColors() const;
   void assignShapeColors() const;
 
   WPXInputStream *m_input;
@@ -112,9 +111,6 @@ private:
   std::vector<ContentChunkReference> m_shapeChunks;
   std::vector<ContentChunkReference> m_paletteChunks;
   std::vector<ContentChunkReference> m_unknownChunks;
-  std::vector<Color> m_colors;
-  std::vector<std::pair<unsigned, unsigned> > m_paletteColorReferences;
-  std::vector<Color> m_paletteColors;
   std::map<unsigned, std::pair<unsigned, unsigned> > m_colorDwordsBySeqNum;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;

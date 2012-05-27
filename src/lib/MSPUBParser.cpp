@@ -44,8 +44,8 @@
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
-    m_paletteChunks(), m_unknownChunks(), m_colors(), m_paletteColorReferences(),
-    m_paletteColors(), m_colorDwordsBySeqNum(),
+    m_paletteChunks(), m_unknownChunks(),
+    m_colorDwordsBySeqNum(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
@@ -161,34 +161,7 @@ void libmspub::MSPUBParser::assignShapeColors() const
   {
     const unsigned &line = i->second.first;
     const unsigned &fill = i->second.second;
-    unsigned char lineType = (line >> 24) & 0xFF;
-    unsigned char fillType = (fill >> 24) & 0xFF;
-    Color lineColor, fillColor;
-    if (lineType == 0x08)
-    {
-      if ((line & 0xFFFFFF) >= m_paletteColors.size())
-      {
-        continue;
-      }
-      lineColor = m_paletteColors[line & 0xFFFFFF];
-    }
-    else
-    {
-      lineColor = Color(line & 0xFF, (line >> 8) & 0xFF, (line >> 16) & 0xFF);
-    }
-    if (fillType == 0x08)
-    {
-      if ((fill & 0xFFFFFF) >= m_paletteColors.size())
-      {
-        continue;
-      }
-      fillColor = m_paletteColors[fill & 0xFFFFFF];
-    }
-    else
-    {
-      fillColor = Color(fill & 0xFF, (fill >> 8) & 0xFF, (fill >> 16) & 0xFF);
-    }
-    m_collector->setShapeColors(i->first, lineColor, fillColor);
+    m_collector->setShapeColors(i->first, line, fill);
   }
 }
 
@@ -284,11 +257,6 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           return false;
         }
       }
-      if (m_paletteColors.size() < 8)
-      {
-        m_paletteColors.insert(m_paletteColors.begin(), Color(0, 0, 0));
-      }
-      addAllColors();
       input->seek(m_documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, m_documentChunk))
       {
@@ -686,17 +654,7 @@ void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkR
       MSPUBBlockInfo info = parseBlock(input, true);
       if (info.id == 0x01)
       {
-        //FIXME : Will all of this fail on big-endian systems?
-        MSPUB_DEBUG_MSG(("Found color 0x%x\n", info.data));
-        unsigned char colorType = (info.data >> 24) & 0xFF;
-        if (colorType == 0x08)
-        {
-          m_paletteColorReferences.push_back(std::pair<unsigned, unsigned>(m_colors.size(), info.data & 0xFFFFFF));
-        }
-        else
-        {
-          m_colors.push_back(Color(info.data & 0xFF, (info.data >> 8) & 0xFF, (info.data >> 16) & 0xFF));
-        }
+        m_collector->addTextColor(info.data);
       }
     }
   }
@@ -1192,47 +1150,8 @@ void libmspub::MSPUBParser::parsePaletteEntry(WPXInputStream *input, MSPUBBlockI
     MSPUBBlockInfo subInfo = parseBlock(input, true);
     if (subInfo.id == 0x01)
     {
-      m_paletteColors.push_back(Color(subInfo.data & 0xFF, (subInfo.data >> 8) & 0xFF, (subInfo.data >> 16) & 0xFF));
+      m_collector->addPaletteColor(Color(subInfo.data & 0xFF, (subInfo.data >> 8) & 0xFF, (subInfo.data >> 16) & 0xFF));
     }
-  }
-}
-
-void libmspub::MSPUBParser::addAllColors() const
-{
-  std::vector<std::pair<unsigned, unsigned> >::const_iterator i_paletteReference = m_paletteColorReferences.begin();
-  for (unsigned i = 0; i < m_colors.size(); ++i)
-  {
-    while (i_paletteReference != m_paletteColorReferences.end() && i_paletteReference->first <= i)
-    {
-      if (i_paletteReference->second < m_paletteColors.size())
-      {
-        const Color &c = m_paletteColors[i_paletteReference->second];
-        m_collector->addColor(c.r, c.g, c.b);
-      }
-      else
-      {
-        m_collector->addColor(0, 0, 0);
-      }
-      ++i_paletteReference;
-    }
-    m_collector->addColor(m_colors[i].r, m_colors[i].g, m_colors[i].b);
-  }
-  while (i_paletteReference != m_paletteColorReferences.end())
-  {
-    if (i_paletteReference->second < m_paletteColors.size())
-    {
-      const Color &c = m_paletteColors[i_paletteReference->second];
-      m_collector->addColor(c.r, c.g, c.b);
-    }
-    else
-    {
-      m_collector->addColor(0, 0, 0);
-    }
-    ++i_paletteReference;
-  }
-  if (m_paletteColors.size() > 0)
-  {
-    m_collector->setDefaultColor(m_paletteColors[0].r, m_paletteColors[0].g, m_paletteColors[0].b);
   }
 }
 

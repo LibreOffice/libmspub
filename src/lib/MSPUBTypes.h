@@ -123,6 +123,7 @@ struct TextParagraph
 
 struct Color
 {
+  Color() : r(0), g(0), b(0) { }
   Color(unsigned char red, unsigned char green, unsigned char blue) : r(red), g(green), b(blue) { }
   unsigned char r, g, b;
 };

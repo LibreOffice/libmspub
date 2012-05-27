@@ -35,6 +35,8 @@
 #define FIELDID_YE         0x2004
 #define FIELDID_PXID       0x4104
 #define FIELDID_SHAPE_ID   0x6801
+#define FIELDID_FILL_COLOR 0x0181
+#define FIELDID_LINE_COLOR 0x01C0
 
 
 #endif /* __ESCHERFIELDIDS_H__ */

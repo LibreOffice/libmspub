@@ -45,7 +45,8 @@
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(), m_colors(), m_paletteColorReferences(),
-    m_paletteColors(), m_documentChunk(), m_lastSeenSeqNum(-1),
+    m_paletteColors(), m_colorDwordsBySeqNum(),
+    m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
 }
@@ -148,7 +149,47 @@ bool libmspub::MSPUBParser::parse()
   }
   delete escher;
 
+  assignShapeColors();
+
   return m_collector->go();
+}
+
+void libmspub::MSPUBParser::assignShapeColors() const
+{
+  for (std::map<unsigned, std::pair<unsigned, unsigned> >::const_iterator i = m_colorDwordsBySeqNum.begin();
+       i != m_colorDwordsBySeqNum.end(); ++i)
+  {
+    const unsigned &line = i->second.first;
+    const unsigned &fill = i->second.second;
+    unsigned char lineType = (line >> 24) & 0xFF;
+    unsigned char fillType = (fill >> 24) & 0xFF;
+    Color lineColor, fillColor;
+    if (lineType == 0x08)
+    {
+      if ((line & 0xFFFFFF) >= m_paletteColors.size())
+      {
+        continue;
+      }
+      lineColor = m_paletteColors[line & 0xFFFFFF];
+    }
+    else
+    {
+      lineColor = Color(line & 0xFF, (line >> 8) & 0xFF, (line >> 16) & 0xFF);
+    }
+    if (fillType == 0x08)
+    {
+      if ((fill & 0xFFFFFF) >= m_paletteColors.size())
+      {
+        continue;
+      }
+      fillColor = m_paletteColors[fill & 0xFFFFFF];
+    }
+    else
+    {
+      fillColor = Color(fill & 0xFF, (fill >> 8) & 0xFF, (fill >> 16) & 0xFF);
+    }
+    m_collector->setShapeColors(i->first, lineColor, fillColor);
+  }
 }
 
 libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
@@ -874,39 +915,43 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
         if (findEscherContainer(input, sp, &cData, OFFICE_ART_CLIENT_DATA))
         {
           std::map<unsigned short, unsigned> dataValues = extractEscherValues(input, cData);
-          std::map<unsigned short, unsigned>::const_iterator i_shapeSeqNum = dataValues.find(FIELDID_SHAPE_ID);
-          if (i_shapeSeqNum != dataValues.end())
+          unsigned *shapeSeqNum = getIfExists(dataValues, FIELDID_SHAPE_ID);
+          if (shapeSeqNum)
           {
             input->seek(sp.contentsOffset, WPX_SEEK_SET);
             if (findEscherContainer(input, sp, &cAnchor, OFFICE_ART_CLIENT_ANCHOR))
             {
-              MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", i_shapeSeqNum->second));
+              MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", *shapeSeqNum));
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
               if (findEscherContainer(input, sp, &cFopt, OFFICE_ART_FOPT))
               {
                 std::map<unsigned short, unsigned> foptValues = extractEscherValues(input, cFopt);
-                std::map<unsigned short, unsigned>::const_iterator i_pxId = foptValues.find(FIELDID_PXID);
-                if (i_pxId != foptValues.end())
+                unsigned *pxId = getIfExists(foptValues, FIELDID_PXID);
+                if (pxId)
                 {
-                  MSPUB_DEBUG_MSG(("Current Escher shape has pxId %d\n", i_pxId->second));
-                  if (i_pxId->second <= escherDelayIndices.size() && escherDelayIndices[i_pxId->second - 1] >= 0)
+                  MSPUB_DEBUG_MSG(("Current Escher shape has pxId %d\n", *pxId));
+                  if (*pxId <= escherDelayIndices.size() && escherDelayIndices[*pxId - 1] >= 0)
                   {
-                    m_collector->setShapeImgIndex(i_shapeSeqNum->second, escherDelayIndices[i_pxId->second - 1]);
+                    m_collector->setShapeImgIndex(*shapeSeqNum, escherDelayIndices[*pxId - 1]);
                   }
                   else
                   {
                     MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
                   }
                 }
+                unsigned *lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
+                unsigned *fillColor = getIfExists(foptValues, FIELDID_FILL_COLOR);
+                m_colorDwordsBySeqNum[*shapeSeqNum] = std::pair<unsigned, unsigned>(
+                                                        lineColor ? *lineColor : 0x08000000, fillColor ? *fillColor : 0x08000000); //FIXME: what defaults to use?
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
               if (findEscherContainer(input, sp, &cFsp, OFFICE_ART_FSP))
               {
-                m_collector->setShapeType(i_shapeSeqNum->second, (ShapeType)(cFsp.initial >> 4));
+                m_collector->setShapeType(*shapeSeqNum, (ShapeType)(cFsp.initial >> 4));
               }
 
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
-              m_collector->setShapeCoordinatesInEmu(i_shapeSeqNum->second, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
+              m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
               input->seek(sp.contentsOffset + sp.contentsLength + getEscherElementTailLength(sp.type), WPX_SEEK_SET);
             }
           }

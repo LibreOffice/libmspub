@@ -103,6 +103,7 @@ private:
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
 
   void addAllColors() const;
+  void assignShapeColors() const;
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
@@ -114,6 +115,7 @@ private:
   std::vector<Color> m_colors;
   std::vector<std::pair<unsigned, unsigned> > m_paletteColorReferences;
   std::vector<Color> m_paletteColors;
+  std::map<unsigned, std::pair<unsigned, unsigned> > m_colorDwordsBySeqNum;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;

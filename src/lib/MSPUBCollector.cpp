@@ -40,12 +40,13 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   colors(), defaultColor(0, 0, 0), fonts(),
   defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
-  shapeCoordinatesBySeqNum()
+  shapeCoordinatesBySeqNum(), shapeLineAndFillColorsBySeqNum()
 {
 }
 
 void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
+  owner->m_painter->setStyle(graphicsProps, WPXPropertyListVector());
   setCoordProps(coord);
   write(painter);
 }
@@ -104,6 +105,14 @@ void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *
   default:
     break;
   }
+}
+
+void libmspub::MSPUBCollector::GeometricShape::setColorProps(Color line, Color fill)
+{
+  graphicsProps.insert("draw:fill", "solid");
+  graphicsProps.insert("draw:fill-color", getColorString(fill));
+  graphicsProps.insert("draw:stroke", "solid");
+  graphicsProps.insert("svg:stroke-color", getColorString(line));
 }
 
 libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
@@ -208,6 +217,12 @@ bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   return shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
 }
 
+bool libmspub::MSPUBCollector::setShapeColors(unsigned seqNum, Color line, Color fill)
+{
+  return shapeLineAndFillColorsBySeqNum.insert(std::pair<const unsigned, std::pair<Color, Color> >(
+           seqNum, std::pair<Color, Color>(line, fill))).second;
+}
+
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
 {
   int xs = coord.xs, ys = coord.ys, xe = coord.xe, ye = coord.ye;
@@ -267,6 +282,11 @@ void libmspub::MSPUBCollector::assignImages()
       else
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", possibleImageShapeSeqNums[i]));
+      }
+      std::pair<Color, Color> *colors = getIfExists(shapeLineAndFillColorsBySeqNum, possibleImageShapeSeqNums[i]);
+      if (colors)
+      {
+        shape->setColorProps(colors->first, colors->second);
       }
     }
   }

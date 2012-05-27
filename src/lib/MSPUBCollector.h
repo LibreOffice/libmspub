@@ -68,6 +68,7 @@ public:
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
+  bool setShapeColors(unsigned seqNum, Color line, Color fill);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
@@ -90,20 +91,21 @@ private:
   };
   struct Shape
   {
-    Shape(MSPUBCollector *o) : props(), owner(o) { }
+    Shape(MSPUBCollector *o) : props(), graphicsProps(), owner(o) { }
     void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
     virtual ~Shape()
     {
     }
     WPXPropertyList props;
+    WPXPropertyList graphicsProps;
   protected:
     virtual void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter) = 0;
     MSPUBCollector *owner;
   protected:
-    Shape() : props(), owner(NULL) { }
+    Shape() : props(), graphicsProps(), owner(NULL) { }
   private:
-    Shape(const Shape &) : props(), owner(NULL) { }
+    Shape(const Shape &) : props(), graphicsProps(), owner(NULL) { }
     Shape &operator=(const Shape &)
     {
       return *this;
@@ -128,6 +130,7 @@ private:
     unsigned pageSeqNum;
     unsigned imgIndex;
     ShapeType type;
+    void setColorProps(Color line, Color fill);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
@@ -185,6 +188,7 @@ private:
   std::vector<unsigned> possibleImageShapeSeqNums;
   std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
+  std::map<unsigned, std::pair<Color, Color> > shapeLineAndFillColorsBySeqNum;
 
   // helper functions
   void assignImages();

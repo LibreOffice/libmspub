@@ -156,6 +156,16 @@ const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
     return "image/png";
   case JPEG:
     return "image/jpeg";
+  case DIB:
+    return "image/dib";
+  case PICT:
+    return "image/pict";
+  case WMF:
+    return "image/wmf";
+  case EMF:
+    return "image/emf";
+  case TIFF:
+    return "image/tiff";
   default:
     return "";
     MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));

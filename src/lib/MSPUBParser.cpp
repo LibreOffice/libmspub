@@ -161,6 +161,16 @@ libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
     return PNG;
   case OFFICE_ART_BLIP_JPEG:
     return JPEG;
+  case OFFICE_ART_BLIP_WMF:
+    return WMF;
+  case OFFICE_ART_BLIP_DIB:
+    return DIB;
+  case OFFICE_ART_BLIP_EMF:
+    return EMF;
+  case OFFICE_ART_BLIP_TIFF:
+    return TIFF;
+  case OFFICE_ART_BLIP_PICT:
+    return PICT;
   }
   return UNKNOWN;
 }
@@ -886,7 +896,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   }
                 }
                 unsigned *lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
-                Fill *ptr_fill = getNewFill(foptValues);
+                Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices);
                 m_collector->setShapeLineColor(*shapeSeqNum, lineColor ? *lineColor : 0x08000000);
                 if (ptr_fill)
                 {
@@ -912,7 +922,8 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
   return true;
 }
 
-libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties)
+libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
+  const std::vector<int> &escherDelayIndices)
 {
   // don't worry about memory leaks; everything created here is deleted when the Collector goes out of scope.
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
@@ -946,7 +957,11 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
   case BITMAP:
   {
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
-    return ptr_bgPxId ? new ImgFill(*ptr_bgPxId, m_collector) : NULL;
+    if (ptr_bgPxId && *ptr_bgPxId <= escherDelayIndices.size() && escherDelayIndices[*ptr_bgPxId - 1] >= 0)
+    {
+      return new ImgFill(escherDelayIndices[*ptr_bgPxId - 1], m_collector);
+    }
+    return NULL;
   }
   default:
     return NULL;

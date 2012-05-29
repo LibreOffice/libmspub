@@ -139,7 +139,12 @@ enum ImgType
 {
   UNKNOWN,
   PNG,
-  JPEG
+  JPEG,
+  WMF,
+  EMF,
+  TIFF,
+  DIB,
+  PICT
 };
 
 } // namespace libmspub

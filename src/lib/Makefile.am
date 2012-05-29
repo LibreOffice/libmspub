@@ -26,6 +26,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	libmspub_utils.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
+	FillType.h \
 	MSPUBBlockID.h \
 	MSPUBBlockType.h \
 	MSPUBCollector.h \

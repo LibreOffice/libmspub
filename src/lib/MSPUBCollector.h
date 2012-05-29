@@ -43,6 +43,7 @@
 #include "libmspub_utils.h"
 #include "MSPUBContentChunkType.h"
 #include "ShapeType.h"
+#include "Fill.h"
 
 namespace libmspub
 {
@@ -52,6 +53,10 @@ class MSPUBCollector
   friend class Shape;
   friend class TextShape;
   friend class GeometricShape;
+  friend class Fill;
+  friend class ImgFill;
+  friend class SolidFill;
+  friend class GradientFill;
 public:
   typedef std::list<ContentChunkReference>::const_iterator ccr_iterator_t;
 
@@ -68,7 +73,8 @@ public:
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
-  bool setShapeColors(unsigned seqNum, unsigned line, unsigned fill);
+  bool setShapeLineColor(unsigned seqNum, unsigned line);
+  bool setShapeFill(unsigned seqNum, Fill *fill);
 
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
@@ -103,7 +109,9 @@ private:
     virtual void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter) = 0;
     MSPUBCollector *owner;
-  protected:
+
+    virtual WPXPropertyListVector updateGraphicsProps();
+
     Shape() : props(), graphicsProps(), owner(NULL) { }
   private:
     Shape(const Shape &) : props(), graphicsProps(), owner(NULL) { }
@@ -127,17 +135,21 @@ private:
   };
   struct GeometricShape : public Shape
   {
-    GeometricShape(unsigned psn, MSPUBCollector *o) : Shape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE) { }
+    GeometricShape(unsigned psn, MSPUBCollector *o) : Shape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
     unsigned pageSeqNum;
     unsigned imgIndex;
     ShapeType type;
-    void setColorProps(unsigned line, unsigned fill);
+    unsigned line;
+    Fill *fill;
+    void setLine(unsigned line);
+    void setFill(Fill *fill);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
-    GeometricShape() : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
+    WPXPropertyListVector updateGraphicsProps();
+    GeometricShape() : pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
   private:
-    GeometricShape(const GeometricShape &) : pageSeqNum(0), imgIndex(0), type(RECTANGLE) { }
+    GeometricShape(const GeometricShape &) : pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
     GeometricShape &operator=(const GeometricShape &)
     {
       return *this;
@@ -151,6 +163,7 @@ private:
       setMime_(type);
     }
     WPXBinaryData img;
+    static const char *mimeByImgType(ImgType type);
   protected:
     virtual void write(libwpg::WPGPaintInterface *painter);
   private:
@@ -189,7 +202,8 @@ private:
   std::vector<unsigned> possibleImageShapeSeqNums;
   std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
-  std::map<unsigned, std::pair<unsigned, unsigned> > shapeLineAndFillColorsBySeqNum;
+  std::map<unsigned, unsigned > shapeLineColorsBySeqNum;
+  boost::ptr_map<unsigned, Fill> shapeFillsBySeqNum;
   std::vector<Color> paletteColors;
 
   // helper functions

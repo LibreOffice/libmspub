@@ -37,6 +37,7 @@
 #include <libwpg/libwpg.h>
 
 #include "MSPUBTypes.h"
+#include "Fill.h"
 
 class WPXInputStream;
 
@@ -101,8 +102,7 @@ private:
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
-
-  void assignShapeColors() const;
+  Fill *getNewFill(const std::map<unsigned short, unsigned> &foptValues);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
@@ -111,7 +111,6 @@ private:
   std::vector<ContentChunkReference> m_shapeChunks;
   std::vector<ContentChunkReference> m_paletteChunks;
   std::vector<ContentChunkReference> m_unknownChunks;
-  std::map<unsigned, std::pair<unsigned, unsigned> > m_colorDwordsBySeqNum;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;

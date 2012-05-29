@@ -41,11 +41,12 @@
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
 #include "ShapeType.h"
+#include "Fill.h"
+#include "FillType.h"
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(),
-    m_colorDwordsBySeqNum(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false)
 {
@@ -149,20 +150,7 @@ bool libmspub::MSPUBParser::parse()
   }
   delete escher;
 
-  assignShapeColors();
-
   return m_collector->go();
-}
-
-void libmspub::MSPUBParser::assignShapeColors() const
-{
-  for (std::map<unsigned, std::pair<unsigned, unsigned> >::const_iterator i = m_colorDwordsBySeqNum.begin();
-       i != m_colorDwordsBySeqNum.end(); ++i)
-  {
-    const unsigned &line = i->second.first;
-    const unsigned &fill = i->second.second;
-    m_collector->setShapeColors(i->first, line, fill);
-  }
 }
 
 libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
@@ -898,9 +886,12 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   }
                 }
                 unsigned *lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
-                unsigned *fillColor = getIfExists(foptValues, FIELDID_FILL_COLOR);
-                m_colorDwordsBySeqNum[*shapeSeqNum] = std::pair<unsigned, unsigned>(
-                                                        lineColor ? *lineColor : 0x08000000, fillColor ? *fillColor : 0x08000000); //FIXME: what defaults to use?
+                Fill *ptr_fill = getNewFill(foptValues);
+                m_collector->setShapeLineColor(*shapeSeqNum, lineColor ? *lineColor : 0x08000000);
+                if (ptr_fill)
+                {
+                  m_collector->setShapeFill(*shapeSeqNum, ptr_fill);
+                }
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
               if (findEscherContainer(input, sp, &cFsp, OFFICE_ART_FSP))
@@ -919,6 +910,47 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
     input->seek(input->tell() + getEscherElementTailLength(OFFICE_ART_DG_CONTAINER), WPX_SEEK_SET);
   }
   return true;
+}
+
+libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties)
+{
+  // don't worry about memory leaks; everything created here is deleted when the Collector goes out of scope.
+  const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
+  FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
+  switch (fillType)
+  {
+  case SOLID:
+  {
+    const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
+    if (ptr_fillColor)
+    {
+      return new SolidFill(*ptr_fillColor, m_collector);
+    }
+    return NULL;
+  }
+  case GRADIENT: //FIXME: The handling of multi-color gradients here is quite bad.
+  {
+    int angle;
+    const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);
+    unsigned firstColor, secondColor;
+    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR), *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
+    firstColor = ptr_firstColor ? *ptr_firstColor : 0x08000000;
+    secondColor = ptr_secondColor ? *ptr_secondColor : 0x08000000;
+    angle = ptr_angle ? *ptr_angle : 0;
+    angle >>= 16; //it's actually only 16 bits
+    GradientFill *ret = new GradientFill(m_collector, angle);
+    ret->addColor(firstColor, 0);
+    ret->addColor(secondColor, 100);
+    return ret;
+  }
+  case BITMAP:
+  {
+    const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
+    return ptr_bgPxId ? new ImgFill(*ptr_bgPxId, m_collector) : NULL;
+  }
+  default:
+    return NULL;
+  }
 }
 
 unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)

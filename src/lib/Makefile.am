@@ -22,6 +22,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBParser.cpp \
 	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
+	Fill.cpp \
 	libmspub_utils.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
@@ -34,7 +35,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \
 	libmspub_utils.h \
-	ShapeType.h
+	ShapeType.h \
+	Fill.h
 
 if OS_WIN32
 

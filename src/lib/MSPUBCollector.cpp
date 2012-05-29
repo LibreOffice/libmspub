@@ -40,8 +40,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   textColors(), defaultColor(0, 0, 0), fonts(),
   defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
-  shapeCoordinatesBySeqNum(), shapeLineAndFillColorsBySeqNum(),
-  paletteColors()
+  shapeCoordinatesBySeqNum(), shapeLineColorsBySeqNum(),
+  shapeFillsBySeqNum(), paletteColors()
 {
 }
 
@@ -50,9 +50,15 @@ void libmspub::MSPUBCollector::addPaletteColor(Color c)
   paletteColors.push_back(c);
 }
 
+WPXPropertyListVector libmspub::MSPUBCollector::Shape::updateGraphicsProps()
+{
+  return WPXPropertyListVector();
+}
+
 void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
-  owner->m_painter->setStyle(graphicsProps, WPXPropertyListVector());
+  WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
+  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
   setCoordProps(coord);
   write(painter);
 }
@@ -98,6 +104,17 @@ void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
   };
 }
 
+WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsProps()
+{
+  graphicsProps.insert("draw:stroke", "solid");
+  graphicsProps.insert("svg:stroke-color", getColorString(owner->getColorByReference(line)));
+  if (fill)
+  {
+    return fill->getProperties(&graphicsProps);
+  }
+  return WPXPropertyListVector();
+}
+
 void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
   switch(type)
@@ -113,14 +130,14 @@ void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *
   }
 }
 
-void libmspub::MSPUBCollector::GeometricShape::setColorProps(unsigned lineReference, unsigned fillReference)
+void libmspub::MSPUBCollector::GeometricShape::setFill(Fill *f)
 {
-  Color line = owner->getColorByReference(lineReference);
-  Color fill = owner->getColorByReference(fillReference);
-  graphicsProps.insert("draw:fill", "solid");
-  graphicsProps.insert("draw:fill-color", getColorString(fill));
-  graphicsProps.insert("draw:stroke", "solid");
-  graphicsProps.insert("svg:stroke-color", getColorString(line));
+  fill = f;
+}
+
+void libmspub::MSPUBCollector::GeometricShape::setLine(unsigned l)
+{
+  line = l;
 }
 
 libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
@@ -131,22 +148,23 @@ libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType
   setMime_(imgType);
 }
 
-void libmspub::MSPUBCollector::ImgShape::setMime_(ImgType imgType)
+const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
 {
-  const char *mime;
-  switch (imgType)
+  switch (type)
   {
   case PNG:
-    mime = "image/png";
-    break;
+    return "image/png";
   case JPEG:
-    mime = "image/jpeg";
-    break;
+    return "image/jpeg";
   default:
-    mime = "";
-    MSPUB_DEBUG_MSG(("Unknown image type %d passed to ImgShape constructor!\n", type));
+    return "";
+    MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
   }
-  props.insert("libwpg:mime-type", mime);
+}
+
+void libmspub::MSPUBCollector::ImgShape::setMime_(ImgType imgType)
+{
+  props.insert("libwpg:mime-type", mimeByImgType(imgType));
 }
 void libmspub::MSPUBCollector::ImgShape::write(libwpg::WPGPaintInterface *painter)
 {
@@ -225,10 +243,16 @@ bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   return shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
 }
 
-bool libmspub::MSPUBCollector::setShapeColors(unsigned seqNum, unsigned line, unsigned fill)
+bool libmspub::MSPUBCollector::setShapeLineColor(unsigned seqNum, unsigned line)
 {
-  return shapeLineAndFillColorsBySeqNum.insert(std::pair<const unsigned, std::pair<unsigned, unsigned> >(
-           seqNum, std::pair<unsigned, unsigned>(line, fill))).second;
+  return shapeLineColorsBySeqNum.insert(std::pair<const unsigned, unsigned>(
+                                          seqNum, line)).second;
+}
+
+bool libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, Fill *fill)
+{
+  shapeFillsBySeqNum.insert(seqNum, fill);
+  return true;
 }
 
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
@@ -291,10 +315,15 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", possibleImageShapeSeqNums[i]));
       }
-      std::pair<unsigned, unsigned> *colors = getIfExists(shapeLineAndFillColorsBySeqNum, possibleImageShapeSeqNums[i]);
-      if (colors)
+      unsigned *ptr_lineColor = getIfExists(shapeLineColorsBySeqNum, possibleImageShapeSeqNums[i]);
+      if (ptr_lineColor)
       {
-        shape->setColorProps(colors->first, colors->second);
+        shape->setLine(*ptr_lineColor);
+      }
+      Fill *ptr_fill = ptr_getIfExists(shapeFillsBySeqNum, possibleImageShapeSeqNums[i]);
+      if (ptr_fill)
+      {
+        shape->setFill(ptr_fill);
       }
     }
   }

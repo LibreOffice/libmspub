@@ -207,7 +207,13 @@ void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char
 
 bool libmspub::stillReading(WPXInputStream *input, unsigned long until)
 {
-  return (!input->atEOS()) && input->tell() >= 0 && ((unsigned long)input->tell() < until);
+  if (input->atEOS())
+    return false;
+  if (input->tell() < 0)
+    return false;
+  if ((unsigned long)input->tell() >= until)
+    return false;
+  return true;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -24,8 +24,6 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBSVGGenerator.cpp \
 	Fill.cpp \
 	libmspub_utils.cpp \
-	puff.cpp \
-	puff.h \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \

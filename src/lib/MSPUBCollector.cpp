@@ -41,7 +41,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   defaultCharStyles(), defaultParaStyles(), shapeTypesBySeqNum(),
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
   shapeCoordinatesBySeqNum(), shapeLineColorsBySeqNum(),
-  shapeFillsBySeqNum(), paletteColors(), shapeSeqNumsOrdered(), pageSeqNumsByShapeSeqNum()
+  shapeFillsBySeqNum(), paletteColors(), shapeSeqNumsOrdered(),
+  pageSeqNumsByShapeSeqNum(), textInfoBySeqNum()
 {
 }
 
@@ -109,15 +110,32 @@ void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
   };
 }
 
-WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsProps()
+WPXPropertyListVector libmspub::MSPUBCollector::FillableShape::updateGraphicsProps()
 {
-  graphicsProps.insert("draw:stroke", "solid");
-  graphicsProps.insert("svg:stroke-color", getColorString(owner->getColorByReference(line)));
   if (fill)
   {
     return fill->getProperties(&graphicsProps);
   }
   return WPXPropertyListVector();
+}
+
+WPXPropertyListVector libmspub::MSPUBCollector::TextShape::updateGraphicsProps()
+{
+  if (fill)
+  {
+    return fill->getProperties(&props);
+  }
+  return WPXPropertyListVector();
+}
+
+WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsProps()
+{
+  if (lineSet)
+  {
+    graphicsProps.insert("draw:stroke", "solid");
+    graphicsProps.insert("svg:stroke-color", getColorString(owner->getColorByReference(line)));
+  }
+  return FillableShape::updateGraphicsProps();
 }
 
 void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *painter)
@@ -135,7 +153,7 @@ void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *
   }
 }
 
-void libmspub::MSPUBCollector::GeometricShape::setFill(Fill *f)
+void libmspub::MSPUBCollector::FillableShape::setFill(Fill *f)
 {
   fill = f;
 }
@@ -143,6 +161,7 @@ void libmspub::MSPUBCollector::GeometricShape::setFill(Fill *f)
 void libmspub::MSPUBCollector::GeometricShape::setLine(unsigned l)
 {
   line = l;
+  lineSet = true;
 }
 
 libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
@@ -223,36 +242,47 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   return true;
 }
 
+void libmspub::MSPUBCollector::assignTextShapes()
+{
+  for (std::map<unsigned, std::pair<unsigned, unsigned> >::const_iterator i = textInfoBySeqNum.begin();
+    i != textInfoBySeqNum.end(); ++i)
+  {
+    unsigned pageSeqNum = i->second.second;
+    unsigned stringId = i->second.first;
+    unsigned seqNum = i->first;
+    PageInfo *ptr_page = getIfExists(pagesBySeqNum, pageSeqNum);
+    if (!ptr_page)
+    {
+      MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in assignTextShapes!\n", pageSeqNum));
+      continue;
+    }
+    std::vector<TextParagraph> *ptr_str = getIfExists(textStringsById, stringId);
+    if (! ptr_str)
+    {
+      MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in assignTextShape!\n", stringId));
+      continue;
+    }
+    if (ptr_getIfExists(shapesBySeqNum, seqNum))
+    {
+      MSPUB_DEBUG_MSG(("already tried to add the text shape of seqnum 0x%x to this page!\n", seqNum));
+      continue;
+    }
+    TextShape *ptr_shape = new TextShape(*ptr_str, this);
+    Fill *ptr_fill = ptr_getIfExists(shapeFillsBySeqNum, seqNum);
+    if (ptr_fill)
+    {
+      ptr_shape->setFill(ptr_fill);
+    }
+    shapesBySeqNum.insert(seqNum, ptr_shape);
+    ptr_page->shapeSeqNums.push_back(seqNum);
+    pageSeqNumsByShapeSeqNum.insert(std::pair<unsigned, unsigned>(seqNum, pageSeqNum));
+  }
+}
+
 bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
 {
-  PageInfo *page = getIfExists(pagesBySeqNum, pageSeqNum);
-  if (!page)
-  {
-    MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in addTextShape!\n", pageSeqNum));
-    return false;
-  }
-  else
-  {
-    std::vector<TextParagraph> *str = getIfExists(textStringsById, stringId);
-    if (!str)
-    {
-      MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in addTextShape!\n", stringId));
-      return false;
-    }
-    else
-    {
-      if (! ptr_getIfExists(shapesBySeqNum, seqNum))
-      {
-        shapesBySeqNum.insert(seqNum, new TextShape(*str, this));
-        page->shapeSeqNums.push_back(seqNum);
-        pageSeqNumsByShapeSeqNum.insert(std::pair<unsigned, unsigned>(seqNum, pageSeqNum));
-        MSPUB_DEBUG_MSG(("addTextShape succeeded with id 0x%x\n", stringId));
-        return true;
-      }
-      MSPUB_DEBUG_MSG(("already tried to add the text shape of seqnum 0x%x to this page!\n", seqNum));
-      return false;
-    }
-  }
+  return textInfoBySeqNum.insert(std::pair<unsigned, std::pair<unsigned,unsigned> >(
+    seqNum, std::pair<unsigned, unsigned>(stringId, pageSeqNum))).second;
 }
 
 bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
@@ -433,6 +463,7 @@ bool libmspub::MSPUBCollector::go()
     paletteColors.insert(paletteColors.begin(), Color());
   }
   assignImages();
+  assignTextShapes();
   // order the shapes in each page
   for (unsigned i = 0; i < shapeSeqNumsOrdered.size(); ++i)
   {

@@ -934,9 +934,12 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                     MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
                   }
                 }
-                unsigned *lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
+                unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices);
-                m_collector->setShapeLineColor(*shapeSeqNum, lineColor ? *lineColor : 0x08000000);
+                if (ptr_lineColor)
+                {
+                  m_collector->setShapeLineColor(*shapeSeqNum, *ptr_lineColor);
+                }
                 if (ptr_fill)
                 {
                   m_collector->setShapeFill(*shapeSeqNum, ptr_fill);

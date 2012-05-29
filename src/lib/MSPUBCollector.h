@@ -53,6 +53,7 @@ class MSPUBCollector
   friend class Shape;
   friend class TextShape;
   friend class GeometricShape;
+  friend class FillableShape;
   friend class Fill;
   friend class ImgFill;
   friend class SolidFill;
@@ -121,36 +122,50 @@ private:
       return *this;
     }
   };
-  struct TextShape : public Shape
+  struct FillableShape : public Shape
   {
-    TextShape(std::vector<TextParagraph> s, MSPUBCollector *o) : Shape(o), str(s) { }
+    FillableShape(MSPUBCollector *o) : Shape(o), fill(NULL) { }
+    Fill *fill;
+    void setFill(Fill *fill);
+  protected:
+    virtual WPXPropertyListVector updateGraphicsProps();
+  private:
+    FillableShape(const FillableShape &) : Shape(NULL), fill(NULL) { }
+    FillableShape &operator=(const FillableShape &)
+    {
+      return *this;
+    }
+  };
+  struct TextShape : public FillableShape
+  {
+    TextShape(std::vector<TextParagraph> s, MSPUBCollector *o) : FillableShape(o), str(s) { }
     std::vector<TextParagraph> str;
   protected:
     void write(libwpg::WPGPaintInterface *painter);
+    WPXPropertyListVector updateGraphicsProps();
   private:
-    TextShape(const TextShape &) : str() { }
+    TextShape(const TextShape &) : FillableShape(NULL), str() { }
     TextShape &operator=(const TextShape &)
     {
       return *this;
     }
   };
-  struct GeometricShape : public Shape
+  struct GeometricShape : public FillableShape
   {
-    GeometricShape(unsigned psn, MSPUBCollector *o) : Shape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
+    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
     unsigned pageSeqNum;
     unsigned imgIndex;
     ShapeType type;
     unsigned line;
-    Fill *fill;
+    bool lineSet;
     void setLine(unsigned line);
-    void setFill(Fill *fill);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
     WPXPropertyListVector updateGraphicsProps();
-    GeometricShape() : pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
+    GeometricShape() : FillableShape(NULL), pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
   private:
-    GeometricShape(const GeometricShape &) : pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), fill(NULL) { }
+    GeometricShape(const GeometricShape &) : FillableShape(NULL), pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
     GeometricShape &operator=(const GeometricShape &)
     {
       return *this;
@@ -209,8 +224,10 @@ private:
   std::vector<Color> paletteColors;
   std::vector<unsigned> shapeSeqNumsOrdered;
   std::map<unsigned, unsigned> pageSeqNumsByShapeSeqNum;
+  std::map<unsigned, std::pair<unsigned, unsigned> > textInfoBySeqNum;
 
   // helper functions
+  void assignTextShapes();
   void assignImages();
   void setRectCoordProps(Coordinate, WPXPropertyList *);
   void setEllipseCoordProps(Coordinate, WPXPropertyList *);

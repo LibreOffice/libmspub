@@ -28,6 +28,7 @@
  * instead of those above.
  */
 
+#include <string.h> // for memcpy
 #include "libmspub_utils.h"
 
 namespace
@@ -134,18 +135,23 @@ uint64_t libmspub::readU64(WPXInputStream *input)
   return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
 }
 
-void libmspub::readNBytes(WPXInputStream *input, unsigned length, std::vector<unsigned char> *out)
+void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out)
 {
-  out->reserve(length);
-  for (unsigned i = 0; i < length; ++i)
+  unsigned long numBytesRead = 0;
+  const unsigned char *tmpBuffer = input->read(length, numBytesRead);
+  if (numBytesRead != length)
   {
-    out->push_back(readU8(input));
+    out.clear();
+    return;
   }
+  out = std::vector<unsigned char>(numBytesRead);
+  memcpy(&out[0], tmpBuffer, numBytesRead);
+  return;
 }
 
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
-void libmspub::appendCharacters(WPXString &text, std::vector<unsigned char> characters)
+void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters)
 {
   for (std::vector<unsigned char>::const_iterator iter = characters.begin();
        iter != characters.end();)
@@ -201,7 +207,7 @@ void libmspub::appendCharacters(WPXString &text, std::vector<unsigned char> char
 
 bool libmspub::stillReading(WPXInputStream *input, unsigned long until)
 {
-  return (!input->atEOS()) && input->tell() >= 0 && (unsigned)input->tell() < until;
+  return (!input->atEOS()) && input->tell() >= 0 && ((unsigned long)input->tell() < until);
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

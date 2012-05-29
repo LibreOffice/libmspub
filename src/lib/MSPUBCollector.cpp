@@ -162,7 +162,7 @@ const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
   case JPEG:
     return "image/jpeg";
   case DIB:
-    return "image/dib";
+    return "image/bmp";
   case PICT:
     return "image/pict";
   case WMF:
@@ -172,14 +172,16 @@ const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
   case TIFF:
     return "image/tiff";
   default:
-    return "";
+    return 0;
     MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
   }
 }
 
 void libmspub::MSPUBCollector::ImgShape::setMime_(ImgType imgType)
 {
-  props.insert("libwpg:mime-type", mimeByImgType(imgType));
+  const char *mimetype = mimeByImgType(imgType);
+  if (mimetype)
+    props.insert("libwpg:mime-type", mimetype);
 }
 void libmspub::MSPUBCollector::ImgShape::write(libwpg::WPGPaintInterface *painter)
 {

@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <string.h>
 #include <libwpd-stream/WPXStream.h>
+#include <zlib.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
 #include "MSPUBBlockID.h"
@@ -184,13 +185,28 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
     {
       WPXBinaryData img;
       unsigned long toRead = info.contentsLength;
+      int seek;
+      switch (imgTypeByBlipType(info.type))
+      {
+      case WMF:
+      case EMF:
+        seek = 0x34;
+        break;
+      default:
+        seek = 17;
+        break;
+      }
+      input->seek(input->tell() + seek, WPX_SEEK_SET);
       while (toRead > 0 && stillReading(input, (unsigned long)-1))
       {
-        input->seek(input->tell() + 17, WPX_SEEK_SET);
         unsigned long howManyRead = 0;
         const unsigned char *buf = input->read(toRead, howManyRead);
         img.append(buf, howManyRead);
         toRead -= howManyRead;
+      }
+      if (imgTypeByBlipType(info.type) == WMF || imgTypeByBlipType(info.type) == EMF)
+      {
+        img = undeflate(img);
       }
       m_collector->addImage(++m_lastAddedImage, imgTypeByBlipType(info.type), img);
     }

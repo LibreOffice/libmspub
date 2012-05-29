@@ -30,6 +30,61 @@
 
 #include <string.h> // for memcpy
 #include "libmspub_utils.h"
+#include "puff.h"
+
+#define ZLIB_CHUNK 16384
+
+WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
+{
+  unsigned long destlen = 0;
+  unsigned char *dest = NULL;
+  const unsigned char *source = deflated.getDataBuffer();
+  unsigned long sourcelen = deflated.size();
+  puff(dest, &destlen, (unsigned char *)source, &sourcelen);
+  dest = (unsigned char *)malloc(destlen);
+  puff(dest, &destlen, (unsigned char *)source, &sourcelen);
+  WPXBinaryData ret;
+  ret.append(dest, destlen);
+  return ret;
+/*  WPXBinaryData inflated;
+  unsigned char out[ZLIB_CHUNK];
+  const unsigned char *data = deflated.getDataBuffer();
+  z_stream strm;
+  int ret;
+  strm.zalloc = Z_NULL;
+  strm.zfree = Z_NULL;
+  strm.opaque = Z_NULL;
+  strm.avail_in = 0;
+  strm.next_in = Z_NULL;
+  if (inflateInit(&strm) != Z_OK)
+  {
+    return WPXBinaryData();
+  }
+  int have;
+  unsigned left = deflated.size();
+  do
+  {
+    strm.avail_in = ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
+    strm.next_in = (unsigned char *)data;
+    do
+    {
+      strm.avail_out = ZLIB_CHUNK;
+      strm.next_out = out;
+      ret = inflate(&strm, Z_NO_FLUSH);
+      if (ret == Z_STREAM_ERROR || ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
+      {
+        inflateEnd(&strm);
+        return WPXBinaryData();
+      }
+      have = ZLIB_CHUNK - strm.avail_out;
+      inflated.append(out, have);
+    } while (strm.avail_out == 0);
+    data += ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
+    left -= ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
+  } while (ret != Z_STREAM_END);
+  inflateEnd(&strm);
+  return ret == Z_STREAM_END ? inflated : WPXBinaryData(); */
+}
 
 namespace
 {

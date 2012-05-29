@@ -176,6 +176,39 @@ libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
   return UNKNOWN;
 }
 
+int libmspub::MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
+{
+  bool oneUid = true;
+  int offset = 0x11;
+  unsigned short recInstance = initial >> 4;
+  switch (type)
+  {
+  case WMF:
+    oneUid = recInstance == 0x216;
+    offset = 0x34;
+    break;
+  case EMF:
+    oneUid = recInstance == 0x3D4;
+    offset = 0x34;
+    break;
+  case PNG:
+    oneUid = recInstance == 0x6E0;
+    offset = 0x11;
+    break;
+  case JPEG:
+    oneUid = recInstance == 0x46A || recInstance == 0x6E2;
+    offset = 0x11;
+    break;
+  case DIB:
+    oneUid = recInstance == 0x7A8;
+    offset = 0x11;
+    break;
+  default:
+    break;
+  }
+  return offset + (oneUid ? 0 : 0x10);
+}
+
 bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
 {
   while (stillReading (input, (unsigned long)-1))
@@ -185,18 +218,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
     {
       WPXBinaryData img;
       unsigned long toRead = info.contentsLength;
-      int seek;
-      switch (imgTypeByBlipType(info.type))
-      {
-      case WMF:
-      case EMF:
-        seek = 0x34;
-        break;
-      default:
-        seek = 17;
-        break;
-      }
-      input->seek(input->tell() + seek, WPX_SEEK_SET);
+      input->seek(input->tell() + getStartOffset(imgTypeByBlipType(info.type), info.initial), WPX_SEEK_SET);
       while (toRead > 0 && stillReading(input, (unsigned long)-1))
       {
         unsigned long howManyRead = 0;

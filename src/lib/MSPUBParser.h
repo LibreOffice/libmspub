@@ -122,6 +122,7 @@ private:
   static unsigned getEscherElementTailLength(unsigned short type);
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
+  static int getStartOffset(ImgType type, unsigned short initial);
 };
 
 } // namespace libmspub

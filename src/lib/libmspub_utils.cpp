@@ -29,24 +29,14 @@
  */
 
 #include <string.h> // for memcpy
+#include <zlib.h>
 #include "libmspub_utils.h"
-#include "puff.h"
 
 #define ZLIB_CHUNK 16384
 
 WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
 {
-  unsigned long destlen = 0;
-  unsigned char *dest = NULL;
-  const unsigned char *source = deflated.getDataBuffer();
-  unsigned long sourcelen = deflated.size();
-  puff(dest, &destlen, (unsigned char *)source, &sourcelen);
-  dest = (unsigned char *)malloc(destlen);
-  puff(dest, &destlen, (unsigned char *)source, &sourcelen);
-  WPXBinaryData ret;
-  ret.append(dest, destlen);
-  return ret;
-/*  WPXBinaryData inflated;
+  WPXBinaryData inflated;
   unsigned char out[ZLIB_CHUNK];
   const unsigned char *data = deflated.getDataBuffer();
   z_stream strm;
@@ -56,7 +46,7 @@ WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
   strm.opaque = Z_NULL;
   strm.avail_in = 0;
   strm.next_in = Z_NULL;
-  if (inflateInit(&strm) != Z_OK)
+  if (inflateInit2(&strm,-MAX_WBITS) != Z_OK)
   {
     return WPXBinaryData();
   }
@@ -83,7 +73,7 @@ WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
     left -= ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
   } while (ret != Z_STREAM_END);
   inflateEnd(&strm);
-  return ret == Z_STREAM_END ? inflated : WPXBinaryData(); */
+  return ret == Z_STREAM_END ? inflated : WPXBinaryData();
 }
 
 namespace

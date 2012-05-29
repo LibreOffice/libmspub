@@ -875,6 +875,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
           if (shapeSeqNum)
           {
             input->seek(sp.contentsOffset, WPX_SEEK_SET);
+            m_collector->setShapeOrder(*shapeSeqNum);
             if (findEscherContainer(input, sp, &cAnchor, OFFICE_ART_CLIENT_ANCHOR))
             {
               MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", *shapeSeqNum));

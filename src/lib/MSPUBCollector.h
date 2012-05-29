@@ -76,6 +76,7 @@ public:
   bool setShapeLineColor(unsigned seqNum, unsigned line);
   bool setShapeFill(unsigned seqNum, Fill *fill);
 
+  void setShapeOrder(unsigned seqNum);
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
 
@@ -176,8 +177,9 @@ private:
   };
   struct PageInfo
   {
-    PageInfo() : shapeSeqNums() { }
+    PageInfo() : shapeSeqNums(), shapeSeqNumsOrdered() { }
     std::vector<unsigned> shapeSeqNums;
+    std::vector<unsigned> shapeSeqNumsOrdered;
   };
 
   MSPUBCollector(const MSPUBCollector &);
@@ -205,6 +207,8 @@ private:
   std::map<unsigned, unsigned > shapeLineColorsBySeqNum;
   boost::ptr_map<unsigned, Fill> shapeFillsBySeqNum;
   std::vector<Color> paletteColors;
+  std::vector<unsigned> shapeSeqNumsOrdered;
+  std::map<unsigned, unsigned> pageSeqNumsByShapeSeqNum;
 
   // helper functions
   void assignImages();

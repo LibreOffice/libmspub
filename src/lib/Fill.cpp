@@ -53,7 +53,7 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
-SolidFill::SolidFill(unsigned color, const MSPUBCollector *owner) : Fill(owner), m_color(color)
+SolidFill::SolidFill(unsigned color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
 {
 }
 
@@ -62,6 +62,9 @@ WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
   Color fillColor = m_owner->getColorByReference(m_color);
   out->insert("draw:fill", "solid");
   out->insert("draw:fill-color", MSPUBCollector::getColorString(fillColor));
+  WPXString val;
+  val.sprintf("%d%%", (int)(m_opacity * 100));
+  out->insert("draw:opacity", val);
   return WPXPropertyListVector();
 }
 

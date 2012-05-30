@@ -981,7 +981,8 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
     if (ptr_fillColor)
     {
-      return new SolidFill(*ptr_fillColor, m_collector);
+      const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
+      return new SolidFill(*ptr_fillColor, ptr_fillOpacity ? (double)(*ptr_fillOpacity)/0xFFFF : 1, m_collector);
     }
     return NULL;
   }

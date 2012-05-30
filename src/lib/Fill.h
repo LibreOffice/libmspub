@@ -71,11 +71,12 @@ private:
 class SolidFill : public Fill
 {
   unsigned m_color;
+  double m_opacity;
 public:
-  SolidFill(unsigned color, const MSPUBCollector *owner);
+  SolidFill(unsigned color, double opacity, const MSPUBCollector *owner);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  SolidFill(const SolidFill &) : Fill(NULL), m_color(0) { }
+  SolidFill(const SolidFill &) : Fill(NULL), m_color(0), m_opacity(1) { }
   SolidFill &operator=(const SolidFill &)
   {
     return *this;

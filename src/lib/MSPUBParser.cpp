@@ -991,7 +991,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     int angle;
     const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);
     unsigned firstColor, secondColor;
-    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR), *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
+    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR), *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
     firstColor = ptr_firstColor ? *ptr_firstColor : 0x08000000;
     secondColor = ptr_secondColor ? *ptr_secondColor : 0x08000000;
     angle = ptr_angle ? *ptr_angle : 0;

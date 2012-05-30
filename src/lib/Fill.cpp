@@ -68,13 +68,13 @@ WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
-GradientFill::GradientFill(const MSPUBCollector *owner, double angle) : Fill(owner), colors(), m_angle(angle)
+GradientFill::GradientFill(const MSPUBCollector *owner, double angle) : Fill(owner), m_stops(), m_angle(angle)
 {
 }
 
-void GradientFill::addColor(unsigned c, unsigned offsetPercent)
+void GradientFill::addColor(unsigned c, unsigned offsetPercent, double opacity)
 {
-  colors.push_back(std::pair<unsigned, unsigned>(c, offsetPercent));
+  m_stops.push_back(StopInfo(c, offsetPercent, opacity));
 }
 
 WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
@@ -82,14 +82,16 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
   WPXPropertyListVector ret;
   out->insert("draw:fill", "gradient");
   out->insert("draw:angle", m_angle);
-  for (unsigned i = 0; i < colors.size(); ++i)
+  for (unsigned i = 0; i < m_stops.size(); ++i)
   {
-    Color c = m_owner->getColorByReference(colors[i].first);
+    Color c = m_owner->getColorByReference(m_stops[i].m_colorReference);
     WPXPropertyList stopProps;
     WPXString sValue;
-    sValue.sprintf("%d%%", colors[i].second);
+    sValue.sprintf("%d%%", m_stops[i].m_offsetPercent);
     stopProps.insert("svg:offset", sValue);
     stopProps.insert("svg:stop-color", MSPUBCollector::getColorString(c));
+    sValue.sprintf("%d%%", (int)(m_stops[i].m_opacity * 100));
+    stopProps.insert("svg:stop-opacity", sValue);
     ret.append(stopProps);
   }
   return ret;

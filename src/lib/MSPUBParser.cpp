@@ -982,7 +982,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     if (ptr_fillColor)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
-      return new SolidFill(*ptr_fillColor, ptr_fillOpacity ? (double)(*ptr_fillOpacity)/0xFFFF : 1, m_collector);
+      return new SolidFill(*ptr_fillColor, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector);
     }
     return NULL;
   }
@@ -991,14 +991,17 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     int angle;
     const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);
     unsigned firstColor, secondColor;
-    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR), *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
+    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
+    const unsigned *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
     firstColor = ptr_firstColor ? *ptr_firstColor : 0x08000000;
     secondColor = ptr_secondColor ? *ptr_secondColor : 0x08000000;
+    const unsigned *ptr_firstOpacity = getIfExists_const(foptProperties, FIELDID_FILL_BACK_OPACITY);
+    const unsigned *ptr_secondOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
     angle = ptr_angle ? *ptr_angle : 0;
     angle >>= 16; //it's actually only 16 bits
     GradientFill *ret = new GradientFill(m_collector, angle);
-    ret->addColor(firstColor, 0);
-    ret->addColor(secondColor, 100);
+    ret->addColor(firstColor, 0, ptr_firstOpacity ? (double)(*ptr_firstOpacity) / 0xFFFF : 1);
+    ret->addColor(secondColor, 100, ptr_secondOpacity ? (double)(*ptr_secondOpacity) / 0xFFFF : 1);
     return ret;
   }
   case BITMAP:

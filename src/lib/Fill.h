@@ -85,14 +85,21 @@ private:
 
 class GradientFill : public Fill
 {
-  std::vector<std::pair<unsigned, unsigned> > colors;
+  struct StopInfo
+  {
+    unsigned m_colorReference;
+    unsigned m_offsetPercent;
+    double m_opacity;
+    StopInfo(unsigned colorReference, unsigned offsetPercent, double opacity) : m_colorReference(colorReference), m_offsetPercent(offsetPercent), m_opacity(opacity) { }
+  };
+  std::vector<StopInfo> m_stops;
   double m_angle;
 public:
   GradientFill(const MSPUBCollector *owner, double angle = 0);
-  void addColor(unsigned c, unsigned offsetPercent);
+  void addColor(unsigned c, unsigned offsetPercent, double opacity);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  GradientFill(const GradientFill &) : Fill(NULL), colors(), m_angle(0) { }
+  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0) { }
   GradientFill &operator=(const GradientFill &)
   {
     return *this;

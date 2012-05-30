@@ -250,7 +250,7 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
 void libmspub::MSPUBCollector::assignTextShapes()
 {
   for (std::map<unsigned, std::pair<unsigned, unsigned> >::const_iterator i = textInfoBySeqNum.begin();
-    i != textInfoBySeqNum.end(); ++i)
+       i != textInfoBySeqNum.end(); ++i)
   {
     unsigned pageSeqNum = i->second.second;
     unsigned stringId = i->second.first;
@@ -287,7 +287,7 @@ void libmspub::MSPUBCollector::assignTextShapes()
 bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
 {
   return textInfoBySeqNum.insert(std::pair<unsigned, std::pair<unsigned,unsigned> >(
-    seqNum, std::pair<unsigned, unsigned>(stringId, pageSeqNum))).second;
+                                   seqNum, std::pair<unsigned, unsigned>(stringId, pageSeqNum))).second;
 }
 
 bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)

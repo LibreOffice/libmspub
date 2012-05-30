@@ -68,10 +68,12 @@ WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
       }
       have = ZLIB_CHUNK - strm.avail_out;
       inflated.append(out, have);
-    } while (strm.avail_out == 0);
+    }
+    while (strm.avail_out == 0);
     data += ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
     left -= ZLIB_CHUNK > left ? left : ZLIB_CHUNK;
-  } while (ret != Z_STREAM_END);
+  }
+  while (ret != Z_STREAM_END);
   inflateEnd(&strm);
   return ret == Z_STREAM_END ? inflated : WPXBinaryData();
 }

@@ -42,7 +42,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
   shapeCoordinatesBySeqNum(), shapeLineColorsBySeqNum(),
   shapeFillsBySeqNum(), paletteColors(), shapeSeqNumsOrdered(),
-  pageSeqNumsByShapeSeqNum(), textInfoBySeqNum(), bgShapeSeqNumsByPageSeqNum()
+  pageSeqNumsByShapeSeqNum(), textInfoBySeqNum(), bgShapeSeqNumsByPageSeqNum(),
+  skipIfNotBgSeqNums()
 {
 }
 
@@ -274,7 +275,7 @@ void libmspub::MSPUBCollector::assignTextShapes()
     }
     TextShape *ptr_shape = new TextShape(*ptr_str, this);
     Fill *ptr_fill = ptr_getIfExists(shapeFillsBySeqNum, seqNum);
-    if (ptr_fill)
+    if (ptr_fill && skipIfNotBgSeqNums.find(seqNum) == skipIfNotBgSeqNums.end())
     {
       ptr_shape->setFill(ptr_fill);
     }
@@ -302,9 +303,13 @@ bool libmspub::MSPUBCollector::setShapeLineColor(unsigned seqNum, unsigned line)
                                           seqNum, line)).second;
 }
 
-bool libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, Fill *fill)
+bool libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg)
 {
   shapeFillsBySeqNum.insert(seqNum, fill);
+  if (skipIfNotBg)
+  {
+    skipIfNotBgSeqNums.insert(seqNum);
+  }
   return true;
 }
 
@@ -374,7 +379,7 @@ void libmspub::MSPUBCollector::assignImages()
         shape->setLine(*ptr_lineColor);
       }
       Fill *ptr_fill = ptr_getIfExists(shapeFillsBySeqNum, possibleImageShapeSeqNums[i]);
-      if (ptr_fill)
+      if (ptr_fill && skipIfNotBgSeqNums.find(possibleImageShapeSeqNums[i]) == skipIfNotBgSeqNums.end())
       {
         shape->setFill(ptr_fill);
       }

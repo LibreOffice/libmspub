@@ -102,7 +102,7 @@ private:
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
-  Fill *getNewFill(const std::map<unsigned short, unsigned> &foptValues, const std::vector<int> &escherDelayIndices);
+  Fill *getNewFill(const std::map<unsigned short, unsigned> &foptValues, const std::vector<int> &escherDelayIndices, bool &skipIfNotBg);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

@@ -29,20 +29,21 @@
 #ifndef __ESCHERFIELDIDS_H__
 #define __ESCHERFIELDIDS_H__
 
-#define FIELDID_XS                0x2001
-#define FIELDID_YS                0x2002
-#define FIELDID_XE                0x2003
-#define FIELDID_YE                0x2004
-#define FIELDID_PXID              0x4104
-#define FIELDID_BG_PXID           0x4186
-#define FIELDID_SHAPE_ID          0x6801
-#define FIELDID_FILL_COLOR        0x0181
-#define FIELDID_FILL_OPACITY      0x0182
-#define FIELDID_FILL_BACK_COLOR   0x0183
-#define FIELDID_FILL_BACK_OPACITY 0x0184
-#define FIELDID_LINE_COLOR        0x01C0
-#define FIELDID_FILL_TYPE         0x0180
-#define FIELDID_FILL_ANGLE        0x018B
+#define FIELDID_XS                     0x2001
+#define FIELDID_YS                     0x2002
+#define FIELDID_XE                     0x2003
+#define FIELDID_YE                     0x2004
+#define FIELDID_PXID                   0x4104
+#define FIELDID_BG_PXID                0x4186
+#define FIELDID_SHAPE_ID               0x6801
+#define FIELDID_FILL_COLOR             0x0181
+#define FIELDID_FILL_OPACITY           0x0182
+#define FIELDID_FILL_BACK_COLOR        0x0183
+#define FIELDID_FILL_BACK_OPACITY      0x0184
+#define FIELDID_LINE_COLOR             0x01C0
+#define FIELDID_FILL_TYPE              0x0180
+#define FIELDID_FILL_ANGLE             0x018B
+#define FIELDID_FIELD_STYLE_BOOL_PROPS 0x01BF
 
 
 #endif /* __ESCHERFIELDIDS_H__ */

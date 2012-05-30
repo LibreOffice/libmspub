@@ -32,6 +32,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <set>
 #include <string>
 
 #include <boost/ptr_container/ptr_map.hpp>
@@ -75,7 +76,7 @@ public:
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
   bool setShapeLineColor(unsigned seqNum, unsigned line);
-  bool setShapeFill(unsigned seqNum, Fill *fill);
+  bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -226,6 +227,7 @@ private:
   std::map<unsigned, unsigned> pageSeqNumsByShapeSeqNum;
   std::map<unsigned, std::pair<unsigned, unsigned> > textInfoBySeqNum;
   std::map<unsigned, unsigned> bgShapeSeqNumsByPageSeqNum;
+  std::set<unsigned> skipIfNotBgSeqNums;
 
   // helper functions
   void assignTextShapes();

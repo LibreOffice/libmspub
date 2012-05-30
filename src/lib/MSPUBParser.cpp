@@ -939,14 +939,15 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   }
                 }
                 unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
-                Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices);
+                bool skipIfNotBg;
+                Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
                 if (ptr_lineColor)
                 {
                   m_collector->setShapeLineColor(*shapeSeqNum, *ptr_lineColor);
                 }
                 if (ptr_fill)
                 {
-                  m_collector->setShapeFill(*shapeSeqNum, ptr_fill);
+                  m_collector->setShapeFill(*shapeSeqNum, ptr_fill, skipIfNotBg);
                 }
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
@@ -969,7 +970,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
 }
 
 libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
-    const std::vector<int> &escherDelayIndices)
+    const std::vector<int> &escherDelayIndices, bool &skipIfNotBg)
 {
   // don't worry about memory leaks; everything created here is deleted when the Collector goes out of scope.
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
@@ -979,6 +980,8 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
   case SOLID:
   {
     const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
+    const unsigned *ptr_fieldStyleProps = getIfExists_const(foptProperties, FIELDID_FIELD_STYLE_BOOL_PROPS);
+    skipIfNotBg = ptr_fieldStyleProps && (*ptr_fieldStyleProps & 0xF0) == 0;
     if (ptr_fillColor)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);

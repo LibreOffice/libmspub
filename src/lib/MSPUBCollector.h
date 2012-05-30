@@ -78,6 +78,7 @@ public:
   bool setShapeFill(unsigned seqNum, Fill *fill);
 
   void setShapeOrder(unsigned seqNum);
+  void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
 
@@ -202,9 +203,8 @@ private:
 
   libwpg::WPGPaintInterface *m_painter;
   std::list<ContentChunkReference> contentChunkReferences;
-  unsigned long m_width, m_height;
+  double m_width, m_height;
   bool m_widthSet, m_heightSet;
-  WPXPropertyList m_commonPageProperties;
   unsigned short m_numPages;
   std::map<unsigned, std::vector<TextParagraph> > textStringsById;
   std::map<unsigned, PageInfo> pagesBySeqNum;
@@ -225,6 +225,7 @@ private:
   std::vector<unsigned> shapeSeqNumsOrdered;
   std::map<unsigned, unsigned> pageSeqNumsByShapeSeqNum;
   std::map<unsigned, std::pair<unsigned, unsigned> > textInfoBySeqNum;
+  std::map<unsigned, unsigned> bgShapeSeqNumsByPageSeqNum;
 
   // helper functions
   void assignTextShapes();

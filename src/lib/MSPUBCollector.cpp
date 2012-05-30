@@ -34,7 +34,7 @@
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), contentChunkReferences(), m_width(0), m_height(0),
-  m_widthSet(false), m_heightSet(false), m_commonPageProperties(),
+  m_widthSet(false), m_heightSet(false),
   m_numPages(0), textStringsById(), pagesBySeqNum(),
   shapesBySeqNum(), images(),
   textColors(), defaultColor(0, 0, 0), fonts(),
@@ -42,8 +42,13 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   possibleImageShapeSeqNums(), shapeImgIndicesBySeqNum(),
   shapeCoordinatesBySeqNum(), shapeLineColorsBySeqNum(),
   shapeFillsBySeqNum(), paletteColors(), shapeSeqNumsOrdered(),
-  pageSeqNumsByShapeSeqNum(), textInfoBySeqNum()
+  pageSeqNumsByShapeSeqNum(), textInfoBySeqNum(), bgShapeSeqNumsByPageSeqNum()
 {
+}
+
+void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
+{
+  bgShapeSeqNumsByPageSeqNum[pageSeqNum] = seqNum;
 }
 
 void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
@@ -306,8 +311,8 @@ bool libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, Fill *fill)
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
 {
   int xs = coord.xs, ys = coord.ys, xe = coord.xe, ye = coord.ye;
-  double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
-  double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
+  double x_center = m_width / 2;
+  double y_center = m_height / 2;
   props->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
   props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
   props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
@@ -317,8 +322,8 @@ void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyLi
 void libmspub::MSPUBCollector::setEllipseCoordProps(Coordinate coord, WPXPropertyList *props)
 {
   int xs = coord.xs, ys = coord.ys, xe = coord.xe, ye = coord.ye;
-  double x_center = m_commonPageProperties["svg:width"]->getDouble() / 2;
-  double y_center = m_commonPageProperties["svg:height"]->getDouble() / 2;
+  double x_center = m_width / 2;
+  double y_center = m_height / 2;
   props->insert("svg:cx", x_center + ((double)xs + (double)xe)/(2 * EMUS_IN_INCH));
   props->insert("svg:cy", y_center + ((double)ys + (double)ye)/(2 * EMUS_IN_INCH));
   props->insert("svg:rx", (double)(xe - xs)/(2 * EMUS_IN_INCH));
@@ -479,10 +484,31 @@ bool libmspub::MSPUBCollector::go()
   }
   for (std::map<unsigned, PageInfo>::const_iterator i = pagesBySeqNum.begin(); i != pagesBySeqNum.end(); ++i)
   {
+    WPXPropertyList pageProps;
+    if (m_widthSet)
+    {
+      pageProps.insert("svg:width", m_width);
+    }
+    if (m_heightSet)
+    {
+      pageProps.insert("svg:height", m_height);
+    }
     const std::vector<unsigned> &shapeSeqNumsOrdered = i->second.shapeSeqNumsOrdered; // for readability
     if (shapeSeqNumsOrdered.size() > 0)
     {
-      m_painter->startGraphics(m_commonPageProperties);
+      m_painter->startGraphics(pageProps);
+      unsigned *ptr_fillSeqNum = getIfExists(bgShapeSeqNumsByPageSeqNum, i->first);
+      if (ptr_fillSeqNum)
+      {
+        Fill *ptr_fill = ptr_getIfExists(shapeFillsBySeqNum, *ptr_fillSeqNum);
+        if (ptr_fill)
+        {
+          GeometricShape bg(i->first, this);
+          bg.setFill(ptr_fill);
+          Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
+          bg.output(m_painter, wholePage);
+        }
+      }
       for (unsigned i_seqNums = 0; i_seqNums < shapeSeqNumsOrdered.size(); ++i_seqNums)
       {
         Shape *shape = ptr_getIfExists(shapesBySeqNum, shapeSeqNumsOrdered[i_seqNums]);
@@ -520,16 +546,14 @@ bool libmspub::MSPUBCollector::addTextString(const std::vector<TextParagraph> &s
 void libmspub::MSPUBCollector::setWidthInEmu(unsigned long widthInEmu)
 {
   //FIXME: Warn if this is called twice
-  m_width = widthInEmu;
-  m_commonPageProperties.insert("svg:width", ((double)widthInEmu)/EMUS_IN_INCH);
+  m_width = ((double)widthInEmu) / EMUS_IN_INCH;
   m_widthSet = true;
 }
 
 void libmspub::MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
 {
   //FIXME: Warn if this is called twice
-  m_height = heightInEmu;
-  m_commonPageProperties.insert("svg:height", ((double)heightInEmu)/EMUS_IN_INCH);
+  m_height = ((double)heightInEmu) / EMUS_IN_INCH;
   m_heightSet = true;
 }
 

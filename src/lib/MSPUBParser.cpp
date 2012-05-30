@@ -360,7 +360,11 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   while (stillReading(input, chunk.offset + length))
   {
     libmspub::MSPUBBlockInfo info = parseBlock(input);
-    if (info.id == PAGE_SHAPES)
+    if (info.id == PAGE_BG_SHAPE)
+    {
+      m_collector->setPageBgShape(chunk.seqNum, info.data);
+    }
+    else if (info.id == PAGE_SHAPES)
     {
       parseShapes(input, info, chunk.seqNum);
     }

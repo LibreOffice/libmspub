@@ -35,6 +35,8 @@
 
 #include <libwpd/libwpd.h>
 
+#include "ColorReference.h"
+
 namespace libmspub
 {
 class MSPUBCollector;
@@ -70,13 +72,13 @@ private:
 
 class SolidFill : public Fill
 {
-  unsigned m_color;
+  ColorReference m_color;
   double m_opacity;
 public:
-  SolidFill(unsigned color, double opacity, const MSPUBCollector *owner);
+  SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  SolidFill(const SolidFill &) : Fill(NULL), m_color(0), m_opacity(1) { }
+  SolidFill(const SolidFill &) : Fill(NULL), m_color(0x08000000), m_opacity(1) { }
   SolidFill &operator=(const SolidFill &)
   {
     return *this;
@@ -87,16 +89,16 @@ class GradientFill : public Fill
 {
   struct StopInfo
   {
-    unsigned m_colorReference;
+    ColorReference m_colorReference;
     unsigned m_offsetPercent;
     double m_opacity;
-    StopInfo(unsigned colorReference, unsigned offsetPercent, double opacity) : m_colorReference(colorReference), m_offsetPercent(offsetPercent), m_opacity(opacity) { }
+    StopInfo(ColorReference colorReference, unsigned offsetPercent, double opacity) : m_colorReference(colorReference), m_offsetPercent(offsetPercent), m_opacity(opacity) { }
   };
   std::vector<StopInfo> m_stops;
   double m_angle;
 public:
   GradientFill(const MSPUBCollector *owner, double angle = 0);
-  void addColor(unsigned c, unsigned offsetPercent, double opacity);
+  void addColor(ColorReference c, unsigned offsetPercent, double opacity);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0) { }

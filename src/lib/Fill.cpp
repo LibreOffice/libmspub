@@ -53,13 +53,13 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
-SolidFill::SolidFill(unsigned color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
+SolidFill::SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
 {
 }
 
 WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
 {
-  Color fillColor = m_owner->getColorByReference(m_color);
+  Color fillColor = m_color.getFinalColor(m_owner->paletteColors);
   out->insert("draw:fill", "solid");
   out->insert("draw:fill-color", MSPUBCollector::getColorString(fillColor));
   WPXString val;
@@ -72,7 +72,7 @@ GradientFill::GradientFill(const MSPUBCollector *owner, double angle) : Fill(own
 {
 }
 
-void GradientFill::addColor(unsigned c, unsigned offsetPercent, double opacity)
+void GradientFill::addColor(ColorReference c, unsigned offsetPercent, double opacity)
 {
   m_stops.push_back(StopInfo(c, offsetPercent, opacity));
 }
@@ -81,10 +81,10 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
 {
   WPXPropertyListVector ret;
   out->insert("draw:fill", "gradient");
-  out->insert("draw:angle", m_angle);
+  out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
   for (unsigned i = 0; i < m_stops.size(); ++i)
   {
-    Color c = m_owner->getColorByReference(m_stops[i].m_colorReference);
+    Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->paletteColors);
     WPXPropertyList stopProps;
     WPXString sValue;
     sValue.sprintf("%d%%", m_stops[i].m_offsetPercent);

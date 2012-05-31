@@ -694,7 +694,7 @@ void libmspub::MSPUBParser::parseColors(WPXInputStream *input, const QuillChunkR
       MSPUBBlockInfo info = parseBlock(input, true);
       if (info.id == 0x01)
       {
-        m_collector->addTextColor(info.data);
+        m_collector->addTextColor(ColorReference(info.data));
       }
     }
   }
@@ -939,11 +939,11 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   }
                 }
                 unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
-                bool skipIfNotBg;
+                bool skipIfNotBg = false;
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
                 if (ptr_lineColor)
                 {
-                  m_collector->setShapeLineColor(*shapeSeqNum, *ptr_lineColor);
+                  m_collector->setShapeLineColor(*shapeSeqNum, ColorReference(*ptr_lineColor));
                 }
                 if (ptr_fill)
                 {
@@ -985,7 +985,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     if (ptr_fillColor)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
-      return new SolidFill(*ptr_fillColor, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector);
+      return new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector);
     }
     return NULL;
   }
@@ -993,18 +993,42 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
   {
     int angle;
     const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);
-    unsigned firstColor, secondColor;
-    const unsigned *ptr_firstColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
-    const unsigned *ptr_secondColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
-    firstColor = ptr_firstColor ? *ptr_firstColor : 0x08000000;
-    secondColor = ptr_secondColor ? *ptr_secondColor : 0x08000000;
-    const unsigned *ptr_firstOpacity = getIfExists_const(foptProperties, FIELDID_FILL_BACK_OPACITY);
-    const unsigned *ptr_secondOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
+    const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
+    const unsigned *ptr_fillBackColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
+    unsigned fill = ptr_fillColor ? *ptr_fillColor : 0x00FFFFFFF;
+    unsigned fillBack = ptr_fillBackColor ? *ptr_fillBackColor : 0x00FFFFFF;
+    ColorReference firstColor(fill, fill);
+    ColorReference secondColor(fill, fillBack);
+    const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
+    const unsigned *ptr_fillBackOpacity = getIfExists_const(foptProperties, FIELDID_FILL_BACK_OPACITY);
+    const unsigned *ptr_fillFocus = getIfExists_const(foptProperties, FIELDID_FILL_FOCUS);
+    short fillFocus = ptr_fillFocus ? ((int)(*ptr_fillFocus) << 16) >> 16 : 0;
     angle = ptr_angle ? *ptr_angle : 0;
     angle >>= 16; //it's actually only 16 bits
+
     GradientFill *ret = new GradientFill(m_collector, angle);
-    ret->addColor(firstColor, 0, ptr_firstOpacity ? (double)(*ptr_firstOpacity) / 0xFFFF : 1);
-    ret->addColor(secondColor, 100, ptr_secondOpacity ? (double)(*ptr_secondOpacity) / 0xFFFF : 1);
+    if (fillFocus ==  0)
+    {
+      ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+      ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+    }
+    else if (fillFocus == 100)
+    {
+      ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+    }
+    else if (fillFocus > 0)
+    {
+      ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+      ret->addColor(secondColor, fillFocus, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+    }
+    else if (fillFocus < 0)
+    {
+      ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      ret->addColor(firstColor, 100 + fillFocus, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+      ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+    }
     return ret;
   }
   case BITMAP:

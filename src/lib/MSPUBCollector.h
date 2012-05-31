@@ -45,6 +45,7 @@
 #include "MSPUBContentChunkType.h"
 #include "ShapeType.h"
 #include "Fill.h"
+#include "ColorReference.h"
 
 namespace libmspub
 {
@@ -75,7 +76,7 @@ public:
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
-  bool setShapeLineColor(unsigned seqNum, unsigned line);
+  bool setShapeLineColor(unsigned seqNum, ColorReference line);
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
 
   void setShapeOrder(unsigned seqNum);
@@ -83,7 +84,7 @@ public:
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
 
-  void addTextColor(unsigned c);
+  void addTextColor(ColorReference c);
   void setDefaultColor(unsigned char r, unsigned char g, unsigned char b);
   void addFont(std::vector<unsigned char> name);
 
@@ -158,9 +159,9 @@ private:
     unsigned pageSeqNum;
     unsigned imgIndex;
     ShapeType type;
-    unsigned line;
+    ColorReference line;
     bool lineSet;
-    void setLine(unsigned line);
+    void setLine(ColorReference line);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
@@ -211,7 +212,7 @@ private:
   std::map<unsigned, PageInfo> pagesBySeqNum;
   boost::ptr_map<unsigned, Shape> shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
   std::vector<std::pair<ImgType, WPXBinaryData> > images;
-  std::vector<unsigned> textColors;
+  std::vector<ColorReference> textColors;
   Color defaultColor;
   std::vector<std::vector<unsigned char> > fonts;
   std::vector<CharacterStyle> defaultCharStyles;
@@ -220,7 +221,7 @@ private:
   std::vector<unsigned> possibleImageShapeSeqNums;
   std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
-  std::map<unsigned, unsigned > shapeLineColorsBySeqNum;
+  std::map<unsigned, ColorReference> shapeLineColorsBySeqNum;
   boost::ptr_map<unsigned, Fill> shapeFillsBySeqNum;
   std::vector<Color> paletteColors;
   std::vector<unsigned> shapeSeqNumsOrdered;
@@ -237,7 +238,6 @@ private:
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);
-  Color getColorByReference(unsigned c) const;
 };
 
 } // namespace libmspub

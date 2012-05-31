@@ -139,7 +139,7 @@ WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsPr
   if (lineSet)
   {
     graphicsProps.insert("draw:stroke", "solid");
-    graphicsProps.insert("svg:stroke-color", getColorString(owner->getColorByReference(line)));
+    graphicsProps.insert("svg:stroke-color", getColorString(line.getFinalColor(owner->paletteColors)));
   }
   return FillableShape::updateGraphicsProps();
 }
@@ -164,7 +164,7 @@ void libmspub::MSPUBCollector::FillableShape::setFill(Fill *f)
   fill = f;
 }
 
-void libmspub::MSPUBCollector::GeometricShape::setLine(unsigned l)
+void libmspub::MSPUBCollector::GeometricShape::setLine(ColorReference l)
 {
   line = l;
   lineSet = true;
@@ -297,9 +297,9 @@ bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   return shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
 }
 
-bool libmspub::MSPUBCollector::setShapeLineColor(unsigned seqNum, unsigned line)
+bool libmspub::MSPUBCollector::setShapeLineColor(unsigned seqNum, ColorReference line)
 {
-  return shapeLineColorsBySeqNum.insert(std::pair<const unsigned, unsigned>(
+  return shapeLineColorsBySeqNum.insert(std::pair<const unsigned, ColorReference>(
                                           seqNum, line)).second;
 }
 
@@ -373,7 +373,7 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", possibleImageShapeSeqNums[i]));
       }
-      unsigned *ptr_lineColor = getIfExists(shapeLineColorsBySeqNum, possibleImageShapeSeqNums[i]);
+      ColorReference *ptr_lineColor = getIfExists(shapeLineColorsBySeqNum, possibleImageShapeSeqNums[i]);
       if (ptr_lineColor)
       {
         shape->setLine(*ptr_lineColor);
@@ -439,11 +439,11 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   }
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < textColors.size())
   {
-    ret.insert("fo:color", getColorString(getColorByReference(textColors[style.colorIndex])));
+    ret.insert("fo:color", getColorString(textColors[style.colorIndex].getFinalColor(paletteColors)));
   }
   else if (defaultCharStyle.colorIndex >= 0 && (size_t)defaultCharStyle.colorIndex < textColors.size())
   {
-    ret.insert("fo:color", getColorString(getColorByReference(textColors[defaultCharStyle.colorIndex])));
+    ret.insert("fo:color", getColorString(textColors[defaultCharStyle.colorIndex].getFinalColor(paletteColors)));
   }
   else
   {
@@ -586,23 +586,9 @@ bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::addTextColor(unsigned c)
+void libmspub::MSPUBCollector::addTextColor(ColorReference c)
 {
   textColors.push_back(c);
-}
-
-libmspub::Color libmspub::MSPUBCollector::getColorByReference(unsigned c) const
-{
-  unsigned char type = (c >> 24) & 0xFF;
-  if (type == 0x08)
-  {
-    if ((c & 0xFFFFFF) >= paletteColors.size())
-    {
-      return defaultColor;
-    }
-    return paletteColors[c & 0xFFFFFF];
-  }
-  return Color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF);
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

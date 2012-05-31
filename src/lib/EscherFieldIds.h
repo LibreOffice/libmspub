@@ -43,6 +43,7 @@
 #define FIELDID_LINE_COLOR             0x01C0
 #define FIELDID_FILL_TYPE              0x0180
 #define FIELDID_FILL_ANGLE             0x018B
+#define FIELDID_FILL_FOCUS             0x018C
 #define FIELDID_FIELD_STYLE_BOOL_PROPS 0x01BF
 
 

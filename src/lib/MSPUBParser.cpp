@@ -1031,6 +1031,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     }
     return ret;
   }
+  case TEXTURE:
   case BITMAP:
   {
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);

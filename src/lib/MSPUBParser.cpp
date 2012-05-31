@@ -230,6 +230,30 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
       {
         img = undeflate(img);
       }
+      else if (imgTypeByBlipType(info.type) == DIB)
+      {
+        // Reconstruct BMP header
+        WPXBinaryData tmpImg;
+        tmpImg.append(0x42);
+        tmpImg.append(0x4d);
+
+        tmpImg.append((unsigned char)((img.size() + 14) & 0x000000ff));
+        tmpImg.append((unsigned char)(((img.size() + 14) & 0x0000ff00) >> 8));
+        tmpImg.append((unsigned char)(((img.size() + 14) & 0x00ff0000) >> 16));
+        tmpImg.append((unsigned char)(((img.size() + 14) & 0xff000000) >> 24));
+
+        tmpImg.append(0x00);
+        tmpImg.append(0x00);
+        tmpImg.append(0x00);
+        tmpImg.append(0x00);
+
+        tmpImg.append(0x36);
+        tmpImg.append(0x00);
+        tmpImg.append(0x00);
+        tmpImg.append(0x00);
+        tmpImg.append(img);
+        img = tmpImg;
+      }
       m_collector->addImage(++m_lastAddedImage, imgTypeByBlipType(info.type), img);
     }
     else

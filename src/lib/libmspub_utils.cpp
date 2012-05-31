@@ -34,7 +34,7 @@
 
 #define ZLIB_CHUNK 16384
 
-WPXBinaryData libmspub::undeflate(WPXBinaryData deflated)
+WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
 {
   WPXBinaryData inflated;
   unsigned char out[ZLIB_CHUNK];

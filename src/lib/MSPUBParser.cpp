@@ -228,7 +228,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
       }
       if (imgTypeByBlipType(info.type) == WMF || imgTypeByBlipType(info.type) == EMF)
       {
-        img = undeflate(img);
+        img = inflateData(img);
       }
       else if (imgTypeByBlipType(info.type) == DIB)
       {

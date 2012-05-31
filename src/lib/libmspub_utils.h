@@ -125,7 +125,7 @@ class GenericException
 {
 };
 
-WPXBinaryData undeflate(WPXBinaryData);
+WPXBinaryData inflateData(WPXBinaryData);
 
 } // namespace libmspub
 

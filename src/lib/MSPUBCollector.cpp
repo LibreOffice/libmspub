@@ -141,6 +141,10 @@ WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsPr
     graphicsProps.insert("draw:stroke", "solid");
     graphicsProps.insert("svg:stroke-color", getColorString(line.getFinalColor(owner->paletteColors)));
   }
+  else
+  {
+    graphicsProps.insert("draw:stroke", "none");
+  }
   return FillableShape::updateGraphicsProps();
 }
 

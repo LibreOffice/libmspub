@@ -36,7 +36,7 @@ Fill::Fill(const MSPUBCollector *owner) : m_owner(owner)
 {
 }
 
-ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner) : Fill(owner), m_imgIndex(imgIndex)
+ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture) : Fill(owner), m_imgIndex(imgIndex), m_isTexture(isTexture)
 {
 }
 
@@ -49,11 +49,15 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
     out->insert("libwpg:mime-type", MSPUBCollector::ImgShape::mimeByImgType(img.first));
     out->insert("draw:fill-image", img.second.getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
+    if (! m_isTexture)
+    {
+      out->insert("style:repeat", "stretch");
+    }
   }
   return WPXPropertyListVector();
 }
 
-PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner), m_fg(fg), m_bg(bg)
+PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner, true), m_fg(fg), m_bg(bg)
 {
 }
 

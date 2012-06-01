@@ -60,11 +60,13 @@ class ImgFill : public Fill
 {
 protected:
   unsigned m_imgIndex;
+private:
+  bool m_isTexture;
 public:
-  ImgFill(unsigned imgIndex, const MSPUBCollector *owner);
+  ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0) { }
+  ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false) { }
   ImgFill &operator=(const ImgFill &)
   {
     return *this;
@@ -79,7 +81,7 @@ public:
   PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  PatternFill(const PatternFill &) : ImgFill(0, NULL), m_fg(0x08000000), m_bg(0x08000000) { }
+  PatternFill(const PatternFill &) : ImgFill(0, NULL, true), m_fg(0x08000000), m_bg(0x08000000) { }
   PatternFill &operator=(const ImgFill &)
   {
     return *this;

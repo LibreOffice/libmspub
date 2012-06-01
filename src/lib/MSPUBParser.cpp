@@ -1081,7 +1081,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId <= escherDelayIndices.size() && escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
-      return new ImgFill(escherDelayIndices[*ptr_bgPxId - 1], m_collector);
+      return new ImgFill(escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE);
     }
     return NULL;
   }

@@ -58,6 +58,7 @@ private:
 
 class ImgFill : public Fill
 {
+protected:
   unsigned m_imgIndex;
 public:
   ImgFill(unsigned imgIndex, const MSPUBCollector *owner);
@@ -65,6 +66,21 @@ public:
 private:
   ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0) { }
   ImgFill &operator=(const ImgFill &)
+  {
+    return *this;
+  }
+};
+
+class PatternFill : public ImgFill
+{
+  ColorReference m_fg;
+  ColorReference m_bg;
+public:
+  PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg);
+  WPXPropertyListVector getProperties(WPXPropertyList *out) const;
+private:
+  PatternFill(const PatternFill &) : ImgFill(0, NULL), m_fg(0x08000000), m_bg(0x08000000) { }
+  PatternFill &operator=(const ImgFill &)
   {
     return *this;
   }

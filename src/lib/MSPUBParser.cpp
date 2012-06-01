@@ -1075,7 +1075,6 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     }
     return ret;
   }
-  case PATTERN:
   case TEXTURE:
   case BITMAP:
   {
@@ -1085,6 +1084,18 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
       return new ImgFill(escherDelayIndices[*ptr_bgPxId - 1], m_collector);
     }
     return NULL;
+  }
+  case PATTERN:
+  {
+    const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
+    const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
+    const unsigned *ptr_fillBackColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
+    ColorReference fill = ptr_fillColor ? ColorReference(*ptr_fillColor) : ColorReference(0x00FFFFFF);
+    ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x08000000);
+    if (ptr_bgPxId && *ptr_bgPxId <= escherDelayIndices.size() && escherDelayIndices[*ptr_bgPxId - 1 ] >= 0)
+    {
+      return new PatternFill(escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back);
+    }
   }
   default:
     return NULL;

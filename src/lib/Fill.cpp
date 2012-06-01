@@ -53,6 +53,43 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
+PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner), m_fg(fg), m_bg(bg)
+{
+}
+
+WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
+{
+  Color fgColor = m_fg.getFinalColor(m_owner->paletteColors);
+  Color bgColor = m_bg.getFinalColor(m_owner->paletteColors);
+  out->insert("draw:fill", "bitmap");
+  if (m_imgIndex <= m_owner->images.size())
+  {
+    const std::pair<ImgType, WPXBinaryData> &img = m_owner->images[m_imgIndex - 1];
+    const ImgType &type = img.first;
+    const WPXBinaryData *data = &img.second;
+    // fix broken MSPUB DIB by putting in correct fg and bg colors
+    WPXBinaryData fixedImg;
+    if (type == DIB && data->size() >= 0x36 + 8)
+    {
+      fixedImg.append(data->getDataBuffer(), 0x36);
+      fixedImg.append(bgColor.b);
+      fixedImg.append(bgColor.g);
+      fixedImg.append(bgColor.r);
+      fixedImg.append('\0');
+      fixedImg.append(fgColor.b);
+      fixedImg.append(fgColor.g);
+      fixedImg.append(fgColor.r);
+      fixedImg.append('\0');
+      fixedImg.append(data->getDataBuffer() + 0x36 + 8, data->size() - 0x36 - 8);
+      data = &fixedImg;
+    }
+    out->insert("libwpg:mime-type", MSPUBCollector::ImgShape::mimeByImgType(type));
+    out->insert("draw:fill-image", data->getBase64Data());
+    out->insert("draw:fill-image-ref-point", "top-left");
+  }
+  return WPXPropertyListVector();
+}
+
 SolidFill::SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
 {
 }

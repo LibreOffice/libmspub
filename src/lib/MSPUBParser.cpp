@@ -233,6 +233,26 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
       else if (imgTypeByBlipType(info.type) == DIB)
       {
         // Reconstruct BMP header
+        // cf. http://en.wikipedia.org/wiki/BMP_file_format , accessed 2012-5-31
+        const unsigned char *buf = img.getDataBuffer();
+        if (img.size() < 0x2E + 4)
+        {
+          ++m_lastAddedImage;
+          MSPUB_DEBUG_MSG(("Garbage DIB at index 0x%x\n", m_lastAddedImage));
+          input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
+          continue;
+        }
+        unsigned short bitsPerPixel = readU16(buf, 0x0E);
+        unsigned numPaletteColors = readU32(buf, 0x20);
+        if (numPaletteColors == 0 && bitsPerPixel <= 8)
+        {
+          numPaletteColors = 1;
+          for (int i = 0; i < bitsPerPixel; ++i)
+          {
+            numPaletteColors *= 2;
+          }
+        }
+
         WPXBinaryData tmpImg;
         tmpImg.append(0x42);
         tmpImg.append(0x4d);
@@ -247,7 +267,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
         tmpImg.append(0x00);
         tmpImg.append(0x00);
 
-        tmpImg.append(0x36);
+        tmpImg.append(0x36 + 4 * numPaletteColors);
         tmpImg.append(0x00);
         tmpImg.append(0x00);
         tmpImg.append(0x00);
@@ -1055,6 +1075,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     }
     return ret;
   }
+  case PATTERN:
   case TEXTURE:
   case BITMAP:
   {

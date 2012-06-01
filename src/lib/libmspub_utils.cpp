@@ -148,6 +148,22 @@ uint8_t libmspub::readU8(WPXInputStream *input)
   throw EndOfStreamException();
 }
 
+uint16_t libmspub::readU16(const unsigned char *input, unsigned offset)
+{
+  uint16_t p0 = (uint16_t)(*(input + offset));
+  uint16_t p1 = (uint16_t)(*(input + offset + 1));
+  return (uint16_t)(p0|(p1<<8));
+}
+
+uint32_t libmspub::readU32(const unsigned char *input, unsigned offset)
+{
+  uint32_t p0 = (uint32_t)(*(input + offset));
+  uint32_t p1 = (uint32_t)(*(input + offset + 1));
+  uint32_t p2 = (uint32_t)(*(input + offset + 2));
+  uint32_t p3 = (uint32_t)(*(input + offset + 3));
+  return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
+}
+
 uint16_t libmspub::readU16(WPXInputStream *input)
 {
   uint16_t p0 = (uint16_t)readU8(input);

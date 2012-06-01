@@ -36,7 +36,8 @@ enum FillType
   SOLID,
   GRADIENT = 0x07,
   BITMAP = 0x03,
-  TEXTURE = 0x02
+  TEXTURE = 0x02,
+  PATTERN = 0x01
 };
 } // libmspub
 #endif /* __FILLTYPE_H__ */

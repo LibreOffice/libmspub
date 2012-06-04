@@ -98,9 +98,9 @@ private:
 
   struct Coordinate
   {
-    Coordinate(int xs, int ys, int xe, int ye) : xs(xs), ys(ys), xe(xe), ye(ye) { }
-    Coordinate() : xs(0), ys(0), xe(0), ye(0) { }
-    int xs, ys, xe, ye;
+    Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
+    Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
+    int m_xs, m_ys, m_xe, m_ye;
   };
   struct Shape
   {
@@ -156,20 +156,20 @@ private:
   };
   struct GeometricShape : public FillableShape
   {
-    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), pageSeqNum(psn), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
-    unsigned pageSeqNum;
-    unsigned imgIndex;
-    ShapeType type;
-    ColorReference line;
-    bool lineSet;
+    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
+    unsigned m_pageSeqNum;
+    unsigned m_imgIndex;
+    ShapeType m_type;
+    ColorReference m_line;
+    bool m_lineSet;
     void setLine(ColorReference line);
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
     WPXPropertyListVector updateGraphicsProps();
-    GeometricShape() : FillableShape(NULL), pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
+    GeometricShape() : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
   private:
-    GeometricShape(const GeometricShape &) : FillableShape(NULL), pageSeqNum(0), imgIndex(0), type(RECTANGLE), line(0x08000000), lineSet(false) { }
+    GeometricShape(const GeometricShape &) : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
     GeometricShape &operator=(const GeometricShape &)
     {
       return *this;
@@ -178,7 +178,7 @@ private:
   struct ImgShape : public GeometricShape
   {
     ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
-    ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList p, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
+    ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList /* p */, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
     {
       setMime_(type);
     }
@@ -188,7 +188,7 @@ private:
     virtual void write(libwpg::WPGPaintInterface *painter);
   private:
     void setMime_(ImgType type);
-    ImgShape(const ImgShape &) : img() { }
+    ImgShape(const ImgShape &) : GeometricShape(), img() { }
     ImgShape &operator=(const ImgShape &)
     {
       return *this;
@@ -196,40 +196,40 @@ private:
   };
   struct PageInfo
   {
-    PageInfo() : shapeSeqNums(), shapeSeqNumsOrdered() { }
-    std::vector<unsigned> shapeSeqNums;
-    std::vector<unsigned> shapeSeqNumsOrdered;
+    PageInfo() : m_shapeSeqNums(), m_shapeSeqNumsOrdered() { }
+    std::vector<unsigned> m_shapeSeqNums;
+    std::vector<unsigned> m_shapeSeqNumsOrdered;
   };
 
   MSPUBCollector(const MSPUBCollector &);
   MSPUBCollector &operator=(const MSPUBCollector &);
 
   libwpg::WPGPaintInterface *m_painter;
-  std::list<ContentChunkReference> contentChunkReferences;
+  std::list<ContentChunkReference> m_contentChunkReferences;
   double m_width, m_height;
   bool m_widthSet, m_heightSet;
   unsigned short m_numPages;
-  std::map<unsigned, std::vector<TextParagraph> > textStringsById;
-  std::map<unsigned, PageInfo> pagesBySeqNum;
-  boost::ptr_map<unsigned, Shape> shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
-  std::vector<std::pair<ImgType, WPXBinaryData> > images;
-  std::vector<ColorReference> textColors;
-  Color defaultColor;
-  std::vector<std::vector<unsigned char> > fonts;
-  std::vector<CharacterStyle> defaultCharStyles;
-  std::vector<ParagraphStyle> defaultParaStyles;
-  std::map<unsigned, ShapeType> shapeTypesBySeqNum;
-  std::vector<unsigned> possibleImageShapeSeqNums;
-  std::map<unsigned, unsigned> shapeImgIndicesBySeqNum;
-  std::map<unsigned, Coordinate> shapeCoordinatesBySeqNum;
-  std::map<unsigned, ColorReference> shapeLineColorsBySeqNum;
-  boost::ptr_map<unsigned, Fill> shapeFillsBySeqNum;
-  std::vector<Color> paletteColors;
-  std::vector<unsigned> shapeSeqNumsOrdered;
-  std::map<unsigned, unsigned> pageSeqNumsByShapeSeqNum;
-  std::map<unsigned, std::pair<unsigned, unsigned> > textInfoBySeqNum;
-  std::map<unsigned, unsigned> bgShapeSeqNumsByPageSeqNum;
-  std::set<unsigned> skipIfNotBgSeqNums;
+  std::map<unsigned, std::vector<TextParagraph> > m_textStringsById;
+  std::map<unsigned, PageInfo> m_pagesBySeqNum;
+  boost::ptr_map<unsigned, Shape> m_shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
+  std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
+  std::vector<ColorReference> m_textColors;
+  Color m_defaultColor;
+  std::vector<std::vector<unsigned char> > m_fonts;
+  std::vector<CharacterStyle> m_defaultCharStyles;
+  std::vector<ParagraphStyle> m_defaultParaStyles;
+  std::map<unsigned, ShapeType> m_shapeTypesBySeqNum;
+  std::vector<unsigned> m_possibleImageShapeSeqNums;
+  std::map<unsigned, unsigned> m_shapeImgIndicesBySeqNum;
+  std::map<unsigned, Coordinate> m_shapeCoordinatesBySeqNum;
+  std::map<unsigned, ColorReference> m_shapeLineColorsBySeqNum;
+  boost::ptr_map<unsigned, Fill> m_shapeFillsBySeqNum;
+  std::vector<Color> m_paletteColors;
+  std::vector<unsigned> m_shapeSeqNumsOrdered;
+  std::map<unsigned, unsigned> m_pageSeqNumsByShapeSeqNum;
+  std::map<unsigned, std::pair<unsigned, unsigned> > m_textInfoBySeqNum;
+  std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
+  std::set<unsigned> m_skipIfNotBgSeqNums;
 
   // helper functions
   void assignTextShapes();

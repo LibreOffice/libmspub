@@ -43,9 +43,9 @@ ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture)
 WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
 {
   out->insert("draw:fill", "bitmap");
-  if (m_imgIndex <= m_owner->images.size())
+  if (m_imgIndex <= m_owner->m_images.size())
   {
-    const std::pair<ImgType, WPXBinaryData> &img = m_owner->images[m_imgIndex - 1];
+    const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
     out->insert("libwpg:mime-type", MSPUBCollector::ImgShape::mimeByImgType(img.first));
     out->insert("draw:fill-image", img.second.getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
@@ -63,12 +63,12 @@ PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorRe
 
 WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
 {
-  Color fgColor = m_fg.getFinalColor(m_owner->paletteColors);
-  Color bgColor = m_bg.getFinalColor(m_owner->paletteColors);
+  Color fgColor = m_fg.getFinalColor(m_owner->m_paletteColors);
+  Color bgColor = m_bg.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "bitmap");
-  if (m_imgIndex <= m_owner->images.size())
+  if (m_imgIndex <= m_owner->m_images.size())
   {
-    const std::pair<ImgType, WPXBinaryData> &img = m_owner->images[m_imgIndex - 1];
+    const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
     const ImgType &type = img.first;
     const WPXBinaryData *data = &img.second;
     // fix broken MSPUB DIB by putting in correct fg and bg colors
@@ -100,7 +100,7 @@ SolidFill::SolidFill(ColorReference color, double opacity, const MSPUBCollector 
 
 WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
 {
-  Color fillColor = m_color.getFinalColor(m_owner->paletteColors);
+  Color fillColor = m_color.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "solid");
   out->insert("draw:fill-color", MSPUBCollector::getColorString(fillColor));
   WPXString val;
@@ -125,7 +125,7 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
   out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
   for (unsigned i = 0; i < m_stops.size(); ++i)
   {
-    Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->paletteColors);
+    Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->m_paletteColors);
     WPXPropertyList stopProps;
     WPXString sValue;
     sValue.sprintf("%d%%", m_stops[i].m_offsetPercent);

@@ -33,8 +33,9 @@ namespace libmspub
 {
 enum ShapeType
 {
-  ELLIPSE   = 0x3,
-  RECTANGLE = 0x1
+  RECTANGLE         = 0x1,
+  ELLIPSE           = 0x3,
+  ISOCELES_TRIANGLE = 0x5
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

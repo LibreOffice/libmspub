@@ -46,6 +46,7 @@
 #include "ShapeType.h"
 #include "Fill.h"
 #include "ColorReference.h"
+#include "PolygonUtils.h"
 
 namespace libmspub
 {
@@ -156,20 +157,21 @@ private:
   };
   struct GeometricShape : public FillableShape
   {
-    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
+    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
     unsigned m_pageSeqNum;
     unsigned m_imgIndex;
     ShapeType m_type;
     ColorReference m_line;
     bool m_lineSet;
     void setLine(ColorReference line);
+    double m_x, m_y, m_width, m_height;
   protected:
     void setCoordProps(Coordinate coord);
     virtual void write(libwpg::WPGPaintInterface *painter);
     WPXPropertyListVector updateGraphicsProps();
-    GeometricShape() : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
+    GeometricShape() : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
   private:
-    GeometricShape(const GeometricShape &) : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false) { }
+    GeometricShape(const GeometricShape &) : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
     GeometricShape &operator=(const GeometricShape &)
     {
       return *this;
@@ -235,7 +237,6 @@ private:
   void assignTextShapes();
   void assignImages();
   void setRectCoordProps(Coordinate, WPXPropertyList *);
-  void setEllipseCoordProps(Coordinate, WPXPropertyList *);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
   static WPXString getColorString(const Color &);

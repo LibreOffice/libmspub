@@ -104,16 +104,10 @@ void libmspub::MSPUBCollector::TextShape::write(libwpg::WPGPaintInterface *paint
 
 void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
 {
-  switch (m_type)
-  {
-  case ELLIPSE:
-    owner->setEllipseCoordProps(coord, &props);
-    break;
-  case RECTANGLE:
-  default:
-    owner->setRectCoordProps(coord, &props);
-    break;
-  };
+  m_x = owner->m_width / 2 + (double)(coord.m_xs) / EMUS_IN_INCH;
+  m_y = owner->m_height / 2 + (double)(coord.m_ys) / EMUS_IN_INCH;
+  m_width = (double)(coord.m_xe - coord.m_xs) / EMUS_IN_INCH;
+  m_height = (double)(coord.m_ye - coord.m_ys) / EMUS_IN_INCH;
 }
 
 WPXPropertyListVector libmspub::MSPUBCollector::FillableShape::updateGraphicsProps()
@@ -150,17 +144,8 @@ WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsPr
 
 void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
-  switch(m_type)
-  {
-  case RECTANGLE:
-    painter->drawRectangle(props);
-    break;
-  case ELLIPSE:
-    painter->drawEllipse(props);
-    break;
-  default:
-    break;
-  }
+  const CustomShape *shape = getCustomShape(m_type);
+  writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width);
 }
 
 void libmspub::MSPUBCollector::FillableShape::setFill(Fill *f)
@@ -326,17 +311,6 @@ void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyLi
   props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
   props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
   props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
-}
-
-void libmspub::MSPUBCollector::setEllipseCoordProps(Coordinate coord, WPXPropertyList *props)
-{
-  int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
-  double x_center = m_width / 2;
-  double y_center = m_height / 2;
-  props->insert("svg:cx", x_center + ((double)xs + (double)xe)/(2 * EMUS_IN_INCH));
-  props->insert("svg:cy", y_center + ((double)ys + (double)ye)/(2 * EMUS_IN_INCH));
-  props->insert("svg:rx", (double)(xe - xs)/(2 * EMUS_IN_INCH));
-  props->insert("svg:ry", (double)(ye - ys)/(2 * EMUS_IN_INCH));
 }
 
 bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)

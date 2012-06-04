@@ -24,6 +24,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBSVGGenerator.cpp \
 	Fill.cpp \
 	libmspub_utils.cpp \
+	PolygonUtils.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -38,7 +39,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	libmspub_utils.h \
 	ShapeType.h \
 	Fill.h \
-	ColorReference.h
+	ColorReference.h \
+	PolygonUtils.h
 
 if OS_WIN32
 

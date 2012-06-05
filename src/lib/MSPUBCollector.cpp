@@ -507,10 +507,10 @@ void libmspub::MSPUBCollector::assignImages()
       {
         shape->setFill(ptr_fill);
       }
-      for (std::map<unsigned, int>::const_iterator i = m_adjustValuesByIndexBySeqNum[seqNum].begin();
-           i != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++i)
+      for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
+           iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)
       {
-        shape->setAdjustValue(i->first, i->second);
+        shape->setAdjustValue(iter->first, iter->second);
       }
     }
   }

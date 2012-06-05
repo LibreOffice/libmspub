@@ -236,7 +236,7 @@ double getSpecialIfNecessary(const libmspub::GeometricShape *caller, int val)
   return special ? caller->getCalculationValue(val ^ 0x80000000) : val;
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller)
+void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller)
 {
   if (width == 0 || height == 0)
   {

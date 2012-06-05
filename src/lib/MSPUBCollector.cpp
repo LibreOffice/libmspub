@@ -113,7 +113,7 @@ double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int a
     }
     return 0;
   }
-  if (arg & 0x400)
+  if (arg & OTHER_CALC_VAL)
   {
     return getCalculationValue(arg & 0xff, true);
   }
@@ -496,6 +496,7 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
       }
+      shape->fillDefaultAdjustValues();
       ColorReference *ptr_lineColor = getIfExists(m_shapeLineColorsBySeqNum, seqNum);
       if (ptr_lineColor)
       {
@@ -509,7 +510,6 @@ void libmspub::MSPUBCollector::assignImages()
       for (std::map<unsigned, int>::const_iterator i = m_adjustValuesByIndexBySeqNum[seqNum].begin();
            i != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++i)
       {
-        shape->fillDefaultAdjustValues();
         shape->setAdjustValue(i->first, i->second);
       }
     }

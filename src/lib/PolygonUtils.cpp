@@ -98,10 +98,10 @@ const Vertex SEAL_4_VERTICES[] =
 const Calculation SEAL_4_CALC[] =
 {
   Calculation(0x0000, 7600, 0, 0),
-  Calculation(0x6001, 0x400, PROP_ADJUST_VAL_FIRST, 10800),
-  Calculation(0xA000, 0x400, 0, 0x401),
-  Calculation(0x4000, 10800, 0x402, 0),
-  Calculation(0x8000, 10800, 0, 0x402)
+  Calculation(0x6001, OTHER_CALC_VAL, PROP_ADJUST_VAL_FIRST, 10800),
+  Calculation(0xA000, OTHER_CALC_VAL, 0, OTHER_CALC_VAL | 1),
+  Calculation(0x4000, 10800, OTHER_CALC_VAL, 0),
+  Calculation(0x8000, 10800, 0, OTHER_CALC_VAL | 2)
 };
 
 const TextRectangle SEAL_4_TRS[] =
@@ -123,6 +123,55 @@ const CustomShape CS_SEAL_4(
   21600, 21600,
   NULL, 0);
 
+const Vertex ISOCELES_TRIANGLE_VERTICES[] =
+{
+  Vertex(0 CALCULATED_VALUE, 0), Vertex(21600, 21600), Vertex(0, 21600)
+};
+
+const unsigned short ISOCELES_TRIANGLE_SEGMENTS[] =
+{
+  0x4000, 0x0002, 0x6001, 0x8000
+};
+
+const Calculation ISOCELES_TRIANGLE_CALC[] =
+{
+  Calculation(0x4000, 0, PROP_ADJUST_VAL_FIRST, 0),
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2),
+  Calculation(0x2000, OTHER_CALC_VAL | 1, 10800, 0),
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 2, 3),
+  Calculation(0x2000, OTHER_CALC_VAL | 3, 7200, 0),
+  Calculation(0x8000, 21600, 0, OTHER_CALC_VAL),
+  Calculation(0x2001, OTHER_CALC_VAL | 5, 1, 2),
+  Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 6)
+};
+
+const TextRectangle ISOCELES_TRIANGLE_TRS[] =
+{
+  TextRectangle(Vertex(1 CALCULATED_VALUE, 10800), Vertex(2 CALCULATED_VALUE, 18000)),
+  TextRectangle(Vertex(3 CALCULATED_VALUE, 7200), Vertex(4 CALCULATED_VALUE, 21600))
+};
+
+const Vertex ISOCELES_TRIANGLE_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(1 CALCULATED_VALUE, 10800),
+  Vertex(0, 21600), Vertex(10800, 21600),
+  Vertex(21600, 21600), Vertex(7 CALCULATED_VALUE, 10800)
+};
+
+const unsigned ISOCELES_TRIANGLE_DEFAULT_ADJUST[] =
+{
+  10800
+};
+
+const CustomShape CS_ISOCELES_TRIANGLE(
+  ISOCELES_TRIANGLE_VERTICES, sizeof(ISOCELES_TRIANGLE_VERTICES) / sizeof(Vertex),
+  ISOCELES_TRIANGLE_SEGMENTS, sizeof(ISOCELES_TRIANGLE_SEGMENTS) / sizeof(unsigned short),
+  ISOCELES_TRIANGLE_CALC, sizeof(ISOCELES_TRIANGLE_CALC) / sizeof(Calculation),
+  ISOCELES_TRIANGLE_DEFAULT_ADJUST, sizeof(ISOCELES_TRIANGLE_DEFAULT_ADJUST) / sizeof(unsigned),
+  ISOCELES_TRIANGLE_TRS, sizeof(ISOCELES_TRIANGLE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  ISOCELES_TRIANGLE_GLUE_POINTS, sizeof(ISOCELES_TRIANGLE_GLUE_POINTS) / sizeof(Vertex));
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -131,6 +180,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_RECTANGLE;
   case ELLIPSE:
     return &CS_ELLIPSE;
+  case ISOCELES_TRIANGLE:
+    return &CS_ISOCELES_TRIANGLE;
   case SEAL_4:
     return &CS_SEAL_4;
   default:
@@ -262,8 +313,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           WPXPropertyList moveVertex;
           double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
           double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
-          moveVertex.insert("svg:x", newX);
-          moveVertex.insert("svg:y", newY);
+          moveVertex.insert("svg:x", newX / divisorX + x);
+          moveVertex.insert("svg:y", newY / divisorY + y);
           moveVertex.insert("libwpg:path-action", "M");
           vertices.append(moveVertex);
           ++vertexIndex;

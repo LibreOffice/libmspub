@@ -40,7 +40,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ShapeType.h \
 	Fill.h \
 	ColorReference.h \
-	PolygonUtils.h
+	PolygonUtils.h \
+	Shapes.h
 
 if OS_WIN32
 

@@ -31,6 +31,7 @@
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
+#include "PolygonUtils.h"
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
@@ -43,7 +44,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapeCoordinatesBySeqNum(), m_shapeLineColorsBySeqNum(),
   m_shapeFillsBySeqNum(), m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
-  m_skipIfNotBgSeqNums()
+  m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum()
 {
 }
 
@@ -62,12 +63,12 @@ void libmspub::MSPUBCollector::addPaletteColor(Color c)
   m_paletteColors.push_back(c);
 }
 
-WPXPropertyListVector libmspub::MSPUBCollector::Shape::updateGraphicsProps()
+WPXPropertyListVector libmspub::Shape::updateGraphicsProps()
 {
   return WPXPropertyListVector();
 }
 
-void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
+void libmspub::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
   owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
@@ -75,12 +76,12 @@ void libmspub::MSPUBCollector::Shape::output(libwpg::WPGPaintInterface *painter,
   write(painter);
 }
 
-void libmspub::MSPUBCollector::Shape::setCoordProps(Coordinate coord)
+void libmspub::Shape::setCoordProps(Coordinate coord)
 {
   owner->setRectCoordProps(coord, &props);
 }
 
-void libmspub::MSPUBCollector::TextShape::write(libwpg::WPGPaintInterface *painter)
+void libmspub::TextShape::write(libwpg::WPGPaintInterface *painter)
 {
   painter->startTextObject(props, WPXPropertyListVector());
   for (unsigned i_lines = 0; i_lines < str.size(); ++i_lines)
@@ -101,8 +102,143 @@ void libmspub::MSPUBCollector::TextShape::write(libwpg::WPGPaintInterface *paint
   painter->endTextObject();
 }
 
+double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int arg) const
+{
+  if (PROP_ADJUST_VAL_FIRST <= arg && PROP_ADJUST_VAL_LAST >= arg)
+  {
+    unsigned adjustIndex = arg - PROP_ADJUST_VAL_FIRST;
+    if (adjustIndex < shape.m_numDefaultAdjustValues)
+    {
+      return m_adjustValues[adjustIndex];
+    }
+    return 0;
+  }
+  if (arg & 0x400)
+  {
+    return getCalculationValue(arg & 0xff, true);
+  }
+  switch (arg)
+  {
+  case PROP_GEO_LEFT:
+    return 0;
+  case PROP_GEO_TOP:
+    return 0;
+  case PROP_GEO_RIGHT:
+    return shape.m_coordWidth;
+  case PROP_GEO_BOTTOM:
+    return shape.m_coordHeight;
+  default:
+    break;
+  }
+  return 0;
+}
 
-void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
+double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recursiveEntry) const
+{
+  const CustomShape *p_shape = getCustomShape(m_type);
+  if (! p_shape)
+  {
+    return 0;
+  }
+  const CustomShape &shape = *p_shape;
+  if (index >= shape.m_numCalculations)
+  {
+    return 0;
+  }
+  if (! recursiveEntry)
+  {
+    m_valuesSeen.clear();
+    m_valuesSeen.resize(shape.m_numCalculations);
+  }
+  if (m_valuesSeen[index])
+  {
+    //recursion detected
+    return 0;
+  }
+  m_valuesSeen[index] = true;
+
+  const Calculation &c = shape.mp_calculations[index];
+  bool oneSpecial = (c.m_flags & 0x2000) != 0;
+  bool twoSpecial = (c.m_flags & 0x4000) != 0;
+  bool threeSpecial = (c.m_flags & 0x8000) != 0;
+
+  double valOne = oneSpecial ? getSpecialValue(shape, c.m_argOne) : c.m_argOne;
+  double valTwo = twoSpecial ? getSpecialValue(shape, c.m_argTwo) : c.m_argTwo;
+  double valThree = threeSpecial ? getSpecialValue(shape, c.m_argThree) : c.m_argThree;
+  m_valuesSeen[index] = false;
+  switch (c.m_flags & 0xFF)
+  {
+  case 0:
+  case 14:
+    return valOne + valTwo - valThree;
+  case 1:
+    return valOne * valTwo / (valThree == 0 ? 1 : valThree);
+  case 2:
+    return (valOne + valTwo) / 2;
+  case 3:
+    return fabs(valOne);
+  case 4:
+    return std::min(valOne, valTwo);
+  case 5:
+    return std::max(valOne, valTwo);
+  case 6:
+    return valOne ? valTwo : valThree;
+  case 7:
+    return sqrt(valOne * valTwo * valThree);
+  case 8:
+    return atan2(valTwo, valOne) / (PI / 180);
+  case 9:
+    return valOne * sin(valTwo * (PI / 180) );
+  case 10:
+    return valOne * cos(valTwo * (PI / 180) );
+  case 11:
+    return valOne * cos(atan2(valThree, valTwo));
+  case 12:
+    return valOne * sin(atan2(valThree, valTwo));
+  case 13:
+    return sqrt(valOne);
+  case 15:
+    return valThree * sqrt(1 - (valOne / valTwo) * (valOne / valTwo));
+  case 16:
+    return valOne * tan(valTwo);
+  case 0x80:
+    return sqrt(valThree * valThree - valOne * valOne);
+  case 0x81:
+    return (cos(valThree * (PI / 180)) * (valOne - 10800) + sin(valThree * (PI / 180)) * (valTwo - 10800)) + 10800;
+  case 0x82:
+    return -(sin(valThree * (PI / 180)) * (valOne - 10800) - cos(valThree * (PI / 180)) * (valTwo - 10800)) + 10800;
+  default:
+    return 0;
+  }
+}
+
+void libmspub::GeometricShape::fillDefaultAdjustValues()
+{
+  if (m_filledDefaultAdjustValues)
+  {
+    return;
+  }
+  m_filledDefaultAdjustValues = true;
+  const CustomShape *def = getCustomShape(m_type);
+  if (def)
+  {
+    for (unsigned i = 0; i < def->m_numDefaultAdjustValues; ++i)
+    {
+      m_adjustValues.push_back(def->mp_defaultAdjustValues[i]);
+    }
+  }
+}
+
+void libmspub::GeometricShape::setAdjustValue(unsigned index, int adjustValue)
+{
+  for (unsigned i = m_adjustValues.size(); i <= index; ++i)
+  {
+    m_adjustValues.push_back(0);
+  }
+  m_adjustValues[index] = adjustValue;
+}
+
+void libmspub::GeometricShape::setCoordProps(Coordinate coord)
 {
   m_x = owner->m_width / 2 + (double)(coord.m_xs) / EMUS_IN_INCH;
   m_y = owner->m_height / 2 + (double)(coord.m_ys) / EMUS_IN_INCH;
@@ -110,7 +246,7 @@ void libmspub::MSPUBCollector::GeometricShape::setCoordProps(Coordinate coord)
   m_height = (double)(coord.m_ye - coord.m_ys) / EMUS_IN_INCH;
 }
 
-WPXPropertyListVector libmspub::MSPUBCollector::FillableShape::updateGraphicsProps()
+WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
 {
   if (fill)
   {
@@ -119,7 +255,7 @@ WPXPropertyListVector libmspub::MSPUBCollector::FillableShape::updateGraphicsPro
   return WPXPropertyListVector();
 }
 
-WPXPropertyListVector libmspub::MSPUBCollector::TextShape::updateGraphicsProps()
+WPXPropertyListVector libmspub::TextShape::updateGraphicsProps()
 {
   if (fill)
   {
@@ -128,12 +264,12 @@ WPXPropertyListVector libmspub::MSPUBCollector::TextShape::updateGraphicsProps()
   return WPXPropertyListVector();
 }
 
-WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsProps()
+WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
 {
   if (m_lineSet)
   {
     graphicsProps.insert("draw:stroke", "solid");
-    graphicsProps.insert("svg:stroke-color", getColorString(m_line.getFinalColor(owner->m_paletteColors)));
+    graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(m_line.getFinalColor(owner->m_paletteColors)));
   }
   else
   {
@@ -142,24 +278,27 @@ WPXPropertyListVector libmspub::MSPUBCollector::GeometricShape::updateGraphicsPr
   return FillableShape::updateGraphicsProps();
 }
 
-void libmspub::MSPUBCollector::GeometricShape::write(libwpg::WPGPaintInterface *painter)
+void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
   const CustomShape *shape = getCustomShape(m_type);
-  writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width);
+  if (shape)
+  {
+    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this);
+  }
 }
 
-void libmspub::MSPUBCollector::FillableShape::setFill(Fill *f)
+void libmspub::FillableShape::setFill(Fill *f)
 {
   fill = f;
 }
 
-void libmspub::MSPUBCollector::GeometricShape::setLine(ColorReference line)
+void libmspub::GeometricShape::setLine(ColorReference line)
 {
   m_line = line;
   m_lineSet = true;
 }
 
-libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
+libmspub::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
   GeometricShape(from.m_pageSeqNum, o), img(i)
 {
   this->m_type = from.m_type;
@@ -167,7 +306,7 @@ libmspub::MSPUBCollector::ImgShape::ImgShape(const GeometricShape &from, ImgType
   setMime_(imgType);
 }
 
-const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
+const char *libmspub::ImgShape::mimeByImgType(ImgType type)
 {
   switch (type)
   {
@@ -191,13 +330,13 @@ const char *libmspub::MSPUBCollector::ImgShape::mimeByImgType(ImgType type)
   }
 }
 
-void libmspub::MSPUBCollector::ImgShape::setMime_(ImgType imgType)
+void libmspub::ImgShape::setMime_(ImgType imgType)
 {
   const char *mimetype = mimeByImgType(imgType);
   if (mimetype)
     props.insert("libwpg:mime-type", mimetype);
 }
-void libmspub::MSPUBCollector::ImgShape::write(libwpg::WPGPaintInterface *painter)
+void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
 {
   painter->drawGraphicObject(props, img);
 }
@@ -209,6 +348,11 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
 {
   return m_shapeTypesBySeqNum.insert(std::pair<const unsigned, ShapeType>(seqNum, type)).second;
+}
+
+bool libmspub::MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, int adjust)
+{
+  return m_adjustValuesByIndexBySeqNum[seqNum].insert(std::pair<const unsigned, int>(index, adjust)).second;
 }
 
 void libmspub::MSPUBCollector::setDefaultColor(unsigned char r, unsigned char g, unsigned char b)
@@ -327,22 +471,23 @@ void libmspub::MSPUBCollector::assignImages()
 {
   for (unsigned i = 0; i < m_possibleImageShapeSeqNums.size(); ++i)
   {
-    unsigned *index = getIfExists(m_shapeImgIndicesBySeqNum, m_possibleImageShapeSeqNums[i]);
-    GeometricShape *shape = (GeometricShape *)ptr_getIfExists(m_shapesBySeqNum, m_possibleImageShapeSeqNums[i]);
+    unsigned seqNum = m_possibleImageShapeSeqNums[i];
+    unsigned *index = getIfExists(m_shapeImgIndicesBySeqNum, seqNum);
+    GeometricShape *shape = (GeometricShape *)ptr_getIfExists(m_shapesBySeqNum, seqNum);
     if (!shape)
     {
-      MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", m_possibleImageShapeSeqNums[i]));
+      MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", seqNum));
       return;
     }
     if (index && *index - 1 < m_images.size())
     {
       ImgShape *toInsert = new ImgShape(*shape, m_images[*index - 1].first, m_images[*index - 1].second, this);
-      m_shapesBySeqNum.erase(m_possibleImageShapeSeqNums[i]);
-      m_shapesBySeqNum.insert(m_possibleImageShapeSeqNums[i], toInsert);
+      m_shapesBySeqNum.erase(seqNum);
+      m_shapesBySeqNum.insert(seqNum, toInsert);
     }
     else
     {
-      ShapeType *type = getIfExists(m_shapeTypesBySeqNum, m_possibleImageShapeSeqNums[i]);
+      ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
       if (type)
       {
         shape->m_type = *type;
@@ -351,15 +496,21 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
       }
-      ColorReference *ptr_lineColor = getIfExists(m_shapeLineColorsBySeqNum, m_possibleImageShapeSeqNums[i]);
+      ColorReference *ptr_lineColor = getIfExists(m_shapeLineColorsBySeqNum, seqNum);
       if (ptr_lineColor)
       {
         shape->setLine(*ptr_lineColor);
       }
-      Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, m_possibleImageShapeSeqNums[i]);
-      if (ptr_fill && m_skipIfNotBgSeqNums.find(m_possibleImageShapeSeqNums[i]) == m_skipIfNotBgSeqNums.end())
+      Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
+      if (ptr_fill && m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end())
       {
         shape->setFill(ptr_fill);
+      }
+      for (std::map<unsigned, int>::const_iterator i = m_adjustValuesByIndexBySeqNum[seqNum].begin();
+           i != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++i)
+      {
+        shape->fillDefaultAdjustValues();
+        shape->setAdjustValue(i->first, i->second);
       }
     }
   }

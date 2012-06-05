@@ -45,6 +45,9 @@
 #define FIELDID_FILL_ANGLE             0x018B
 #define FIELDID_FILL_FOCUS             0x018C
 #define FIELDID_FIELD_STYLE_BOOL_PROPS 0x01BF
+#define FIELDID_ADJUST_VALUE_1         0x0147
+#define FIELDID_ADJUST_VALUE_2         0x0148
+#define FIELDID_ADJUST_VALUE_3         0x0149
 
 
 #endif /* __ESCHERFIELDIDS_H__ */

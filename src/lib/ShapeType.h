@@ -35,7 +35,7 @@ enum ShapeType
 {
   RECTANGLE         = 0x1,
   ELLIPSE           = 0x3,
-  ISOCELES_TRIANGLE = 0x5
+  SEAL_4            = 0xBB
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

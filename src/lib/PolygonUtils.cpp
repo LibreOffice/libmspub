@@ -34,8 +34,11 @@
 #include "ShapeType.h"
 #include "PolygonUtils.h"
 #include "libmspub_utils.h"
+#include "MSPUBCollector.h"
 
-const double PI = 3.14159265;
+#define CALCULATED_VALUE | 0x80000000
+
+#define PI 3.14159265
 
 using namespace libmspub;
 
@@ -46,6 +49,8 @@ const Vertex RECTANGLE_VERTICES[] =
 
 const CustomShape CS_RECTANGLE(
   RECTANGLE_VERTICES, sizeof(RECTANGLE_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
   NULL, 0,
   NULL, 0,
   21600, 21600,
@@ -75,9 +80,48 @@ const Vertex ELLIPSE_GLUE_PTS[] =
 const CustomShape CS_ELLIPSE(
   ELLIPSE_VERTICES, sizeof(ELLIPSE_VERTICES) / sizeof(Vertex),
   ELLIPSE_SEGMENTS, sizeof(ELLIPSE_SEGMENTS) / sizeof(unsigned short),
+  NULL, 0,
+  NULL, 0,
   ELLIPSE_TRS, sizeof(ELLIPSE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   ELLIPSE_GLUE_PTS, sizeof(ELLIPSE_GLUE_PTS) / sizeof(Vertex));
+
+const Vertex SEAL_4_VERTICES[] =
+{
+  Vertex(0, 10800), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE),
+  Vertex(10800, 0), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE),
+  Vertex(21600, 10800), Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE),
+  Vertex(10800, 21600), Vertex(4 CALCULATED_VALUE, 3 CALCULATED_VALUE),
+  Vertex(0, 10800)
+};
+
+const Calculation SEAL_4_CALC[] =
+{
+  Calculation(0x0000, 7600, 0, 0),
+  Calculation(0x6001, 0x400, PROP_ADJUST_VAL_FIRST, 10800),
+  Calculation(0xA000, 0x400, 0, 0x401),
+  Calculation(0x4000, 10800, 0x402, 0),
+  Calculation(0x8000, 10800, 0, 0x402)
+};
+
+const TextRectangle SEAL_4_TRS[] =
+{
+  TextRectangle(Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE))
+};
+
+const unsigned SEAL_4_DEFAULT_ADJUST[] =
+{
+  8100
+};
+
+const CustomShape CS_SEAL_4(
+  SEAL_4_VERTICES, sizeof(SEAL_4_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  SEAL_4_CALC, sizeof(SEAL_4_CALC) / sizeof(Calculation),
+  SEAL_4_DEFAULT_ADJUST, sizeof(SEAL_4_DEFAULT_ADJUST) / sizeof(unsigned),
+  SEAL_4_TRS, sizeof(SEAL_4_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
 
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
@@ -87,6 +131,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_RECTANGLE;
   case ELLIPSE:
     return &CS_ELLIPSE;
+  case SEAL_4:
+    return &CS_SEAL_4;
   default:
     return NULL;
   }
@@ -94,6 +140,7 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
 
 enum Command
 {
+  MOVETO,
   LINETO,
   ANGLEELLIPSE
 };
@@ -115,14 +162,30 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
     break;
+  case 0x20:
+    cmd = LINETO;
+    count = (binary & 0xFF);
+    break;
+  case 0x40:
+    cmd = MOVETO;
+    count = (binary & 0xFF);
+    count = count ? count : 1;
+    break;
   default:
     cmd = LINETO;
+    count = 1;
     break;
   }
   return ShapeElementCommand(cmd, count);
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width)
+double getSpecialIfNecessary(const libmspub::GeometricShape *caller, int val)
+{
+  bool special = val & 0x80000000;
+  return special ? caller->getCalculationValue(val ^ 0x80000000) : val;
+}
+
+void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller)
 {
   if (width == 0 || height == 0)
   {
@@ -136,29 +199,32 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
     for (unsigned i = 0; i < shape->m_numVertices; ++i)
     {
       WPXPropertyList vertex;
-      vertex.insert("svg:x", shape->mp_vertices[i].m_x / divisorX + x);
-      vertex.insert("svg:y", shape->mp_vertices[i].m_y / divisorY + y);
+      double vertexX = getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
+      double vertexY = getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
+      vertex.insert("svg:x", vertexX / divisorX + x);
+      vertex.insert("svg:y", vertexY / divisorY + y);
       vertices.append(vertex);
     }
     painter->drawPolygon(vertices);
   }
   else
   {
+    unsigned vertexIndex = 0;
     for (unsigned i = 0; i < shape->m_numElements; ++i)
     {
       ShapeElementCommand cmd = getCommandFromBinary(shape->mp_elements[i]);
       switch (cmd.m_command)
       {
       case ANGLEELLIPSE:
-        for (unsigned j = 0; (j < cmd.m_count) && (3 * j + 2 < shape->m_numVertices); ++j)
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           WPXPropertyList vertex;
-          double startAngle = shape->mp_vertices[3 * j + 2].m_x;
-          double endAngle = shape->mp_vertices[3 * j + 2].m_y;
-          double cx = x + shape->mp_vertices[3 * j].m_x / divisorX;
-          double cy = y + shape->mp_vertices[3 * j].m_y / divisorY;
-          double rx = shape->mp_vertices[3 * j + 1].m_x / divisorX;
-          double ry = shape->mp_vertices[3 * j + 1].m_y / divisorY;
+          double startAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x);
+          double endAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y);
+          double cx = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double cy = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double rx = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
+          double ry = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
 
           // FIXME: Are angles supposed to be the actual angle of the point with the x-axis,
           // or the eccentric anomaly, or something else?
@@ -189,6 +255,32 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           vertex.insert("libwpg:path-action", "A");
           vertices.append(vertex);
         }
+        break;
+      case MOVETO:
+        if (vertexIndex < shape->m_numVertices)
+        {
+          WPXPropertyList moveVertex;
+          double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
+          moveVertex.insert("svg:x", newX);
+          moveVertex.insert("svg:y", newY);
+          moveVertex.insert("libwpg:path-action", "M");
+          vertices.append(moveVertex);
+          ++vertexIndex;
+        }
+        break;
+      case LINETO:
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
+        {
+          WPXPropertyList vertex;
+          double vertexX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double vertexY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
+          vertex.insert("svg:x", vertexX / divisorX + x);
+          vertex.insert("svg:y", vertexY / divisorY + y);
+          vertex.insert("libwpg:path-action", "L");
+          vertices.append(vertex);
+        }
+        break;
       default:
         break;
       }

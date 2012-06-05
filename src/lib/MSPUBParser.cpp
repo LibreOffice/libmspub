@@ -42,6 +42,7 @@
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
 #include "ShapeType.h"
+#include "Shapes.h"
 #include "Fill.h"
 #include "FillType.h"
 
@@ -992,6 +993,21 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 if (ptr_fill)
                 {
                   m_collector->setShapeFill(*shapeSeqNum, ptr_fill, skipIfNotBg);
+                }
+                int *ptr_adjust1 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_1);
+                int *ptr_adjust2 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_2);
+                int *ptr_adjust3 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_3);
+                if (ptr_adjust1)
+                {
+                  m_collector->setAdjustValue(*shapeSeqNum, 0, *ptr_adjust1);
+                }
+                if (ptr_adjust2)
+                {
+                  m_collector->setAdjustValue(*shapeSeqNum, 1, *ptr_adjust2);
+                }
+                if (ptr_adjust3)
+                {
+                  m_collector->setAdjustValue(*shapeSeqNum, 2, *ptr_adjust3);
                 }
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);

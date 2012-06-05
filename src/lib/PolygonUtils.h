@@ -33,14 +33,37 @@
 
 #include <libwpg/libwpg.h>
 
+#include "MSPUBCollector.h"
+#include "Shapes.h"
+
 namespace libmspub
 {
+const int PROP_ADJUST_VAL_FIRST = 327;
+const int PROP_ADJUST_VAL_LAST  = 336;
+const int PROP_GEO_LEFT         = 320;
+const int PROP_GEO_TOP          = 321;
+const int PROP_GEO_RIGHT        = 322;
+const int PROP_GEO_BOTTOM       = 323;
+
+class MSPUBCollector;
 
 struct Vertex
 {
   int m_x;
   int m_y;
   Vertex(int x, int y) : m_x(x), m_y(y) { }
+};
+
+struct Calculation
+{
+  int m_flags;
+  int m_argOne;
+  int m_argTwo;
+  int m_argThree;
+  Calculation(int flags, int argOne, int argTwo, int argThree) : m_flags(flags), m_argOne(argOne),
+    m_argTwo(argTwo), m_argThree(argThree)
+  {
+  }
 };
 
 typedef std::pair<Vertex, Vertex> TextRectangle;
@@ -51,6 +74,10 @@ struct CustomShape
   unsigned m_numVertices;
   const unsigned short *mp_elements;
   unsigned m_numElements;
+  const Calculation *mp_calculations;
+  unsigned m_numCalculations;
+  const unsigned *mp_defaultAdjustValues;
+  unsigned m_numDefaultAdjustValues;
   const TextRectangle *mp_textRectangles;
   unsigned m_numTextRectangles;
   unsigned m_coordWidth;
@@ -58,9 +85,11 @@ struct CustomShape
   const Vertex *mp_gluePoints;
   unsigned m_numGluePoints;
 
-  CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints) :
+  CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const unsigned *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints) :
     mp_vertices(p_vertices), m_numVertices(numVertices),
     mp_elements(p_elements), m_numElements(numElements),
+    mp_calculations(p_calculations), m_numCalculations(numCalculations),
+    mp_defaultAdjustValues(p_defaultAdjustValues), m_numDefaultAdjustValues(numDefaultAdjustValues),
     mp_textRectangles(p_textRectangles), m_numTextRectangles(numTextRectangles),
     m_coordWidth(coordWidth), m_coordHeight(coordHeight),
     mp_gluePoints(p_gluePoints), m_numGluePoints(numGluePoints)
@@ -69,7 +98,7 @@ struct CustomShape
 };
 
 const CustomShape *getCustomShape(ShapeType type);
-void writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width);
+void writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

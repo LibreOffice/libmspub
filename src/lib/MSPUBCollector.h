@@ -34,6 +34,8 @@
 #include <map>
 #include <set>
 #include <string>
+#include <algorithm>
+#include <cmath>
 
 #include <boost/ptr_container/ptr_map.hpp>
 
@@ -47,6 +49,9 @@
 #include "Fill.h"
 #include "ColorReference.h"
 #include "PolygonUtils.h"
+#include "Shapes.h"
+
+#define PI 3.14159265
 
 namespace libmspub
 {
@@ -80,6 +85,7 @@ public:
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
   bool setShapeLineColor(unsigned seqNum, ColorReference line);
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
+  bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -97,105 +103,6 @@ public:
   bool go();
 private:
 
-  struct Coordinate
-  {
-    Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
-    Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
-    int m_xs, m_ys, m_xe, m_ye;
-  };
-  struct Shape
-  {
-    Shape(MSPUBCollector *o) : props(), graphicsProps(), owner(o) { }
-    void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
-    virtual ~Shape()
-    {
-    }
-    WPXPropertyList props;
-    WPXPropertyList graphicsProps;
-  protected:
-    virtual void setCoordProps(Coordinate coord);
-    virtual void write(libwpg::WPGPaintInterface *painter) = 0;
-    MSPUBCollector *owner;
-
-    virtual WPXPropertyListVector updateGraphicsProps();
-
-    Shape() : props(), graphicsProps(), owner(NULL) { }
-  private:
-    Shape(const Shape &) : props(), graphicsProps(), owner(NULL) { }
-    Shape &operator=(const Shape &)
-    {
-      return *this;
-    }
-  };
-  struct FillableShape : public Shape
-  {
-    FillableShape(MSPUBCollector *o) : Shape(o), fill(NULL) { }
-    Fill *fill;
-    void setFill(Fill *fill);
-  protected:
-    virtual WPXPropertyListVector updateGraphicsProps();
-  private:
-    FillableShape(const FillableShape &) : Shape(NULL), fill(NULL) { }
-    FillableShape &operator=(const FillableShape &)
-    {
-      return *this;
-    }
-  };
-  struct TextShape : public FillableShape
-  {
-    TextShape(std::vector<TextParagraph> s, MSPUBCollector *o) : FillableShape(o), str(s) { }
-    std::vector<TextParagraph> str;
-  protected:
-    void write(libwpg::WPGPaintInterface *painter);
-    WPXPropertyListVector updateGraphicsProps();
-  private:
-    TextShape(const TextShape &) : FillableShape(NULL), str() { }
-    TextShape &operator=(const TextShape &)
-    {
-      return *this;
-    }
-  };
-  struct GeometricShape : public FillableShape
-  {
-    GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
-    unsigned m_pageSeqNum;
-    unsigned m_imgIndex;
-    ShapeType m_type;
-    ColorReference m_line;
-    bool m_lineSet;
-    void setLine(ColorReference line);
-    double m_x, m_y, m_width, m_height;
-  protected:
-    void setCoordProps(Coordinate coord);
-    virtual void write(libwpg::WPGPaintInterface *painter);
-    WPXPropertyListVector updateGraphicsProps();
-    GeometricShape() : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
-  private:
-    GeometricShape(const GeometricShape &) : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0) { }
-    GeometricShape &operator=(const GeometricShape &)
-    {
-      return *this;
-    }
-  };
-  struct ImgShape : public GeometricShape
-  {
-    ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
-    ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList /* p */, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
-    {
-      setMime_(type);
-    }
-    WPXBinaryData img;
-    static const char *mimeByImgType(ImgType type);
-  protected:
-    virtual void write(libwpg::WPGPaintInterface *painter);
-  private:
-    void setMime_(ImgType type);
-    ImgShape(const ImgShape &) : GeometricShape(), img() { }
-    ImgShape &operator=(const ImgShape &)
-    {
-      return *this;
-    }
-  };
   struct PageInfo
   {
     PageInfo() : m_shapeSeqNums(), m_shapeSeqNumsOrdered() { }
@@ -232,6 +139,7 @@ private:
   std::map<unsigned, std::pair<unsigned, unsigned> > m_textInfoBySeqNum;
   std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
   std::set<unsigned> m_skipIfNotBgSeqNums;
+  std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
 
   // helper functions
   void assignTextShapes();

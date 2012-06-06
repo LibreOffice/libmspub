@@ -172,6 +172,45 @@ const CustomShape CS_ISOCELES_TRIANGLE(
   21600, 21600,
   ISOCELES_TRIANGLE_GLUE_POINTS, sizeof(ISOCELES_TRIANGLE_GLUE_POINTS) / sizeof(Vertex));
 
+const Vertex PARALLELOGRAM_VERTICES[] =
+{
+  Vertex(0 CALCULATED_VALUE, 0), Vertex(21600, 0), Vertex(1 CALCULATED_VALUE, 21600), Vertex(0, 21600)
+};
+
+const unsigned short PARALLELOGRAM_SEGMENTS[] =
+{
+  0x4000, 0x003, 0x6001, 0x8000
+};
+
+const Calculation PARALLELOGRAM_CALC[] =
+{
+  Calculation(0x4000, 0, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x8000, 0, 21600, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 10, 24), Calculation(0x2000, OTHER_CALC_VAL | 2, 1750, 0), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 3), Calculation(0x2001, OTHER_CALC_VAL, 1, 2), Calculation(0x4000, 10800, OTHER_CALC_VAL | 5, 0), Calculation(0x2000, OTHER_CALC_VAL, 0, 10800), Calculation(0x6006, OTHER_CALC_VAL | 7, OTHER_CALC_VAL | 0xC, 21600), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 5), Calculation(0x8001, 21600, 10800, OTHER_CALC_VAL), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 0xC)
+};
+
+const TextRectangle PARALLELOGRAM_TRS[] =
+{
+  TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const unsigned PARALLELOGRAM_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex PARALLELOGRAM_GLUE_POINTS[] =
+{
+  Vertex(6 CALCULATED_VALUE, 0), Vertex(10800, 8 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 10800), Vertex(9 CALCULATED_VALUE, 21600), Vertex(10800, 10 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 10800)
+};
+
+const CustomShape CS_PARALLELOGRAM(
+  PARALLELOGRAM_VERTICES, sizeof(PARALLELOGRAM_VERTICES) / sizeof(Vertex),
+  PARALLELOGRAM_SEGMENTS, sizeof(PARALLELOGRAM_SEGMENTS) / sizeof(unsigned short),
+  PARALLELOGRAM_CALC, sizeof(PARALLELOGRAM_CALC) / sizeof(Calculation),
+  PARALLELOGRAM_DEFAULT_ADJUST, sizeof(PARALLELOGRAM_DEFAULT_ADJUST) / sizeof(unsigned),
+  PARALLELOGRAM_TRS, sizeof(PARALLELOGRAM_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  PARALLELOGRAM_GLUE_POINTS, sizeof(PARALLELOGRAM_GLUE_POINTS) / sizeof(Vertex));
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -184,6 +223,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_ISOCELES_TRIANGLE;
   case SEAL_4:
     return &CS_SEAL_4;
+  case PARALLELOGRAM:
+    return &CS_PARALLELOGRAM;
   default:
     return NULL;
   }

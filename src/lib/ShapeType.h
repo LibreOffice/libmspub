@@ -40,6 +40,7 @@ enum ShapeType
   RIGHT_TRIANGLE    = 0x6,
   PARALLELOGRAM     = 0x7,
   TRAPEZOID         = 0x8,
+  HEXAGON           = 0x9,
   SEAL_4            = 0xBB
 };
 } // libmspub

@@ -297,6 +297,45 @@ const CustomShape CS_PARALLELOGRAM(
   PARALLELOGRAM_TRS, sizeof(PARALLELOGRAM_TRS) / sizeof(TextRectangle),
   21600, 21600,
   PARALLELOGRAM_GLUE_POINTS, sizeof(PARALLELOGRAM_GLUE_POINTS) / sizeof(Vertex));
+const Vertex HEXAGON_VERTICES[] =
+{
+  Vertex(0 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(21600, 10800), Vertex(1 CALCULATED_VALUE, 21600), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 10800)
+};
+
+const unsigned short HEXAGON_SEGMENTS[] =
+{
+  0x4000, 0x0005, 0x6001, 0x8000
+};
+
+const Calculation HEXAGON_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 100, 234), Calculation(0x2000, OTHER_CALC_VAL | 2, 1700, 0), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 3)
+};
+
+const TextRectangle HEXAGON_TRS[] =
+{
+  TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const unsigned HEXAGON_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex HEXAGON_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_HEXAGON(
+  HEXAGON_VERTICES, sizeof(HEXAGON_VERTICES) / sizeof(Vertex),
+  HEXAGON_SEGMENTS, sizeof(HEXAGON_SEGMENTS) / sizeof(unsigned short),
+  HEXAGON_CALC, sizeof(HEXAGON_CALC) / sizeof(Calculation),
+  HEXAGON_DEFAULT_ADJUST, sizeof(HEXAGON_DEFAULT_ADJUST) / sizeof(unsigned),
+  HEXAGON_TRS, sizeof(HEXAGON_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  HEXAGON_GLUE_POINTS, sizeof(HEXAGON_GLUE_POINTS) / sizeof(Vertex));
+
 
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
@@ -318,6 +357,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_DIAMOND;
   case TRAPEZOID:
     return &CS_TRAPEZOID;
+  case HEXAGON:
+    return &CS_HEXAGON;
   default:
     return NULL;
   }

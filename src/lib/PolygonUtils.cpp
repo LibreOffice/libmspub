@@ -297,6 +297,7 @@ const CustomShape CS_PARALLELOGRAM(
   PARALLELOGRAM_TRS, sizeof(PARALLELOGRAM_TRS) / sizeof(TextRectangle),
   21600, 21600,
   PARALLELOGRAM_GLUE_POINTS, sizeof(PARALLELOGRAM_GLUE_POINTS) / sizeof(Vertex));
+
 const Vertex HEXAGON_VERTICES[] =
 {
   Vertex(0 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(21600, 10800), Vertex(1 CALCULATED_VALUE, 21600), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 10800)
@@ -368,7 +369,8 @@ enum Command
 {
   MOVETO,
   LINETO,
-  ANGLEELLIPSE
+  ANGLEELLIPSE,
+  CLOSESUBPATH
 };
 
 struct ShapeElementCommand
@@ -388,7 +390,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
     break;
-  case 0x20:
+  case 0x0:
     cmd = LINETO;
     count = (binary & 0xFF);
     break;
@@ -397,8 +399,11 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     count = (binary & 0xFF);
     count = count ? count : 1;
     break;
+  case 0x80:
+    cmd = CLOSESUBPATH;
+    break;
   default:
-    cmd = LINETO;
+    cmd = MOVETO;
     count = 1;
     break;
   }
@@ -507,13 +512,17 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           vertices.append(vertex);
         }
         break;
+      case CLOSESUBPATH:
+        {
+          WPXPropertyList end;
+          end.insert("libwpg:path-action", "Z");
+          vertices.append(end);
+        }
+        break;
       default:
         break;
       }
     }
-    WPXPropertyList end;
-    end.insert("libwpg:path-action", "Z");
-    vertices.append(end);
     painter->drawPath(vertices);
   }
 }

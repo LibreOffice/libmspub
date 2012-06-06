@@ -39,6 +39,7 @@ SLOFILES= \
     $(SLO)$/MSPUBParser.obj \
     $(SLO)$/MSPUBStringVector.obj \
     $(SLO)$/MSPUBSVGGenerator.obj \
+    $(SLO)$/PolygonUtils.obj \
     $(SLO)$/libmspub_utils.obj
 
 LIB1ARCHIV=$(LB)$/libmspublib.a

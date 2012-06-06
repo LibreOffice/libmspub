@@ -35,8 +35,11 @@ enum ShapeType
 {
   RECTANGLE         = 0x1,
   ELLIPSE           = 0x3,
+  DIAMOND           = 0x4,
   ISOCELES_TRIANGLE = 0x5,
+  RIGHT_TRIANGLE    = 0x6,
   PARALLELOGRAM     = 0x7,
+  TRAPEZOID         = 0x8,
   SEAL_4            = 0xBB
 };
 } // libmspub

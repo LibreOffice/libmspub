@@ -41,6 +41,93 @@
 #define PI 3.14159265
 
 using namespace libmspub;
+const Vertex TRAPEZOID_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(0 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 21600)
+};
+
+const unsigned short TRAPEZOID_SEGMENTS[] =
+{
+  0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation TRAPEZOID_CALC[] =
+{
+  Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 10, 18), Calculation(0x2000, OTHER_CALC_VAL | 2, 1750, 0), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 3), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL | 5)
+};
+
+const TextRectangle TRAPEZOID_TRS[] =
+{
+  TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const unsigned TRAPEZOID_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex TRAPEZOID_GLUE_POINTS[] =
+{
+  Vertex(6 CALCULATED_VALUE, 10800), Vertex(10800, 21600), Vertex(5 CALCULATED_VALUE, 10800), Vertex(10800, 0)
+};
+
+const CustomShape CS_TRAPEZOID(
+  TRAPEZOID_VERTICES, sizeof(TRAPEZOID_VERTICES) / sizeof(Vertex),
+  TRAPEZOID_SEGMENTS, sizeof(TRAPEZOID_SEGMENTS) / sizeof(unsigned short),
+  TRAPEZOID_CALC, sizeof(TRAPEZOID_CALC) / sizeof(Calculation),
+  TRAPEZOID_DEFAULT_ADJUST, sizeof(TRAPEZOID_DEFAULT_ADJUST) / sizeof(unsigned),
+  TRAPEZOID_TRS, sizeof(TRAPEZOID_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  TRAPEZOID_GLUE_POINTS, sizeof(TRAPEZOID_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex DIAMOND_VERTICES[] =
+{
+  Vertex(10800, 0), Vertex(21600, 10800), Vertex(10800, 21600), Vertex(0, 10800), Vertex(10800, 0)
+};
+
+const TextRectangle DIAMOND_TRS[] =
+{
+  TextRectangle(Vertex(5400, 5400), Vertex(16200, 16200))
+};
+
+const Vertex DIAMOND_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_DIAMOND(
+  DIAMOND_VERTICES, sizeof(DIAMOND_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  DIAMOND_TRS, sizeof(DIAMOND_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  DIAMOND_GLUE_POINTS, sizeof(DIAMOND_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex RIGHT_TRIANGLE_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0)
+};
+
+const TextRectangle RIGHT_TRIANGLE_TRS[] =
+{
+  TextRectangle(Vertex(1900, 12700), Vertex(12700, 19700))
+};
+
+const Vertex RIGHT_TRIANGLE_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(5400, 10800), Vertex(0, 21600), Vertex(10800, 21600), Vertex(21600, 21600), Vertex(16200, 10800)
+};
+
+const CustomShape CS_RIGHT_TRIANGLE(
+  RIGHT_TRIANGLE_VERTICES, sizeof(RIGHT_TRIANGLE_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  RIGHT_TRIANGLE_TRS, sizeof(RIGHT_TRIANGLE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  RIGHT_TRIANGLE_GLUE_POINTS, sizeof(RIGHT_TRIANGLE_GLUE_POINTS) / sizeof(Vertex));
+
 
 const Vertex RECTANGLE_VERTICES[] =
 {
@@ -225,6 +312,12 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_SEAL_4;
   case PARALLELOGRAM:
     return &CS_PARALLELOGRAM;
+  case RIGHT_TRIANGLE:
+    return &CS_RIGHT_TRIANGLE;
+  case DIAMOND:
+    return &CS_DIAMOND;
+  case TRAPEZOID:
+    return &CS_TRAPEZOID;
   default:
     return NULL;
   }

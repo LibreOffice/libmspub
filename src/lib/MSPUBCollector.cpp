@@ -44,7 +44,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapeCoordinatesBySeqNum(), m_shapeLineColorsBySeqNum(),
   m_shapeFillsBySeqNum(), m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
-  m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum()
+  m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
+  m_shapeRotationsBySeqNum()
 {
 }
 
@@ -100,6 +101,11 @@ void libmspub::TextShape::write(libwpg::WPGPaintInterface *painter)
     painter->endTextLine();
   }
   painter->endTextObject();
+}
+
+void libmspub::GeometricShape::setRotation(short rotation)
+{
+  props.insert("libwpg:rotate", rotation);
 }
 
 double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int arg) const
@@ -252,6 +258,7 @@ WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
   {
     return fill->getProperties(&graphicsProps);
   }
+  graphicsProps.insert("draw:fill", "none");
   return WPXPropertyListVector();
 }
 
@@ -343,6 +350,11 @@ void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
 
 libmspub::MSPUBCollector::~MSPUBCollector()
 {
+}
+
+bool libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, short rotation)
+{
+  return m_shapeRotationsBySeqNum.insert(std::pair<const unsigned, short>(seqNum, rotation)).second;
 }
 
 bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
@@ -478,6 +490,11 @@ void libmspub::MSPUBCollector::assignImages()
     {
       MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", seqNum));
       return;
+    }
+    short *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
+    if (ptr_rotation)
+    {
+      shape->setRotation(*ptr_rotation);
     }
     if (index && *index - 1 < m_images.size())
     {

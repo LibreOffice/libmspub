@@ -48,6 +48,7 @@
 #define FIELDID_ADJUST_VALUE_1         0x0147
 #define FIELDID_ADJUST_VALUE_2         0x0148
 #define FIELDID_ADJUST_VALUE_3         0x0149
+#define FIELDID_ROTATION               0x0004
 
 
 #endif /* __ESCHERFIELDIDS_H__ */

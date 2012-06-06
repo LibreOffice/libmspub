@@ -86,6 +86,7 @@ public:
   bool setShapeLineColor(unsigned seqNum, ColorReference line);
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
   bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
+  bool setShapeRotation(unsigned seqNum, short rotation);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -140,6 +141,7 @@ private:
   std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
   std::set<unsigned> m_skipIfNotBgSeqNums;
   std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
+  std::map<unsigned, short> m_shapeRotationsBySeqNum;
 
   // helper functions
   void assignTextShapes();

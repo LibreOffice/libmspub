@@ -98,6 +98,7 @@ struct GeometricShape : public FillableShape
   void setLine(ColorReference line);
   void fillDefaultAdjustValues();
   void setAdjustValue(unsigned index, int adjustValue);
+  void setRotation(short rotation);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
 

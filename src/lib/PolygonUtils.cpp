@@ -61,6 +61,41 @@ const CustomShape CS_STAR(
   21600, 21600,
   NULL, 0);
 
+const Vertex PLUS_VERTICES[] =
+{
+  Vertex(1 CALCULATED_VALUE, 0), Vertex(2 CALCULATED_VALUE, 0), Vertex(2 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(21600, 1 CALCULATED_VALUE), Vertex(21600, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0, 3 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 0)
+};
+
+const Calculation PLUS_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 10799, 10800), Calculation(0x2000, OTHER_CALC_VAL, 0, 0), Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL), Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL)
+};
+
+const TextRectangle PLUS_TRS[] =
+{
+  TextRectangle(Vertex(1 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE))
+};
+
+const unsigned PLUS_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex PLUS_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_PLUS(
+  PLUS_VERTICES, sizeof(PLUS_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  PLUS_CALC, sizeof(PLUS_CALC) / sizeof(Calculation),
+  PLUS_DEFAULT_ADJUST, sizeof(PLUS_DEFAULT_ADJUST) / sizeof(unsigned),
+  PLUS_TRS, sizeof(PLUS_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  PLUS_GLUE_POINTS, sizeof(PLUS_GLUE_POINTS) / sizeof(Vertex));
+
+
 const Vertex TRAPEZOID_VERTICES[] =
 {
   Vertex(0, 0), Vertex(21600, 0), Vertex(0 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 21600)
@@ -382,6 +417,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_HEXAGON;
   case STAR:
     return &CS_STAR;
+  case PLUS:
+    return &CS_PLUS;
   default:
     return NULL;
   }

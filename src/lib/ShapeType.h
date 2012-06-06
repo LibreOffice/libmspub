@@ -41,6 +41,7 @@ enum ShapeType
   PARALLELOGRAM     = 7,
   TRAPEZOID         = 8,
   HEXAGON           = 9,
+  PLUS              = 11,
   STAR              = 12,
   SEAL_4            = 0xBB
 };

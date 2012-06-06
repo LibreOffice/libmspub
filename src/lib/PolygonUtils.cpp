@@ -41,6 +41,26 @@
 #define PI 3.14159265
 
 using namespace libmspub;
+
+const Vertex STAR_VERTICES[] =
+{
+  Vertex(10797, 0), Vertex(8278, 8256), Vertex(0, 8256), Vertex(6722, 13405), Vertex(4198, 21600), Vertex(10797, 16580), Vertex(17401, 21600), Vertex(14878, 13405), Vertex(21600, 8256), Vertex(13321, 8256), Vertex(10797, 0)
+};
+
+const TextRectangle STAR_TRS[] =
+{
+  TextRectangle(Vertex(6722, 8256), Vertex(14878, 15460))
+};
+
+const CustomShape CS_STAR(
+  STAR_VERTICES, sizeof(STAR_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  STAR_TRS, sizeof(STAR_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
 const Vertex TRAPEZOID_VERTICES[] =
 {
   Vertex(0, 0), Vertex(21600, 0), Vertex(0 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 21600)
@@ -360,6 +380,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_TRAPEZOID;
   case HEXAGON:
     return &CS_HEXAGON;
+  case STAR:
+    return &CS_STAR;
   default:
     return NULL;
   }

@@ -33,14 +33,15 @@ namespace libmspub
 {
 enum ShapeType
 {
-  RECTANGLE         = 0x1,
-  ELLIPSE           = 0x3,
-  DIAMOND           = 0x4,
-  ISOCELES_TRIANGLE = 0x5,
-  RIGHT_TRIANGLE    = 0x6,
-  PARALLELOGRAM     = 0x7,
-  TRAPEZOID         = 0x8,
-  HEXAGON           = 0x9,
+  RECTANGLE         = 1,
+  ELLIPSE           = 3,
+  DIAMOND           = 4,
+  ISOCELES_TRIANGLE = 5,
+  RIGHT_TRIANGLE    = 6,
+  PARALLELOGRAM     = 7,
+  TRAPEZOID         = 8,
+  HEXAGON           = 9,
+  STAR              = 12,
   SEAL_4            = 0xBB
 };
 } // libmspub

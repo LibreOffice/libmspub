@@ -34,7 +34,7 @@
 namespace libmspub
 {
 class MSPUBCollector;
-class CustomShape;
+struct CustomShape;
 struct Coordinate
 {
   Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }

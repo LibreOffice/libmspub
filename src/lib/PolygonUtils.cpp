@@ -535,12 +535,12 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
         break;
       case CLOSESUBPATH:
-        {
-          WPXPropertyList end;
-          end.insert("libwpg:path-action", "Z");
-          vertices.append(end);
-        }
-        break;
+      {
+        WPXPropertyList end;
+        end.insert("libwpg:path-action", "Z");
+        vertices.append(end);
+      }
+      break;
       default:
         break;
       }

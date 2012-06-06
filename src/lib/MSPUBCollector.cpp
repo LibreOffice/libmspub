@@ -345,6 +345,10 @@ void libmspub::ImgShape::setMime_(ImgType imgType)
 }
 void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
 {
+  props.insert("svg:x", m_x);
+  props.insert("svg:y", m_y);
+  props.insert("svg:width", m_width);
+  props.insert("svg:height", m_height);
   painter->drawGraphicObject(props, img);
 }
 

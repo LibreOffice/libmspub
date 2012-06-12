@@ -42,6 +42,44 @@
 
 using namespace libmspub;
 
+const Vertex OCTAGON_VERTICES[] =
+{
+  Vertex(0 CALCULATED_VALUE, 0), Vertex(2 CALCULATED_VALUE, 0), Vertex(21600, 1 CALCULATED_VALUE), Vertex(21600, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 21600), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 3 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE)
+};
+
+const unsigned short OCTAGON_SEGMENTS[] =
+{
+  0x4000, 0x0007, 0x6001, 0x8000
+};
+
+const Calculation OCTAGON_CALC[] =
+{
+  Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xA000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xA000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x6000, PROP_GEO_LEFT, OTHER_CALC_VAL | 4, 0), Calculation(0x6000, PROP_GEO_TOP, OTHER_CALC_VAL | 4, 0), Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL | 4), Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL | 4)
+};
+
+const TextRectangle OCTAGON_TRS[] =
+{
+  TextRectangle(Vertex(5 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 8 CALCULATED_VALUE))
+};
+
+const unsigned OCTAGON_DEFAULT_ADJUST[] =
+{
+  5000
+};
+
+const Vertex OCTAGON_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_OCTAGON(
+  OCTAGON_VERTICES, sizeof(OCTAGON_VERTICES) / sizeof(Vertex),
+  OCTAGON_SEGMENTS, sizeof(OCTAGON_SEGMENTS) / sizeof(unsigned short),
+  OCTAGON_CALC, sizeof(OCTAGON_CALC) / sizeof(Calculation),
+  OCTAGON_DEFAULT_ADJUST, sizeof(OCTAGON_DEFAULT_ADJUST) / sizeof(unsigned),
+  OCTAGON_TRS, sizeof(OCTAGON_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  OCTAGON_GLUE_POINTS, sizeof(OCTAGON_GLUE_POINTS) / sizeof(Vertex));
 
 const Vertex ROUND_RECTANGLE_VERTICES[] =
 {
@@ -456,6 +494,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_PLUS;
   case ROUND_RECTANGLE:
     return &CS_ROUND_RECTANGLE;
+  case OCTAGON:
+    return &CS_OCTAGON;
   default:
     return NULL;
   }

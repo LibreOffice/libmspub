@@ -42,6 +42,74 @@
 
 using namespace libmspub;
 
+const Vertex HOME_PLATE_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0), Vertex(21600, 10800), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 21600)
+};
+
+const unsigned short HOME_PLATE_SEGMENTS[] =
+{
+  0x4000, 0x0004, 0x6001, 0x8000
+};
+
+const Calculation HOME_PLATE_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0)
+};
+
+const TextRectangle HOME_PLATE_TRS[] =
+{
+  TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const unsigned HOME_PLATE_DEFAULT_ADJUST[] =
+{
+  16200
+};
+
+const CustomShape CS_HOME_PLATE(
+  HOME_PLATE_VERTICES, sizeof(HOME_PLATE_VERTICES) / sizeof(Vertex),
+  HOME_PLATE_SEGMENTS, sizeof(HOME_PLATE_SEGMENTS) / sizeof(unsigned short),
+  HOME_PLATE_CALC, sizeof(HOME_PLATE_CALC) / sizeof(Calculation),
+  HOME_PLATE_DEFAULT_ADJUST, sizeof(HOME_PLATE_DEFAULT_ADJUST) / sizeof(unsigned),
+  HOME_PLATE_TRS, sizeof(HOME_PLATE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
+const Vertex ARROW_VERTICES[] =
+{
+  Vertex(0, 0 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE ), Vertex(1 CALCULATED_VALUE , 0), Vertex(21600, 10800), Vertex(1 CALCULATED_VALUE , 21600), Vertex(1 CALCULATED_VALUE , 2 CALCULATED_VALUE ), Vertex(0, 2 CALCULATED_VALUE )
+};
+
+const unsigned short ARROW_SEGMENTS[] =
+{
+  0x4000, 0x0006, 0x6001, 0x8000
+};
+
+const Calculation ARROW_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL  | 1), Calculation(0x6001, OTHER_CALC_VAL | 3, OTHER_CALC_VAL, 10800), Calculation(0x6000, OTHER_CALC_VAL | 1, OTHER_CALC_VAL | 4, 0), Calculation(0x6001, OTHER_CALC_VAL | 1, OTHER_CALC_VAL, 10800), Calculation(0xA000, OTHER_CALC_VAL | 1, 0, OTHER_CALC_VAL | 6)
+};
+
+const TextRectangle ARROW_TRS[] =
+{
+  TextRectangle(Vertex(0, 0 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 2 CALCULATED_VALUE))
+};
+
+const unsigned ARROW_DEFAULT_ADJUST[] =
+{
+  16200, 5400
+};
+
+const CustomShape CS_ARROW(
+  ARROW_VERTICES, sizeof(ARROW_VERTICES) / sizeof(Vertex),
+  ARROW_SEGMENTS, sizeof(ARROW_SEGMENTS) / sizeof(unsigned short),
+  ARROW_CALC, sizeof(ARROW_CALC) / sizeof(Calculation),
+  ARROW_DEFAULT_ADJUST, sizeof(ARROW_DEFAULT_ADJUST) / sizeof(unsigned),
+  ARROW_TRS, sizeof(ARROW_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
 const Vertex OCTAGON_VERTICES[] =
 {
   Vertex(0 CALCULATED_VALUE, 0), Vertex(2 CALCULATED_VALUE, 0), Vertex(21600, 1 CALCULATED_VALUE), Vertex(21600, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 21600), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 3 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE)
@@ -496,6 +564,10 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_ROUND_RECTANGLE;
   case OCTAGON:
     return &CS_OCTAGON;
+  case ARROW:
+    return &CS_ARROW;
+  case HOME_PLATE:
+    return &CS_HOME_PLATE;
   default:
     return NULL;
   }

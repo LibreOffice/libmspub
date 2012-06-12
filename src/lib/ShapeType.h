@@ -45,6 +45,8 @@ enum ShapeType
   OCTAGON           = 10,
   PLUS              = 11,
   STAR              = 12,
+  ARROW             = 13,
+  HOME_PLATE        = 15,
   SEAL_4            = 0xBB
 };
 } // libmspub

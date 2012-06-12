@@ -42,6 +42,45 @@
 
 using namespace libmspub;
 
+const Vertex CUBE_VERTICES[] =
+{
+  Vertex(0, 12 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 0), Vertex(11 CALCULATED_VALUE, 0), Vertex(11 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 12 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 0), Vertex(11 CALCULATED_VALUE, 0), Vertex(4 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 12 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 0), Vertex(11 CALCULATED_VALUE, 3 CALCULATED_VALUE)
+};
+
+const unsigned short CUBE_SEGMENTS[] =
+{
+  0x4000, 0x0005, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation CUBE_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_TOP, OTHER_CALC_VAL, 0), Calculation(0x6000, PROP_GEO_LEFT, OTHER_CALC_VAL, 0), Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL), Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL), Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL | 2), Calculation(0x2001, OTHER_CALC_VAL | 5, 1, 2), Calculation(0x6000, OTHER_CALC_VAL | 2, OTHER_CALC_VAL | 6, 0), Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL | 1), Calculation(0x2001, OTHER_CALC_VAL | 8, 1, 2), Calculation(0x6000, OTHER_CALC_VAL | 1, OTHER_CALC_VAL | 9, 0), Calculation(0x2000, PROP_GEO_RIGHT, 0, 0), Calculation(0x2000, PROP_GEO_BOTTOM, 0, 0)
+};
+
+const TextRectangle CUBE_TRS[] =
+{
+  TextRectangle(Vertex(0, 1 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 12 CALCULATED_VALUE))
+};
+
+const unsigned CUBE_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex CUBE_GLUE_POINTS[] =
+{
+  Vertex(7 CALCULATED_VALUE, 0), Vertex(6 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0, 10 CALCULATED_VALUE), Vertex(6 CALCULATED_VALUE, 21600), Vertex(4 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(21600, 9 CALCULATED_VALUE)
+};
+
+const CustomShape CS_CUBE(
+  CUBE_VERTICES, sizeof(CUBE_VERTICES) / sizeof(Vertex),
+  CUBE_SEGMENTS, sizeof(CUBE_SEGMENTS) / sizeof(unsigned short),
+  CUBE_CALC, sizeof(CUBE_CALC) / sizeof(Calculation),
+  CUBE_DEFAULT_ADJUST, sizeof(CUBE_DEFAULT_ADJUST) / sizeof(unsigned),
+  CUBE_TRS, sizeof(CUBE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  CUBE_GLUE_POINTS, sizeof(CUBE_GLUE_POINTS) / sizeof(Vertex));
+
 const Vertex HOME_PLATE_VERTICES[] =
 {
   Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0), Vertex(21600, 10800), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 21600)
@@ -568,6 +607,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_ARROW;
   case HOME_PLATE:
     return &CS_HOME_PLATE;
+  case CUBE:
+    return &CS_CUBE;
   default:
     return NULL;
   }
@@ -579,6 +620,7 @@ enum Command
   LINETO,
   ANGLEELLIPSE,
   CLOSESUBPATH,
+  ENDSUBPATH,
   ELLIPTICALQUADRANTX,
   ELLIPTICALQUADRANTY
 };
@@ -619,6 +661,9 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     break;
   case 0x80:
     cmd = CLOSESUBPATH;
+    break;
+  case 0x60:
+    cmd = ENDSUBPATH;
     break;
   default:
     cmd = MOVETO;
@@ -791,7 +836,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
         break;
       case MOVETO:
-        if (vertexIndex < shape->m_numVertices)
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
           WPXPropertyList moveVertex;
           double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
@@ -800,7 +845,6 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           moveVertex.insert("svg:y", newY / divisorY + y);
           moveVertex.insert("libwpg:path-action", "M");
           vertices.append(moveVertex);
-          ++vertexIndex;
         }
         break;
       case LINETO:

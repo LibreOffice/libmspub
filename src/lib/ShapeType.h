@@ -34,6 +34,7 @@ namespace libmspub
 enum ShapeType
 {
   RECTANGLE         = 1,
+  ROUND_RECTANGLE   = 2,
   ELLIPSE           = 3,
   DIAMOND           = 4,
   ISOCELES_TRIANGLE = 5,

@@ -94,7 +94,6 @@ public:
   void setHeightInEmu(unsigned long);
 
   void addTextColor(ColorReference c);
-  void setDefaultColor(unsigned char r, unsigned char g, unsigned char b);
   void addFont(std::vector<unsigned char> name);
 
   void addDefaultCharacterStyle(const CharacterStyle &style);
@@ -124,7 +123,6 @@ private:
   boost::ptr_map<unsigned, Shape> m_shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
   std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
   std::vector<ColorReference> m_textColors;
-  Color m_defaultColor;
   std::vector<std::vector<unsigned char> > m_fonts;
   std::vector<CharacterStyle> m_defaultCharStyles;
   std::vector<ParagraphStyle> m_defaultParaStyles;

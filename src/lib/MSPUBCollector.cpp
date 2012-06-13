@@ -38,7 +38,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_widthSet(false), m_heightSet(false),
   m_numPages(0), m_textStringsById(), m_pagesBySeqNum(),
   m_shapesBySeqNum(), m_images(),
-  m_textColors(), m_defaultColor(0, 0, 0), m_fonts(),
+  m_textColors(), m_fonts(),
   m_defaultCharStyles(), m_defaultParaStyles(), m_shapeTypesBySeqNum(),
   m_possibleImageShapeSeqNums(), m_shapeImgIndicesBySeqNum(),
   m_shapeCoordinatesBySeqNum(), m_shapeLineColorsBySeqNum(),
@@ -410,11 +410,6 @@ bool libmspub::MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, i
   return m_adjustValuesByIndexBySeqNum[seqNum].insert(std::pair<const unsigned, int>(index, adjust)).second;
 }
 
-void libmspub::MSPUBCollector::setDefaultColor(unsigned char r, unsigned char g, unsigned char b)
-{
-  m_defaultColor = Color(r, g, b);
-}
-
 void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
 {
   m_defaultCharStyles.push_back(st);
@@ -609,7 +604,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   }
   else
   {
-    ret.insert("fo:color", getColorString(m_defaultColor));
+    ret.insert("fo:color", getColorString(Color(0, 0, 0)));  // default color is black
   }
   if (style.fontIndex < m_fonts.size())
   {

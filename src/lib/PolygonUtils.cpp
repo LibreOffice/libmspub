@@ -42,6 +42,457 @@
 
 using namespace libmspub;
 
+const Vertex CALLOUT_2_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 5 CALCULATED_VALUE)
+};
+
+const unsigned short CALLOUT_2_SEGMENTS[] =
+{
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation CALLOUT_2_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 3, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 4, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 5, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 6, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 7, 0, 0)
+};
+
+const int CALLOUT_2_DEFAULT_ADJUST[] =
+{
+  -10000, 24500, -3600, 4000, -1800, 4000
+};
+
+const CustomShape CS_CALLOUT_2(
+  CALLOUT_2_VERTICES, sizeof(CALLOUT_2_VERTICES) / sizeof(Vertex),
+  CALLOUT_2_SEGMENTS, sizeof(CALLOUT_2_SEGMENTS) / sizeof(unsigned short),
+  CALLOUT_2_CALC, sizeof(CALLOUT_2_CALC) / sizeof(Calculation),
+  CALLOUT_2_DEFAULT_ADJUST, sizeof(CALLOUT_2_DEFAULT_ADJUST) / sizeof(int),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CALLOUT_3_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(6 CALCULATED_VALUE, 7 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short CALLOUT_3_SEGMENTS[] =
+{
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0xaa00, 0x0003, 0x8000 // NO FILL
+};
+
+const Calculation CALLOUT_3_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 3, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 4, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 5, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 6, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 7, 0, 0)
+};
+
+const int CALLOUT_3_DEFAULT_ADJUST[] =
+{
+  23400, 24500, 25200, 21600, 25200, 4000, 23400, 4000
+};
+
+const CustomShape CS_CALLOUT_3(
+  CALLOUT_3_VERTICES, sizeof(CALLOUT_3_VERTICES) / sizeof(Vertex),
+  CALLOUT_3_SEGMENTS, sizeof(CALLOUT_3_SEGMENTS) / sizeof(unsigned short),
+  CALLOUT_3_CALC, sizeof(CALLOUT_3_CALC) / sizeof(Calculation),
+  CALLOUT_3_DEFAULT_ADJUST, sizeof(CALLOUT_3_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CALLOUT_1_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE)
+};
+
+const unsigned short CALLOUT_1_SEGMENTS[] =
+{
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0x0001, 0x8000
+};
+
+const Calculation CALLOUT_1_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 3, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 4, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 5, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 6, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 7, 0, 0)
+};
+
+const int CALLOUT_1_DEFAULT_ADJUST[] =
+{
+  -8300, 24500, -1800, 4000
+};
+
+const CustomShape CS_CALLOUT_1(
+  CALLOUT_1_VERTICES, sizeof(CALLOUT_1_VERTICES) / sizeof(Vertex),
+  CALLOUT_1_SEGMENTS, sizeof(CALLOUT_1_SEGMENTS) / sizeof(unsigned short),
+  CALLOUT_1_CALC, sizeof(CALLOUT_1_CALC) / sizeof(Calculation),
+  CALLOUT_1_DEFAULT_ADJUST, sizeof(CALLOUT_1_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CURVED_CONNECTOR_5_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 12 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 14 CALCULATED_VALUE), Vertex(6 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 18 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 16 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 20 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short CURVED_CONNECTOR_5_SEGMENTS[] =
+{
+  0x4000, 0x2004, 0x8000
+};
+
+const Calculation CURVED_CONNECTOR_5_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x6000, 0x400, 0x401, 0), Calculation(0x2001, 0x402, 1, 2), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x6000, 0x400, 0x403, 0), Calculation(0x2001, 0x405, 1, 2), Calculation(0x6000, 0x401, 0x403, 0), Calculation(0x2001, 0x407, 1, 2), Calculation(0x2000, 0x401, 21600, 0), Calculation(0x2001, 0x409, 1, 2), Calculation(0x2001, 0x404, 1, 2), Calculation(0x2001, 0x40b, 1, 2), Calculation(0x6000, 0x404, 0x40b, 0), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x2000, 0x404, 21600, 0), Calculation(0x2001, 0x40f, 1, 2), Calculation(0x6000, 0x404, 0x410, 0), Calculation(0x2001, 0x411, 1, 2), Calculation(0x2000, 0x410, 21600, 0), Calculation(0x2001, 0x413, 1, 2), Calculation(0x2001, 0x400, 1, 2)
+};
+
+const int CURVED_CONNECTOR_5_DEFAULT_ADJUST[] =
+{
+  10800, 10800, 10800
+};
+
+const CustomShape CS_CURVED_CONNECTOR_5(
+  CURVED_CONNECTOR_5_VERTICES, sizeof(CURVED_CONNECTOR_5_VERTICES) / sizeof(Vertex),
+  CURVED_CONNECTOR_5_SEGMENTS, sizeof(CURVED_CONNECTOR_5_SEGMENTS) / sizeof(unsigned short),
+  CURVED_CONNECTOR_5_CALC, sizeof(CURVED_CONNECTOR_5_CALC) / sizeof(Calculation),
+  CURVED_CONNECTOR_5_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_5_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CURVED_CONNECTOR_4_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 12 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(21600, 14 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short CURVED_CONNECTOR_4_SEGMENTS[] =
+{
+  0x4000, 0x2003, 0x8000
+};
+
+const Calculation CURVED_CONNECTOR_4_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, 0x400, 1, 2), Calculation(0x4000, 21600, 0x400, 0), Calculation(0x2001, 0x402, 1, 2), Calculation(0x6000, 0x400, 0x403, 0), Calculation(0x2001, 0x404, 1, 2), Calculation(0x2000, 0x403, 21600, 0), Calculation(0x2001, 0x406, 1, 2), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2001, PROP_ADJUST_VAL_FIRST + 1, 1, 2), Calculation(0x2001, PROP_ADJUST_VAL_FIRST + 1, 1, 4), Calculation(0x6000, 0x408, 0x409, 0), Calculation(0x2001, 0x40b, 1, 2), Calculation(0x2000, 0x408, 21600, 0), Calculation(0x2001, 0x40d, 1, 2)
+};
+
+const int CURVED_CONNECTOR_4_DEFAULT_ADJUST[] =
+{
+  10800, 10800
+};
+
+const CustomShape CS_CURVED_CONNECTOR_4(
+  CURVED_CONNECTOR_4_VERTICES, sizeof(CURVED_CONNECTOR_4_VERTICES) / sizeof(Vertex),
+  CURVED_CONNECTOR_4_SEGMENTS, sizeof(CURVED_CONNECTOR_4_SEGMENTS) / sizeof(unsigned short),
+  CURVED_CONNECTOR_4_CALC, sizeof(CURVED_CONNECTOR_4_CALC) / sizeof(Calculation),
+  CURVED_CONNECTOR_4_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_4_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CURVED_CONNECTOR_3_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 5400), Vertex(0 CALCULATED_VALUE, 10800), Vertex(0 CALCULATED_VALUE, 16200), Vertex(3 CALCULATED_VALUE, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short CURVED_CONNECTOR_3_SEGMENTS[] =
+{
+  0x4000, 0x2002, 0x8000
+};
+
+const Calculation CURVED_CONNECTOR_3_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, 0x400, 1, 2), Calculation(0x2000, 0x400, 21600, 0), Calculation(0x2001, 0x402, 1, 2)
+};
+
+const int CURVED_CONNECTOR_3_DEFAULT_ADJUST[] =
+{
+  10800
+};
+
+const CustomShape CS_CURVED_CONNECTOR_3(
+  CURVED_CONNECTOR_3_VERTICES, sizeof(CURVED_CONNECTOR_3_VERTICES) / sizeof(Vertex),
+  CURVED_CONNECTOR_3_SEGMENTS, sizeof(CURVED_CONNECTOR_3_SEGMENTS) / sizeof(unsigned short),
+  CURVED_CONNECTOR_3_CALC, sizeof(CURVED_CONNECTOR_3_CALC) / sizeof(Calculation),
+  CURVED_CONNECTOR_3_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_3_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+
+const Vertex BENT_CONNECTOR_5_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short BENT_CONNECTOR_5_SEGMENTS[] =
+{
+  0x4000, 0x0005, 0x8000
+};
+
+const Calculation BENT_CONNECTOR_5_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x6000, 0x400, 0x401, 0), Calculation(0x2001, 0x402, 1, 2), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2001, 0x404, 1, 2), Calculation(0x4000, 21600, 0x404, 0), Calculation(0x2001, 0x406, 1, 2)
+};
+
+const int BENT_CONNECTOR_5_DEFAULT_ADJUST[] =
+{
+  10800, 10800, 10800
+};
+
+const CustomShape CS_BENT_CONNECTOR_5(
+  BENT_CONNECTOR_5_VERTICES, sizeof(BENT_CONNECTOR_5_VERTICES) / sizeof(Vertex),
+  BENT_CONNECTOR_5_SEGMENTS, sizeof(BENT_CONNECTOR_5_SEGMENTS) / sizeof(unsigned short),
+  BENT_CONNECTOR_5_CALC, sizeof(BENT_CONNECTOR_5_CALC) / sizeof(Calculation),
+  BENT_CONNECTOR_5_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_5_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex CURVED_CONNECTOR_2_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(10800, 0), Vertex(21600, 10800), Vertex(21600, 21600)
+};
+
+const unsigned short CURVED_CONNECTOR_2_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x8000
+};
+
+const CustomShape CS_CURVED_CONNECTOR_2(
+  CURVED_CONNECTOR_2_VERTICES, sizeof(CURVED_CONNECTOR_2_VERTICES) / sizeof(Vertex),
+  CURVED_CONNECTOR_2_SEGMENTS, sizeof(CURVED_CONNECTOR_2_SEGMENTS) / sizeof(unsigned short),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex BENT_CONNECTOR_4_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(21600, 1 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short BENT_CONNECTOR_4_SEGMENTS[] =
+{
+  0x4000, 0x0004, 0x8000
+};
+
+const Calculation BENT_CONNECTOR_4_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x400, 21600, 0), Calculation(0x2001, 0x402, 1, 2), Calculation(0x2001, 0x401, 1, 2)
+};
+
+const int BENT_CONNECTOR_4_DEFAULT_ADJUST[] =
+{
+  10800, 10800
+};
+
+const CustomShape CS_BENT_CONNECTOR_4(
+  BENT_CONNECTOR_4_VERTICES, sizeof(BENT_CONNECTOR_4_VERTICES) / sizeof(Vertex),
+  BENT_CONNECTOR_4_SEGMENTS, sizeof(BENT_CONNECTOR_4_SEGMENTS) / sizeof(unsigned short),
+  BENT_CONNECTOR_4_CALC, sizeof(BENT_CONNECTOR_4_CALC) / sizeof(Calculation),
+  BENT_CONNECTOR_4_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_4_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex BENT_CONNECTOR_3_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short BENT_CONNECTOR_3_SEGMENTS[] =
+{
+  0x4000, 0x0003, 0x8000
+};
+
+const Calculation BENT_CONNECTOR_3_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0)
+};
+
+const int BENT_CONNECTOR_3_DEFAULT_ADJUST[] =
+{
+  10800
+};
+
+const CustomShape CS_BENT_CONNECTOR_3(
+  BENT_CONNECTOR_3_VERTICES, sizeof(BENT_CONNECTOR_3_VERTICES) / sizeof(Vertex),
+  BENT_CONNECTOR_3_SEGMENTS, sizeof(BENT_CONNECTOR_3_SEGMENTS) / sizeof(unsigned short),
+  BENT_CONNECTOR_3_CALC, sizeof(BENT_CONNECTOR_3_CALC) / sizeof(Calculation),
+  BENT_CONNECTOR_3_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_3_DEFAULT_ADJUST) / sizeof(unsigned),
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex BENT_CONNECTOR_2_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600)
+};
+
+const unsigned short BENT_CONNECTOR_2_SEGMENTS[] =
+{
+  0x4000, 0x0002, 0x8000
+};
+
+const CustomShape CS_BENT_CONNECTOR_2(
+  BENT_CONNECTOR_2_VERTICES, sizeof(BENT_CONNECTOR_2_VERTICES) / sizeof(Vertex),
+  BENT_CONNECTOR_2_SEGMENTS, sizeof(BENT_CONNECTOR_2_SEGMENTS) / sizeof(unsigned short),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex STRAIGHT_CONNECTOR_1_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 21600)
+};
+
+const unsigned short STRAIGHT_CONNECTOR_1_SEGMENTS[] =
+{
+  0x4000, 0x0001, 0x8000
+};
+
+const CustomShape CS_STRAIGHT_CONNECTOR_1(
+  STRAIGHT_CONNECTOR_1_VERTICES, sizeof(STRAIGHT_CONNECTOR_1_VERTICES) / sizeof(Vertex),
+  STRAIGHT_CONNECTOR_1_SEGMENTS, sizeof(STRAIGHT_CONNECTOR_1_SEGMENTS) / sizeof(unsigned short),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex TEXT_SIMPLE_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0)
+};
+
+const CustomShape CS_TEXT_SIMPLE(
+  TEXT_SIMPLE_VERTICES, sizeof(TEXT_SIMPLE_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
+const Vertex DONUT_VERTICES[] =
+{
+  Vertex(10800, 10800), Vertex(10800, 10800), Vertex(0, 360), Vertex(10800, 10800), Vertex(1 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0, 360)
+};
+
+const unsigned short DONUT_SEGMENTS[] =
+{
+  0xa203, 0x6000, 0xa203, 0x8000
+};
+
+const Calculation DONUT_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle DONUT_TRS[] =
+{
+  TextRectangle(Vertex(3163, 3163), Vertex(18437, 18437))
+};
+
+const int DONUT_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex DONUT_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(3163, 3163), Vertex(0, 10800), Vertex(3163, 18437), Vertex(10800, 21600), Vertex(18437, 18437), Vertex(21600, 10800), Vertex(18437, 3163)
+};
+
+const CustomShape CS_DONUT(
+  DONUT_VERTICES, sizeof(DONUT_VERTICES) / sizeof(Vertex),
+  DONUT_SEGMENTS, sizeof(DONUT_SEGMENTS) / sizeof(unsigned short),
+  DONUT_CALC, sizeof(DONUT_CALC) / sizeof(Calculation),
+  DONUT_DEFAULT_ADJUST, sizeof(DONUT_DEFAULT_ADJUST) / sizeof(unsigned),
+  DONUT_TRS, sizeof(DONUT_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  DONUT_GLUE_POINTS, sizeof(DONUT_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex CAN_VERTICES[] =
+{
+  Vertex(44, 0), Vertex(20, 0), Vertex(0, 2 CALCULATED_VALUE), Vertex(0, 0 CALCULATED_VALUE), Vertex(0, 3 CALCULATED_VALUE), Vertex(0, 4 CALCULATED_VALUE), Vertex(20, 21600), Vertex(44, 21600), Vertex(68, 21600), Vertex(88, 4 CALCULATED_VALUE), Vertex(88, 3 CALCULATED_VALUE), Vertex(88, 0 CALCULATED_VALUE), Vertex(88, 2 CALCULATED_VALUE), Vertex(68, 0), Vertex(44, 0), Vertex(44, 0), Vertex(20, 0), Vertex(0, 2 CALCULATED_VALUE), Vertex(0, 0 CALCULATED_VALUE), Vertex(0, 5 CALCULATED_VALUE), Vertex(20, 6 CALCULATED_VALUE), Vertex(44, 6 CALCULATED_VALUE), Vertex(68, 6 CALCULATED_VALUE), Vertex(88, 5 CALCULATED_VALUE), Vertex(88, 0 CALCULATED_VALUE), Vertex(88, 2 CALCULATED_VALUE), Vertex(68, 0), Vertex(44, 0)
+};
+
+const unsigned short CAN_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x0001, 0x2002, 0x0001, 0x2001, 0x6001, 0x8000, 0x4000, 0x2004, 0x6001, 0x8000
+};
+
+const Calculation CAN_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 2, 4), Calculation(0x2001, OTHER_CALC_VAL, 6, 11), Calculation(0xA000, OTHER_CALC_VAL, 0, OTHER_CALC_VAL | 0x1), Calculation(0x8000, 21600, 0, OTHER_CALC_VAL), Calculation(0x6000, OTHER_CALC_VAL | 0x3, OTHER_CALC_VAL | 0x1, 0), Calculation(0x6000, OTHER_CALC_VAL, OTHER_CALC_VAL | 0x1, 0), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 2, 2), Calculation(0x0000, 44, 0, 0)
+};
+
+const TextRectangle CAN_TRS[] =
+{
+  TextRectangle(Vertex(0, 6 CALCULATED_VALUE), Vertex(88, 3 CALCULATED_VALUE))
+};
+
+const int CAN_DEFAULT_ADJUST[] =
+{
+  5400
+};
+
+const Vertex CAN_GLUE_POINTS[] =
+{
+  Vertex(44, 6 CALCULATED_VALUE), Vertex(44, 0), Vertex(0, 10800), Vertex(44, 21600), Vertex(88, 10800)
+};
+
+const CustomShape CS_CAN(
+  CAN_VERTICES, sizeof(CAN_VERTICES) / sizeof(Vertex),
+  CAN_SEGMENTS, sizeof(CAN_SEGMENTS) / sizeof(unsigned short),
+  CAN_CALC, sizeof(CAN_CALC) / sizeof(Calculation),
+  CAN_DEFAULT_ADJUST, sizeof(CAN_DEFAULT_ADJUST) / sizeof(unsigned),
+  CAN_TRS, sizeof(CAN_TRS) / sizeof(TextRectangle),
+  88, 21600,
+  CAN_GLUE_POINTS, sizeof(CAN_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex PLAQUE_VERTICES[] =
+{
+  Vertex(0 CALCULATED_VALUE, 0), Vertex(0, 1 CALCULATED_VALUE), Vertex(0, 2 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 21600), Vertex(3 CALCULATED_VALUE, 21600), Vertex(21600, 2 CALCULATED_VALUE), Vertex(21600, 1 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 0)
+};
+
+const unsigned short PLAQUE_SEGMENTS[] =
+{
+  0x4000, 0xA801, 0x0001, 0xA701, 0x0001, 0xA801, 0x0001, 0xA701, 0x6000, 0x8000
+};
+
+const Calculation PLAQUE_CALC[] =
+{
+  Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xA000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xA000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2082, PROP_ADJUST_VAL_FIRST, 0, 45), Calculation(0x2000, OTHER_CALC_VAL | 0x4, 0, 10800), Calculation(0x8000, 0, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xA000, OTHER_CALC_VAL | 0x6, 0, OTHER_CALC_VAL | 0x5), Calculation(0xA000, PROP_GEO_LEFT, 0, OTHER_CALC_VAL | 0x7), Calculation(0xA000, PROP_GEO_TOP, 0, OTHER_CALC_VAL | 0x7), Calculation(0x6000, PROP_GEO_RIGHT, OTHER_CALC_VAL | 0x7, 0), Calculation(0x6000, PROP_GEO_BOTTOM, OTHER_CALC_VAL | 0x7, 0), Calculation(0xA000, PROP_GEO_LEFT, 0, OTHER_CALC_VAL | 0x5), Calculation(0xA000, PROP_GEO_TOP, 0, OTHER_CALC_VAL | 0x5), Calculation(0x6000, PROP_GEO_RIGHT, OTHER_CALC_VAL | 0x5, 0), Calculation(0x6000, PROP_GEO_BOTTOM, OTHER_CALC_VAL | 0x5, 0)
+};
+
+const TextRectangle PLAQUE_TRS[] =
+{
+  TextRectangle(Vertex(0xC CALCULATED_VALUE, 0xD CALCULATED_VALUE), Vertex(0xE CALCULATED_VALUE, 0xF CALCULATED_VALUE))
+};
+
+const int PLAQUE_DEFAULT_ADJUST[] =
+{
+  3600
+};
+
+const Vertex PLAQUE_GLUE_POINTS[] =
+{
+  Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_PLAQUE(
+  PLAQUE_VERTICES, sizeof(PLAQUE_VERTICES) / sizeof(Vertex),
+  PLAQUE_SEGMENTS, sizeof(PLAQUE_SEGMENTS) / sizeof(unsigned short),
+  PLAQUE_CALC, sizeof(PLAQUE_CALC) / sizeof(Calculation),
+  PLAQUE_DEFAULT_ADJUST, sizeof(PLAQUE_DEFAULT_ADJUST) / sizeof(unsigned),
+  PLAQUE_TRS, sizeof(PLAQUE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  PLAQUE_GLUE_POINTS, sizeof(PLAQUE_GLUE_POINTS) / sizeof(Vertex));
+
+
 const Vertex BALLOON_VERTICES[] =
 {
   Vertex(3590, 0), Vertex(0, 3590), Vertex(0, 14460), Vertex(3590, 18050), Vertex(40 CALCULATED_VALUE, 21600), Vertex(5420, 18050), Vertex(18010, 18050), Vertex(21600, 14460), Vertex(21600, 3590), Vertex(18010, 0)
@@ -62,7 +513,7 @@ const TextRectangle BALLOON_TRS[] =
   TextRectangle(Vertex(800, 800), Vertex(20800, 17250))
 };
 
-const unsigned BALLOON_DEFAULT_ADJUST[] =
+const int BALLOON_DEFAULT_ADJUST[] =
 {
   1400, 25920
 };
@@ -96,7 +547,7 @@ const TextRectangle CUBE_TRS[] =
   TextRectangle(Vertex(0, 1 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 12 CALCULATED_VALUE))
 };
 
-const unsigned CUBE_DEFAULT_ADJUST[] =
+const int CUBE_DEFAULT_ADJUST[] =
 {
   5400
 };
@@ -135,7 +586,7 @@ const TextRectangle HOME_PLATE_TRS[] =
   TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
 };
 
-const unsigned HOME_PLATE_DEFAULT_ADJUST[] =
+const int HOME_PLATE_DEFAULT_ADJUST[] =
 {
   16200
 };
@@ -169,7 +620,7 @@ const TextRectangle ARROW_TRS[] =
   TextRectangle(Vertex(0, 0 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 2 CALCULATED_VALUE))
 };
 
-const unsigned ARROW_DEFAULT_ADJUST[] =
+const int ARROW_DEFAULT_ADJUST[] =
 {
   16200, 5400
 };
@@ -203,7 +654,7 @@ const TextRectangle OCTAGON_TRS[] =
   TextRectangle(Vertex(5 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 8 CALCULATED_VALUE))
 };
 
-const unsigned OCTAGON_DEFAULT_ADJUST[] =
+const int OCTAGON_DEFAULT_ADJUST[] =
 {
   5000
 };
@@ -242,7 +693,7 @@ const TextRectangle ROUND_RECTANGLE_TRS[] =
   TextRectangle(Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 6 CALCULATED_VALUE))
 };
 
-const unsigned ROUND_RECTANGLE_DEFAULT_ADJUST[] =
+const int ROUND_RECTANGLE_DEFAULT_ADJUST[] =
 {
   3600
 };
@@ -290,7 +741,7 @@ const TextRectangle PLUS_TRS[] =
   TextRectangle(Vertex(1 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE))
 };
 
-const unsigned PLUS_DEFAULT_ADJUST[] =
+const int PLUS_DEFAULT_ADJUST[] =
 {
   5400
 };
@@ -330,7 +781,7 @@ const TextRectangle TRAPEZOID_TRS[] =
   TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
 };
 
-const unsigned TRAPEZOID_DEFAULT_ADJUST[] =
+const int TRAPEZOID_DEFAULT_ADJUST[] =
 {
   5400
 };
@@ -465,7 +916,7 @@ const TextRectangle SEAL_4_TRS[] =
   TextRectangle(Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE))
 };
 
-const unsigned SEAL_4_DEFAULT_ADJUST[] =
+const int SEAL_4_DEFAULT_ADJUST[] =
 {
   8100
 };
@@ -514,7 +965,7 @@ const Vertex ISOCELES_TRIANGLE_GLUE_POINTS[] =
   Vertex(21600, 21600), Vertex(7 CALCULATED_VALUE, 10800)
 };
 
-const unsigned ISOCELES_TRIANGLE_DEFAULT_ADJUST[] =
+const int ISOCELES_TRIANGLE_DEFAULT_ADJUST[] =
 {
   10800
 };
@@ -548,7 +999,7 @@ const TextRectangle PARALLELOGRAM_TRS[] =
   TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
 };
 
-const unsigned PARALLELOGRAM_DEFAULT_ADJUST[] =
+const int PARALLELOGRAM_DEFAULT_ADJUST[] =
 {
   5400
 };
@@ -587,7 +1038,7 @@ const TextRectangle HEXAGON_TRS[] =
   TextRectangle(Vertex(3 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE))
 };
 
-const unsigned HEXAGON_DEFAULT_ADJUST[] =
+const int HEXAGON_DEFAULT_ADJUST[] =
 {
   5400
 };
@@ -645,6 +1096,38 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_CUBE;
   case BALLOON:
     return &CS_BALLOON;
+  case PLAQUE:
+    return &CS_PLAQUE;
+  case CAN:
+    return &CS_CAN;
+  case DONUT:
+    return &CS_DONUT;
+  case TEXT_SIMPLE:
+    return &CS_TEXT_SIMPLE;
+  case STRAIGHT_CONNECTOR_1:
+    return &CS_STRAIGHT_CONNECTOR_1;
+  case BENT_CONNECTOR_2:
+    return &CS_BENT_CONNECTOR_2;
+  case BENT_CONNECTOR_3:
+    return &CS_BENT_CONNECTOR_3;
+  case BENT_CONNECTOR_4:
+    return &CS_BENT_CONNECTOR_4;
+  case BENT_CONNECTOR_5:
+    return &CS_BENT_CONNECTOR_5;
+  case CURVED_CONNECTOR_2:
+    return &CS_CURVED_CONNECTOR_2;
+  case CURVED_CONNECTOR_3:
+    return &CS_CURVED_CONNECTOR_3;
+  case CURVED_CONNECTOR_4:
+    return &CS_CURVED_CONNECTOR_4;
+  case CURVED_CONNECTOR_5:
+    return &CS_CURVED_CONNECTOR_5;
+  case CALLOUT_1:
+    return &CS_CALLOUT_1;
+  case CALLOUT_2:
+    return &CS_CALLOUT_2;
+  case CALLOUT_3:
+    return &CS_CALLOUT_3;
   default:
     return NULL;
   }
@@ -702,6 +1185,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ENDSUBPATH;
     break;
   default:
+    MSPUB_DEBUG_MSG(("unknown segment command 0x%x\n", binary >> 8));
     cmd = MOVETO;
     count = 1;
     break;

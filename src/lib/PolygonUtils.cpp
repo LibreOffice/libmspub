@@ -456,7 +456,7 @@ const Calculation SEAL_4_CALC[] =
   Calculation(0x0000, 7600, 0, 0),
   Calculation(0x6001, OTHER_CALC_VAL, PROP_ADJUST_VAL_FIRST, 10800),
   Calculation(0xA000, OTHER_CALC_VAL, 0, OTHER_CALC_VAL | 1),
-  Calculation(0x4000, 10800, OTHER_CALC_VAL, 0),
+  Calculation(0x4000, 10800, OTHER_CALC_VAL | 2, 0),
   Calculation(0x8000, 10800, 0, OTHER_CALC_VAL | 2)
 };
 

@@ -436,43 +436,6 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::assignTextShapes()
-{
-  for (std::map<unsigned, std::pair<unsigned, unsigned> >::const_iterator i = m_textInfoBySeqNum.begin();
-       i != m_textInfoBySeqNum.end(); ++i)
-  {
-    unsigned pageSeqNum = i->second.second;
-    unsigned stringId = i->second.first;
-    unsigned seqNum = i->first;
-    PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, pageSeqNum);
-    if (!ptr_page)
-    {
-      MSPUB_DEBUG_MSG(("Page of seqnum 0x%x not found in assignTextShapes!\n", pageSeqNum));
-      continue;
-    }
-    std::vector<TextParagraph> *ptr_str = getIfExists(m_textStringsById, stringId);
-    if (! ptr_str)
-    {
-      MSPUB_DEBUG_MSG(("Text string of id 0x%x not found in assignTextShape!\n", stringId));
-      continue;
-    }
-    if (ptr_getIfExists(m_shapesBySeqNum, seqNum))
-    {
-      MSPUB_DEBUG_MSG(("already tried to add the text shape of seqnum 0x%x to this page!\n", seqNum));
-      continue;
-    }
-    TextShape *ptr_shape = new TextShape(*ptr_str, this);
-    Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
-    if (ptr_fill && m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end())
-    {
-      ptr_shape->setFill(ptr_fill);
-    }
-    m_shapesBySeqNum.insert(seqNum, ptr_shape);
-    ptr_page->m_shapeSeqNums.push_back(seqNum);
-    m_pageSeqNumsByShapeSeqNum.insert(std::pair<unsigned, unsigned>(seqNum, pageSeqNum));
-  }
-}
-
 bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
 {
   return m_textInfoBySeqNum.insert(std::pair<unsigned, std::pair<unsigned,unsigned> >(
@@ -672,7 +635,6 @@ bool libmspub::MSPUBCollector::go()
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
   assignImages();
-  // assignTextShapes();
   // order the shapes in each page
   for (unsigned i = 0; i < m_shapeSeqNumsOrdered.size(); ++i)
   {

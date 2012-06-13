@@ -144,7 +144,6 @@ private:
   std::map<unsigned, short> m_shapeRotationsBySeqNum;
 
   // helper functions
-  void assignTextShapes();
   void assignImages();
   void setRectCoordProps(Coordinate, WPXPropertyList *);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);

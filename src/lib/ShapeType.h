@@ -48,6 +48,7 @@ enum ShapeType
   ARROW             = 13,
   HOME_PLATE        = 15,
   CUBE              = 16,
+  BALLOON           = 17,
   SEAL_4            = 0xBB
 };
 } // libmspub

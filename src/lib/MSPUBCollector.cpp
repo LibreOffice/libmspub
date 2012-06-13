@@ -244,12 +244,27 @@ void libmspub::GeometricShape::setAdjustValue(unsigned index, int adjustValue)
   m_adjustValues[index] = adjustValue;
 }
 
+void libmspub::GeometricShape::setText(std::vector<TextParagraph> str)
+{
+  m_str = str;
+  m_hasText = true;
+}
+
 void libmspub::GeometricShape::setCoordProps(Coordinate coord)
 {
   m_x = owner->m_width / 2 + (double)(coord.m_xs) / EMUS_IN_INCH;
   m_y = owner->m_height / 2 + (double)(coord.m_ys) / EMUS_IN_INCH;
   m_width = (double)(coord.m_xe - coord.m_xs) / EMUS_IN_INCH;
   m_height = (double)(coord.m_ye - coord.m_ys) / EMUS_IN_INCH;
+  const CustomShape *p_shape = getCustomShape(m_type);
+  if (p_shape)
+  {
+    m_textCoord = p_shape->getTextRectangle(coord.m_xs, coord.m_ys, coord.m_xe - coord.m_xs, coord.m_ye - coord.m_ys, this);
+  }
+  else
+  {
+    m_textCoord = coord;
+  }
 }
 
 WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
@@ -258,7 +273,10 @@ WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
   {
     return fill->getProperties(&graphicsProps);
   }
-  graphicsProps.insert("draw:fill", "none");
+  else
+  {
+    graphicsProps.insert("draw:fill", "none");
+  }
   return WPXPropertyListVector();
 }
 
@@ -291,6 +309,27 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   if (shape)
   {
     writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this);
+  }
+  if (m_hasText)
+  {
+    owner->setRectCoordProps(m_textCoord, &props);
+    painter->startTextObject(props, WPXPropertyListVector());
+    for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)
+    {
+      WPXPropertyList paraProps = owner->getParaStyleProps(m_str[i_lines].style, m_str[i_lines].style.defaultCharStyleIndex);
+      painter->startTextLine(paraProps);
+      for (unsigned i_spans = 0; i_spans < m_str[i_lines].spans.size(); ++i_spans)
+      {
+        WPXString text;
+        appendCharacters(text, m_str[i_lines].spans[i_spans].chars);
+        WPXPropertyList charProps = owner->getCharStyleProps(m_str[i_lines].spans[i_spans].style, m_str[i_lines].style.defaultCharStyleIndex);
+        painter->startTextSpan(charProps);
+        painter->insertText(text);
+        painter->endTextSpan();
+      }
+      painter->endTextLine();
+    }
+    painter->endTextObject();
   }
 }
 
@@ -517,6 +556,16 @@ void libmspub::MSPUBCollector::assignImages()
       {
         MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
       }
+      std::pair<unsigned, unsigned> *ptr_textInfo = getIfExists(m_textInfoBySeqNum, seqNum);
+      if (ptr_textInfo)
+      {
+        unsigned stringId = ptr_textInfo->first;
+        std::vector<TextParagraph> *ptr_str = getIfExists(m_textStringsById, stringId);
+        if (ptr_str)
+        {
+          shape->setText(*ptr_str);
+        }
+      }
       shape->fillDefaultAdjustValues();
       ColorReference *ptr_lineColor = getIfExists(m_shapeLineColorsBySeqNum, seqNum);
       if (ptr_lineColor)
@@ -623,7 +672,7 @@ bool libmspub::MSPUBCollector::go()
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
   assignImages();
-  assignTextShapes();
+  // assignTextShapes();
   // order the shapes in each page
   for (unsigned i = 0; i < m_shapeSeqNumsOrdered.size(); ++i)
   {

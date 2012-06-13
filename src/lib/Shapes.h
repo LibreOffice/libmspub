@@ -99,9 +99,12 @@ struct GeometricShape : public FillableShape
   void fillDefaultAdjustValues();
   void setAdjustValue(unsigned index, int adjustValue);
   void setRotation(short rotation);
+  void setText(std::vector<TextParagraph> str);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
 
+  std::vector<TextParagraph> m_str;
+  bool m_hasText;
   unsigned m_pageSeqNum;
   unsigned m_imgIndex;
   ShapeType m_type;
@@ -109,20 +112,21 @@ struct GeometricShape : public FillableShape
   bool m_lineSet;
   double m_x, m_y, m_width, m_height;
   std::vector<int> m_adjustValues;
-  GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false) { }
+  GeometricShape(unsigned psn, MSPUBCollector *o) : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord() { }
 protected:
   void setCoordProps(Coordinate coord);
   virtual void write(libwpg::WPGPaintInterface *painter);
   WPXPropertyListVector updateGraphicsProps();
-  GeometricShape() : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false) { }
+  GeometricShape() : FillableShape(NULL), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord() { }
 private:
-  GeometricShape(const GeometricShape &) : FillableShape(NULL), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false) { }
+  GeometricShape(const GeometricShape &) : FillableShape(NULL), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE), m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(), m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord() { }
   GeometricShape &operator=(const GeometricShape &)
   {
     return *this;
   }
   mutable std::vector<bool> m_valuesSeen;
   bool m_filledDefaultAdjustValues;
+  Coordinate m_textCoord;
 };
 struct ImgShape : public GeometricShape
 {

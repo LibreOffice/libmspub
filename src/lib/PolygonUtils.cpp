@@ -715,6 +715,23 @@ double getSpecialIfNecessary(const libmspub::GeometricShape *caller, int val)
   return special ? caller->getCalculationValue(val ^ 0x80000000) : val;
 }
 
+Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const
+{
+  double divisorX = m_coordWidth / width;
+  double divisorY = m_coordHeight / height;
+  if (m_numTextRectangles == 0)
+  {
+    return Coordinate(x, y, x + width, y + height);
+  }
+  const Vertex &start = mp_textRectangles[0].first;
+  const Vertex &end = mp_textRectangles[0].second;
+  double startX = x + getSpecialIfNecessary(caller, start.m_x) / divisorX;
+  double startY = y + getSpecialIfNecessary(caller, start.m_y) / divisorY;
+  double endX = x + getSpecialIfNecessary(caller, end.m_x) / divisorX;
+  double endY = y + getSpecialIfNecessary(caller, end.m_y) / divisorY;
+  return Coordinate(startX, startY, endX, endY);
+}
+
 void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller)
 {
   if (width == 0 || height == 0)

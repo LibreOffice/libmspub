@@ -87,6 +87,8 @@ struct CustomShape
   const Vertex *mp_gluePoints;
   unsigned m_numGluePoints;
 
+  Coordinate getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const;
+
   CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const unsigned *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints) :
     mp_vertices(p_vertices), m_numVertices(numVertices),
     mp_elements(p_elements), m_numElements(numElements),

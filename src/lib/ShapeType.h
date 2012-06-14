@@ -106,6 +106,7 @@ enum ShapeType
   U_TURN_ARROW         = 101,
   CURVED_RIGHT_ARROW   = 102,
   CURVED_LEFT_ARROW    = 103,
+  CURVED_UP_ARROW      = 104,
   SEAL_4               = 0xBB
 };
 } // libmspub

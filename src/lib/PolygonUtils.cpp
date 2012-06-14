@@ -2312,13 +2312,14 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           bezier.insert("svg:y", endY);
           vertices.append(bezier);
         }
-      case CLOSESUBPATH:
-      {
-        WPXPropertyList end;
-        end.insert("libwpg:path-action", "Z");
-        vertices.append(end);
-      }
-      break;
+        break;
+      case ENDSUBPATH:
+        {
+          WPXPropertyList end;
+          end.insert("libwpg:path-action", "Z");
+          vertices.append(end);
+        }
+        break;
       default:
         break;
       }

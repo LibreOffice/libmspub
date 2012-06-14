@@ -100,6 +100,11 @@ enum ShapeType
   BLOCK_ARC            = 95,
   SMILEY_FACE          = 96,
   VERTICAL_SCROLL      = 97,
+  HORIZONTAL_SCROLL    = 98,
+  CIRCULAR_ARROW       = 99,
+  U_TURN_ARROW         = 101,
+  CURVED_RIGHT_ARROW   = 102,
+  CURVED_LEFT_ARROW    = 103,
   SEAL_4               = 0xBB
 };
 } // libmspub

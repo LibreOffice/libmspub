@@ -2556,10 +2556,10 @@ enum Command
   NOSTROKE,
   ANGLEELLIPSE,
   CLOSESUBPATH,
-  ARCTO,
+  /* ARCTO,
   ARC,
   CLOCKWISEARCTO,
-  CLOCKWISEARC,
+  CLOCKWISEARC,*/
   ENDSUBPATH,
   ELLIPTICALQUADRANTX,
   ELLIPTICALQUADRANTY
@@ -2592,7 +2592,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
     break;
-  case 0xA3:
+  /* case 0xA3:
     cmd = ARCTO;
     count = (binary & 0xFF) / 4;
     break;
@@ -2607,7 +2607,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   case 0xA6:
     cmd = CLOCKWISEARC;
     count = (binary & 0xFF) / 4;
-    break;
+    break; */
   case 0xA7:
     cmd = ELLIPTICALQUADRANTX;
     count = (binary & 0xFF);
@@ -2778,7 +2778,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
       }
       break;
-      case CLOCKWISEARCTO:
+      /* case CLOCKWISEARCTO:
       case CLOCKWISEARC:
       case ARCTO:
       case ARC:
@@ -2818,6 +2818,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           }
         }
         break;
+      */
       case ANGLEELLIPSE:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {

@@ -91,6 +91,15 @@ enum ShapeType
   RIGHT_BRACKET        = 86,
   LEFT_BRACE           = 87,
   RIGHT_BRACE          = 88,
+  LEFT_UP_ARROW        = 89,
+  BENT_UP_ARROW        = 90,
+  BENT_ARROW           = 91,
+  SEAL_24              = 92,
+  STRIPED_RIGHT_ARROW  = 93,
+  NOTCHED_RIGHT_ARROW  = 94,
+  BLOCK_ARC            = 95,
+  SMILEY_FACE          = 96,
+  VERTICAL_SCROLL      = 97,
   SEAL_4               = 0xBB
 };
 } // libmspub

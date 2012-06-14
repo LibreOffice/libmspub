@@ -65,7 +65,20 @@ enum ShapeType
   CALLOUT_1            = 41,
   CALLOUT_2            = 42,
   CALLOUT_3            = 43,
-  SEAL_4            = 0xBB
+  RIBBON               = 53,
+  RIBBON_2             = 54,
+  CHEVRON              = 55,
+  PENTAGON             = 56,
+  NO_SMOKING           = 57,
+  SEAL_8               = 58,
+  SEAL_16              = 59,
+  SEAL_32              = 60,
+  WAVE                 = 64,
+  FOLDED_CORNER        = 65,
+  LEFT_ARROW           = 66,
+  DOWN_ARROW           = 67,
+  UP_ARROW             = 68,
+  SEAL_4               = 0xBB
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

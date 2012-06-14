@@ -49,6 +49,7 @@ enum ShapeType
   HOME_PLATE           = 15,
   CUBE                 = 16,
   BALLOON              = 17,
+  ARC_SHAPE            = 19,
   PLAQUE               = 21,
   CAN                  = 22,
   DONUT                = 23,

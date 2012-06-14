@@ -1816,6 +1816,40 @@ const int BALLOON_DEFAULT_ADJUST[] =
   1400, 25920
 };
 
+const Vertex ARC_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(10800, 10800), Vertex(0, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 5 CALCULATED_VALUE)
+};
+
+const unsigned short ARC_SEGMENTS[] =
+{
+    0xa504, 0xab00, 0x0001, 0x6001, 0x8000, 0xa504, 0xaa00, 0x8000
+};
+
+const Calculation ARC_CALC[] =
+{
+    Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x402, 10800, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST + 1, 0), Calculation(0x2000, 0x404, 10800, 0), Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST + 1, 0), Calculation(0x2000, 0x406, 10800, 0)
+};
+
+const int ARC_DEFAULT_ADJUST[] =
+{
+    270, 0
+};
+
+const Vertex ARC_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_ARC(
+      ARC_VERTICES, sizeof(ARC_VERTICES) / sizeof(Vertex),
+        ARC_SEGMENTS, sizeof(ARC_SEGMENTS) / sizeof(unsigned short),
+          ARC_CALC, sizeof(ARC_CALC) / sizeof(Calculation),
+            ARC_DEFAULT_ADJUST, sizeof(ARC_DEFAULT_ADJUST) / sizeof(int),
+              NULL, 0,
+                21600, 21600,
+                  ARC_GLUE_POINTS, sizeof(ARC_GLUE_POINTS) / sizeof(Vertex));
+
 const CustomShape CS_BALLOON(
   BALLOON_VERTICES, sizeof(BALLOON_VERTICES) / sizeof(Vertex),
   BALLOON_SEGMENTS, sizeof(BALLOON_SEGMENTS) / sizeof(unsigned short),
@@ -2394,6 +2428,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_CUBE;
   case BALLOON:
     return &CS_BALLOON;
+  case ARC_SHAPE:
+    return &CS_ARC;
   case PLAQUE:
     return &CS_PLAQUE;
   case CAN:
@@ -2520,6 +2556,10 @@ enum Command
   NOSTROKE,
   ANGLEELLIPSE,
   CLOSESUBPATH,
+  ARCTO,
+  ARC,
+  CLOCKWISEARCTO,
+  CLOCKWISEARC,
   ENDSUBPATH,
   ELLIPTICALQUADRANTX,
   ELLIPTICALQUADRANTY
@@ -2551,6 +2591,22 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   case 0xA2:
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
+    break;
+  case 0xA3:
+    cmd = ARCTO;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA4:
+    cmd = ARC;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA5:
+    cmd = CLOCKWISEARCTO;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA6:
+    cmd = CLOCKWISEARC;
+    count = (binary & 0xFF) / 4;
     break;
   case 0xA7:
     cmd = ELLIPTICALQUADRANTX;
@@ -2722,6 +2778,46 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
       }
       break;
+      case CLOCKWISEARCTO:
+      case CLOCKWISEARC:
+      case ARCTO:
+      case ARC:
+        {
+          bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
+          bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
+          for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
+          {
+            unsigned startIndex = vertexIndex + clockwise ? 3 : 2;
+            unsigned endIndex = vertexIndex + clockwise ? 2 : 3;
+            double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+            double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+            double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
+            double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+            double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
+            double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
+            double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
+            double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
+            WPXPropertyList moveVertex;
+            moveVertex.insert("libwpg:path-action", "M");
+            moveVertex.insert("svg:x", startX);
+            moveVertex.insert("svg:y", startY);
+            vertices.append(moveVertex);
+            WPXPropertyList endVertex;
+            endVertex.insert("libwpg:path-action", "A");
+            endVertex.insert("libwpg:large-arc", 0);
+            endVertex.insert("libwpg:sweep", 0);
+            endVertex.insert("svg:x", endX);
+            endVertex.insert("svg:y", endY);
+            endVertex.insert("svg:rx", (right - left) / 2);
+            endVertex.insert("svg:ry", (bottom - top) / 2);
+            vertices.append(endVertex);
+            if (! move)
+            {
+              vertices.append(moveVertex); //move back
+            }
+          }
+        }
+        break;
       case ANGLEELLIPSE:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {

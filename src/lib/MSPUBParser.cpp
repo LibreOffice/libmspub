@@ -493,7 +493,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
     }
     //else
     //{
-      m_collector->addShape(seqNum, pageSeqNum);
+    m_collector->addShape(seqNum, pageSeqNum);
     //}
   }
   else

@@ -1138,6 +1138,7 @@ enum Command
   MOVETO,
   LINETO,
   CURVETO,
+  NOFILL,
   ANGLEELLIPSE,
   CLOSESUBPATH,
   ENDSUBPATH,
@@ -1158,6 +1159,9 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   unsigned count = 0;
   switch(binary >> 8)
   {
+  case 0xAB:
+    cmd = NOFILL;
+    break;
   case 0x20:
     cmd = CURVETO;
     count = (binary & 0xFF);
@@ -1253,89 +1257,89 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       {
       case ELLIPTICALQUADRANTX:
       case ELLIPTICALQUADRANTY:
+      {
+        bool firstDirection = true;
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
-          bool firstDirection = true;
-          for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
+          bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
+          const Vertex &curr = shape->mp_vertices[vertexIndex];
+          double currX = x + getSpecialIfNecessary(caller, curr.m_x) / divisorX;
+          double currY = y + getSpecialIfNecessary(caller, curr.m_y) / divisorY;
+          if (vertexIndex)
           {
-            bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
-            const Vertex &curr = shape->mp_vertices[vertexIndex];
-            double currX = x + getSpecialIfNecessary(caller, curr.m_x) / divisorX;
-            double currY = y + getSpecialIfNecessary(caller, curr.m_y) / divisorY;
-            if (vertexIndex)
+            const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
+            double prevX = x + getSpecialIfNecessary(caller, prev.m_x) / divisorX;
+            double prevY = y + getSpecialIfNecessary(caller, prev.m_y) / divisorY;
+            double tmpX = currX - prevX;
+            double tmpY = currY - prevY;
+            if ((tmpX < 0 && tmpY >= 0) || (tmpX >= 0 && tmpY < 0))
             {
-              const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
-              double prevX = x + getSpecialIfNecessary(caller, prev.m_x) / divisorX;
-              double prevY = y + getSpecialIfNecessary(caller, prev.m_y) / divisorY;
-              double tmpX = currX - prevX;
-              double tmpY = currY - prevY;
-              if ((tmpX < 0 && tmpY >= 0) || (tmpX >= 0 && tmpY < 0))
+              if (j == 0)
               {
-                if (j == 0)
-                {
-                  firstDirection = true;
-                }
-                else if (! firstDirection)
-                {
-                  modifier = !modifier;
-                }
+                firstDirection = true;
               }
-              else
+              else if (! firstDirection)
               {
-                if (j == 0)
-                {
-                  firstDirection = false;
-                }
-                else if (firstDirection)
-                {
-                  modifier = !modifier;
-                }
+                modifier = !modifier;
               }
-              if (modifier)
-              {
-                tmpX = currX;
-                tmpY = prevY;
-              }
-              else
-              {
-                tmpX = prevX;
-                tmpY = currY;
-              }
-              double vecX = (tmpX - prevX) / 2;
-              double vecY = (tmpY - prevY) / 2;
-              double x1 = prevX + vecX;
-              double y1 = prevY + vecY;
-              vecX = (tmpX - currX) / 2;
-              vecY = (tmpY - currY) / 2;
-              double x2 = currX + vecX;
-              double y2 = currY + vecY;
-              WPXPropertyList bezier;
-              bezier.insert("libwpg:path-action", "C");
-              bezier.insert("svg:x1", x1);
-              bezier.insert("svg:x2", x2);
-              bezier.insert("svg:y1", y1);
-              bezier.insert("svg:y2", y2);
-              bezier.insert("svg:x", currX);
-              bezier.insert("svg:y", currY);
-              vertices.append(bezier);
             }
             else
             {
-              //something is broken, just move
-              if (vertexIndex < shape->m_numVertices)
+              if (j == 0)
               {
-                WPXPropertyList moveVertex;
-                double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
-                double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
-                moveVertex.insert("svg:x", newX / divisorX + x);
-                moveVertex.insert("svg:y", newY / divisorY + y);
-                moveVertex.insert("libwpg:path-action", "M");
-                vertices.append(moveVertex);
-                ++vertexIndex;
+                firstDirection = false;
               }
+              else if (firstDirection)
+              {
+                modifier = !modifier;
+              }
+            }
+            if (modifier)
+            {
+              tmpX = currX;
+              tmpY = prevY;
+            }
+            else
+            {
+              tmpX = prevX;
+              tmpY = currY;
+            }
+            double vecX = (tmpX - prevX) / 2;
+            double vecY = (tmpY - prevY) / 2;
+            double x1 = prevX + vecX;
+            double y1 = prevY + vecY;
+            vecX = (tmpX - currX) / 2;
+            vecY = (tmpY - currY) / 2;
+            double x2 = currX + vecX;
+            double y2 = currY + vecY;
+            WPXPropertyList bezier;
+            bezier.insert("libwpg:path-action", "C");
+            bezier.insert("svg:x1", x1);
+            bezier.insert("svg:x2", x2);
+            bezier.insert("svg:y1", y1);
+            bezier.insert("svg:y2", y2);
+            bezier.insert("svg:x", currX);
+            bezier.insert("svg:y", currY);
+            vertices.append(bezier);
+          }
+          else
+          {
+            //something is broken, just move
+            if (vertexIndex < shape->m_numVertices)
+            {
+              WPXPropertyList moveVertex;
+              double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+              double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
+              moveVertex.insert("svg:x", newX / divisorX + x);
+              moveVertex.insert("svg:y", newY / divisorY + y);
+              moveVertex.insert("libwpg:path-action", "M");
+              vertices.append(moveVertex);
+              ++vertexIndex;
             }
           }
         }
-        break;
+      }
+      break;
       case ANGLEELLIPSE:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {

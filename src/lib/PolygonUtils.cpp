@@ -1137,6 +1137,7 @@ enum Command
 {
   MOVETO,
   LINETO,
+  CURVETO,
   ANGLEELLIPSE,
   CLOSESUBPATH,
   ENDSUBPATH,
@@ -1157,6 +1158,10 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   unsigned count = 0;
   switch(binary >> 8)
   {
+  case 0x20:
+    cmd = CURVETO;
+    count = (binary & 0xFF);
+    break;
   case 0xA2:
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
@@ -1396,6 +1401,25 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           vertices.append(vertex);
         }
         break;
+      case CURVETO:
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
+        {
+          double firstCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double firstCtrlY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double secondCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
+          double secondCtrlY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+          double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x) / divisorX;
+          double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y) / divisorY;
+          WPXPropertyList bezier;
+          bezier.insert("libwpg:path-action", "C");
+          bezier.insert("svg:x1", firstCtrlX);
+          bezier.insert("svg:x2", secondCtrlX);
+          bezier.insert("svg:y1", firstCtrlY);
+          bezier.insert("svg:y2", secondCtrlY);
+          bezier.insert("svg:x", endX);
+          bezier.insert("svg:y", endY);
+          vertices.append(bezier);
+        }
       case CLOSESUBPATH:
       {
         WPXPropertyList end;

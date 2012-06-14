@@ -155,6 +155,366 @@ const CustomShape CS_LEFT_ARROW(
   21600, 21600,
   NULL, 0);
 
+const Vertex UP_DOWN_ARROW_VERTICES[] =
+{
+  Vertex(0, 1 CALCULATED_VALUE), Vertex(10800, 0), Vertex(21600, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(21600, 3 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(0, 3 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short UP_DOWN_ARROW_SEGMENTS[] =
+{
+  0x4000, 0x0009, 0x6001, 0x8000
+};
+
+const Calculation UP_DOWN_ARROW_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x6001, PROP_ADJUST_VAL_FIRST, 0x404, 10800), Calculation(0x8000, 21600, 0, 0x405), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x6001, PROP_ADJUST_VAL_FIRST + 1, 0x407, 10800), Calculation(0x8000, 21600, 0, 0x408)
+};
+
+const TextRectangle UP_DOWN_ARROW_TRS[] =
+{
+  TextRectangle(Vertex(0 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 9 CALCULATED_VALUE))
+};
+
+const int UP_DOWN_ARROW_DEFAULT_ADJUST[] =
+{
+  5400, 4300
+};
+
+const CustomShape CS_UP_DOWN_ARROW(
+  UP_DOWN_ARROW_VERTICES, sizeof(UP_DOWN_ARROW_VERTICES) / sizeof(Vertex),
+  UP_DOWN_ARROW_SEGMENTS, sizeof(UP_DOWN_ARROW_SEGMENTS) / sizeof(unsigned short),
+  UP_DOWN_ARROW_CALC, sizeof(UP_DOWN_ARROW_CALC) / sizeof(Calculation),
+  UP_DOWN_ARROW_DEFAULT_ADJUST, sizeof(UP_DOWN_ARROW_DEFAULT_ADJUST) / sizeof(int),
+  UP_DOWN_ARROW_TRS, sizeof(UP_DOWN_ARROW_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
+const Vertex IRREGULAR_SEAL_1_VERTICES[] =
+{
+  Vertex(10901, 5905), Vertex(8458, 2399), Vertex(7417, 6425), Vertex(476, 2399), Vertex(4732, 7722), Vertex(106, 8718), Vertex(3828, 11880), Vertex(243, 14689), Vertex(5772, 14041), Vertex(4868, 17719), Vertex(7819, 15730), Vertex(8590, 21600), Vertex(10637, 15038), Vertex(13349, 19840), Vertex(14125, 14561), Vertex(18248, 18195), Vertex(16938, 13044), Vertex(21600, 13393), Vertex(17710, 10579), Vertex(21198, 8242), Vertex(16806, 7417), Vertex(18482, 4560), Vertex(14257, 5429), Vertex(14623, 106), Vertex(10901, 5905)
+};
+
+const TextRectangle IRREGULAR_SEAL_1_TRS[] =
+{
+  TextRectangle(Vertex(5400, 6570), Vertex(14160, 15290))
+};
+
+const Vertex IRREGULAR_SEAL_1_GLUE_POINTS[] =
+{
+  Vertex(9722, 1887), Vertex(0, 12875), Vertex(11614, 18844), Vertex(21600, 6646)
+};
+
+const CustomShape CS_IRREGULAR_SEAL_1(
+  IRREGULAR_SEAL_1_VERTICES, sizeof(IRREGULAR_SEAL_1_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  IRREGULAR_SEAL_1_TRS, sizeof(IRREGULAR_SEAL_1_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  IRREGULAR_SEAL_1_GLUE_POINTS, sizeof(IRREGULAR_SEAL_1_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex LIGHTNING_BOLT_VERTICES[] =
+{
+  Vertex(8458, 0), Vertex(0, 3923), Vertex(7564, 8416), Vertex(4993, 9720), Vertex(12197, 13904), Vertex(9987, 14934), Vertex(21600, 21600), Vertex(14768, 12911), Vertex(16558, 12016), Vertex(11030, 6840), Vertex(12831, 6120), Vertex(8458, 0)
+};
+
+const TextRectangle LIGHTNING_BOLT_TRS[] =
+{
+  TextRectangle(Vertex(8680, 7410), Vertex(13970, 14190))
+};
+
+const Vertex LIGHTNING_BOLT_GLUE_POINTS[] =
+{
+  Vertex(8458, 0), Vertex(0, 3923), Vertex(4993, 9720), Vertex(9987, 14934), Vertex(21600, 21600), Vertex(16558, 12016), Vertex(12831, 6120)
+};
+
+const CustomShape CS_LIGHTNING_BOLT(
+  LIGHTNING_BOLT_VERTICES, sizeof(LIGHTNING_BOLT_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  LIGHTNING_BOLT_TRS, sizeof(LIGHTNING_BOLT_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  LIGHTNING_BOLT_GLUE_POINTS, sizeof(LIGHTNING_BOLT_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex IRREGULAR_SEAL_2_VERTICES[] =
+{
+  Vertex(11464, 4340), Vertex(9722, 1887), Vertex(8548, 6383), Vertex(4503, 3626), Vertex(5373, 7816), Vertex(1174, 8270), Vertex(3934, 11592), Vertex(0, 12875), Vertex(3329, 15372), Vertex(1283, 17824), Vertex(4804, 18239), Vertex(4918, 21600), Vertex(7525, 18125), Vertex(8698, 19712), Vertex(9871, 17371), Vertex(11614, 18844), Vertex(12178, 15937), Vertex(14943, 17371), Vertex(14640, 14348), Vertex(18878, 15632), Vertex(16382, 12311), Vertex(18270, 11292), Vertex(16986, 9404), Vertex(21600, 6646), Vertex(16382, 6533), Vertex(18005, 3172), Vertex(14524, 5778), Vertex(14789, 0), Vertex(11464, 4340)
+};
+
+const TextRectangle IRREGULAR_SEAL_2_TRS[] =
+{
+  TextRectangle(Vertex(5400, 6570), Vertex(14160, 15290))
+};
+
+const Vertex IRREGULAR_SEAL_2_GLUE_POINTS[] =
+{
+  Vertex(9722, 1887), Vertex(0, 12875), Vertex(11614, 18844), Vertex(21600, 6646)
+};
+
+const CustomShape CS_IRREGULAR_SEAL_2(
+  IRREGULAR_SEAL_2_VERTICES, sizeof(IRREGULAR_SEAL_2_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  IRREGULAR_SEAL_2_TRS, sizeof(IRREGULAR_SEAL_2_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  IRREGULAR_SEAL_2_GLUE_POINTS, sizeof(IRREGULAR_SEAL_2_GLUE_POINTS) / sizeof(Vertex));
+
+
+const Vertex HEART_VERTICES[] =
+{
+  Vertex(10800, 21599), Vertex(321, 6886), Vertex(70, 6036), Vertex(-9, 5766), Vertex(-1, 5474), Vertex(2, 5192), Vertex(6, 4918), Vertex(43, 4641), Vertex(101, 4370), Vertex(159, 4103), Vertex(245, 3837), Vertex(353, 3582), Vertex(460, 3326), Vertex(591, 3077), Vertex(741, 2839), Vertex(892, 2598), Vertex(1066, 2369), Vertex(1253, 2155), Vertex(1443, 1938), Vertex(1651, 1732), Vertex(1874, 1543), Vertex(2097, 1351), Vertex(2337, 1174), Vertex(2587, 1014), Vertex(2839, 854), Vertex(3106, 708), Vertex(3380, 584), Vertex(3656, 459), Vertex(3945, 350), Vertex(4237, 264), Vertex(4533, 176), Vertex(4838, 108), Vertex(5144, 66), Vertex(5454, 22), Vertex(5771, 1), Vertex(6086, 3), Vertex(6407, 7), Vertex(6731, 35), Vertex(7048, 89), Vertex(7374, 144), Vertex(7700, 226), Vertex(8015, 335), Vertex(8344, 447), Vertex(8667, 590), Vertex(8972, 756), Vertex(9297, 932), Vertex(9613, 1135), Vertex(9907, 1363), Vertex(10224, 1609), Vertex(10504, 1900), Vertex(10802, 2169), Vertex(11697, 1363), Vertex(11971, 1116), Vertex(12304, 934), Vertex(12630, 756), Vertex(12935, 590), Vertex(13528, 450), Vertex(13589, 335), Vertex(13901, 226), Vertex(14227, 144), Vertex(14556, 89), Vertex(14872, 35), Vertex(15195, 7), Vertex(15517, 3), Vertex(15830, 0), Vertex(16147, 22), Vertex(16458, 66), Vertex(16764, 109), Vertex(17068, 177), Vertex(17365, 264), Vertex(17658, 349), Vertex(17946, 458), Vertex(18222, 584), Vertex(18496, 708), Vertex(18762, 854), Vertex(19015, 1014), Vertex(19264, 1172), Vertex(19504, 1349), Vertex(19730, 1543), Vertex(19950, 1731), Vertex(20158, 1937), Vertex(20350, 2155), Vertex(20536, 2369), Vertex(20710, 2598), Vertex(20861, 2839), Vertex(21010, 3074), Vertex(21143, 3323), Vertex(21251, 3582), Vertex(21357, 3835), Vertex(21443, 4099), Vertex(21502, 4370), Vertex(21561, 4639), Vertex(21595, 4916), Vertex(21600, 5192), Vertex(21606, 5474), Vertex(21584, 5760), Vertex(21532, 6036), Vertex(21478, 6326), Vertex(21366, 6603), Vertex(21282, 6887), Vertex(10802, 21602)
+};
+
+const unsigned short HEART_SEGMENTS[] =
+{
+  0x4000, 0x0002, 0x2010, 0x0001, 0x2010, 0x0001, 0x6001, 0x8000
+};
+
+const TextRectangle HEART_TRS[] =
+{
+  TextRectangle(Vertex(5080, 2540), Vertex(16520, 13550))
+};
+
+const Vertex HEART_GLUE_POINTS[] =
+{
+  Vertex(10800, 2180), Vertex(3090, 10800), Vertex(10800, 21600), Vertex(18490, 10800)
+};
+
+const CustomShape CS_HEART(
+  HEART_VERTICES, sizeof(HEART_VERTICES) / sizeof(Vertex),
+  HEART_SEGMENTS, sizeof(HEART_SEGMENTS) / sizeof(unsigned short),
+  NULL, 0,
+  NULL, 0,
+  HEART_TRS, sizeof(HEART_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  HEART_GLUE_POINTS, sizeof(HEART_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex QUAD_ARROW_VERTICES[] =
+{
+  Vertex(0, 10800), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(10800, 0), Vertex(3 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(21600, 10800), Vertex(5 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(1 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 3 CALCULATED_VALUE)
+};
+
+const unsigned short QUAD_ARROW_SEGMENTS[] =
+{
+  0x4000, 0x0017, 0x6001, 0x8000
+};
+
+const Calculation QUAD_ARROW_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 2)
+};
+
+const TextRectangle QUAD_ARROW_TRS[] =
+{
+  TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int QUAD_ARROW_DEFAULT_ADJUST[] =
+{
+  6500, 8600, 4300
+};
+
+const CustomShape CS_QUAD_ARROW(
+  QUAD_ARROW_VERTICES, sizeof(QUAD_ARROW_VERTICES) / sizeof(Vertex),
+  QUAD_ARROW_SEGMENTS, sizeof(QUAD_ARROW_SEGMENTS) / sizeof(unsigned short),
+  QUAD_ARROW_CALC, sizeof(QUAD_ARROW_CALC) / sizeof(Calculation),
+  QUAD_ARROW_DEFAULT_ADJUST, sizeof(QUAD_ARROW_DEFAULT_ADJUST) / sizeof(int),
+  QUAD_ARROW_TRS, sizeof(QUAD_ARROW_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
+const Vertex BEVEL_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE)
+};
+
+const unsigned short BEVEL_SEGMENTS[] =
+{
+  0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation BEVEL_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 21599, 21600), Calculation(0xa000, PROP_GEO_RIGHT, 0, 0x400), Calculation(0xa000, PROP_GEO_BOTTOM, 0, 0x400)
+};
+
+const TextRectangle BEVEL_TRS[] =
+{
+  TextRectangle(Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE))
+};
+
+const int BEVEL_DEFAULT_ADJUST[] =
+{
+  2700
+};
+
+const CustomShape CS_BEVEL(
+  BEVEL_VERTICES, sizeof(BEVEL_VERTICES) / sizeof(Vertex),
+  BEVEL_SEGMENTS, sizeof(BEVEL_SEGMENTS) / sizeof(unsigned short),
+  BEVEL_CALC, sizeof(BEVEL_CALC) / sizeof(Calculation),
+  BEVEL_DEFAULT_ADJUST, sizeof(BEVEL_DEFAULT_ADJUST) / sizeof(int),
+  BEVEL_TRS, sizeof(BEVEL_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
+const Vertex LEFT_BRACKET_VERTICES[] =
+{
+  Vertex(21600, 0), Vertex(10800, 0), Vertex(0, 3 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(0, 2 CALCULATED_VALUE), Vertex(0, 4 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short LEFT_BRACKET_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x0001, 0x2001, 0x8000
+};
+
+const Calculation LEFT_BRACKET_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x6000, PROP_GEO_TOP, 0x400, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, 0x400)
+};
+
+const TextRectangle LEFT_BRACKET_TRS[] =
+{
+  TextRectangle(Vertex(6350, 3 CALCULATED_VALUE), Vertex(21600, 4 CALCULATED_VALUE))
+};
+
+const int LEFT_BRACKET_DEFAULT_ADJUST[] =
+{
+  1800
+};
+
+const Vertex LEFT_BRACKET_GLUE_POINTS[] =
+{
+  Vertex(21600, 0), Vertex(0, 10800), Vertex(21600, 21600)
+};
+
+const CustomShape CS_LEFT_BRACKET(
+  LEFT_BRACKET_VERTICES, sizeof(LEFT_BRACKET_VERTICES) / sizeof(Vertex),
+  LEFT_BRACKET_SEGMENTS, sizeof(LEFT_BRACKET_SEGMENTS) / sizeof(unsigned short),
+  LEFT_BRACKET_CALC, sizeof(LEFT_BRACKET_CALC) / sizeof(Calculation),
+  LEFT_BRACKET_DEFAULT_ADJUST, sizeof(LEFT_BRACKET_DEFAULT_ADJUST) / sizeof(int),
+  LEFT_BRACKET_TRS, sizeof(LEFT_BRACKET_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  LEFT_BRACKET_GLUE_POINTS, sizeof(LEFT_BRACKET_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex RIGHT_BRACKET_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(10800, 0), Vertex(21600, 3 CALCULATED_VALUE), Vertex(21600, 1 CALCULATED_VALUE), Vertex(21600, 2 CALCULATED_VALUE), Vertex(21600, 4 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(0, 21600)
+};
+
+const unsigned short RIGHT_BRACKET_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x0001, 0x2001, 0x8000
+};
+
+const Calculation RIGHT_BRACKET_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x6000, PROP_GEO_TOP, 0x400, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, 0x400)
+};
+
+const TextRectangle RIGHT_BRACKET_TRS[] =
+{
+  TextRectangle(Vertex(0, 3 CALCULATED_VALUE), Vertex(15150, 4 CALCULATED_VALUE))
+};
+
+const int RIGHT_BRACKET_DEFAULT_ADJUST[] =
+{
+  1800
+};
+
+const Vertex RIGHT_BRACKET_GLUE_POINTS[] =
+{
+  Vertex(0, 0), Vertex(0, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_RIGHT_BRACKET(
+  RIGHT_BRACKET_VERTICES, sizeof(RIGHT_BRACKET_VERTICES) / sizeof(Vertex),
+  RIGHT_BRACKET_SEGMENTS, sizeof(RIGHT_BRACKET_SEGMENTS) / sizeof(unsigned short),
+  RIGHT_BRACKET_CALC, sizeof(RIGHT_BRACKET_CALC) / sizeof(Calculation),
+  RIGHT_BRACKET_DEFAULT_ADJUST, sizeof(RIGHT_BRACKET_DEFAULT_ADJUST) / sizeof(int),
+  RIGHT_BRACKET_TRS, sizeof(RIGHT_BRACKET_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  RIGHT_BRACKET_GLUE_POINTS, sizeof(RIGHT_BRACKET_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex LEFT_BRACE_VERTICES[] =
+{
+  Vertex(21600, 0), Vertex(16200, 0), Vertex(10800, 0 CALCULATED_VALUE), Vertex(10800, 1 CALCULATED_VALUE), Vertex(10800, 2 CALCULATED_VALUE), Vertex(10800, 3 CALCULATED_VALUE), Vertex(5400, 4 CALCULATED_VALUE), Vertex(0, 4 CALCULATED_VALUE), Vertex(5400, 4 CALCULATED_VALUE), Vertex(10800, 5 CALCULATED_VALUE), Vertex(10800, 6 CALCULATED_VALUE), Vertex(10800, 7 CALCULATED_VALUE), Vertex(10800, 8 CALCULATED_VALUE), Vertex(16200, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short LEFT_BRACE_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x0001, 0x2002, 0x0001, 0x2001, 0x8000
+};
+
+const Calculation LEFT_BRACE_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0xa000, 0x404, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, 0x404, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x6000, 0x404, 0x400, 0), Calculation(0x6000, 0x404, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 10000, 31953), Calculation(0x8000, 21600, 0, 0x409)
+};
+
+const TextRectangle LEFT_BRACE_TRS[] =
+{
+  TextRectangle(Vertex(13800, 9 CALCULATED_VALUE), Vertex(21600, 10 CALCULATED_VALUE))
+};
+
+const int LEFT_BRACE_DEFAULT_ADJUST[] =
+{
+  1800, 10800
+};
+
+const Vertex LEFT_BRACE_GLUE_POINTS[] =
+{
+  Vertex(21600, 0), Vertex(0, 10800), Vertex(21600, 21600)
+};
+
+const CustomShape CS_LEFT_BRACE(
+  LEFT_BRACE_VERTICES, sizeof(LEFT_BRACE_VERTICES) / sizeof(Vertex),
+  LEFT_BRACE_SEGMENTS, sizeof(LEFT_BRACE_SEGMENTS) / sizeof(unsigned short),
+  LEFT_BRACE_CALC, sizeof(LEFT_BRACE_CALC) / sizeof(Calculation),
+  LEFT_BRACE_DEFAULT_ADJUST, sizeof(LEFT_BRACE_DEFAULT_ADJUST) / sizeof(int),
+  LEFT_BRACE_TRS, sizeof(LEFT_BRACE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  LEFT_BRACE_GLUE_POINTS, sizeof(LEFT_BRACE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex RIGHT_BRACE_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(5400, 0), Vertex(10800, 0 CALCULATED_VALUE), Vertex(10800, 1 CALCULATED_VALUE), Vertex(10800, 2 CALCULATED_VALUE), Vertex(10800, 3 CALCULATED_VALUE), Vertex(16200, 4 CALCULATED_VALUE), Vertex(21600, 4 CALCULATED_VALUE), Vertex(16200, 4 CALCULATED_VALUE), Vertex(10800, 5 CALCULATED_VALUE), Vertex(10800, 6 CALCULATED_VALUE), Vertex(10800, 7 CALCULATED_VALUE), Vertex(10800, 8 CALCULATED_VALUE), Vertex(5400, 21600), Vertex(0, 21600)
+};
+
+const unsigned short RIGHT_BRACE_SEGMENTS[] =
+{
+  0x4000, 0x2001, 0x0001, 0x2002, 0x0001, 0x2001, 0x8000
+};
+
+const Calculation RIGHT_BRACE_CALC[] =
+{
+  Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0xa000, 0x404, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, 0x404, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x6000, 0x404, 0x400, 0), Calculation(0x6000, 0x404, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 10000, 31953), Calculation(0x8000, 21600, 0, 0x409)
+};
+
+const TextRectangle RIGHT_BRACE_TRS[] =
+{
+  TextRectangle(Vertex(0, 9 CALCULATED_VALUE), Vertex(7800, 10 CALCULATED_VALUE))
+};
+
+const int RIGHT_BRACE_DEFAULT_ADJUST[] =
+{
+  1800, 10800
+};
+
+const Vertex RIGHT_BRACE_GLUE_POINTS[] =
+{
+  Vertex(0, 0), Vertex(0, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_RIGHT_BRACE(
+  RIGHT_BRACE_VERTICES, sizeof(RIGHT_BRACE_VERTICES) / sizeof(Vertex),
+  RIGHT_BRACE_SEGMENTS, sizeof(RIGHT_BRACE_SEGMENTS) / sizeof(unsigned short),
+  RIGHT_BRACE_CALC, sizeof(RIGHT_BRACE_CALC) / sizeof(Calculation),
+  RIGHT_BRACE_DEFAULT_ADJUST, sizeof(RIGHT_BRACE_DEFAULT_ADJUST) / sizeof(int),
+  RIGHT_BRACE_TRS, sizeof(RIGHT_BRACE_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  RIGHT_BRACE_GLUE_POINTS, sizeof(RIGHT_BRACE_GLUE_POINTS) / sizeof(Vertex));
+
 const Vertex DOWN_ARROW_VERTICES[] =
 {
   Vertex(0 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(21600, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 0)
@@ -220,6 +580,40 @@ const CustomShape CS_UP_ARROW(
   UP_ARROW_CALC, sizeof(UP_ARROW_CALC) / sizeof(Calculation),
   UP_ARROW_DEFAULT_ADJUST, sizeof(UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
   UP_ARROW_TRS, sizeof(UP_ARROW_TRS) / sizeof(TextRectangle),
+  21600, 21600,
+  NULL, 0);
+
+const Vertex LEFT_RIGHT_ARROW_VERTICES[] =
+{
+  Vertex(0, 10800), Vertex(0 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 0), Vertex(21600, 10800), Vertex(2 CALCULATED_VALUE, 21600), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 21600)
+};
+
+const unsigned short LEFT_RIGHT_ARROW_SEGMENTS[] =
+{
+  0x4000, 0x0009, 0x6001, 0x8000
+};
+
+const Calculation LEFT_RIGHT_ARROW_CALC[] =
+{
+  Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x6001, PROP_ADJUST_VAL_FIRST, 0x404, 10800), Calculation(0x8000, 21600, 0, 0x405), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x6001, PROP_ADJUST_VAL_FIRST + 1, 0x407, 10800), Calculation(0x8000, 21600, 0, 0x408)
+};
+
+const TextRectangle LEFT_RIGHT_ARROW_TRS[] =
+{
+  TextRectangle(Vertex(5 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(6 CALCULATED_VALUE, 3 CALCULATED_VALUE))
+};
+
+const int LEFT_RIGHT_ARROW_DEFAULT_ADJUST[] =
+{
+  4300, 5400
+};
+
+const CustomShape CS_LEFT_RIGHT_ARROW(
+  LEFT_RIGHT_ARROW_VERTICES, sizeof(LEFT_RIGHT_ARROW_VERTICES) / sizeof(Vertex),
+  LEFT_RIGHT_ARROW_SEGMENTS, sizeof(LEFT_RIGHT_ARROW_SEGMENTS) / sizeof(unsigned short),
+  LEFT_RIGHT_ARROW_CALC, sizeof(LEFT_RIGHT_ARROW_CALC) / sizeof(Calculation),
+  LEFT_RIGHT_ARROW_DEFAULT_ADJUST, sizeof(LEFT_RIGHT_ARROW_DEFAULT_ADJUST) / sizeof(int),
+  LEFT_RIGHT_ARROW_TRS, sizeof(LEFT_RIGHT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
   NULL, 0);
 
@@ -1592,6 +1986,32 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_DOWN_ARROW;
   case UP_ARROW:
     return &CS_UP_ARROW;
+  case LEFT_RIGHT_ARROW:
+    return &CS_LEFT_RIGHT_ARROW;
+  case UP_DOWN_ARROW:
+    return &CS_UP_DOWN_ARROW;
+  case IRREGULAR_SEAL_1:
+    return &CS_IRREGULAR_SEAL_1;
+  case IRREGULAR_SEAL_2:
+    return &CS_IRREGULAR_SEAL_2;
+  case LIGHTNING_BOLT:
+    return &CS_LIGHTNING_BOLT;
+  case HEART:
+    return &CS_HEART;
+  case PICTURE_FRAME:
+    return NULL; //FIXME
+  case QUAD_ARROW:
+    return &CS_QUAD_ARROW;
+  case BEVEL:
+    return &CS_BEVEL;
+  case LEFT_BRACKET:
+    return &CS_LEFT_BRACKET;
+  case RIGHT_BRACKET:
+    return &CS_RIGHT_BRACKET;
+  case LEFT_BRACE:
+    return &CS_LEFT_BRACE;
+  case RIGHT_BRACE:
+    return &CS_RIGHT_BRACE;
   default:
     return NULL;
   }

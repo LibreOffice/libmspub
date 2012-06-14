@@ -78,6 +78,19 @@ enum ShapeType
   LEFT_ARROW           = 66,
   DOWN_ARROW           = 67,
   UP_ARROW             = 68,
+  LEFT_RIGHT_ARROW     = 69,
+  UP_DOWN_ARROW        = 70,
+  IRREGULAR_SEAL_1     = 71,
+  IRREGULAR_SEAL_2     = 72,
+  LIGHTNING_BOLT       = 73,
+  HEART                = 74,
+  PICTURE_FRAME        = 75,
+  QUAD_ARROW           = 76,
+  BEVEL                = 84,
+  LEFT_BRACKET         = 85,
+  RIGHT_BRACKET        = 86,
+  LEFT_BRACE           = 87,
+  RIGHT_BRACE          = 88,
   SEAL_4               = 0xBB
 };
 } // libmspub

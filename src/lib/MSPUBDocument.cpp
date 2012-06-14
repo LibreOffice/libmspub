@@ -79,7 +79,7 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 
 /**
 Parses the input stream content. It will make callbacks to the functions provided by a
-MSPUBPaintInterface class implementation when needed. This is often commonly called the
+WPGPaintInterface class implementation when needed. This is often commonly called the
 'main parsing routine'.
 \param input The input stream
 \param painter A MSPUBPainterInterface implementation

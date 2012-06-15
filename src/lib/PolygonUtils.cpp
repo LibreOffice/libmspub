@@ -756,6 +756,248 @@ const Vertex CURVED_LEFT_ARROW_GLUE_POINTS[] =
   Vertex(0, 15 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(0, 8 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 13 CALCULATED_VALUE), Vertex(21 CALCULATED_VALUE, 16 CALCULATED_VALUE)
 };
 
+
+const Vertex CURVED_DOWN_ARROW_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(3 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(0, 22 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 0), Vertex(15 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0), Vertex(13 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(0, 0), Vertex(3 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(17 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(17 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(0, 0), Vertex(3 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(0, 22 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 0), Vertex(0, 0), Vertex(3 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 0), Vertex(17 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 23 CALCULATED_VALUE), Vertex(17 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 22 CALCULATED_VALUE)
+};
+
+const unsigned short CURVED_DOWN_ARROW_SEGMENTS[] =
+{
+    0xa608, 0x0003, 0xa308, 0x6000, 0x8000, 0xa604, 0xa504, 0xa304, 0x6000, 0x8000
+};
+
+const Calculation CURVED_DOWN_ARROW_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 2, 0, 0), Calculation(0xa000, PROP_ADJUST_VAL_FIRST, 21600, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x2001, 0x403, 1, 2), Calculation(0x6000, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST + 1, 21600), Calculation(0xe000, 0x405, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x406, 1, 2), Calculation(0x4002, 21600, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 2), Calculation(0xa00f, 0x409, 21600, 0x404), Calculation(0x6000, 0x404, 0x40a, 0), Calculation(0x6000, 0x40b, PROP_ADJUST_VAL_FIRST + 1, 21600), Calculation(0x6000, 0x407, 0x40a, 0), Calculation(0xa000, 0x40c, 21600, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, 0x405, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x40f, 1, 2), Calculation(0x6002, 0x404, 0x407, 0), Calculation(0x6000, PROP_ADJUST_VAL_FIRST, PROP_ADJUST_VAL_FIRST + 1, 21600), Calculation(0x2001, 0x412, 1, 2), Calculation(0xa000, 0x411, 0, 0x413), Calculation(0x0000, 21600, 0, 0), Calculation(0x0000, 21600, 0, 0), Calculation(0x0001, 21600, 2, 1), Calculation(0xa000, 0x411, 0, 0x404), Calculation(0x600f, 0x418, 0x404, 21600), Calculation(0x8000, 21600, 0, 0x419), Calculation(0x2000, 0x408, 128, 0), Calculation(0x2001, 0x405, 1, 2), Calculation(0x2000, 0x405, 0, 128), Calculation(0xe000, PROP_ADJUST_VAL_FIRST, 0x411, 0x40c), Calculation(0x600f, 0x414, 0x404, 21600), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x420, 1, 2), Calculation(0x0001, 21600, 21600, 1), Calculation(0x6001, 0x409, 0x409, 1), Calculation(0xa000, 0x422, 0, 0x423), Calculation(0x200d, 0x424, 0, 0), Calculation(0x2000, 0x425, 21600, 0), Calculation(0x8001, 21600, 21600, 0x426), Calculation(0x2000, 0x427, 64, 0), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 2), Calculation(0x600f, 0x421, 0x429, 21600), Calculation(0x8000, 21600, 0, 0x42a), Calculation(0x2000, 0x42b, 64, 0), Calculation(0x2001, 0x404, 1, 2), Calculation(0xa000, PROP_ADJUST_VAL_FIRST + 1, 0, 0x42d), Calculation(0x0001, 21600, 2195, 16384), Calculation(0x0001, 21600, 14189, 16384)
+};
+
+const TextRectangle CURVED_DOWN_ARROW_TRS[] =
+{
+    TextRectangle(Vertex(45 CALCULATED_VALUE, 47 CALCULATED_VALUE), Vertex(46 CALCULATED_VALUE, 48 CALCULATED_VALUE))
+};
+
+const int CURVED_DOWN_ARROW_DEFAULT_ADJUST[] =
+{
+    12960, 19440, 14400
+};
+
+const Vertex CURVED_DOWN_ARROW_GLUE_POINTS[] =
+{
+    Vertex(17 CALCULATED_VALUE, 0), Vertex(16 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 2 CALCULATED_VALUE)
+};
+
+const CustomShape CS_CURVED_DOWN_ARROW(
+      CURVED_DOWN_ARROW_VERTICES, sizeof(CURVED_DOWN_ARROW_VERTICES) / sizeof(Vertex),
+        CURVED_DOWN_ARROW_SEGMENTS, sizeof(CURVED_DOWN_ARROW_SEGMENTS) / sizeof(unsigned short),
+          CURVED_DOWN_ARROW_CALC, sizeof(CURVED_DOWN_ARROW_CALC) / sizeof(Calculation),
+            CURVED_DOWN_ARROW_DEFAULT_ADJUST, sizeof(CURVED_DOWN_ARROW_DEFAULT_ADJUST) / sizeof(int),
+              CURVED_DOWN_ARROW_TRS, sizeof(CURVED_DOWN_ARROW_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  CURVED_DOWN_ARROW_GLUE_POINTS, sizeof(CURVED_DOWN_ARROW_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_PREDEFINED_PROCESS_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(2540, 0), Vertex(2540, 21600), Vertex(21600 - 2540, 0), Vertex(21600 - 2540, 21600)
+};
+
+const unsigned short FLOW_CHART_PREDEFINED_PROCESS_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6000, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const TextRectangle FLOW_CHART_PREDEFINED_PROCESS_TRS[] =
+{
+    TextRectangle(Vertex(2540, 0), Vertex(21600 - 2540, 21600))
+};
+
+const Vertex FLOW_CHART_INTERNAL_STORAGE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(4230, 0), Vertex(4230, 21600), Vertex(0, 4230), Vertex(21600, 4230)
+};
+
+const unsigned short FLOW_CHART_INTERNAL_STORAGE_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6000, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const TextRectangle FLOW_CHART_INTERNAL_STORAGE_TRS[] =
+{
+    TextRectangle(Vertex(4230, 4230), Vertex(21600, 21600))
+};
+
+const CustomShape CS_FLOW_CHART_INTERNAL_STORAGE(
+      FLOW_CHART_INTERNAL_STORAGE_VERTICES, sizeof(FLOW_CHART_INTERNAL_STORAGE_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_INTERNAL_STORAGE_SEGMENTS, sizeof(FLOW_CHART_INTERNAL_STORAGE_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_INTERNAL_STORAGE_TRS, sizeof(FLOW_CHART_INTERNAL_STORAGE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex FLOW_CHART_DOCUMENT_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 17360), Vertex(13050, 17220), Vertex(13340, 20770), Vertex(5620, 21600), Vertex(2860, 21100), Vertex(1850, 20700), Vertex(0, 20120)
+};
+
+const unsigned short FLOW_CHART_DOCUMENT_SEGMENTS[] =
+{
+    0x4000, 0x0002, 0x2002, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_DOCUMENT_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 17360))
+};
+
+const Vertex FLOW_CHART_DOCUMENT_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 20320), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_DOCUMENT(
+      FLOW_CHART_DOCUMENT_VERTICES, sizeof(FLOW_CHART_DOCUMENT_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_DOCUMENT_SEGMENTS, sizeof(FLOW_CHART_DOCUMENT_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_DOCUMENT_TRS, sizeof(FLOW_CHART_DOCUMENT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_DOCUMENT_GLUE_POINTS, sizeof(FLOW_CHART_DOCUMENT_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MULTI_DOCUMENT_VERTICES[] =
+{
+    Vertex(0, 3600), Vertex(1500, 3600), Vertex(1500, 1800), Vertex(3000, 1800), Vertex(3000, 0), Vertex(21600, 0), Vertex(21600, 14409), Vertex(21600 - 1500, 14409), Vertex(21600 - 1500, 14409 + 1800), Vertex(21600 - 3000, 14409 + 1800), Vertex(21600 - 3000, 14409 + 3600), Vertex(11610, 14293 + 3600), Vertex(11472, 17239 + 3600), Vertex(4833, 17928 + 3600), Vertex(2450, 17513 + 3600), Vertex(1591, 17181 + 3600), Vertex(0, 16700 + 3600), Vertex(1500, 3600), Vertex(21600 - 3000, 3600), Vertex(21600 - 3000, 14409 + 1800), Vertex(3000, 1800), Vertex(21600 - 1500, 1800), Vertex(21600 - 1500, 14409)
+};
+
+const unsigned short FLOW_CHART_MULTI_DOCUMENT_SEGMENTS[] =
+{
+    0x4000, 0x000a, 0x2002, 0x6000, 0x8000, 0x4000, 0xaa00, 0x0002, 0x8000, 0x4000, 0xaa00, 0x0002, 0x8000
+};
+
+const TextRectangle FLOW_CHART_MULTI_DOCUMENT_TRS[] =
+{
+    TextRectangle(Vertex(0, 3600), Vertex(21600 - 3600, 14409 + 3600))
+};
+
+const Vertex FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 19890), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MULTI_DOCUMENT(
+      FLOW_CHART_MULTI_DOCUMENT_VERTICES, sizeof(FLOW_CHART_MULTI_DOCUMENT_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_MULTI_DOCUMENT_SEGMENTS, sizeof(FLOW_CHART_MULTI_DOCUMENT_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MULTI_DOCUMENT_TRS, sizeof(FLOW_CHART_MULTI_DOCUMENT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS, sizeof(FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_TERMINATOR_VERTICES[] =
+{
+    Vertex(3470, 21600), Vertex(0, 10800), Vertex(3470, 0), Vertex(18130, 0), Vertex(21600, 10800), Vertex(18130, 21600)
+};
+
+const unsigned short FLOW_CHART_TERMINATOR_SEGMENTS[] =
+{
+    0x4000, 0xa702, 0x0001, 0xa702, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_TERMINATOR_TRS[] =
+{
+    TextRectangle(Vertex(1060, 3180), Vertex(20540, 18420))
+};
+
+const Vertex FLOW_CHART_TERMINATOR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_TERMINATOR(
+      FLOW_CHART_TERMINATOR_VERTICES, sizeof(FLOW_CHART_TERMINATOR_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_TERMINATOR_SEGMENTS, sizeof(FLOW_CHART_TERMINATOR_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_TERMINATOR_TRS, sizeof(FLOW_CHART_TERMINATOR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_TERMINATOR_GLUE_POINTS, sizeof(FLOW_CHART_TERMINATOR_GLUE_POINTS) / sizeof(Vertex));
+
+const CustomShape CS_FLOW_CHART_PREDEFINED_PROCESS(
+      FLOW_CHART_PREDEFINED_PROCESS_VERTICES, sizeof(FLOW_CHART_PREDEFINED_PROCESS_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_PREDEFINED_PROCESS_SEGMENTS, sizeof(FLOW_CHART_PREDEFINED_PROCESS_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_PREDEFINED_PROCESS_TRS, sizeof(FLOW_CHART_PREDEFINED_PROCESS_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex FLOW_CHART_IO_VERTICES[] =
+{
+    Vertex(4230, 0), Vertex(21600, 0), Vertex(17370, 21600), Vertex(0, 21600), Vertex(4230, 0)
+};
+
+const TextRectangle FLOW_CHART_IO_TRS[] =
+{
+    TextRectangle(Vertex(4230, 0), Vertex(17370, 21600))
+};
+
+const Vertex FLOW_CHART_IO_GLUE_POINTS[] =
+{
+    Vertex(12960, 0), Vertex(10800, 0), Vertex(2160, 10800), Vertex(8600, 21600), Vertex(10800, 21600), Vertex(19400, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_IO(
+      FLOW_CHART_IO_VERTICES, sizeof(FLOW_CHART_IO_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_IO_TRS, sizeof(FLOW_CHART_IO_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_IO_GLUE_POINTS, sizeof(FLOW_CHART_IO_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_PROCESS_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0)
+};
+
+const Vertex FLOW_CHART_PROCESS_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const Vertex FLOW_CHART_DECISION_VERTICES[] =
+{
+    Vertex(0, 10800), Vertex(10800, 0), Vertex(21600, 10800), Vertex(10800, 21600), Vertex(0, 10800)
+};
+
+const TextRectangle FLOW_CHART_DECISION_TRS[] =
+{
+    TextRectangle(Vertex(5400, 5400), Vertex(16200, 16200))
+};
+
+const Vertex FLOW_CHART_DECISION_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_DECISION(
+      FLOW_CHART_DECISION_VERTICES, sizeof(FLOW_CHART_DECISION_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_DECISION_TRS, sizeof(FLOW_CHART_DECISION_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_DECISION_GLUE_POINTS, sizeof(FLOW_CHART_DECISION_GLUE_POINTS) / sizeof(Vertex));
+
+const CustomShape CS_FLOW_CHART_PROCESS(
+      FLOW_CHART_PROCESS_VERTICES, sizeof(FLOW_CHART_PROCESS_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              NULL, 0,
+                21600, 21600,
+                  FLOW_CHART_PROCESS_GLUE_POINTS, sizeof(FLOW_CHART_PROCESS_GLUE_POINTS) / sizeof(Vertex));
+
 const Vertex CURVED_UP_ARROW_VERTICES[] =
 {
     Vertex(0, 22 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(0, 0), Vertex(4 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(13 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 0), Vertex(11 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(0, 22 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 24 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 24 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 0), Vertex(0, 22 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(0, 0), Vertex(4 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 24 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 24 CALCULATED_VALUE), Vertex(14 CALCULATED_VALUE, 0)
@@ -2428,6 +2670,653 @@ const CustomShape CS_HEXAGON(
   21600, 21600,
   HEXAGON_GLUE_POINTS, sizeof(HEXAGON_GLUE_POINTS) / sizeof(Vertex));
 
+const Vertex FLOW_CHART_SUMMING_JUNCTION_VERTICES[] =
+{
+    Vertex(10800, 10800), Vertex(10800, 10800), Vertex(0, 360), Vertex(3100, 3100), Vertex(18500, 18500), Vertex(3100, 18500), Vertex(18500, 3100)
+};
+
+const unsigned short FLOW_CHART_SUMMING_JUNCTION_SEGMENTS[] =
+{
+    0xa203, 0x6000, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const TextRectangle FLOW_CHART_SUMMING_JUNCTION_TRS[] =
+{
+    TextRectangle(Vertex(3100, 3100), Vertex(18500, 18500))
+};
+
+const Vertex FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(3163, 3163), Vertex(0, 10800), Vertex(3163, 18437), Vertex(10800, 21600), Vertex(18437, 18437), Vertex(21600, 10800), Vertex(18437, 3163)
+};
+
+const CustomShape CS_FLOW_CHART_SUMMING_JUNCTION(
+      FLOW_CHART_SUMMING_JUNCTION_VERTICES, sizeof(FLOW_CHART_SUMMING_JUNCTION_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_SUMMING_JUNCTION_SEGMENTS, sizeof(FLOW_CHART_SUMMING_JUNCTION_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_SUMMING_JUNCTION_TRS, sizeof(FLOW_CHART_SUMMING_JUNCTION_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS, sizeof(FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_PREPARATION_VERTICES[] =
+{ 
+    Vertex(4350, 0), Vertex(17250, 0), Vertex(21600, 10800), Vertex(17250, 21600), Vertex(4350, 21600), Vertex(0, 10800), Vertex(4350, 0)
+};
+
+const TextRectangle FLOW_CHART_PREPARATION_TRS[] =
+{ 
+    TextRectangle(Vertex(4350, 0), Vertex(17250, 21600))
+};
+
+const Vertex FLOW_CHART_PREPARATION_GLUE_POINTS[] =
+{ 
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_PREPARATION(
+      FLOW_CHART_PREPARATION_VERTICES, sizeof(FLOW_CHART_PREPARATION_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_PREPARATION_TRS, sizeof(FLOW_CHART_PREPARATION_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_PREPARATION_GLUE_POINTS, sizeof(FLOW_CHART_PREPARATION_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_PUNCHED_TAPE_VERTICES[] =
+{
+    Vertex(0, 2230), Vertex(820, 3990), Vertex(3410, 3980), Vertex(5370, 4360), Vertex(7430, 4030), Vertex(10110, 3890), Vertex(10690, 2270), Vertex(11440, 300), Vertex(14200, 160), Vertex(16150, 0), Vertex(18670, 170), Vertex(20690, 390), Vertex(21600, 2230), Vertex(21600, 19420), Vertex(20640, 17510), Vertex(18320, 17490), Vertex(16140, 17240), Vertex(14710, 17370), Vertex(11310, 17510), Vertex(10770, 19430), Vertex(10150, 21150), Vertex(7380, 21290), Vertex(5290, 21600), Vertex(3220, 21250), Vertex(610, 21130), Vertex(0, 19420)
+};
+
+const unsigned short FLOW_CHART_PUNCHED_TAPE_SEGMENTS[] =
+{
+    0x4000, 0x2004, 0x0001, 0x2004, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_PUNCHED_TAPE_TRS[] =
+{
+    TextRectangle(Vertex(0, 4360), Vertex(21600, 17240))
+};
+
+const Vertex FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS[] =
+{
+    Vertex(10800, 2020), Vertex(0, 10800), Vertex(10800, 19320), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_PUNCHED_TAPE(
+      FLOW_CHART_PUNCHED_TAPE_VERTICES, sizeof(FLOW_CHART_PUNCHED_TAPE_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_PUNCHED_TAPE_SEGMENTS, sizeof(FLOW_CHART_PUNCHED_TAPE_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_PUNCHED_TAPE_TRS, sizeof(FLOW_CHART_PUNCHED_TAPE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS, sizeof(FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_PUNCHED_CARD_VERTICES[] =
+{
+    Vertex(4300, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 4300), Vertex(4300, 0)
+};
+
+const TextRectangle FLOW_CHART_PUNCHED_CARD_TRS[] =
+{
+    TextRectangle(Vertex(0, 4300), Vertex(21600, 21600))
+};
+
+const Vertex FLOW_CHART_PUNCHED_CARD_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_PUNCHED_CARD(
+      FLOW_CHART_PUNCHED_CARD_VERTICES, sizeof(FLOW_CHART_PUNCHED_CARD_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_PUNCHED_CARD_TRS, sizeof(FLOW_CHART_PUNCHED_CARD_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_PUNCHED_CARD_GLUE_POINTS, sizeof(FLOW_CHART_PUNCHED_CARD_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_CONNECTOR_VERTICES[] =
+{
+    Vertex(10800, 10800), Vertex(10800, 10800), Vertex(0, 360)
+};
+
+const unsigned short FLOW_CHART_CONNECTOR_SEGMENTS[] =
+{
+    0xa203, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_CONNECTOR_TRS[] =
+{
+    TextRectangle(Vertex(3180, 3180), Vertex(18420, 18420))
+};
+
+const Vertex FLOW_CHART_CONNECTOR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(3163, 3163), Vertex(0, 10800), Vertex(3163, 18437), Vertex(10800, 21600), Vertex(18437, 18437), Vertex(21600, 10800), Vertex(18437, 3163)
+};
+
+const CustomShape CS_FLOW_CHART_CONNECTOR(
+      FLOW_CHART_CONNECTOR_VERTICES, sizeof(FLOW_CHART_CONNECTOR_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_CONNECTOR_SEGMENTS, sizeof(FLOW_CHART_CONNECTOR_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_CONNECTOR_TRS, sizeof(FLOW_CHART_CONNECTOR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_CONNECTOR_GLUE_POINTS, sizeof(FLOW_CHART_CONNECTOR_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MANUAL_OPERATION_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(17250, 21600), Vertex(4350, 21600), Vertex(0, 0)
+};
+
+const TextRectangle FLOW_CHART_MANUAL_OPERATION_TRS[] =
+{
+    TextRectangle(Vertex(4350, 0), Vertex(17250, 21600))
+};
+
+const Vertex FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(2160, 10800), Vertex(10800, 21600), Vertex(19440, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MANUAL_OPERATION(
+      FLOW_CHART_MANUAL_OPERATION_VERTICES, sizeof(FLOW_CHART_MANUAL_OPERATION_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MANUAL_OPERATION_TRS, sizeof(FLOW_CHART_MANUAL_OPERATION_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS, sizeof(FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MANUAL_INPUT_VERTICES[] =
+{ 
+    Vertex(0, 4300), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 4300)
+};
+
+const TextRectangle FLOW_CHART_MANUAL_INPUT_TRS[] =
+{ 
+    TextRectangle(Vertex(0, 4300), Vertex(21600, 21600))
+};
+
+const Vertex FLOW_CHART_MANUAL_INPUT_GLUE_POINTS[] =
+{ 
+    Vertex(10800, 2150), Vertex(0, 10800), Vertex(10800, 19890), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MANUAL_INPUT(
+      FLOW_CHART_MANUAL_INPUT_VERTICES, sizeof(FLOW_CHART_MANUAL_INPUT_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MANUAL_INPUT_TRS, sizeof(FLOW_CHART_MANUAL_INPUT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MANUAL_INPUT_GLUE_POINTS, sizeof(FLOW_CHART_MANUAL_INPUT_GLUE_POINTS) / sizeof(Vertex));
+
+
+const Vertex FLOW_CHART_OR_VERTICES[] =
+{
+    Vertex(10800, 10800), Vertex(10800, 10800), Vertex(0, 360), Vertex(0, 10800), Vertex(21600, 10800), Vertex(10800, 0), Vertex(10800, 21600)
+};
+
+const unsigned short FLOW_CHART_OR_SEGMENTS[] =
+{
+    0xa203, 0x6000, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const TextRectangle FLOW_CHART_OR_TRS[] =
+{
+    TextRectangle(Vertex(3100, 3100), Vertex(18500, 18500))
+};
+
+const Vertex FLOW_CHART_OR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(3163, 3163), Vertex(0, 10800), Vertex(3163, 18437), Vertex(10800, 21600), Vertex(18437, 18437), Vertex(21600, 10800), Vertex(18437, 3163)
+};
+
+const CustomShape CS_FLOW_CHART_OR(
+      FLOW_CHART_OR_VERTICES, sizeof(FLOW_CHART_OR_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_OR_SEGMENTS, sizeof(FLOW_CHART_OR_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_OR_TRS, sizeof(FLOW_CHART_OR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_OR_GLUE_POINTS, sizeof(FLOW_CHART_OR_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_COLLATE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(21600, 0), Vertex(0, 0)
+};
+
+const TextRectangle FLOW_CHART_COLLATE_TRS[] =
+{
+    TextRectangle(Vertex(5400, 5400), Vertex(16200, 16200))
+};
+
+const Vertex FLOW_CHART_COLLATE_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(10800, 10800), Vertex(10800, 21600)
+};
+
+const CustomShape CS_FLOW_CHART_COLLATE(
+      FLOW_CHART_COLLATE_VERTICES, sizeof(FLOW_CHART_COLLATE_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_COLLATE_TRS, sizeof(FLOW_CHART_COLLATE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_COLLATE_GLUE_POINTS, sizeof(FLOW_CHART_COLLATE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_SORT_VERTICES[] =
+{
+    Vertex(0, 10800), Vertex(10800, 0), Vertex(21600, 10800), Vertex(10800, 21600), Vertex(0, 10800), Vertex(21600, 10800)
+};
+
+const unsigned short FLOW_CHART_SORT_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6000, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const TextRectangle FLOW_CHART_SORT_TRS[] =
+{
+    TextRectangle(Vertex(5400, 5400), Vertex(16200, 16200))
+};
+
+const CustomShape CS_FLOW_CHART_SORT(
+      FLOW_CHART_SORT_VERTICES, sizeof(FLOW_CHART_SORT_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_SORT_SEGMENTS, sizeof(FLOW_CHART_SORT_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_SORT_TRS, sizeof(FLOW_CHART_SORT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex FLOW_CHART_EXTRACT_VERTICES[] =
+{
+    Vertex(10800, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(10800, 0)
+};
+
+const TextRectangle FLOW_CHART_EXTRACT_TRS[] =
+{
+    TextRectangle(Vertex(5400, 10800), Vertex(16200, 21600))
+};
+
+const Vertex FLOW_CHART_EXTRACT_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(5400, 10800), Vertex(10800, 21600), Vertex(16200, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_EXTRACT(
+      FLOW_CHART_EXTRACT_VERTICES, sizeof(FLOW_CHART_EXTRACT_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_EXTRACT_TRS, sizeof(FLOW_CHART_EXTRACT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_EXTRACT_GLUE_POINTS, sizeof(FLOW_CHART_EXTRACT_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MERGE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(10800, 21600), Vertex(0, 0)
+};
+
+const TextRectangle FLOW_CHART_MERGE_TRS[] =
+{
+    TextRectangle(Vertex(5400, 0), Vertex(16200, 10800))
+};
+
+const Vertex FLOW_CHART_MERGE_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(5400, 10800), Vertex(10800, 21600), Vertex(16200, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MERGE(
+      FLOW_CHART_MERGE_VERTICES, sizeof(FLOW_CHART_MERGE_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MERGE_TRS, sizeof(FLOW_CHART_MERGE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MERGE_GLUE_POINTS, sizeof(FLOW_CHART_MERGE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_ONLINE_STORAGE_VERTICES[] =
+{
+    Vertex(3600, 21600), Vertex(0, 10800), Vertex(3600, 0), Vertex(21600, 0), Vertex(18000, 10800), Vertex(21600, 21600)
+};
+
+const unsigned short FLOW_CHART_ONLINE_STORAGE_SEGMENTS[] =
+{
+    0x4000, 0xa702, 0x0001, 0xa702, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_ONLINE_STORAGE_TRS[] =
+{
+    TextRectangle(Vertex(3600, 0), Vertex(18000, 21600))
+};
+
+const Vertex FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(18000, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_ONLINE_STORAGE(
+      FLOW_CHART_ONLINE_STORAGE_VERTICES, sizeof(FLOW_CHART_ONLINE_STORAGE_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_ONLINE_STORAGE_SEGMENTS, sizeof(FLOW_CHART_ONLINE_STORAGE_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_ONLINE_STORAGE_TRS, sizeof(FLOW_CHART_ONLINE_STORAGE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS, sizeof(FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MAGNETIC_TAPE_VERTICES[] =
+{
+    Vertex(20980, 18150), Vertex(20980, 21600), Vertex(10670, 21600), Vertex(4770, 21540), Vertex(0, 16720), Vertex(0, 10800), Vertex(0, 4840), Vertex(4840, 0), Vertex(10800, 0), Vertex(16740, 0), Vertex(21600, 4840), Vertex(21600, 10800), Vertex(21600, 13520), Vertex(20550, 16160), Vertex(18670, 18170)
+};
+
+const unsigned short FLOW_CHART_MAGNETIC_TAPE_SEGMENTS[] =
+{
+    0x4000, 0x0002, 0x2004, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_MAGNETIC_TAPE_TRS[] =
+{
+    TextRectangle(Vertex(3100, 3100), Vertex(18500, 18500))
+};
+
+const Vertex FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MAGNETIC_TAPE(
+      FLOW_CHART_MAGNETIC_TAPE_VERTICES, sizeof(FLOW_CHART_MAGNETIC_TAPE_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_MAGNETIC_TAPE_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_TAPE_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MAGNETIC_TAPE_TRS, sizeof(FLOW_CHART_MAGNETIC_TAPE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MAGNETIC_DISK_VERTICES[] =
+{
+    Vertex(0, 3400), Vertex(10800, 0), Vertex(21600, 3400), Vertex(21600, 18200), Vertex(10800, 21600), Vertex(0, 18200), Vertex(0, 3400), Vertex(10800, 6800), Vertex(21600, 3400)
+};
+
+const unsigned short FLOW_CHART_MAGNETIC_DISK_SEGMENTS[] =
+{
+    0x4000, 0xa802, 0x0001, 0xa802, 0x6000, 0x8000, 0x4000, 0xa802, 0x8000
+};
+
+const TextRectangle FLOW_CHART_MAGNETIC_DISK_TRS[] =
+{
+    TextRectangle(Vertex(0, 6800), Vertex(21600, 18200))
+};
+
+const Vertex FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS[] =
+{
+    Vertex(10800, 6800), Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MAGNETIC_DISK(
+      FLOW_CHART_MAGNETIC_DISK_VERTICES, sizeof(FLOW_CHART_MAGNETIC_DISK_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_MAGNETIC_DISK_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_DISK_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MAGNETIC_DISK_TRS, sizeof(FLOW_CHART_MAGNETIC_DISK_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_MAGNETIC_DRUM_VERTICES[] =
+{
+    Vertex(18200, 0), Vertex(21600, 10800), Vertex(18200, 21600), Vertex(3400, 21600), Vertex(0, 10800), Vertex(3400, 0), Vertex(18200, 0), Vertex(14800, 10800), Vertex(18200, 21600)
+};
+
+const unsigned short FLOW_CHART_MAGNETIC_DRUM_SEGMENTS[] =
+{
+    0x4000, 0xa702, 0x0001, 0xa702, 0x6000, 0x8000, 0x4000, 0xa702, 0x8000
+};
+
+const TextRectangle FLOW_CHART_MAGNETIC_DRUM_TRS[] =
+{
+    TextRectangle(Vertex(3400, 0), Vertex(14800, 21600))
+};
+
+const Vertex FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(14800, 10800), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_MAGNETIC_DRUM(
+      FLOW_CHART_MAGNETIC_DRUM_VERTICES, sizeof(FLOW_CHART_MAGNETIC_DRUM_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_MAGNETIC_DRUM_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_DRUM_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_MAGNETIC_DRUM_TRS, sizeof(FLOW_CHART_MAGNETIC_DRUM_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_DIPSLAY_VERTICES[] =
+{
+    Vertex(3600, 0), Vertex(17800, 0), Vertex(21600, 10800), Vertex(17800, 21600), Vertex(3600, 21600), Vertex(0, 10800)
+};
+
+const unsigned short FLOW_CHART_DIPSLAY_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0xa702, 0x0002, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_DIPSLAY_TRS[] =
+{
+    TextRectangle(Vertex(3600, 0), Vertex(17800, 21600))
+};
+
+const Vertex FLOW_CHART_DIPSLAY_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_DIPSLAY(
+      FLOW_CHART_DIPSLAY_VERTICES, sizeof(FLOW_CHART_DIPSLAY_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_DIPSLAY_SEGMENTS, sizeof(FLOW_CHART_DIPSLAY_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_DIPSLAY_TRS, sizeof(FLOW_CHART_DIPSLAY_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_DIPSLAY_GLUE_POINTS, sizeof(FLOW_CHART_DIPSLAY_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_DELAY_VERTICES[] =
+{
+    Vertex(10800, 0), Vertex(21600, 10800), Vertex(10800, 21600), Vertex(0, 21600), Vertex(0, 0)
+};
+
+const unsigned short FLOW_CHART_DELAY_SEGMENTS[] =
+{
+    0x4000, 0xa702, 0x0002, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_DELAY_TRS[] =
+{
+    TextRectangle(Vertex(0, 3100), Vertex(18500, 18500))
+};
+
+const Vertex FLOW_CHART_DELAY_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_DELAY(
+      FLOW_CHART_DELAY_VERTICES, sizeof(FLOW_CHART_DELAY_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_DELAY_SEGMENTS, sizeof(FLOW_CHART_DELAY_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_DELAY_TRS, sizeof(FLOW_CHART_DELAY_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_DELAY_GLUE_POINTS, sizeof(FLOW_CHART_DELAY_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex TEXT_PLAIN_TEXT_VERTICES[] =
+{
+    Vertex(3 CALCULATED_VALUE, 0), Vertex(5 CALCULATED_VALUE, 0), Vertex(6 CALCULATED_VALUE, 21600), Vertex(7 CALCULATED_VALUE, 21600)
+};
+
+const unsigned short TEXT_PLAIN_TEXT_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_PLAIN_TEXT_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 10800), Calculation(0x2001, 0x400, 2, 1), Calculation(0x2003, 0x401, 0, 0), Calculation(0xa006, 0x401, 0, 0x402), Calculation(0x8000, 21600, 0, 0x402), Calculation(0x6006, 0x401, 0x404, 21600), Calculation(0x6006, 0x401, 0x402, 0), Calculation(0xa006, 0x401, 21600, 0x404)
+};
+
+const TextRectangle TEXT_PLAIN_TEXT_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_PLAIN_TEXT_DEFAULT_ADJUST[] =
+{
+    10800
+};
+
+const CustomShape CS_TEXT_PLAIN_TEXT(
+      TEXT_PLAIN_TEXT_VERTICES, sizeof(TEXT_PLAIN_TEXT_VERTICES) / sizeof(Vertex),
+        TEXT_PLAIN_TEXT_SEGMENTS, sizeof(TEXT_PLAIN_TEXT_SEGMENTS) / sizeof(unsigned short),
+          TEXT_PLAIN_TEXT_CALC, sizeof(TEXT_PLAIN_TEXT_CALC) / sizeof(Calculation),
+            TEXT_PLAIN_TEXT_DEFAULT_ADJUST, sizeof(TEXT_PLAIN_TEXT_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_PLAIN_TEXT_TRS, sizeof(TEXT_PLAIN_TEXT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_STOP_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(7200, 0), Vertex(14400, 0), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 1 CALCULATED_VALUE), Vertex(7200, 21600), Vertex(14400, 21600), Vertex(21600, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_STOP_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x8000, 0x4000, 0x0003, 0x8000
+};
+
+const Calculation TEXT_STOP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_STOP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_STOP_DEFAULT_ADJUST[] =
+{
+    2700
+};
+
+const CustomShape CS_TEXT_STOP(
+      TEXT_STOP_VERTICES, sizeof(TEXT_STOP_VERTICES) / sizeof(Vertex),
+        TEXT_STOP_SEGMENTS, sizeof(TEXT_STOP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_STOP_CALC, sizeof(TEXT_STOP_CALC) / sizeof(Calculation),
+            TEXT_STOP_DEFAULT_ADJUST, sizeof(TEXT_STOP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_STOP_TRS, sizeof(TEXT_STOP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_TRIANGLE_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(10800, 0), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_TRIANGLE_SEGMENTS[] =
+{
+    0x4000, 0x0002, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_TRIANGLE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0)
+};
+
+const TextRectangle TEXT_TRIANGLE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_TRIANGLE_DEFAULT_ADJUST[] =
+{
+    10800
+};
+
+const CustomShape CS_TEXT_TRIANGLE(
+      TEXT_TRIANGLE_VERTICES, sizeof(TEXT_TRIANGLE_VERTICES) / sizeof(Vertex),
+        TEXT_TRIANGLE_SEGMENTS, sizeof(TEXT_TRIANGLE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_TRIANGLE_CALC, sizeof(TEXT_TRIANGLE_CALC) / sizeof(Calculation),
+            TEXT_TRIANGLE_DEFAULT_ADJUST, sizeof(TEXT_TRIANGLE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_TRIANGLE_TRS, sizeof(TEXT_TRIANGLE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_TRIANGLE_INVERTED_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0, 0 CALCULATED_VALUE), Vertex(10800, 21600), Vertex(21600, 0 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_TRIANGLE_INVERTED_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0002, 0x8000
+};
+
+const Calculation TEXT_TRIANGLE_INVERTED_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0)
+};
+
+const TextRectangle TEXT_TRIANGLE_INVERTED_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_TRIANGLE_INVERTED_DEFAULT_ADJUST[] =
+{
+    10800
+};
+
+const CustomShape CS_TEXT_TRIANGLE_INVERTED(
+      TEXT_TRIANGLE_INVERTED_VERTICES, sizeof(TEXT_TRIANGLE_INVERTED_VERTICES) / sizeof(Vertex),
+        TEXT_TRIANGLE_INVERTED_SEGMENTS, sizeof(TEXT_TRIANGLE_INVERTED_SEGMENTS) / sizeof(unsigned short),
+          TEXT_TRIANGLE_INVERTED_CALC, sizeof(TEXT_TRIANGLE_INVERTED_CALC) / sizeof(Calculation),
+            TEXT_TRIANGLE_INVERTED_DEFAULT_ADJUST, sizeof(TEXT_TRIANGLE_INVERTED_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_TRIANGLE_INVERTED_TRS, sizeof(TEXT_TRIANGLE_INVERTED_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex FLOW_CHART_DISPLAY_VERTICES[] =
+{
+    Vertex(3600, 0), Vertex(17800, 0), Vertex(21600, 10800), Vertex(17800, 21600), Vertex(3600, 21600), Vertex(0, 10800)
+};
+
+const unsigned short FLOW_CHART_DISPLAY_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0xa702, 0x0002, 0x6000, 0x8000
+};
+
+const TextRectangle FLOW_CHART_DISPLAY_TRS[] =
+{
+    TextRectangle(Vertex(3600, 0), Vertex(17800, 21600))
+};
+
+const Vertex FLOW_CHART_DISPLAY_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_DISPLAY(
+      FLOW_CHART_DISPLAY_VERTICES, sizeof(FLOW_CHART_DISPLAY_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_DISPLAY_SEGMENTS, sizeof(FLOW_CHART_DISPLAY_SEGMENTS) / sizeof(unsigned short),
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_DISPLAY_TRS, sizeof(FLOW_CHART_DISPLAY_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_DISPLAY_GLUE_POINTS, sizeof(FLOW_CHART_DISPLAY_GLUE_POINTS) / sizeof(Vertex));
 
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
@@ -2583,6 +3472,68 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_CURVED_LEFT_ARROW;
   case CURVED_UP_ARROW:
     return &CS_CURVED_UP_ARROW;
+  case CURVED_DOWN_ARROW:
+    return &CS_CURVED_DOWN_ARROW;
+  case FLOW_CHART_PROCESS:
+    return &CS_FLOW_CHART_PROCESS;
+  case FLOW_CHART_DECISION:
+    return &CS_FLOW_CHART_DECISION;
+  case FLOW_CHART_IO:
+    return &CS_FLOW_CHART_IO;
+  case FLOW_CHART_PREDEFINED_PROCESS:
+    return &CS_FLOW_CHART_PREDEFINED_PROCESS;
+  case FLOW_CHART_INTERNAL_STORAGE:
+    return &CS_FLOW_CHART_INTERNAL_STORAGE;
+  case FLOW_CHART_DOCUMENT:
+    return &CS_FLOW_CHART_DOCUMENT;
+  case FLOW_CHART_MULTI_DOCUMENT:
+    return &CS_FLOW_CHART_MULTI_DOCUMENT;
+  case FLOW_CHART_TERMINATOR:
+    return &CS_FLOW_CHART_TERMINATOR;
+  case FLOW_CHART_PREPARATION:
+    return &CS_FLOW_CHART_PREPARATION;
+  case FLOW_CHART_MANUAL_INPUT:
+    return &CS_FLOW_CHART_MANUAL_INPUT;
+  case FLOW_CHART_MANUAL_OPERATION:
+    return &CS_FLOW_CHART_MANUAL_OPERATION;
+  case FLOW_CHART_CONNECTOR:
+    return &CS_FLOW_CHART_CONNECTOR;
+  case FLOW_CHART_PUNCHED_CARD:
+    return &CS_FLOW_CHART_PUNCHED_CARD;
+  case FLOW_CHART_PUNCHED_TAPE:
+    return &CS_FLOW_CHART_PUNCHED_TAPE;
+  case FLOW_CHART_SUMMING_JUNCTION:
+    return &CS_FLOW_CHART_SUMMING_JUNCTION;
+  case FLOW_CHART_OR:
+    return &CS_FLOW_CHART_OR;
+  case FLOW_CHART_COLLATE:
+    return &CS_FLOW_CHART_COLLATE;
+  case FLOW_CHART_SORT:
+    return &CS_FLOW_CHART_SORT;
+  case FLOW_CHART_EXTRACT:
+    return &CS_FLOW_CHART_EXTRACT;
+  case FLOW_CHART_MERGE:
+    return &CS_FLOW_CHART_MERGE;
+  case FLOW_CHART_ONLINE_STORAGE:
+    return &CS_FLOW_CHART_ONLINE_STORAGE;
+  case FLOW_CHART_MAGNETIC_TAPE:
+    return &CS_FLOW_CHART_MAGNETIC_TAPE;
+  case FLOW_CHART_MAGNETIC_DISK:
+    return &CS_FLOW_CHART_MAGNETIC_DISK;
+  case FLOW_CHART_MAGNETIC_DRUM:
+    return &CS_FLOW_CHART_MAGNETIC_DRUM;
+  case FLOW_CHART_DISPLAY:
+    return &CS_FLOW_CHART_DISPLAY;
+  case FLOW_CHART_DELAY:
+    return &CS_FLOW_CHART_DELAY;
+  case TEXT_PLAIN_TEXT:
+    return &CS_TEXT_PLAIN_TEXT;
+  case TEXT_STOP:
+    return &CS_TEXT_STOP;
+  case TEXT_TRIANGLE:
+    return &CS_TEXT_TRIANGLE;
+  case TEXT_TRIANGLE_INVERTED:
+    return &CS_TEXT_TRIANGLE_INVERTED;
   default:
     return NULL;
   }

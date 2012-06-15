@@ -138,7 +138,12 @@ enum ShapeType
   TEXT_STOP           = 137,
   TEXT_TRIANGLE       = 138,
   TEXT_TRIANGLE_INVERTED        = 139,
-  SEAL_4               = 0xBB
+  TEXT_CHEVRON        = 140,
+  TEXT_CHEVRON_INVERTED         = 141,
+  TEXT_RING_OUTSIDE   = 143,
+  TEXT_ARCH_UP_CURVE  = 144,
+  TEXT_ARCH_UP_POUR   = 145,
+  SEAL_4              = 0xBB
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

@@ -59,6 +59,9 @@ libmspub::MSPUBStringVector::~MSPUBStringVector()
 
 libmspub::MSPUBStringVector &libmspub::MSPUBStringVector::operator=(const MSPUBStringVector &vec)
 {
+  // Check for self-assignment
+  if (this == &vec)
+    return *this; 
   if (m_pImpl)
     delete m_pImpl;
   m_pImpl = new MSPUBStringVectorImpl(*(vec.m_pImpl));

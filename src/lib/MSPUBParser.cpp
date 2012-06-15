@@ -639,7 +639,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
           bytesRead += 2;
           if (bytesRead >= currentTextSpan->last - textChunkReference->offset)
           {
-            if (text.size() > 0)
+            if (!text.empty())
             {
               readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
               MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
@@ -649,13 +649,13 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
           }
           if (bytesRead >= currentTextPara->last - textChunkReference->offset)
           {
-            if (text.size() > 0)
+            if (!text.empty())
             {
               readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
               MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
             }
             text.clear();
-            if (readSpans.size() > 0)
+            if (!readSpans.empty())
             {
               readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
               MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
@@ -664,9 +664,9 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
             readSpans.clear();
           }
         }
-        if (readSpans.size() > 0)
+        if (!readSpans.empty())
         {
-          if (text.size() > 0)
+          if (!text.empty())
           {
             readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
             MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));

@@ -371,8 +371,8 @@ const char *libmspub::ImgShape::mimeByImgType(ImgType type)
   case TIFF:
     return "image/tiff";
   default:
-    return 0;
     MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
+    return 0;
   }
 }
 
@@ -655,7 +655,7 @@ bool libmspub::MSPUBCollector::go()
       pageProps.insert("svg:height", m_height);
     }
     const std::vector<unsigned> &shapeSeqNumsOrdered = i->second.m_shapeSeqNumsOrdered; // for readability
-    if (shapeSeqNumsOrdered.size() > 0)
+    if (!shapeSeqNumsOrdered.empty())
     {
       m_painter->startGraphics(pageProps);
       unsigned *ptr_fillSeqNum = getIfExists(m_bgShapeSeqNumsByPageSeqNum, i->first);

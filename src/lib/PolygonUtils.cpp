@@ -3493,6 +3493,759 @@ const CustomShape CS_TEXT_ARCH_UP_POUR(
   21600, 21600,
   NULL, 0);
 
+const Vertex TEXT_ARCH_DOWN_CURVE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(4 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_ARCH_DOWN_CURVE_SEGMENTS[] =
+{
+    0xA304, 0x8000
+};
+
+const Calculation TEXT_ARCH_DOWN_CURVE_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x402)
+};
+
+const TextRectangle TEXT_ARCH_DOWN_CURVE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_ARCH_DOWN_CURVE_DEFAULT_ADJUST[] =
+{
+    0
+};
+
+const CustomShape CS_TEXT_ARCH_DOWN_CURVE(
+      TEXT_ARCH_DOWN_CURVE_VERTICES, sizeof(TEXT_ARCH_DOWN_CURVE_VERTICES) / sizeof(Vertex),
+        TEXT_ARCH_DOWN_CURVE_SEGMENTS, sizeof(TEXT_ARCH_DOWN_CURVE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_ARCH_DOWN_CURVE_CALC, sizeof(TEXT_ARCH_DOWN_CURVE_CALC) / sizeof(Calculation),
+            TEXT_ARCH_DOWN_CURVE_DEFAULT_ADJUST, sizeof(TEXT_ARCH_DOWN_CURVE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_ARCH_DOWN_CURVE_TRS, sizeof(TEXT_ARCH_DOWN_CURVE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CIRCLE_CURVE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 4 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_CIRCLE_CURVE_SEGMENTS[] =
+{
+    0xA504, 0x8000
+};
+
+const Calculation TEXT_CIRCLE_CURVE_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x403)
+};
+
+const TextRectangle TEXT_CIRCLE_CURVE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CIRCLE_CURVE_DEFAULT_ADJUST[] =
+{
+    -179
+};
+
+const CustomShape CS_TEXT_CIRCLE_CURVE(
+      TEXT_CIRCLE_CURVE_VERTICES, sizeof(TEXT_CIRCLE_CURVE_VERTICES) / sizeof(Vertex),
+        TEXT_CIRCLE_CURVE_SEGMENTS, sizeof(TEXT_CIRCLE_CURVE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CIRCLE_CURVE_CALC, sizeof(TEXT_CIRCLE_CURVE_CALC) / sizeof(Calculation),
+            TEXT_CIRCLE_CURVE_DEFAULT_ADJUST, sizeof(TEXT_CIRCLE_CURVE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CIRCLE_CURVE_TRS, sizeof(TEXT_CIRCLE_CURVE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_BUTTON_CURVE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0, 10800), Vertex(21600, 10800), Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 5 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_BUTTON_CURVE_SEGMENTS[] =
+{
+    0xA504, 0x8000, 0x4000, 0x0001, 0x8000, 0xA304, 0x8000
+};
+
+const Calculation TEXT_BUTTON_CURVE_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x402), Calculation(0x8000, 21600, 0, 0x403)
+};
+
+const TextRectangle TEXT_BUTTON_CURVE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_BUTTON_CURVE_DEFAULT_ADJUST[] =
+{
+    180
+};
+
+const CustomShape CS_TEXT_BUTTON_CURVE(
+      TEXT_BUTTON_CURVE_VERTICES, sizeof(TEXT_BUTTON_CURVE_VERTICES) / sizeof(Vertex),
+        TEXT_BUTTON_CURVE_SEGMENTS, sizeof(TEXT_BUTTON_CURVE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_BUTTON_CURVE_CALC, sizeof(TEXT_BUTTON_CURVE_CALC) / sizeof(Calculation),
+            TEXT_BUTTON_CURVE_DEFAULT_ADJUST, sizeof(TEXT_BUTTON_CURVE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_BUTTON_CURVE_TRS, sizeof(TEXT_BUTTON_CURVE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_ARCH_DOWN_POUR_VERTICES[] =
+{
+    Vertex(5 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0, 0), Vertex(21600, 21600), Vertex(4 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_ARCH_DOWN_POUR_SEGMENTS[] =
+{
+    0xA304, 0x8000, 0xA304, 0x8000
+};
+
+const Calculation TEXT_ARCH_DOWN_POUR_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x402), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x600a, 0x405, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6009, 0x405, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x406, 10800, 0), Calculation(0x2000, 0x407, 10800, 0), Calculation(0x8000, 21600, 0, 0x408), Calculation(0x8000, 21600, 0, 0x405)
+};
+
+const TextRectangle TEXT_ARCH_DOWN_POUR_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_ARCH_DOWN_POUR_DEFAULT_ADJUST[] =
+{
+    0, 5400
+};
+
+const CustomShape CS_TEXT_ARCH_DOWN_POUR(
+      TEXT_ARCH_DOWN_POUR_VERTICES, sizeof(TEXT_ARCH_DOWN_POUR_VERTICES) / sizeof(Vertex),
+        TEXT_ARCH_DOWN_POUR_SEGMENTS, sizeof(TEXT_ARCH_DOWN_POUR_SEGMENTS) / sizeof(unsigned short),
+          TEXT_ARCH_DOWN_POUR_CALC, sizeof(TEXT_ARCH_DOWN_POUR_CALC) / sizeof(Calculation),
+            TEXT_ARCH_DOWN_POUR_DEFAULT_ADJUST, sizeof(TEXT_ARCH_DOWN_POUR_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_ARCH_DOWN_POUR_TRS, sizeof(TEXT_ARCH_DOWN_POUR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CIRCLE_POUR_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 0xa CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_CIRCLE_POUR_SEGMENTS[] =
+{
+    0xA504, 0x8000, 0xA504, 0x8000
+};
+
+const Calculation TEXT_CIRCLE_POUR_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x403), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x600a, 0x405, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6009, 0x405, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x406, 10800, 0), Calculation(0x2000, 0x407, 10800, 0), Calculation(0x8000, 21600, 0, 0x409), Calculation(0x8000, 21600, 0, 0x405), Calculation(0x000, 21600, 0, 0)
+};
+
+const TextRectangle TEXT_CIRCLE_POUR_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CIRCLE_POUR_DEFAULT_ADJUST[] =
+{
+    -179, 5400
+};
+
+const CustomShape CS_TEXT_CIRCLE_POUR(
+      TEXT_CIRCLE_POUR_VERTICES, sizeof(TEXT_CIRCLE_POUR_VERTICES) / sizeof(Vertex),
+        TEXT_CIRCLE_POUR_SEGMENTS, sizeof(TEXT_CIRCLE_POUR_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CIRCLE_POUR_CALC, sizeof(TEXT_CIRCLE_POUR_CALC) / sizeof(Calculation),
+            TEXT_CIRCLE_POUR_DEFAULT_ADJUST, sizeof(TEXT_CIRCLE_POUR_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CIRCLE_POUR_TRS, sizeof(TEXT_CIRCLE_POUR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_BUTTON_POUR_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(6 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 7 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 11 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 16 CALCULATED_VALUE), Vertex(0x15 CALCULATED_VALUE, 16 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 15 CALCULATED_VALUE), Vertex(0x15 CALCULATED_VALUE, 15 CALCULATED_VALUE), Vertex(6 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 7 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 13 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 13 CALCULATED_VALUE), Vertex(0, 0), Vertex(21600, 21600), Vertex(2 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 5 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_BUTTON_POUR_SEGMENTS[] =
+{
+    0xA504, 0x8000, 0xA504, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000, 0xA304, 0x8000, 0xA304, 0x8000
+};
+
+const Calculation TEXT_BUTTON_POUR_CALC[] =
+{
+    Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x400, 10800, 0), Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x402), Calculation(0x8000, 21600, 0, 0x403), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 21600, 0, 0x406), Calculation(0x600a, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6009, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2000, 0x408, 10800, 0), Calculation(0x2000, 0x409, 10800, 0), Calculation(0x8000, 21600, 0, 0x40a), Calculation(0x8000, 21600, 0, 0x40b), Calculation(0x2001, 0x406, 1, 2), Calculation(0x4000, 10800, 0x40e, 0), Calculation(0x8000, 10800, 0, 0x40e), Calculation(0x6001, 0x40e, 0x40e, 1), Calculation(0x6001, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST + 1, 1), Calculation(0xA000, 0x412, 0, 0x411), Calculation(0x200d, 0x413, 0, 0), Calculation(0x4000, 10800, 0x414, 0), Calculation(0x8000, 10800, 0, 0x414)
+};
+
+const TextRectangle TEXT_BUTTON_POUR_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_BUTTON_POUR_DEFAULT_ADJUST[] =
+{
+    180, 5400
+};
+
+const CustomShape CS_TEXT_BUTTON_POUR(
+      TEXT_BUTTON_POUR_VERTICES, sizeof(TEXT_BUTTON_POUR_VERTICES) / sizeof(Vertex),
+        TEXT_BUTTON_POUR_SEGMENTS, sizeof(TEXT_BUTTON_POUR_SEGMENTS) / sizeof(unsigned short),
+          TEXT_BUTTON_POUR_CALC, sizeof(TEXT_BUTTON_POUR_CALC) / sizeof(Calculation),
+            TEXT_BUTTON_POUR_DEFAULT_ADJUST, sizeof(TEXT_BUTTON_POUR_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_BUTTON_POUR_TRS, sizeof(TEXT_BUTTON_POUR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CURVE_UP_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(4900, 1 CALCULATED_VALUE /*12170->0 14250 ->0*/), Vertex(11640, 2 CALCULATED_VALUE /*12170->0 12800 ->0*/), Vertex(21600, 0), Vertex(0, 4 CALCULATED_VALUE /*12170->0 17220 ->21600*/), Vertex(3700, 21600), Vertex(8500, 21600), Vertex(10100, 21600), Vertex(14110, 21600), Vertex(15910, 21600), Vertex(21600, 4 CALCULATED_VALUE /*12170->0 17220 ->21600*/)
+};
+
+const unsigned short TEXT_CURVE_UP_SEGMENTS[] =
+{
+    0x4000, 0x2001, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_CURVE_UP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x4001, 14250, 0x400, 12170), Calculation(0x4001, 12800, 0x400, 12170), Calculation(0x4001, 6380, 0x400, 12170), Calculation(0x8000, 21600, 0, 0x403)
+};
+
+const TextRectangle TEXT_CURVE_UP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CURVE_UP_DEFAULT_ADJUST[] =
+{
+    9900
+};
+
+const CustomShape CS_TEXT_CURVE_UP(
+      TEXT_CURVE_UP_VERTICES, sizeof(TEXT_CURVE_UP_VERTICES) / sizeof(Vertex),
+        TEXT_CURVE_UP_SEGMENTS, sizeof(TEXT_CURVE_UP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CURVE_UP_CALC, sizeof(TEXT_CURVE_UP_CALC) / sizeof(Calculation),
+            TEXT_CURVE_UP_DEFAULT_ADJUST, sizeof(TEXT_CURVE_UP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CURVE_UP_TRS, sizeof(TEXT_CURVE_UP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CURVE_DOWN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(9960, 2 CALCULATED_VALUE), Vertex(16700, 1 CALCULATED_VALUE), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 4 CALCULATED_VALUE), Vertex(5690, 21600), Vertex(7490, 21600), Vertex(11500, 21600), Vertex(13100, 21600), Vertex(17900, 21600), Vertex(21600, 4 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_CURVE_DOWN_SEGMENTS[] =
+{
+    0x4000, 0x2001, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_CURVE_DOWN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x4001, 14250, 0x400, 12170), Calculation(0x4001, 12800, 0x400, 12170), Calculation(0x4001, 6380, 0x400, 12170), Calculation(0x8000, 21600, 0, 0x403)
+};
+
+const TextRectangle TEXT_CURVE_DOWN_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CURVE_DOWN_DEFAULT_ADJUST[] =
+{
+    9900
+};
+
+const CustomShape CS_TEXT_CURVE_DOWN(
+      TEXT_CURVE_DOWN_VERTICES, sizeof(TEXT_CURVE_DOWN_VERTICES) / sizeof(Vertex),
+        TEXT_CURVE_DOWN_SEGMENTS, sizeof(TEXT_CURVE_DOWN_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CURVE_DOWN_CALC, sizeof(TEXT_CURVE_DOWN_CALC) / sizeof(Calculation),
+            TEXT_CURVE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CURVE_DOWN_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CURVE_DOWN_TRS, sizeof(TEXT_CURVE_DOWN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CASCADE_UP_VERTICES[] =
+{
+    Vertex(0, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 21600), Vertex(21600, 0 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_CASCADE_UP_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_CASCADE_UP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x401, 1, 4)
+};
+
+const TextRectangle TEXT_CASCADE_UP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CASCADE_UP_DEFAULT_ADJUST[] =
+{
+    9600
+};
+
+const CustomShape CS_TEXT_CASCADE_UP(
+      TEXT_CASCADE_UP_VERTICES, sizeof(TEXT_CASCADE_UP_VERTICES) / sizeof(Vertex),
+        TEXT_CASCADE_UP_SEGMENTS, sizeof(TEXT_CASCADE_UP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CASCADE_UP_CALC, sizeof(TEXT_CASCADE_UP_CALC) / sizeof(Calculation),
+            TEXT_CASCADE_UP_DEFAULT_ADJUST, sizeof(TEXT_CASCADE_UP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CASCADE_UP_TRS, sizeof(TEXT_CASCADE_UP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CASCADE_DOWN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 2 CALCULATED_VALUE), Vertex(0, 0 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_CASCADE_DOWN_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_CASCADE_DOWN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x401, 1, 4)
+};
+
+const TextRectangle TEXT_CASCADE_DOWN_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CASCADE_DOWN_DEFAULT_ADJUST[] =
+{
+    9600
+};
+
+const CustomShape CS_TEXT_CASCADE_DOWN(
+      TEXT_CASCADE_DOWN_VERTICES, sizeof(TEXT_CASCADE_DOWN_VERTICES) / sizeof(Vertex),
+        TEXT_CASCADE_DOWN_SEGMENTS, sizeof(TEXT_CASCADE_DOWN_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CASCADE_DOWN_CALC, sizeof(TEXT_CASCADE_DOWN_CALC) / sizeof(Calculation),
+            TEXT_CASCADE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CASCADE_DOWN_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CASCADE_DOWN_TRS, sizeof(TEXT_CASCADE_DOWN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_WAVE_1_VERTICES[] =
+{
+    Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_WAVE_1_SEGMENTS[] =
+{
+    0x4000, 0x2001, 0x8000, 0x4000, 0x2001, 0x8000
+};
+
+const Calculation TEXT_WAVE_1_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x402, 0, 10800), Calculation(0x2001, 0x403, 2, 1), Calculation(0x2003, 0x404, 0, 0), Calculation(0x8000, 4320, 0, 0x405), Calculation(0xa006, 0x403, 0, 0x405), Calculation(0x4001, 15800, 0x400, 4460), Calculation(0xa000, 0x400, 0, 0x408), Calculation(0x6000, 0x400, 0x408, 0), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x6006, 0x403, 0x40b, 21600), Calculation(0xa000, 0x40c, 0, 0x407), Calculation(0x2001, 0x405, 1, 2), Calculation(0xa000, 0x407, 7200, 0x40e), Calculation(0x6000, 0x40c, 0x40e, 7200), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x6000, 0x407, 0x411, 0), Calculation(0x8000, 21600, 0, 0x412), Calculation(0x2001, 0x405, 1, 2), Calculation(0x8000, 21600, 0, 0x414), Calculation(0x2001, 0x400, 2, 1), Calculation(0x8000, 21600, 0, 0x416), Calculation(0x8000, 21600, 0, 0x407), Calculation(0x8000, 21600, 0, 0x40f), Calculation(0x6000, 0x401, 0x408, 0), Calculation(0x8000, 21600, 0, 0x410), Calculation(0xa000, 0x401, 0, 0x408), Calculation(0x8000, 21600, 0, 0x40c)
+};
+
+const TextRectangle TEXT_WAVE_1_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_WAVE_1_DEFAULT_ADJUST[] =
+{
+    1400, 10800
+};
+
+const CustomShape CS_TEXT_WAVE_1(
+      TEXT_WAVE_1_VERTICES, sizeof(TEXT_WAVE_1_VERTICES) / sizeof(Vertex),
+        TEXT_WAVE_1_SEGMENTS, sizeof(TEXT_WAVE_1_SEGMENTS) / sizeof(unsigned short),
+          TEXT_WAVE_1_CALC, sizeof(TEXT_WAVE_1_CALC) / sizeof(Calculation),
+            TEXT_WAVE_1_DEFAULT_ADJUST, sizeof(TEXT_WAVE_1_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_WAVE_1_TRS, sizeof(TEXT_WAVE_1_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_WAVE_2_VERTICES[] =
+{
+    Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_WAVE_2_SEGMENTS[] =
+{
+    0x4000, 0x2001, 0x8000, 0x4000, 0x2001, 0x8000
+};
+
+const Calculation TEXT_WAVE_2_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x402, 0, 10800), Calculation(0x2001, 0x403, 2, 1), Calculation(0x2003, 0x404, 0, 0), Calculation(0x8000, 4320, 0, 0x405), Calculation(0xa006, 0x403, 0, 0x405), Calculation(0x4001, 15800, 0x400, 4460), Calculation(0xa000, 0x400, 0, 0x408), Calculation(0x6000, 0x400, 0x408, 0), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x6006, 0x403, 0x40b, 21600), Calculation(0xa000, 0x40c, 0, 0x407), Calculation(0x2001, 0x405, 1, 2), Calculation(0xa000, 0x407, 7200, 0x40e), Calculation(0x6000, 0x40c, 0x40e, 7200), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x6000, 0x407, 0x411, 0), Calculation(0x8000, 21600, 0, 0x412), Calculation(0x2001, 0x405, 1, 2), Calculation(0x8000, 21600, 0, 0x414), Calculation(0x2001, 0x400, 2, 1), Calculation(0x8000, 21600, 0, 0x416), Calculation(0x8000, 21600, 0, 0x407), Calculation(0x8000, 21600, 0, 0x40f), Calculation(0x6000, 0x401, 0x408, 0), Calculation(0x8000, 21600, 0, 0x410), Calculation(0xa000, 0x401, 0, 0x408), Calculation(0x8000, 21600, 0, 0x40c)
+};
+
+const TextRectangle TEXT_WAVE_2_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_WAVE_2_DEFAULT_ADJUST[] =
+{
+    1400, 10800
+};
+
+const CustomShape CS_TEXT_WAVE_2(
+      TEXT_WAVE_2_VERTICES, sizeof(TEXT_WAVE_2_VERTICES) / sizeof(Vertex),
+        TEXT_WAVE_2_SEGMENTS, sizeof(TEXT_WAVE_2_SEGMENTS) / sizeof(unsigned short),
+          TEXT_WAVE_2_CALC, sizeof(TEXT_WAVE_2_CALC) / sizeof(Calculation),
+            TEXT_WAVE_2_DEFAULT_ADJUST, sizeof(TEXT_WAVE_2_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_WAVE_2_TRS, sizeof(TEXT_WAVE_2_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                NULL, 0);
+
+const Vertex TEXT_WAVE_3_VERTICES[] =
+{
+    Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0x1f CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(0x13 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0x21 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_WAVE_3_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_WAVE_3_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x402, 0, 10800), Calculation(0x2001, 0x403, 2, 1), Calculation(0x2003, 0x404, 0, 0), Calculation(0x8000, 4320, 0, 0x405), Calculation(0xa006, 0x403, 0, 0x405), Calculation(0x4001, 7900, 0x400, 2230), Calculation(0xa000, 0x400, 0, 0x408), Calculation(0x6000, 0x400, 0x408, 0), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x6006, 0x403, 0x40b, 21600), Calculation(0xa000, 0x40c, 0, 0x407), Calculation(0x2001, 0x405, 1, 2), Calculation(0xa000, 0x407, 3600, 0x40e), Calculation(0x6000, 0x40c, 0x40e, 3600), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x6000, 0x407, 0x411, 0), Calculation(0x8000, 21600, 0, 0x412), Calculation(0x2001, 0x405, 1, 2), Calculation(0x8000, 21600, 0, 0x414), Calculation(0x2001, 0x400, 2, 1), Calculation(0x8000, 21600, 0, 0x416), Calculation(0x8000, 21600, 0, 0x407), Calculation(0x8000, 21600, 0, 0x40f), Calculation(0x6000, 0x401, 0x408, 0), Calculation(0x8000, 21600, 0, 0x410), Calculation(0xa000, 0x401, 0, 0x408), Calculation(0x8000, 21600, 0, 0x40c), Calculation(0xa000, 0x412, 0, 0x40e), Calculation(0x6000, 0x412, 0x40e, 0), Calculation(0xa000, 0x413, 0, 0x40e), Calculation(0x6000, 0x413, 0x40e, 0)
+};
+
+const TextRectangle TEXT_WAVE_3_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_WAVE_3_DEFAULT_ADJUST[] =
+{
+    1400, 10800
+};
+
+const CustomShape CS_TEXT_WAVE_3(
+      TEXT_WAVE_3_VERTICES, sizeof(TEXT_WAVE_3_VERTICES) / sizeof(Vertex),
+        TEXT_WAVE_3_SEGMENTS, sizeof(TEXT_WAVE_3_SEGMENTS) / sizeof(unsigned short),
+          TEXT_WAVE_3_CALC, sizeof(TEXT_WAVE_3_CALC) / sizeof(Calculation),
+            TEXT_WAVE_3_DEFAULT_ADJUST, sizeof(TEXT_WAVE_3_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_WAVE_3_TRS, sizeof(TEXT_WAVE_3_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_WAVE_4_VERTICES[] =
+{
+    Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0x1f CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(0x13 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0x21 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_WAVE_4_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_WAVE_4_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x402, 0, 10800), Calculation(0x2001, 0x403, 2, 1), Calculation(0x2003, 0x404, 0, 0), Calculation(0x8000, 4320, 0, 0x405), Calculation(0xa006, 0x403, 0, 0x405), Calculation(0x4001, 7900, 0x400, 2230), Calculation(0xa000, 0x400, 0, 0x408), Calculation(0x6000, 0x400, 0x408, 0), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x6006, 0x403, 0x40b, 21600), Calculation(0xa000, 0x40c, 0, 0x407), Calculation(0x2001, 0x405, 1, 2), Calculation(0xa000, 0x407, 3600, 0x40e), Calculation(0x6000, 0x40c, 0x40e, 3600), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x6000, 0x407, 0x411, 0), Calculation(0x8000, 21600, 0, 0x412), Calculation(0x2001, 0x405, 1, 2), Calculation(0x8000, 21600, 0, 0x414), Calculation(0x2001, 0x400, 2, 1), Calculation(0x8000, 21600, 0, 0x416), Calculation(0x8000, 21600, 0, 0x407), Calculation(0x8000, 21600, 0, 0x40f), Calculation(0x6000, 0x401, 0x408, 0), Calculation(0x8000, 21600, 0, 0x410), Calculation(0xa000, 0x401, 0, 0x408), Calculation(0x8000, 21600, 0, 0x40c), Calculation(0xa000, 0x412, 0, 0x40e), Calculation(0x6000, 0x412, 0x40e, 0), Calculation(0xa000, 0x413, 0, 0x40e), Calculation(0x6000, 0x413, 0x40e, 0)
+};
+
+const TextRectangle TEXT_WAVE_4_TRS[] =
+{
+    TextRectangle(Vertex(5 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 23 CALCULATED_VALUE))
+};
+
+const int TEXT_WAVE_4_DEFAULT_ADJUST[] =
+{
+    1400, 10800
+};
+
+const Vertex TEXT_WAVE_4_GLUE_POINTS[] =
+{
+    Vertex(0x12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 10800), Vertex(0x13 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0x15 CALCULATED_VALUE, 10800)
+};
+
+const CustomShape CS_TEXT_WAVE_4(
+      TEXT_WAVE_4_VERTICES, sizeof(TEXT_WAVE_4_VERTICES) / sizeof(Vertex),
+        TEXT_WAVE_4_SEGMENTS, sizeof(TEXT_WAVE_4_SEGMENTS) / sizeof(unsigned short),
+          TEXT_WAVE_4_CALC, sizeof(TEXT_WAVE_4_CALC) / sizeof(Calculation),
+            TEXT_WAVE_4_DEFAULT_ADJUST, sizeof(TEXT_WAVE_4_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_WAVE_4_TRS, sizeof(TEXT_WAVE_4_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  TEXT_WAVE_4_GLUE_POINTS, sizeof(TEXT_WAVE_4_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex TEXT_INFLATE_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(4100, 1 CALCULATED_VALUE), Vertex(7300, 0), Vertex(10800, 0), Vertex(14300, 0), Vertex(17500, 1 CALCULATED_VALUE), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 2 CALCULATED_VALUE), Vertex(4100, 3 CALCULATED_VALUE), Vertex(7300, 21600), Vertex(10800, 21600), Vertex(14300, 21600), Vertex(17500, 3 CALCULATED_VALUE), Vertex(21600, 2 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_INFLATE_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_INFLATE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x4001, 1530, 0x400, 4650), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x8000, 21600, 0, 0x401)
+};
+
+const TextRectangle TEXT_INFLATE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_INFLATE_DEFAULT_ADJUST[] =
+{
+    2950
+};
+
+const CustomShape CS_TEXT_INFLATE(
+      TEXT_INFLATE_VERTICES, sizeof(TEXT_INFLATE_VERTICES) / sizeof(Vertex),
+        TEXT_INFLATE_SEGMENTS, sizeof(TEXT_INFLATE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_INFLATE_CALC, sizeof(TEXT_INFLATE_CALC) / sizeof(Calculation),
+            TEXT_INFLATE_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_INFLATE_TRS, sizeof(TEXT_INFLATE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_DEFLATE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(3500, 1 CALCULATED_VALUE), Vertex(7100, 0 CALCULATED_VALUE), Vertex(10800, 0 CALCULATED_VALUE), Vertex(14500, 0 CALCULATED_VALUE), Vertex(18100, 1 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 21600), Vertex(3500, 3 CALCULATED_VALUE), Vertex(7100, 2 CALCULATED_VALUE), Vertex(10800, 2 CALCULATED_VALUE), Vertex(14500, 2 CALCULATED_VALUE), Vertex(18100, 3 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_DEFLATE_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_DEFLATE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, 0x400, 5320, 7100), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x8000, 21600, 0, 0x401)
+};
+
+const TextRectangle TEXT_DEFLATE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_DEFLATE_DEFAULT_ADJUST[] =
+{
+    8100
+};
+
+const CustomShape CS_TEXT_DEFLATE(
+      TEXT_DEFLATE_VERTICES, sizeof(TEXT_DEFLATE_VERTICES) / sizeof(Vertex),
+        TEXT_DEFLATE_SEGMENTS, sizeof(TEXT_DEFLATE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_DEFLATE_CALC, sizeof(TEXT_DEFLATE_CALC) / sizeof(Calculation),
+            TEXT_DEFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_DEFLATE_TRS, sizeof(TEXT_DEFLATE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_INFLATE_BOTTOM_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0, 0 CALCULATED_VALUE), Vertex(3500, 3 CALCULATED_VALUE), Vertex(7300, 21600), Vertex(10800, 21600), Vertex(14300, 21600), Vertex(18100, 3 CALCULATED_VALUE), Vertex(21600, 0 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_INFLATE_BOTTOM_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_INFLATE_BOTTOM_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, 0x400, 0, 11150), Calculation(0x2001, 0x401, 3900, 10450), Calculation(0x2000, 0x402, 17700, 0)
+};
+
+const TextRectangle TEXT_INFLATE_BOTTOM_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_INFLATE_BOTTOM_DEFAULT_ADJUST[] =
+{
+    14700
+};
+
+const CustomShape CS_TEXT_INFLATE_BOTTOM(
+      TEXT_INFLATE_BOTTOM_VERTICES, sizeof(TEXT_INFLATE_BOTTOM_VERTICES) / sizeof(Vertex),
+        TEXT_INFLATE_BOTTOM_SEGMENTS, sizeof(TEXT_INFLATE_BOTTOM_SEGMENTS) / sizeof(unsigned short),
+          TEXT_INFLATE_BOTTOM_CALC, sizeof(TEXT_INFLATE_BOTTOM_CALC) / sizeof(Calculation),
+            TEXT_INFLATE_BOTTOM_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_BOTTOM_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_INFLATE_BOTTOM_TRS, sizeof(TEXT_INFLATE_BOTTOM_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_DEFLATE_BOTTOM_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0, 21600), Vertex(2900, 3 CALCULATED_VALUE), Vertex(7200, 0 CALCULATED_VALUE), Vertex(10800, 0 CALCULATED_VALUE), Vertex(14400, 0 CALCULATED_VALUE), Vertex(18700, 3 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_DEFLATE_BOTTOM_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_DEFLATE_BOTTOM_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, 0x400, 0, 1350), Calculation(0x2001, 0x401, 12070, 20250), Calculation(0x2000, 0x402, 9530, 0)
+};
+
+const TextRectangle TEXT_DEFLATE_BOTTOM_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_DEFLATE_BOTTOM_DEFAULT_ADJUST[] =
+{
+    11500
+};
+
+const CustomShape CS_TEXT_DEFLATE_BOTTOM(
+      TEXT_DEFLATE_BOTTOM_VERTICES, sizeof(TEXT_DEFLATE_BOTTOM_VERTICES) / sizeof(Vertex),
+        TEXT_DEFLATE_BOTTOM_SEGMENTS, sizeof(TEXT_DEFLATE_BOTTOM_SEGMENTS) / sizeof(unsigned short),
+          TEXT_DEFLATE_BOTTOM_CALC, sizeof(TEXT_DEFLATE_BOTTOM_CALC) / sizeof(Calculation),
+            TEXT_DEFLATE_BOTTOM_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_BOTTOM_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_DEFLATE_BOTTOM_TRS, sizeof(TEXT_DEFLATE_BOTTOM_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_INFLATE_TOP_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(3500, 1 CALCULATED_VALUE), Vertex(7300, 0), Vertex(10800, 0), Vertex(14300, 0), Vertex(18100, 1 CALCULATED_VALUE), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_INFLATE_TOP_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_INFLATE_TOP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, 0x400, 3900, 10450)
+};
+
+const TextRectangle TEXT_INFLATE_TOP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_INFLATE_TOP_DEFAULT_ADJUST[] =
+{
+    6900
+};
+
+const CustomShape CS_TEXT_INFLATE_TOP(
+      TEXT_INFLATE_TOP_VERTICES, sizeof(TEXT_INFLATE_TOP_VERTICES) / sizeof(Vertex),
+        TEXT_INFLATE_TOP_SEGMENTS, sizeof(TEXT_INFLATE_TOP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_INFLATE_TOP_CALC, sizeof(TEXT_INFLATE_TOP_CALC) / sizeof(Calculation),
+            TEXT_INFLATE_TOP_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_TOP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_INFLATE_TOP_TRS, sizeof(TEXT_INFLATE_TOP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_DEFLATE_TOP_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(2900, 1 CALCULATED_VALUE), Vertex(7200, 0 CALCULATED_VALUE), Vertex(10800, 0 CALCULATED_VALUE), Vertex(14400, 0 CALCULATED_VALUE), Vertex(18700, 1 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_DEFLATE_TOP_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_DEFLATE_TOP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2001, 0x400, 12070, 20250)
+};
+
+const TextRectangle TEXT_DEFLATE_TOP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_DEFLATE_TOP_DEFAULT_ADJUST[] =
+{
+    10100
+};
+
+const CustomShape CS_TEXT_DEFLATE_TOP(
+      TEXT_DEFLATE_TOP_VERTICES, sizeof(TEXT_DEFLATE_TOP_VERTICES) / sizeof(Vertex),
+        TEXT_DEFLATE_TOP_SEGMENTS, sizeof(TEXT_DEFLATE_TOP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_DEFLATE_TOP_CALC, sizeof(TEXT_DEFLATE_TOP_CALC) / sizeof(Calculation),
+            TEXT_DEFLATE_TOP_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_TOP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_DEFLATE_TOP_TRS, sizeof(TEXT_DEFLATE_TOP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_DEFLATE_INFLATE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0, 10100), Vertex(3300, 3 CALCULATED_VALUE), Vertex(7100, 5 CALCULATED_VALUE), Vertex(10800, 5 CALCULATED_VALUE), Vertex(14500, 5 CALCULATED_VALUE), Vertex(18300, 3 CALCULATED_VALUE), Vertex(21600, 10100), Vertex(0, 11500), Vertex(3300, 4 CALCULATED_VALUE), Vertex(7100, 6 CALCULATED_VALUE), Vertex(10800, 6 CALCULATED_VALUE), Vertex(14500, 6 CALCULATED_VALUE), Vertex(18300, 4 CALCULATED_VALUE), Vertex(21600, 11500), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_DEFLATE_INFLATE_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_DEFLATE_INFLATE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 10800, 0, 0x400), Calculation(0x2001, 0x401, 5770, 9500), Calculation(0x8000, 10100, 0, 0x402), Calculation(0x8000, 11500, 0, 0x402), Calculation(0x2000, 0x400, 0, 700), Calculation(0x2000, 0x400, 700, 0)
+};
+
+const TextRectangle TEXT_DEFLATE_INFLATE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_DEFLATE_INFLATE_DEFAULT_ADJUST[] =
+{
+    6500
+};
+
+const CustomShape CS_TEXT_DEFLATE_INFLATE(
+      TEXT_DEFLATE_INFLATE_VERTICES, sizeof(TEXT_DEFLATE_INFLATE_VERTICES) / sizeof(Vertex),
+        TEXT_DEFLATE_INFLATE_SEGMENTS, sizeof(TEXT_DEFLATE_INFLATE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_DEFLATE_INFLATE_CALC, sizeof(TEXT_DEFLATE_INFLATE_CALC) / sizeof(Calculation),
+            TEXT_DEFLATE_INFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_INFLATE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_DEFLATE_INFLATE_TRS, sizeof(TEXT_DEFLATE_INFLATE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_DEFLATE_INFLATE_DEFLATE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0, 6600), Vertex(3600, 3 CALCULATED_VALUE), Vertex(7250, 4 CALCULATED_VALUE), Vertex(10800, 4 CALCULATED_VALUE), Vertex(14350, 4 CALCULATED_VALUE), Vertex(18000, 3 CALCULATED_VALUE), Vertex(21600, 6600), Vertex(0, 7500), Vertex(3600, 5 CALCULATED_VALUE), Vertex(7250, 6 CALCULATED_VALUE), Vertex(10800, 6 CALCULATED_VALUE), Vertex(14350, 6 CALCULATED_VALUE), Vertex(18000, 5 CALCULATED_VALUE), Vertex(21600, 7500), Vertex(0, 14100), Vertex(3600, 9 CALCULATED_VALUE), Vertex(7250, 10 CALCULATED_VALUE), Vertex(10800, 10 CALCULATED_VALUE), Vertex(14350, 10 CALCULATED_VALUE), Vertex(18000, 9 CALCULATED_VALUE), Vertex(21600, 14100), Vertex(0, 15000), Vertex(3600, 7 CALCULATED_VALUE), Vertex(7250, 8 CALCULATED_VALUE), Vertex(10800, 8 CALCULATED_VALUE), Vertex(14350, 8 CALCULATED_VALUE), Vertex(18000, 7 CALCULATED_VALUE), Vertex(21600, 15000), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_DEFLATE_INFLATE_DEFLATE_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_DEFLATE_INFLATE_DEFLATE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 850), Calculation(0x2001, 0x400, 6120, 8700), Calculation(0x2000, 0x401, 0, 4280), Calculation(0x4000, 6600, 0x402, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 450), Calculation(0x2000, 0x403, 900, 0), Calculation(0x2000, 0x404, 900, 0), Calculation(0x8000, 21600, 0, 0x403), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x8000, 21600, 0, 0x405), Calculation(0x8000, 21600, 0, 0x406)
+};
+
+const TextRectangle TEXT_DEFLATE_INFLATE_DEFLATE_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_DEFLATE_INFLATE_DEFLATE_DEFAULT_ADJUST[] =
+{
+    6050
+};
+
+const CustomShape CS_TEXT_DEFLATE_INFLATE_DEFLATE(
+      TEXT_DEFLATE_INFLATE_DEFLATE_VERTICES, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_VERTICES) / sizeof(Vertex),
+        TEXT_DEFLATE_INFLATE_DEFLATE_SEGMENTS, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_SEGMENTS) / sizeof(unsigned short),
+          TEXT_DEFLATE_INFLATE_DEFLATE_CALC, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_CALC) / sizeof(Calculation),
+            TEXT_DEFLATE_INFLATE_DEFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_DEFLATE_INFLATE_DEFLATE_TRS, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -3717,8 +4470,52 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_TEXT_RING_OUTSIDE;
   case TEXT_ARCH_UP_CURVE:
     return &CS_TEXT_ARCH_UP_CURVE;
+  case TEXT_ARCH_DOWN_CURVE:
+    return &CS_TEXT_ARCH_DOWN_CURVE;
+  case TEXT_CIRCLE_CURVE:
+    return &CS_TEXT_CIRCLE_CURVE;
+  case TEXT_BUTTON_CURVE:
+    return &CS_TEXT_BUTTON_CURVE;
   case TEXT_ARCH_UP_POUR:
     return &CS_TEXT_ARCH_UP_POUR;
+  case TEXT_ARCH_DOWN_POUR:
+    return &CS_TEXT_ARCH_DOWN_POUR;
+  case TEXT_CIRCLE_POUR:
+    return &CS_TEXT_CIRCLE_POUR;
+  case TEXT_BUTTON_POUR:
+    return &CS_TEXT_BUTTON_POUR;
+  case TEXT_CURVE_UP:
+    return &CS_TEXT_CURVE_UP;
+  case TEXT_CURVE_DOWN:
+    return &CS_TEXT_CURVE_DOWN;
+  case TEXT_CASCADE_UP:
+    return &CS_TEXT_CASCADE_UP;
+  case TEXT_CASCADE_DOWN:
+    return &CS_TEXT_CASCADE_DOWN;
+  case TEXT_WAVE_1:
+    return &CS_TEXT_WAVE_1;
+  case TEXT_WAVE_2:
+    return &CS_TEXT_WAVE_2;
+  case TEXT_WAVE_3:
+    return &CS_TEXT_WAVE_3;
+  case TEXT_WAVE_4:
+    return &CS_TEXT_WAVE_4;
+  case TEXT_INFLATE:
+    return &CS_TEXT_INFLATE;
+  case TEXT_DEFLATE:
+    return &CS_TEXT_DEFLATE;
+  case TEXT_INFLATE_BOTTOM:
+    return &CS_TEXT_INFLATE_BOTTOM;
+  case TEXT_DEFLATE_BOTTOM:
+    return &CS_TEXT_DEFLATE_BOTTOM;
+  case TEXT_INFLATE_TOP:
+    return &CS_TEXT_INFLATE_TOP;
+  case TEXT_DEFLATE_TOP:
+    return &CS_TEXT_DEFLATE_TOP;
+  case TEXT_DEFLATE_INFLATE:
+    return &CS_TEXT_DEFLATE_INFLATE;
+  case TEXT_DEFLATE_INFLATE_DEFLATE: // great name
+    return &CS_TEXT_DEFLATE_INFLATE_DEFLATE;
   default:
     return NULL;
   }

@@ -4246,6 +4246,40 @@ const CustomShape CS_TEXT_DEFLATE_INFLATE_DEFLATE(
                 21600, 21600,
                   NULL, 0);
 
+const Vertex TEXT_FADE_RIGHT_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0 CALCULATED_VALUE), Vertex(0, 21600), Vertex(21600, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_FADE_RIGHT_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_FADE_RIGHT_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_FADE_RIGHT_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_FADE_RIGHT_DEFAULT_ADJUST[] =
+{
+    7200
+};
+
+const CustomShape CS_TEXT_FADE_RIGHT(
+      TEXT_FADE_RIGHT_VERTICES, sizeof(TEXT_FADE_RIGHT_VERTICES) / sizeof(Vertex),
+        TEXT_FADE_RIGHT_SEGMENTS, sizeof(TEXT_FADE_RIGHT_SEGMENTS) / sizeof(unsigned short),
+          TEXT_FADE_RIGHT_CALC, sizeof(TEXT_FADE_RIGHT_CALC) / sizeof(Calculation),
+            TEXT_FADE_RIGHT_DEFAULT_ADJUST, sizeof(TEXT_FADE_RIGHT_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_FADE_RIGHT_TRS, sizeof(TEXT_FADE_RIGHT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -4516,6 +4550,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_TEXT_DEFLATE_INFLATE;
   case TEXT_DEFLATE_INFLATE_DEFLATE: // great name
     return &CS_TEXT_DEFLATE_INFLATE_DEFLATE;
+  case TEXT_FADE_RIGHT:
+    return &CS_TEXT_FADE_RIGHT;
   default:
     return NULL;
   }

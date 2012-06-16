@@ -166,6 +166,8 @@ enum ShapeType
   TEXT_DEFLATE_INFLATE          = 166,
   TEXT_DEFLATE_INFLATE_DEFLATE  = 167,
   TEXT_FADE_RIGHT     = 168,
+  TEXT_FADE_LEFT      = 169,
+  TEXT_FADE_UP        = 170,
   SEAL_4              = 0xBB
 };
 } // libmspub

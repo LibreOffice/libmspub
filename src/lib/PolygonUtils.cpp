@@ -4280,6 +4280,74 @@ const CustomShape CS_TEXT_FADE_RIGHT(
                 21600, 21600,
                   NULL, 0);
 
+const Vertex TEXT_FADE_LEFT_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 1 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_FADE_LEFT_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_FADE_LEFT_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_FADE_LEFT_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_FADE_LEFT_DEFAULT_ADJUST[] =
+{
+    7200
+};
+
+const CustomShape CS_TEXT_FADE_LEFT(
+      TEXT_FADE_LEFT_VERTICES, sizeof(TEXT_FADE_LEFT_VERTICES) / sizeof(Vertex),
+        TEXT_FADE_LEFT_SEGMENTS, sizeof(TEXT_FADE_LEFT_SEGMENTS) / sizeof(unsigned short),
+          TEXT_FADE_LEFT_CALC, sizeof(TEXT_FADE_LEFT_CALC) / sizeof(Calculation),
+            TEXT_FADE_LEFT_DEFAULT_ADJUST, sizeof(TEXT_FADE_LEFT_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_FADE_LEFT_TRS, sizeof(TEXT_FADE_LEFT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_FADE_UP_VERTICES[] =
+{
+    Vertex(0 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(0, 21600), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_FADE_UP_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_FADE_UP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_FADE_UP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_FADE_UP_DEFAULT_ADJUST[] =
+{
+    7200
+};
+
+const CustomShape CS_TEXT_FADE_UP(
+      TEXT_FADE_UP_VERTICES, sizeof(TEXT_FADE_UP_VERTICES) / sizeof(Vertex),
+        TEXT_FADE_UP_SEGMENTS, sizeof(TEXT_FADE_UP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_FADE_UP_CALC, sizeof(TEXT_FADE_UP_CALC) / sizeof(Calculation),
+            TEXT_FADE_UP_DEFAULT_ADJUST, sizeof(TEXT_FADE_UP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_FADE_UP_TRS, sizeof(TEXT_FADE_UP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -4552,6 +4620,10 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_TEXT_DEFLATE_INFLATE_DEFLATE;
   case TEXT_FADE_RIGHT:
     return &CS_TEXT_FADE_RIGHT;
+  case TEXT_FADE_LEFT:
+    return &CS_TEXT_FADE_LEFT;
+  case TEXT_FADE_UP:
+    return &CS_TEXT_FADE_UP;
   default:
     return NULL;
   }

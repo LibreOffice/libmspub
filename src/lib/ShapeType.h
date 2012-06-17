@@ -168,7 +168,32 @@ enum ShapeType
   TEXT_FADE_RIGHT     = 168,
   TEXT_FADE_LEFT      = 169,
   TEXT_FADE_UP        = 170,
-  SEAL_4              = 0xBB
+  TEXT_FADE_DOWN      = 171,
+  TEXT_SLANT_UP       = 172,
+  TEXT_SLANT_DOWN     = 173,
+  TEXT_CAN_UP         = 174,
+  TEXT_CAN_DOWN       = 175,
+  FLOW_CHART_ALTERNATE_PROCESS  = 176,
+  FLOW_CHART_OFFPAGE_CONNECTOR  = 177,
+  LEFT_RIGHT_UP_ARROW = 182,
+  SUN                 = 183,
+  MOON                = 184,
+  BRACKET_PAIR        = 185,
+  BRACE_PAIR          = 186,
+  SEAL_4              = 187,
+  DOUBLE_WAVE         = 188,
+  ACTION_BUTTON_BLANK = 189,
+  ACTION_BUTTON_HOME  = 190,
+  ACTION_BUTTON_HELP  = 191,
+  ACTION_BUTTON_INFORMATION     = 192,
+  ACTION_BUTTON_FORWARD_NEXT    = 193,
+  ACTION_BUTTON_BACK_PREVIOUS   = 194,
+  ACTION_BUTTON_END   = 195,
+  ACTION_BUTTON_BEGINNING       = 196,
+  ACTION_BUTTON_RETURN          = 197,
+  ACTION_BUTTON_DOCUMENT        = 198,
+  ACTION_BUTTON_SOUND           = 199,
+  ACTION_BUTTON_MOVIE           = 200
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

@@ -4348,6 +4348,871 @@ const CustomShape CS_TEXT_FADE_UP(
                 21600, 21600,
                   NULL, 0);
 
+const Vertex TEXT_FADE_DOWN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(0 CALCULATED_VALUE, 21600), Vertex(1 CALCULATED_VALUE, 21600)
+};
+
+const unsigned short TEXT_FADE_DOWN_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_FADE_DOWN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_FADE_DOWN_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_FADE_DOWN_DEFAULT_ADJUST[] =
+{
+    7200
+};
+
+const CustomShape CS_TEXT_FADE_DOWN(
+      TEXT_FADE_DOWN_VERTICES, sizeof(TEXT_FADE_DOWN_VERTICES) / sizeof(Vertex),
+        TEXT_FADE_DOWN_SEGMENTS, sizeof(TEXT_FADE_DOWN_SEGMENTS) / sizeof(unsigned short),
+          TEXT_FADE_DOWN_CALC, sizeof(TEXT_FADE_DOWN_CALC) / sizeof(Calculation),
+            TEXT_FADE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_FADE_DOWN_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_FADE_DOWN_TRS, sizeof(TEXT_FADE_DOWN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_SLANT_UP_VERTICES[] =
+{
+    Vertex(0, 0 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 21600), Vertex(21600, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_SLANT_UP_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_SLANT_UP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_SLANT_UP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_SLANT_UP_DEFAULT_ADJUST[] =
+{
+    12000
+};
+
+const CustomShape CS_TEXT_SLANT_UP(
+      TEXT_SLANT_UP_VERTICES, sizeof(TEXT_SLANT_UP_VERTICES) / sizeof(Vertex),
+        TEXT_SLANT_UP_SEGMENTS, sizeof(TEXT_SLANT_UP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_SLANT_UP_CALC, sizeof(TEXT_SLANT_UP_CALC) / sizeof(Calculation),
+            TEXT_SLANT_UP_DEFAULT_ADJUST, sizeof(TEXT_SLANT_UP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_SLANT_UP_TRS, sizeof(TEXT_SLANT_UP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_SLANT_DOWN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 1 CALCULATED_VALUE), Vertex(0, 0 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_SLANT_DOWN_SEGMENTS[] =
+{
+    0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation TEXT_SLANT_DOWN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle TEXT_SLANT_DOWN_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_SLANT_DOWN_DEFAULT_ADJUST[] =
+{
+    12000
+};
+
+const CustomShape CS_TEXT_SLANT_DOWN(
+      TEXT_SLANT_DOWN_VERTICES, sizeof(TEXT_SLANT_DOWN_VERTICES) / sizeof(Vertex),
+        TEXT_SLANT_DOWN_SEGMENTS, sizeof(TEXT_SLANT_DOWN_SEGMENTS) / sizeof(unsigned short),
+          TEXT_SLANT_DOWN_CALC, sizeof(TEXT_SLANT_DOWN_CALC) / sizeof(Calculation),
+            TEXT_SLANT_DOWN_DEFAULT_ADJUST, sizeof(TEXT_SLANT_DOWN_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_SLANT_DOWN_TRS, sizeof(TEXT_SLANT_DOWN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CAN_UP_VERTICES[] =
+{
+    Vertex(0, 1 CALCULATED_VALUE), Vertex(900, 0), Vertex(7100, 0), Vertex(10800, 0), Vertex(14500, 0), Vertex(20700, 0), Vertex(21600, 1 CALCULATED_VALUE), Vertex(0, 21600), Vertex(900, 4 CALCULATED_VALUE), Vertex(7100, 0 CALCULATED_VALUE), Vertex(10800, 0 CALCULATED_VALUE), Vertex(14500, 0 CALCULATED_VALUE), Vertex(20700, 4 CALCULATED_VALUE), Vertex(21600, 21600)
+};
+
+const unsigned short TEXT_CAN_UP_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_CAN_UP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 14400), Calculation(0x4001, 5470, 0x402, 7200), Calculation(0x4000, 16130, 0x403, 0)
+};
+
+const TextRectangle TEXT_CAN_UP_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CAN_UP_DEFAULT_ADJUST[] =
+{
+    18500
+};
+
+const CustomShape CS_TEXT_CAN_UP(
+      TEXT_CAN_UP_VERTICES, sizeof(TEXT_CAN_UP_VERTICES) / sizeof(Vertex),
+        TEXT_CAN_UP_SEGMENTS, sizeof(TEXT_CAN_UP_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CAN_UP_CALC, sizeof(TEXT_CAN_UP_CALC) / sizeof(Calculation),
+            TEXT_CAN_UP_DEFAULT_ADJUST, sizeof(TEXT_CAN_UP_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CAN_UP_TRS, sizeof(TEXT_CAN_UP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex TEXT_CAN_DOWN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(900, 2 CALCULATED_VALUE), Vertex(7100, 0 CALCULATED_VALUE), Vertex(10800, 0 CALCULATED_VALUE), Vertex(14500, 0 CALCULATED_VALUE), Vertex(20700, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(0, 1 CALCULATED_VALUE), Vertex(900, 21600), Vertex(7100, 21600), Vertex(10800, 21600), Vertex(14500, 21600), Vertex(20700, 21600), Vertex(21600, 1 CALCULATED_VALUE)
+};
+
+const unsigned short TEXT_CAN_DOWN_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x8000, 0x4000, 0x2002, 0x8000
+};
+
+const Calculation TEXT_CAN_DOWN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x4001, 5470, 0x400, 7200)
+};
+
+const TextRectangle TEXT_CAN_DOWN_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int TEXT_CAN_DOWN_DEFAULT_ADJUST[] =
+{
+    3100
+};
+
+const CustomShape CS_TEXT_CAN_DOWN(
+      TEXT_CAN_DOWN_VERTICES, sizeof(TEXT_CAN_DOWN_VERTICES) / sizeof(Vertex),
+        TEXT_CAN_DOWN_SEGMENTS, sizeof(TEXT_CAN_DOWN_SEGMENTS) / sizeof(unsigned short),
+          TEXT_CAN_DOWN_CALC, sizeof(TEXT_CAN_DOWN_CALC) / sizeof(Calculation),
+            TEXT_CAN_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CAN_DOWN_DEFAULT_ADJUST) / sizeof(int),
+              TEXT_CAN_DOWN_TRS, sizeof(TEXT_CAN_DOWN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex FLOW_CHART_ALTERNATE_PROCESS_VERTICES[] =
+{
+    Vertex(0, 2 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 0), Vertex(1 CALCULATED_VALUE, 0), Vertex(21600, 2 CALCULATED_VALUE), Vertex(21600, 3 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 21600), Vertex(0 CALCULATED_VALUE, 21600), Vertex(0, 3 CALCULATED_VALUE)
+};
+
+const unsigned short FLOW_CHART_ALTERNATE_PROCESS_SEGMENTS[] =
+{
+    0x4000, 0xa801, 0x0001, 0xa701, 0x0001, 0xa801, 0x0001, 0xa701, 0x6000, 0x8000
+};
+
+const Calculation FLOW_CHART_ALTERNATE_PROCESS_CALC[] =
+{
+    Calculation(0x2000, PROP_GEO_LEFT, 2540, 0), Calculation(0x2000, PROP_GEO_RIGHT, 0, 2540), Calculation(0x2000, PROP_GEO_TOP, 2540, 0), Calculation(0x2000, PROP_GEO_BOTTOM, 0, 2540), Calculation(0x2000, PROP_GEO_LEFT, 800, 0), Calculation(0x2000, PROP_GEO_RIGHT, 0, 800), Calculation(0x2000, PROP_GEO_TOP, 800, 0), Calculation(0x2000, PROP_GEO_BOTTOM, 0, 800)
+};
+
+const TextRectangle FLOW_CHART_ALTERNATE_PROCESS_TRS[] =
+{
+    TextRectangle(Vertex(4 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 7 CALCULATED_VALUE))
+};
+
+const Vertex FLOW_CHART_ALTERNATE_PROCESS_GLUE_POINTS[] =
+{
+    Vertex(0, 10800), Vertex(10800, 0), Vertex(21600, 10800), Vertex(10800, 21600)
+};
+
+const CustomShape CS_FLOW_CHART_ALTERNATE_PROCESS(
+      FLOW_CHART_ALTERNATE_PROCESS_VERTICES, sizeof(FLOW_CHART_ALTERNATE_PROCESS_VERTICES) / sizeof(Vertex),
+        FLOW_CHART_ALTERNATE_PROCESS_SEGMENTS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_SEGMENTS) / sizeof(unsigned short),
+          FLOW_CHART_ALTERNATE_PROCESS_CALC, sizeof(FLOW_CHART_ALTERNATE_PROCESS_CALC) / sizeof(Calculation),
+            NULL, 0,
+              FLOW_CHART_ALTERNATE_PROCESS_TRS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_ALTERNATE_PROCESS_GLUE_POINTS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex FLOW_CHART_OFFPAGE_CONNECTOR_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 17150), Vertex(10800, 21600), Vertex(0, 17150), Vertex(0, 0)
+};
+
+const TextRectangle FLOW_CHART_OFFPAGE_CONNECTOR_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 17150))
+};
+
+const Vertex FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_FLOW_CHART_OFFPAGE_CONNECTOR(
+      FLOW_CHART_OFFPAGE_CONNECTOR_VERTICES, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_VERTICES) / sizeof(Vertex),
+        NULL, 0,
+          NULL, 0,
+            NULL, 0,
+              FLOW_CHART_OFFPAGE_CONNECTOR_TRS, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex LEFT_RIGHT_UP_ARROW_VERTICES[] =
+{
+    Vertex(10800, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(21600, 10800), Vertex(5 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(5 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 3 CALCULATED_VALUE), Vertex(0, 10800), Vertex(2 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(2 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE)
+};
+
+const unsigned short LEFT_RIGHT_UP_ARROW_SEGMENTS[] =
+{
+    0x4000, 0x0010, 0x6001, 0x8000
+};
+
+const Calculation LEFT_RIGHT_UP_ARROW_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x6001, 0x0403, PROP_ADJUST_VAL_FIRST + 2, 21600), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST + 1), Calculation(0x8000, 21600, 0, 0x0402)
+};
+
+const TextRectangle LEFT_RIGHT_UP_ARROW_TRS[] =
+{
+    TextRectangle(Vertex(0, 0), Vertex(21600, 21600))
+};
+
+const int LEFT_RIGHT_UP_ARROW_DEFAULT_ADJUST[] =
+{
+    6500, 8600, 6200
+};
+
+const CustomShape CS_LEFT_RIGHT_UP_ARROW(
+      LEFT_RIGHT_UP_ARROW_VERTICES, sizeof(LEFT_RIGHT_UP_ARROW_VERTICES) / sizeof(Vertex),
+        LEFT_RIGHT_UP_ARROW_SEGMENTS, sizeof(LEFT_RIGHT_UP_ARROW_SEGMENTS) / sizeof(unsigned short),
+          LEFT_RIGHT_UP_ARROW_CALC, sizeof(LEFT_RIGHT_UP_ARROW_CALC) / sizeof(Calculation),
+            LEFT_RIGHT_UP_ARROW_DEFAULT_ADJUST, sizeof(LEFT_RIGHT_UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
+              LEFT_RIGHT_UP_ARROW_TRS, sizeof(LEFT_RIGHT_UP_ARROW_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex SUN_VERTICES[] =
+{
+    Vertex(0, 10800), Vertex(4 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0x0a CALCULATED_VALUE, 0x0b CALCULATED_VALUE), Vertex(0x0c CALCULATED_VALUE, 0x0d CALCULATED_VALUE), Vertex(0x0e CALCULATED_VALUE, 0x0f CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x11 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x13 CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 0x15 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x17 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x19 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x1b CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x1d CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x1f CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x21 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0x23 CALCULATED_VALUE), Vertex(0x24 CALCULATED_VALUE, 0x25 CALCULATED_VALUE), Vertex(0x26 CALCULATED_VALUE, 0x27 CALCULATED_VALUE), Vertex(0x28 CALCULATED_VALUE, 0x29 CALCULATED_VALUE), Vertex(0x2a CALCULATED_VALUE, 0x2b CALCULATED_VALUE), Vertex(0x2c CALCULATED_VALUE, 0x2d CALCULATED_VALUE), Vertex(0x2e CALCULATED_VALUE, 0x2f CALCULATED_VALUE), Vertex(0x30 CALCULATED_VALUE, 0x31 CALCULATED_VALUE), Vertex(0x32 CALCULATED_VALUE, 0x33 CALCULATED_VALUE), Vertex(10800, 10800), Vertex(0x36 CALCULATED_VALUE, 0x36 CALCULATED_VALUE), Vertex(0, 360)
+};
+
+const unsigned short SUN_SEGMENTS[] =
+{
+    0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0xa203, 0x6000, 0x8000
+};
+
+const Calculation SUN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 2700), Calculation(0x2001, 0x402, 5080, 7425), Calculation(0x2000, 0x403, 2540, 0), Calculation(0x8000, 10125, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x405, 2120, 7425), Calculation(0x2000, 0x406, 210, 0), Calculation(0x4000, 10800, 0x407, 0), Calculation(0x8000, 10800, 0, 0x407), Calculation(0x0081, 0, 10800, 45), Calculation(0x0082, 0, 10800, 45), Calculation(0x6081, 0x404, 0x408, 45), Calculation(0x6082, 0x404, 0x408, 45), Calculation(0x6081, 0x404, 0x409, 45), Calculation(0x6082, 0x404, 0x409, 45), Calculation(0x0081, 0, 10800, 90), Calculation(0x0082, 0, 10800, 90), Calculation(0x6081, 0x404, 0x408, 90), Calculation(0x6082, 0x404, 0x408, 90), Calculation(0x6081, 0x404, 0x409, 90), Calculation(0x6082, 0x404, 0x409, 90), Calculation(0x0081, 0, 10800, 135), Calculation(0x0082, 0, 10800, 135), Calculation(0x6081, 0x404, 0x408, 135), Calculation(0x6082, 0x404, 0x408, 135), Calculation(0x6081, 0x404, 0x409, 135), Calculation(0x6082, 0x404, 0x409, 135), Calculation(0x0081, 0, 10800, 180), Calculation(0x0082, 0, 10800, 180), Calculation(0x6081, 0x404, 0x408, 180), Calculation(0x6082, 0x404, 0x408, 180), Calculation(0x6081, 0x404, 0x409, 180), Calculation(0x6082, 0x404, 0x409, 180), Calculation(0x0081, 0, 10800, 225), Calculation(0x0082, 0, 10800, 225), Calculation(0x6081, 0x404, 0x408, 225), Calculation(0x6082, 0x404, 0x408, 225), Calculation(0x6081, 0x404, 0x409, 225), Calculation(0x6082, 0x404, 0x409, 225), Calculation(0x0081, 0, 10800, 270), Calculation(0x0082, 0, 10800, 270), Calculation(0x6081, 0x404, 0x408, 270), Calculation(0x6082, 0x404, 0x408, 270), Calculation(0x6081, 0x404, 0x409, 270), Calculation(0x6082, 0x404, 0x409, 270), Calculation(0x0081, 0, 10800, 315), Calculation(0x0082, 0, 10800, 315), Calculation(0x6081, 0x404, 0x408, 315), Calculation(0x6082, 0x404, 0x408, 315), Calculation(0x6081, 0x404, 0x409, 315), Calculation(0x6082, 0x404, 0x409, 315), Calculation(0x2081, PROP_ADJUST_VAL_FIRST, 10800, 45), Calculation(0x2081, PROP_ADJUST_VAL_FIRST, 10800, 225), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST)
+};
+
+const TextRectangle SUN_TRS[] =
+{
+    TextRectangle(Vertex(0x34 CALCULATED_VALUE, 0x34 CALCULATED_VALUE), Vertex(0x35 CALCULATED_VALUE, 0x35 CALCULATED_VALUE))
+};
+
+const int SUN_DEFAULT_ADJUST[] =
+{
+    5400
+};
+
+const Vertex SUN_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_SUN(
+      SUN_VERTICES, sizeof(SUN_VERTICES) / sizeof(Vertex),
+        SUN_SEGMENTS, sizeof(SUN_SEGMENTS) / sizeof(unsigned short),
+          SUN_CALC, sizeof(SUN_CALC) / sizeof(Calculation),
+            SUN_DEFAULT_ADJUST, sizeof(SUN_DEFAULT_ADJUST) / sizeof(int),
+              SUN_TRS, sizeof(SUN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  SUN_GLUE_POINTS, sizeof(SUN_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex MOON_VERTICES[] =
+{
+    Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 5080), Vertex(0 CALCULATED_VALUE, 10800), Vertex(0 CALCULATED_VALUE, 16520), Vertex(3 CALCULATED_VALUE, 5 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(9740, 21600), Vertex(0, 16730), Vertex(0, 10800), Vertex(0, 4870), Vertex(9740, 0), Vertex(21600, 0)
+};
+
+const unsigned short MOON_SEGMENTS[] =
+{
+    0x4000, 0x2004, 0x6000, 0x8000
+};
+
+const Calculation MOON_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x401, 1, 2), Calculation(0x6000, 0x402, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1794, 10000), Calculation(0x8000, 21600, 0, 0x0404), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 400, 18900), Calculation(0x8081, 0, 10800, 0x406), Calculation(0x8082, 0, 10800, 0x406), Calculation(0x6000, 0x407, 0x407, 0), Calculation(0x8000, 21600, 0, 0x408)
+};
+
+const TextRectangle MOON_TRS[] =
+{
+    TextRectangle(Vertex(9 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 10 CALCULATED_VALUE))
+};
+
+const int MOON_DEFAULT_ADJUST[] =
+{
+    10800
+};
+
+const Vertex MOON_GLUE_POINTS[] =
+{
+    Vertex(21600, 0), Vertex(0, 10800), Vertex(21600, 21600), Vertex(0 CALCULATED_VALUE, 10800)
+};
+
+const CustomShape CS_MOON(
+      MOON_VERTICES, sizeof(MOON_VERTICES) / sizeof(Vertex),
+        MOON_SEGMENTS, sizeof(MOON_SEGMENTS) / sizeof(unsigned short),
+          MOON_CALC, sizeof(MOON_CALC) / sizeof(Calculation),
+            MOON_DEFAULT_ADJUST, sizeof(MOON_DEFAULT_ADJUST) / sizeof(int),
+              MOON_TRS, sizeof(MOON_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  MOON_GLUE_POINTS, sizeof(MOON_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex BRACKET_PAIR_VERTICES[] =
+{
+    Vertex(0 CALCULATED_VALUE, 0), Vertex(0, 1 CALCULATED_VALUE), Vertex(0, 2 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 21600), Vertex(3 CALCULATED_VALUE, 21600), Vertex(21600, 2 CALCULATED_VALUE), Vertex(21600, 1 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 0)
+};
+
+const unsigned short BRACKET_PAIR_SEGMENTS[] =
+{
+    0x4000, 0xa701, 0x0001, 0xa801, 0x8000, 0x4000, 0xa701, 0x0001, 0xa801, 0x8000
+};
+
+const Calculation BRACKET_PAIR_CALC[] =
+{
+    Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2082, PROP_ADJUST_VAL_FIRST, 0, 45), Calculation(0x2000, 0x404, 0, 10800), Calculation(0x8000, 0, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, 0x406, 0, 0x405), Calculation(0xa000, PROP_GEO_LEFT, 0, 0x407), Calculation(0xa000, PROP_GEO_TOP, 0, 0x407), Calculation(0x6000, PROP_GEO_RIGHT, 0x407, 0), Calculation(0x6000, PROP_GEO_BOTTOM, 0x407, 0), Calculation(0xa000, PROP_GEO_LEFT, 0, 0x405), Calculation(0xa000, PROP_GEO_TOP, 0, 0x405), Calculation(0x6000, PROP_GEO_RIGHT, 0x405, 0), Calculation(0x6000, PROP_GEO_BOTTOM, 0x405, 0)
+};
+
+const TextRectangle BRACKET_PAIR_TRS[] =
+{
+    TextRectangle(Vertex(8 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 11 CALCULATED_VALUE))
+};
+
+const int BRACKET_PAIR_DEFAULT_ADJUST[] =
+{
+    3700
+};
+
+const Vertex BRACKET_PAIR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_BRACKET_PAIR(
+      BRACKET_PAIR_VERTICES, sizeof(BRACKET_PAIR_VERTICES) / sizeof(Vertex),
+        BRACKET_PAIR_SEGMENTS, sizeof(BRACKET_PAIR_SEGMENTS) / sizeof(unsigned short),
+          BRACKET_PAIR_CALC, sizeof(BRACKET_PAIR_CALC) / sizeof(Calculation),
+            BRACKET_PAIR_DEFAULT_ADJUST, sizeof(BRACKET_PAIR_DEFAULT_ADJUST) / sizeof(int),
+              BRACKET_PAIR_TRS, sizeof(BRACKET_PAIR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  BRACKET_PAIR_GLUE_POINTS, sizeof(BRACKET_PAIR_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex BRACE_PAIR_VERTICES[] =
+{
+    Vertex(4 CALCULATED_VALUE, 0), Vertex(0 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(0, 10800), Vertex(0 CALCULATED_VALUE, 7 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(4 CALCULATED_VALUE, 21600), Vertex(8 CALCULATED_VALUE, 21600), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 7 CALCULATED_VALUE), Vertex(21600, 10800), Vertex(3 CALCULATED_VALUE, 6 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(8 CALCULATED_VALUE, 0)
+};
+
+const unsigned short BRACE_PAIR_SEGMENTS[] =
+{
+    0x4000, 0xa701, 0x0001, 0xa801, 0xa701, 0x0001, 0xa801, 0x8000, 0x4000, 0xa701, 0x0001, 0xa801, 0xa701, 0x0001, 0xa801, 0x8000
+};
+
+const Calculation BRACE_PAIR_CALC[] =
+{
+    Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x400, 2, 1), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 2, 1), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 21600, 0, 0x406), Calculation(0xa000, PROP_GEO_RIGHT, 0, 0x405), Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 1, 3), Calculation(0x6000, 0x409, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_LEFT, 0x40a, 0), Calculation(0x6000, PROP_GEO_TOP, 0x409, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, 0x40a), Calculation(0xa000, PROP_GEO_BOTTOM, 0, 0x409)
+};
+
+const TextRectangle BRACE_PAIR_TRS[] =
+{
+    TextRectangle(Vertex(11 CALCULATED_VALUE, 12 CALCULATED_VALUE), Vertex(13 CALCULATED_VALUE, 14 CALCULATED_VALUE))
+};
+
+const int BRACE_PAIR_DEFAULT_ADJUST[] =
+{
+    1800
+};
+
+const Vertex BRACE_PAIR_GLUE_POINTS[] =
+{
+    Vertex(10800, 0), Vertex(0, 10800), Vertex(10800, 21600), Vertex(21600, 10800)
+};
+
+const CustomShape CS_BRACE_PAIR(
+      BRACE_PAIR_VERTICES, sizeof(BRACE_PAIR_VERTICES) / sizeof(Vertex),
+        BRACE_PAIR_SEGMENTS, sizeof(BRACE_PAIR_SEGMENTS) / sizeof(unsigned short),
+          BRACE_PAIR_CALC, sizeof(BRACE_PAIR_CALC) / sizeof(Calculation),
+            BRACE_PAIR_DEFAULT_ADJUST, sizeof(BRACE_PAIR_DEFAULT_ADJUST) / sizeof(int),
+              BRACE_PAIR_TRS, sizeof(BRACE_PAIR_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  BRACE_PAIR_GLUE_POINTS, sizeof(BRACE_PAIR_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex DOUBLE_WAVE_VERTICES[] =
+{
+    Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0x1f CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(0x21 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(0x13 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE)
+};
+
+const unsigned short DOUBLE_WAVE_SEGMENTS[] =
+{
+    0x4000, 0x2002, 0x0001, 0x2002, 0x6000, 0x8000
+};
+
+const Calculation DOUBLE_WAVE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x8000, 21600, 0, 0x400), Calculation(0x2000, PROP_ADJUST_VAL_FIRST + 1, 0, 0), Calculation(0x2000, 0x402, 0, 10800), Calculation(0x2001, 0x403, 2, 1), Calculation(0x2003, 0x404, 0, 0), Calculation(0x8000, 4320, 0, 0x405), Calculation(0xa006, 0x403, 0, 0x405), Calculation(0x4001, 7900, 0x400, 2230), Calculation(0xa000, 0x400, 0, 0x408), Calculation(0x6000, 0x400, 0x408, 0), Calculation(0x8000, 21600, 0, 0x404), Calculation(0x6006, 0x403, 0x40b, 21600), Calculation(0xa000, 0x40c, 0, 0x407), Calculation(0x2001, 0x405, 1, 2), Calculation(0xa000, 0x407, 3600, 0x40e), Calculation(0x6000, 0x40c, 0x40e, 3600), Calculation(0x2001, 0x40d, 1, 2), Calculation(0x6000, 0x407, 0x411, 0), Calculation(0x8000, 21600, 0, 0x412), Calculation(0x2001, 0x405, 1, 2), Calculation(0x8000, 21600, 0, 0x414), Calculation(0x2001, 0x400, 2, 1), Calculation(0x8000, 21600, 0, 0x416), Calculation(0x8000, 21600, 0, 0x407), Calculation(0x8000, 21600, 0, 0x40f), Calculation(0x6000, 0x401, 0x408, 0), Calculation(0x8000, 21600, 0, 0x410), Calculation(0xa000, 0x401, 0, 0x408), Calculation(0x8000, 21600, 0, 0x40c), Calculation(0xa000, 0x412, 0, 0x40e), Calculation(0x6000, 0x412, 0x40e, 0), Calculation(0xa000, 0x413, 0, 0x40e), Calculation(0x6000, 0x413, 0x40e, 0)
+};
+
+const TextRectangle DOUBLE_WAVE_TRS[] =
+{
+  TextRectangle(Vertex(5 CALCULATED_VALUE, 22 CALCULATED_VALUE), Vertex(11 CALCULATED_VALUE, 23 CALCULATED_VALUE))
+};
+
+const int DOUBLE_WAVE_DEFAULT_ADJUST[] =
+{
+    1400, 10800
+};
+
+const Vertex DOUBLE_WAVE_GLUE_POINTS[] =
+{
+    Vertex(0x12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 10800), Vertex(0x13 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(0x15 CALCULATED_VALUE, 10800)
+};
+
+const CustomShape CS_DOUBLE_WAVE(
+      DOUBLE_WAVE_VERTICES, sizeof(DOUBLE_WAVE_VERTICES) / sizeof(Vertex),
+        DOUBLE_WAVE_SEGMENTS, sizeof(DOUBLE_WAVE_SEGMENTS) / sizeof(unsigned short),
+          DOUBLE_WAVE_CALC, sizeof(DOUBLE_WAVE_CALC) / sizeof(Calculation),
+            DOUBLE_WAVE_DEFAULT_ADJUST, sizeof(DOUBLE_WAVE_DEFAULT_ADJUST) / sizeof(int),
+              DOUBLE_WAVE_TRS, sizeof(DOUBLE_WAVE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  DOUBLE_WAVE_GLUE_POINTS, sizeof(DOUBLE_WAVE_GLUE_POINTS) / sizeof(Vertex));
+
+const Vertex ACTION_BUTTON_BLANK_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(0 CALCULATED_VALUE, 2 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_BLANK_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_BLANK_CALC[] =
+{
+    Calculation(0x2001, PROP_ADJUST_VAL_FIRST, 21599, 21600), Calculation(0xa000, PROP_GEO_RIGHT, 0, 0x400), Calculation(0xa000, PROP_GEO_BOTTOM, 0, 0x400)
+};
+
+const TextRectangle ACTION_BUTTON_BLANK_TRS[] =
+{
+    TextRectangle(Vertex(0 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_BLANK_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_BLANK(
+      ACTION_BUTTON_BLANK_VERTICES, sizeof(ACTION_BUTTON_BLANK_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_BLANK_SEGMENTS, sizeof(ACTION_BUTTON_BLANK_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_BLANK_CALC, sizeof(ACTION_BUTTON_BLANK_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_BLANK_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BLANK_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_BLANK_TRS, sizeof(ACTION_BUTTON_BLANK_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_HOME_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0xa CALCULATED_VALUE), Vertex(0xc CALCULATED_VALUE, 0xe CALCULATED_VALUE), Vertex(0xc CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0xc CALCULATED_VALUE, 0xe CALCULATED_VALUE), Vertex(0xc CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x1a CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_HOME_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x000a, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0007, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_HOME_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8000, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0408, 0), Calculation(0x4001, 2960, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0407, 0), Calculation(0x4001, -5000, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0408, 0), Calculation(0x4001, -7000, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, 5000, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0407, 0), Calculation(0x4001, -2960, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0408, 0), Calculation(0x4001, 8000, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0407, 0), Calculation(0x4001, 6100, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0407, 0), Calculation(0x4001, 8260, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0408, 0), Calculation(0x4001, -6100, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0407, 0), Calculation(0x4001, -8000, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0407, 0), Calculation(0x4001, -1060, 0x0406, 1), Calculation(0x6000, 0x041f, 0x0407, 0), Calculation(0x4001, 1060, 0x0406, 1), Calculation(0x6000, 0x0421, 0x0407, 0), Calculation(0x4001, 4020, 0x0406, 1), Calculation(0x6000, 0x0423, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_HOME_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_HOME_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_HOME(
+      ACTION_BUTTON_HOME_VERTICES, sizeof(ACTION_BUTTON_HOME_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_HOME_SEGMENTS, sizeof(ACTION_BUTTON_HOME_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_HOME_CALC, sizeof(ACTION_BUTTON_HOME_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_HOME_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_HOME_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_HOME_TRS, sizeof(ACTION_BUTTON_HOME_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_HELP_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x3e CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x3e CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x18 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x22 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0x28 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x2c CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x2e CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0x2e CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x30 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x30 CALCULATED_VALUE, 0x32 CALCULATED_VALUE), Vertex(0x34 CALCULATED_VALUE, 0x36 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x36 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x36 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x32 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x38 CALCULATED_VALUE), Vertex(0x3a CALCULATED_VALUE, 0x3c CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x3c CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x3c CALCULATED_VALUE), Vertex(0x34 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x34 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x34 CALCULATED_VALUE, 0x14 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_HELP_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0xa704, 0x6000, 0x8000, 0x4000, 0x0001, 0x2004, 0x0001, 0x2004, 0x0001, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_HELP_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -1690, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, 4600, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 1690, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 7980, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, 1270, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0407, 0), Calculation(0x4001, 4000, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0408, 0), Calculation(0x4001, 1750, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0408, 0), Calculation(0x4001, 800, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0408, 0), Calculation(0x4001, 1650, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0407, 0), Calculation(0x4001, 2340, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0407, 0), Calculation(0x4001, 3640, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0407, 0), Calculation(0x4001, 4670, 0x0406, 1), Calculation(0x6000, 0x041f, 0x0407, 0), Calculation(0x4001, -1570, 0x0406, 1), Calculation(0x6000, 0x0421, 0x0408, 0), Calculation(0x4001, -3390, 0x0406, 1), Calculation(0x6000, 0x0423, 0x0408, 0), Calculation(0x4001, -6050, 0x0406, 1), Calculation(0x6000, 0x0425, 0x0408, 0), Calculation(0x4001, 2540, 0x0406, 1), Calculation(0x6000, 0x0427, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0429, 0x0408, 0), Calculation(0x4001, -2540, 0x0406, 1), Calculation(0x6000, 0x042b, 0x0407, 0), Calculation(0x4001, -4460, 0x0406, 1), Calculation(0x6000, 0x042d, 0x0407, 0), Calculation(0x4001, -2330, 0x0406, 1), Calculation(0x6000, 0x042f, 0x0407, 0), Calculation(0x4001, -4700, 0x0406, 1), Calculation(0x6000, 0x0431, 0x0408, 0), Calculation(0x4001, -1270, 0x0406, 1), Calculation(0x6000, 0x0433, 0x0407, 0), Calculation(0x4001, -5720, 0x0406, 1), Calculation(0x6000, 0x0435, 0x0408, 0), Calculation(0x4001, -2540, 0x0406, 1), Calculation(0x6000, 0x0437, 0x0408, 0), Calculation(0x4001, 1800, 0x0406, 1), Calculation(0x6000, 0x0439, 0x0407, 0), Calculation(0x4001, -1700, 0x0406, 1), Calculation(0x6000, 0x043b, 0x0408, 0), Calculation(0x4001, 6290, 0x0406, 1), Calculation(0x6000, 0x043d, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_HELP_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_HELP_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_HELP(
+      ACTION_BUTTON_HELP_VERTICES, sizeof(ACTION_BUTTON_HELP_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_HELP_SEGMENTS, sizeof(ACTION_BUTTON_HELP_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_HELP_CALC, sizeof(ACTION_BUTTON_HELP_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_HELP_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_HELP_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_HELP_TRS, sizeof(ACTION_BUTTON_HELP_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_INFORMATION_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x8 CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0x18 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x7 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x1c CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x1c CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x20 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0x20 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x20 CALCULATED_VALUE), Vertex(0x26 CALCULATED_VALUE, 0x20 CALCULATED_VALUE), Vertex(0x26 CALCULATED_VALUE, 0x28 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x28 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_INFORMATION_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0xa704, 0x6000, 0x8000, 0x4000, 0xa704, 0x6000, 0x8000, 0x4000, 0x0009, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_INFORMATION_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, -2060, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0407, 0), Calculation(0x4001, -7620, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0408, 0), Calculation(0x4001, 2060, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0407, 0), Calculation(0x4001, -3500, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0408, 0), Calculation(0x4001, -2960, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0407, 0), Calculation(0x4001, -2960, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0408, 0), Calculation(0x4001, 1480, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0407, 0), Calculation(0x4001, 5080, 0x0406, 1), Calculation(0x6000, 0x041f, 0x0408, 0), Calculation(0x4001, 2960, 0x0406, 1), Calculation(0x6000, 0x0421, 0x0407, 0), Calculation(0x4001, 6140, 0x0406, 1), Calculation(0x6000, 0x0423, 0x0408, 0), Calculation(0x4001, -1480, 0x0406, 1), Calculation(0x6000, 0x0425, 0x0407, 0), Calculation(0x4001, -1920, 0x0406, 1), Calculation(0x6000, 0x0427, 0x0408, 0), Calculation(0x4001, -5560, 0x0406, 1), Calculation(0x6000, 0x0429, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_INFORMATION_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_INFORMATION_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_INFORMATION(
+      ACTION_BUTTON_INFORMATION_VERTICES, sizeof(ACTION_BUTTON_INFORMATION_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_INFORMATION_SEGMENTS, sizeof(ACTION_BUTTON_INFORMATION_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_INFORMATION_CALC, sizeof(ACTION_BUTTON_INFORMATION_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_INFORMATION_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_INFORMATION_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_INFORMATION_TRS, sizeof(ACTION_BUTTON_INFORMATION_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_FORWARD_NEXT_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x10 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_FORWARD_NEXT_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_FORWARD_NEXT_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_FORWARD_NEXT_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_FORWARD_NEXT_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_FORWARD_NEXT(
+      ACTION_BUTTON_FORWARD_NEXT_VERTICES, sizeof(ACTION_BUTTON_FORWARD_NEXT_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_FORWARD_NEXT_SEGMENTS, sizeof(ACTION_BUTTON_FORWARD_NEXT_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_FORWARD_NEXT_CALC, sizeof(ACTION_BUTTON_FORWARD_NEXT_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_FORWARD_NEXT_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_FORWARD_NEXT_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_FORWARD_NEXT_TRS, sizeof(ACTION_BUTTON_FORWARD_NEXT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_BACK_PREVIOUS_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x10 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_BACK_PREVIOUS_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_BACK_PREVIOUS_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_BACK_PREVIOUS_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_BACK_PREVIOUS_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_BACK_PREVIOUS(
+      ACTION_BUTTON_BACK_PREVIOUS_VERTICES, sizeof(ACTION_BUTTON_BACK_PREVIOUS_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_BACK_PREVIOUS_SEGMENTS, sizeof(ACTION_BUTTON_BACK_PREVIOUS_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_BACK_PREVIOUS_CALC, sizeof(ACTION_BUTTON_BACK_PREVIOUS_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_BACK_PREVIOUS_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BACK_PREVIOUS_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_BACK_PREVIOUS_TRS, sizeof(ACTION_BUTTON_BACK_PREVIOUS_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_END_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_END_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_END_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -4020, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0407, 0), Calculation(0x4001, -6140, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0407, 0), Calculation(0x4001, 4020, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0407, 0), Calculation(0x4001, 6140, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0407, 0)
+};
+
+const TextRectangle ACTION_BUTTON_END_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_END_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_END(
+      ACTION_BUTTON_END_VERTICES, sizeof(ACTION_BUTTON_END_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_END_SEGMENTS, sizeof(ACTION_BUTTON_END_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_END_CALC, sizeof(ACTION_BUTTON_END_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_END_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_END_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_END_TRS, sizeof(ACTION_BUTTON_END_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_BEGINNING_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x12 CALCULATED_VALUE, 0x10 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_BEGINNING_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_BEGINNING_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -4020, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0407, 0), Calculation(0x4001, -6140, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0407, 0), Calculation(0x4001, 4020, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0407, 0), Calculation(0x4001, 6140, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0407, 0)
+};
+
+const TextRectangle ACTION_BUTTON_BEGINNING_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_BEGINNING_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_BEGINNING(
+      ACTION_BUTTON_BEGINNING_VERTICES, sizeof(ACTION_BUTTON_BEGINNING_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_BEGINNING_SEGMENTS, sizeof(ACTION_BUTTON_BEGINNING_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_BEGINNING_CALC, sizeof(ACTION_BUTTON_BEGINNING_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_BEGINNING_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BEGINNING_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_BEGINNING_TRS, sizeof(ACTION_BUTTON_BEGINNING_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_RETURN_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x20 CALCULATED_VALUE), Vertex(0x22 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x24 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x24 CALCULATED_VALUE, 0x10 CALCULATED_VALUE), Vertex(0x24 CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0x28 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0x2c CALCULATED_VALUE, 0x2a CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x10 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_RETURN_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0002, 0x2001, 0x0001, 0x2001, 0x0006, 0x2001, 0x0001, 0x2001, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_RETURN_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -3800, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, -4020, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 2330, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0408, 0), Calculation(0x4001, 3390, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0408, 0), Calculation(0x4001, -3100, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0407, 0), Calculation(0x4001, 4230, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0408, 0), Calculation(0x4001, -1910, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0407, 0), Calculation(0x4001, 1190, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0407, 0), Calculation(0x4001, 2110, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0407, 0), Calculation(0x4001, 4030, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0407, 0), Calculation(0x4001, -7830, 0x0406, 1), Calculation(0x6000, 0x041f, 0x0408, 0), Calculation(0x4001, 8250, 0x0406, 1), Calculation(0x6000, 0x0421, 0x0407, 0), Calculation(0x4001, 6140, 0x0406, 1), Calculation(0x6000, 0x0423, 0x0407, 0), Calculation(0x4001, 5510, 0x0406, 1), Calculation(0x6000, 0x0425, 0x0408, 0), Calculation(0x4001, 3180, 0x0406, 1), Calculation(0x6000, 0x0427, 0x0407, 0), Calculation(0x4001, 8450, 0x0406, 1), Calculation(0x6000, 0x0429, 0x0408, 0), Calculation(0x4001, -5090, 0x0406, 1), Calculation(0x6000, 0x042b, 0x0407, 0)
+};
+
+const TextRectangle ACTION_BUTTON_RETURN_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_RETURN_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_RETURN(
+      ACTION_BUTTON_RETURN_VERTICES, sizeof(ACTION_BUTTON_RETURN_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_RETURN_SEGMENTS, sizeof(ACTION_BUTTON_RETURN_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_RETURN_CALC, sizeof(ACTION_BUTTON_RETURN_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_RETURN_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_RETURN_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_RETURN_TRS, sizeof(ACTION_BUTTON_RETURN_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_DOCUMENT_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x12 CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_DOCUMENT_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0004, 0x6001, 0x8000, 0x4000, 0x0002, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_DOCUMENT_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -6350, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -7830, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, 1690, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 6350, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0407, 0), Calculation(0x4001, -3810, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0408, 0), Calculation(0x4001, 7830, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_DOCUMENT_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_DOCUMENT_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_DOCUMENT(
+      ACTION_BUTTON_DOCUMENT_VERTICES, sizeof(ACTION_BUTTON_DOCUMENT_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_DOCUMENT_SEGMENTS, sizeof(ACTION_BUTTON_DOCUMENT_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_DOCUMENT_CALC, sizeof(ACTION_BUTTON_DOCUMENT_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_DOCUMENT_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_DOCUMENT_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_DOCUMENT_TRS, sizeof(ACTION_BUTTON_DOCUMENT_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_SOUND_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x14 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 8 CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x1c CALCULATED_VALUE), Vertex(0x18 CALCULATED_VALUE, 0x16 CALCULATED_VALUE), Vertex(0x1a CALCULATED_VALUE, 0x1e CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_SOUND_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0005, 0x6001, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_SOUND_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -2750, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, -2960, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, 2120, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0407, 0), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0408, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0408, 0), Calculation(0x4001, 2750, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0408, 0), Calculation(0x4001, 4020, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0407, 0), Calculation(0x4001, -5930, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0408, 0), Calculation(0x4001, 5930, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_SOUND_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_SOUND_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_SOUND(
+      ACTION_BUTTON_SOUND_VERTICES, sizeof(ACTION_BUTTON_SOUND_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_SOUND_SEGMENTS, sizeof(ACTION_BUTTON_SOUND_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_SOUND_CALC, sizeof(ACTION_BUTTON_SOUND_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_SOUND_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_SOUND_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_SOUND_TRS, sizeof(ACTION_BUTTON_SOUND_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
+const Vertex ACTION_BUTTON_MOVIE_VERTICES[] =
+{
+    Vertex(0, 0), Vertex(21600, 0), Vertex(21600, 21600), Vertex(0, 21600), Vertex(0, 0), Vertex(21600, 0), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 0), Vertex(21600, 21600), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(21600, 21600), Vertex(0, 21600), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0, 21600), Vertex(0, 0), Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(1 CALCULATED_VALUE, 4 CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0xc CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x14 CALCULATED_VALUE, 0x12 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x18 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x1a CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x18 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x18 CALCULATED_VALUE), Vertex(0x20 CALCULATED_VALUE, 0x22 CALCULATED_VALUE), Vertex(0x1e CALCULATED_VALUE, 0x22 CALCULATED_VALUE), Vertex(0x1c CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x24 CALCULATED_VALUE), Vertex(0x16 CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0x2a CALCULATED_VALUE, 0x26 CALCULATED_VALUE), Vertex(0x2a CALCULATED_VALUE, 0x28 CALCULATED_VALUE), Vertex(0x10 CALCULATED_VALUE, 0x28 CALCULATED_VALUE), Vertex(0xe CALCULATED_VALUE, 0x2c CALCULATED_VALUE), Vertex(0xa CALCULATED_VALUE, 0x2c CALCULATED_VALUE)
+};
+
+const unsigned short ACTION_BUTTON_MOVIE_SEGMENTS[] =
+{
+    0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0003, 0x6001, 0x8000, 0x4000, 0x0012, 0x6001, 0x8000
+};
+
+const Calculation ACTION_BUTTON_MOVIE_CALC[] =
+{
+    Calculation(0x2000, PROP_ADJUST_VAL_FIRST, 0, 0), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xa000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xa000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST), Calculation(0x2001, 0x0405, 1, 10800), Calculation(0x2001, PROP_GEO_RIGHT, 1, 2), Calculation(0x2001, PROP_GEO_BOTTOM, 1, 2), Calculation(0x4001, -8050, 0x0406, 1), Calculation(0x6000, 0x0409, 0x0407, 0), Calculation(0x4001, -4020, 0x0406, 1), Calculation(0x6000, 0x040b, 0x0408, 0), Calculation(0x4001, -7000, 0x0406, 1), Calculation(0x6000, 0x040d, 0x0407, 0), Calculation(0x4001, -6560, 0x0406, 1), Calculation(0x6000, 0x040f, 0x0407, 0), Calculation(0x4001, -3600, 0x0406, 1), Calculation(0x6000, 0x0411, 0x0408, 0), Calculation(0x4001, 4020, 0x0406, 1), Calculation(0x6000, 0x0413, 0x0407, 0), Calculation(0x4001, 4660, 0x0406, 1), Calculation(0x6000, 0x0415, 0x0407, 0), Calculation(0x4001, -2960, 0x0406, 1), Calculation(0x6000, 0x0417, 0x0408, 0), Calculation(0x4001, -2330, 0x0406, 1), Calculation(0x6000, 0x0419, 0x0408, 0), Calculation(0x4001, 6780, 0x0406, 1), Calculation(0x6000, 0x041b, 0x0407, 0), Calculation(0x4001, 7200, 0x0406, 1), Calculation(0x6000, 0x041d, 0x0407, 0), Calculation(0x4001, 8050, 0x0406, 1), Calculation(0x6000, 0x041f, 0x0407, 0), Calculation(0x4001, 2960, 0x0406, 1), Calculation(0x6000, 0x0421, 0x0408, 0), Calculation(0x4001, 2330, 0x0406, 1), Calculation(0x6000, 0x0423, 0x0408, 0), Calculation(0x4001, 3800, 0x0406, 1), Calculation(0x6000, 0x0425, 0x0408, 0), Calculation(0x4001, -1060, 0x0406, 1), Calculation(0x6000, 0x0427, 0x0408, 0), Calculation(0x4001, -6350, 0x0406, 1), Calculation(0x6000, 0x0429, 0x0407, 0), Calculation(0x4001, -640, 0x0406, 1), Calculation(0x6000, 0x042b, 0x0408, 0)
+};
+
+const TextRectangle ACTION_BUTTON_MOVIE_TRS[] =
+{
+    TextRectangle(Vertex(1 CALCULATED_VALUE, 2 CALCULATED_VALUE), Vertex(3 CALCULATED_VALUE, 4 CALCULATED_VALUE))
+};
+
+const int ACTION_BUTTON_MOVIE_DEFAULT_ADJUST[] =
+{
+    1400
+};
+
+const CustomShape CS_ACTION_BUTTON_MOVIE(
+      ACTION_BUTTON_MOVIE_VERTICES, sizeof(ACTION_BUTTON_MOVIE_VERTICES) / sizeof(Vertex),
+        ACTION_BUTTON_MOVIE_SEGMENTS, sizeof(ACTION_BUTTON_MOVIE_SEGMENTS) / sizeof(unsigned short),
+          ACTION_BUTTON_MOVIE_CALC, sizeof(ACTION_BUTTON_MOVIE_CALC) / sizeof(Calculation),
+            ACTION_BUTTON_MOVIE_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_MOVIE_DEFAULT_ADJUST) / sizeof(int),
+              ACTION_BUTTON_MOVIE_TRS, sizeof(ACTION_BUTTON_MOVIE_TRS) / sizeof(TextRectangle),
+                21600, 21600,
+                  NULL, 0);
+
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
   switch(type)
@@ -4624,6 +5489,56 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_TEXT_FADE_LEFT;
   case TEXT_FADE_UP:
     return &CS_TEXT_FADE_UP;
+  case TEXT_FADE_DOWN:
+    return &CS_TEXT_FADE_DOWN;
+  case TEXT_SLANT_UP:
+    return &CS_TEXT_SLANT_UP;
+  case TEXT_SLANT_DOWN:
+    return &CS_TEXT_SLANT_DOWN;
+  case TEXT_CAN_UP:
+    return &CS_TEXT_CAN_UP;
+  case TEXT_CAN_DOWN:
+    return &CS_TEXT_CAN_DOWN;
+  case FLOW_CHART_ALTERNATE_PROCESS:
+    return &CS_FLOW_CHART_ALTERNATE_PROCESS;
+  case FLOW_CHART_OFFPAGE_CONNECTOR:
+    return &CS_FLOW_CHART_OFFPAGE_CONNECTOR;
+  case LEFT_RIGHT_UP_ARROW:
+    return &CS_LEFT_RIGHT_UP_ARROW;
+  case SUN:
+    return &CS_SUN;
+  case MOON:
+    return &CS_MOON;
+  case BRACKET_PAIR:
+    return &CS_BRACKET_PAIR;
+  case BRACE_PAIR:
+    return &CS_BRACE_PAIR;
+  case DOUBLE_WAVE:
+    return &CS_DOUBLE_WAVE;
+  case ACTION_BUTTON_BLANK:
+    return &CS_ACTION_BUTTON_BLANK;
+  case ACTION_BUTTON_HOME:
+    return &CS_ACTION_BUTTON_HOME;
+  case ACTION_BUTTON_HELP:
+    return &CS_ACTION_BUTTON_HELP;
+  case ACTION_BUTTON_INFORMATION:
+    return &CS_ACTION_BUTTON_INFORMATION;
+  case ACTION_BUTTON_FORWARD_NEXT:
+    return &CS_ACTION_BUTTON_FORWARD_NEXT;
+  case ACTION_BUTTON_BACK_PREVIOUS:
+    return &CS_ACTION_BUTTON_BACK_PREVIOUS;
+  case ACTION_BUTTON_END:
+    return &CS_ACTION_BUTTON_END;
+  case ACTION_BUTTON_BEGINNING:
+    return &CS_ACTION_BUTTON_BEGINNING;
+  case ACTION_BUTTON_RETURN:
+    return &CS_ACTION_BUTTON_RETURN;
+  case ACTION_BUTTON_DOCUMENT:
+    return &CS_ACTION_BUTTON_DOCUMENT;
+  case ACTION_BUTTON_SOUND:
+    return &CS_ACTION_BUTTON_SOUND;
+  case ACTION_BUTTON_MOVIE:
+    return &CS_ACTION_BUTTON_MOVIE;
   default:
     return NULL;
   }

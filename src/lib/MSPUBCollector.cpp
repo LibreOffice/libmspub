@@ -77,6 +77,22 @@ void libmspub::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coor
   write(painter);
 }
 
+void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
+{
+  WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
+  WPXString stroke = graphicsProps["draw:stroke"]->getStr();
+  graphicsProps.insert("draw:stroke", "none");
+  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
+  setCoordProps(coord);
+  m_closeEverything = true;
+  write(painter);
+  graphicsProps.insert("draw:stroke", stroke);
+  graphicsProps.insert("draw:fill", "none");
+  m_closeEverything = false;
+  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
+  write(painter);
+}
+
 void libmspub::Shape::setCoordProps(Coordinate coord)
 {
   owner->setRectCoordProps(coord, &props);
@@ -308,9 +324,9 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   const CustomShape *shape = getCustomShape(m_type);
   if (shape)
   {
-    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this);
+    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything);
   }
-  if (m_hasText)
+  if (m_hasText && !m_closeEverything) // only fill in text on the second pass
   {
     owner->setRectCoordProps(m_textCoord, &props);
     painter->startTextObject(props, WPXPropertyListVector());

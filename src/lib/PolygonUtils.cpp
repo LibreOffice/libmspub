@@ -5556,10 +5556,10 @@ enum Command
   NOSTROKE,
   ANGLEELLIPSE,
   CLOSESUBPATH,
-  /* ARCTO,
+  ARCTO,
   ARC,
   CLOCKWISEARCTO,
-  CLOCKWISEARC,*/
+  CLOCKWISEARC,
   ENDSUBPATH,
   ELLIPTICALQUADRANTX,
   ELLIPTICALQUADRANTY
@@ -5592,22 +5592,22 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ANGLEELLIPSE;
     count = (binary & 0xFF) / 3;
     break;
-    /* case 0xA3:
-      cmd = ARCTO;
-      count = (binary & 0xFF) / 4;
-      break;
-    case 0xA4:
-      cmd = ARC;
-      count = (binary & 0xFF) / 4;
-      break;
-    case 0xA5:
-      cmd = CLOCKWISEARCTO;
-      count = (binary & 0xFF) / 4;
-      break;
-    case 0xA6:
-      cmd = CLOCKWISEARC;
-      count = (binary & 0xFF) / 4;
-      break; */
+  case 0xA3:
+    cmd = ARCTO;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA4:
+    cmd = ARC;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA5:
+    cmd = CLOCKWISEARCTO;
+    count = (binary & 0xFF) / 4;
+    break;
+  case 0xA6:
+    cmd = CLOCKWISEARC;
+    count = (binary & 0xFF) / 4;
+    break;
   case 0xA7:
     cmd = ELLIPTICALQUADRANTX;
     count = (binary & 0xFF);
@@ -5663,7 +5663,7 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller)
+void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything)
 {
   if (width == 0 || height == 0)
   {
@@ -5688,6 +5688,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
   else
   {
     unsigned vertexIndex = 0;
+    bool hasUnclosedElements = false;
     for (unsigned i = 0; i < shape->m_numElements; ++i)
     {
       ShapeElementCommand cmd = getCommandFromBinary(shape->mp_elements[i]);
@@ -5705,6 +5706,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           double currY = y + getSpecialIfNecessary(caller, curr.m_y) / divisorY;
           if (vertexIndex)
           {
+            hasUnclosedElements = true;
             const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
             double prevX = x + getSpecialIfNecessary(caller, prev.m_x) / divisorX;
             double prevY = y + getSpecialIfNecessary(caller, prev.m_y) / divisorY;
@@ -5766,6 +5768,13 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
             if (vertexIndex < shape->m_numVertices)
             {
               WPXPropertyList moveVertex;
+              if (hasUnclosedElements && closeEverything)
+              {
+                WPXPropertyList closeVertex;
+                closeVertex.insert("libwpg:path-action", "Z");
+                vertices.append(closeVertex);
+              }
+              hasUnclosedElements = false;
               double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
               double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
               moveVertex.insert("svg:x", newX / divisorX + x);
@@ -5778,17 +5787,18 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
       }
       break;
-      /* case CLOCKWISEARCTO:
+      case CLOCKWISEARCTO:
       case CLOCKWISEARC:
       case ARCTO:
       case ARC:
         {
-          bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
+          //bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
           bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
           for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
           {
-            unsigned startIndex = vertexIndex + clockwise ? 3 : 2;
-            unsigned endIndex = vertexIndex + clockwise ? 2 : 3;
+            hasUnclosedElements = true;
+            unsigned startIndex = vertexIndex + (clockwise ? 3 : 2);
+            unsigned endIndex = vertexIndex + (clockwise ? 2 : 3);
             double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
             double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
             double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
@@ -5804,24 +5814,24 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
             vertices.append(moveVertex);
             WPXPropertyList endVertex;
             endVertex.insert("libwpg:path-action", "A");
-            endVertex.insert("libwpg:large-arc", 0);
+            double startAngle = atan2((bottom + top) / 2 - startY, startX - (right + left) / 2);
+            double endAngle = atan2((bottom + top) / 2 - endY, endX - (right + left) / 2);
+            bool large = startAngle >= 0 ? (endAngle < startAngle && endAngle < -startAngle) : (endAngle > startAngle && endAngle < -startAngle);
+            endVertex.insert("libwpg:large-arc", large ? 1 : 0);
             endVertex.insert("libwpg:sweep", 0);
             endVertex.insert("svg:x", endX);
             endVertex.insert("svg:y", endY);
             endVertex.insert("svg:rx", (right - left) / 2);
             endVertex.insert("svg:ry", (bottom - top) / 2);
             vertices.append(endVertex);
-            if (! move)
-            {
-              vertices.append(moveVertex); //move back
-            }
           }
         }
         break;
-      */
+      
       case ANGLEELLIPSE:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
+          hasUnclosedElements = true;
           WPXPropertyList vertex;
           double startAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x);
           double endAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y);
@@ -5863,6 +5873,13 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       case MOVETO:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
+          if (hasUnclosedElements && closeEverything)
+          {
+            WPXPropertyList closeVertex;
+            closeVertex.insert("libwpg:path-action", "Z");
+            vertices.append(closeVertex);
+          }
+          hasUnclosedElements = false;
           WPXPropertyList moveVertex;
           double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
           double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
@@ -5875,6 +5892,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       case LINETO:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
+          hasUnclosedElements = true;
           WPXPropertyList vertex;
           double vertexX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
           double vertexY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
@@ -5887,6 +5905,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       case CURVETO:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
+          hasUnclosedElements = true;
           double firstCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
           double firstCtrlY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
           double secondCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
@@ -5910,11 +5929,18 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         WPXPropertyList end;
         end.insert("libwpg:path-action", "Z");
         vertices.append(end);
+        hasUnclosedElements = false;
       }
       break;
       default:
         break;
       }
+    }
+    if (hasUnclosedElements && closeEverything)
+    {
+      WPXPropertyList closeVertex;
+      closeVertex.insert("libwpg:path-action", "Z");
+      vertices.append(closeVertex);
     }
     painter->drawPath(vertices);
   }

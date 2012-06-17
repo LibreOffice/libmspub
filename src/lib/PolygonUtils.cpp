@@ -5625,10 +5625,10 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     count = (binary & 0xFF);
     count = count ? count : 1;
     break;
-  case 0x80:
+  case 0x60:
     cmd = CLOSESUBPATH;
     break;
-  case 0x60:
+  case 0x80:
     cmd = ENDSUBPATH;
     break;
   default:
@@ -5904,7 +5904,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           vertices.append(bezier);
         }
         break;
-      case ENDSUBPATH:
+      case CLOSESUBPATH:
+      // case ENDSUBPATH:
       {
         WPXPropertyList end;
         end.insert("libwpg:path-action", "Z");

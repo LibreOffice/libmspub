@@ -1628,7 +1628,8 @@ const Vertex CALLOUT_2_VERTICES[] =
 
 const unsigned short CALLOUT_2_SEGMENTS[] =
 {
-  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE
+  0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000, 0x4000, 0x0001, 0x8000
 };
 
 const Calculation CALLOUT_2_CALC[] =
@@ -1657,7 +1658,8 @@ const Vertex CALLOUT_3_VERTICES[] =
 
 const unsigned short CALLOUT_3_SEGMENTS[] =
 {
-  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0xaa00, 0x0003, 0x8000 // NO FILL
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE
+  0x4000, 0xaa00, 0x0003, 0x8000 // NO FILL
 };
 
 const Calculation CALLOUT_3_CALC[] =
@@ -1686,7 +1688,8 @@ const Vertex CALLOUT_1_VERTICES[] =
 
 const unsigned short CALLOUT_1_SEGMENTS[] =
 {
-  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE 0x4000, 0x0001, 0x8000
+  0x4000, 0xab00, 0x0003, 0x6000, 0x8000, // NO STROKE
+  0x4000, 0x0001, 0x8000
 };
 
 const Calculation CALLOUT_1_CALC[] =
@@ -5575,10 +5578,10 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   unsigned count = 0;
   switch(binary >> 8)
   {
-  case 0xAB:
+  case 0xAA:
     cmd = NOFILL;
     break;
-  case 0xAA:
+  case 0xAB:
     cmd = NOSTROKE;
     break;
   case 0x20:

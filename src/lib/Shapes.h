@@ -67,13 +67,13 @@ private:
 };
 struct FillableShape : public Shape
 {
-  FillableShape(MSPUBCollector *o) : Shape(o), fill(NULL) { }
-  Fill *fill;
+  FillableShape(MSPUBCollector *o) : Shape(o), m_fill(NULL) { }
+  Fill *m_fill;
   void setFill(Fill *fill);
 protected:
   virtual WPXPropertyListVector updateGraphicsProps();
 private:
-  FillableShape(const FillableShape &) : Shape(NULL), fill(NULL) { }
+  FillableShape(const FillableShape &) : Shape(NULL), m_fill(NULL) { }
   FillableShape &operator=(const FillableShape &)
   {
     return *this;

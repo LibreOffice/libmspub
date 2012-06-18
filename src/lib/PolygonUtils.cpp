@@ -5791,43 +5791,43 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       case CLOCKWISEARC:
       case ARCTO:
       case ARC:
+      {
+        //bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
+        bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
         {
-          //bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
-          bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
-          for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
-          {
-            hasUnclosedElements = true;
-            unsigned startIndex = vertexIndex + (clockwise ? 3 : 2);
-            unsigned endIndex = vertexIndex + (clockwise ? 2 : 3);
-            double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-            double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
-            double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
-            double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
-            double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
-            double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
-            double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
-            double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
-            WPXPropertyList moveVertex;
-            moveVertex.insert("libwpg:path-action", "M");
-            moveVertex.insert("svg:x", startX);
-            moveVertex.insert("svg:y", startY);
-            vertices.append(moveVertex);
-            WPXPropertyList endVertex;
-            endVertex.insert("libwpg:path-action", "A");
-            double startAngle = atan2((bottom + top) / 2 - startY, startX - (right + left) / 2);
-            double endAngle = atan2((bottom + top) / 2 - endY, endX - (right + left) / 2);
-            bool large = startAngle >= 0 ? (endAngle < startAngle && endAngle < -startAngle) : (endAngle > startAngle && endAngle < -startAngle);
-            endVertex.insert("libwpg:large-arc", large ? 1 : 0);
-            endVertex.insert("libwpg:sweep", 0);
-            endVertex.insert("svg:x", endX);
-            endVertex.insert("svg:y", endY);
-            endVertex.insert("svg:rx", (right - left) / 2);
-            endVertex.insert("svg:ry", (bottom - top) / 2);
-            vertices.append(endVertex);
-          }
+          hasUnclosedElements = true;
+          unsigned startIndex = vertexIndex + (clockwise ? 3 : 2);
+          unsigned endIndex = vertexIndex + (clockwise ? 2 : 3);
+          double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
+          double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+          double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
+          double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
+          double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
+          double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
+          WPXPropertyList moveVertex;
+          moveVertex.insert("libwpg:path-action", "M");
+          moveVertex.insert("svg:x", startX);
+          moveVertex.insert("svg:y", startY);
+          vertices.append(moveVertex);
+          WPXPropertyList endVertex;
+          endVertex.insert("libwpg:path-action", "A");
+          double startAngle = atan2((bottom + top) / 2 - startY, startX - (right + left) / 2);
+          double endAngle = atan2((bottom + top) / 2 - endY, endX - (right + left) / 2);
+          bool large = startAngle >= 0 ? (endAngle < startAngle && endAngle < -startAngle) : (endAngle > startAngle && endAngle < -startAngle);
+          endVertex.insert("libwpg:large-arc", large ? 1 : 0);
+          endVertex.insert("libwpg:sweep", 0);
+          endVertex.insert("svg:x", endX);
+          endVertex.insert("svg:y", endY);
+          endVertex.insert("svg:rx", (right - left) / 2);
+          endVertex.insert("svg:ry", (bottom - top) / 2);
+          vertices.append(endVertex);
         }
-        break;
-      
+      }
+      break;
+
       case ANGLEELLIPSE:
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
@@ -5924,7 +5924,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         }
         break;
       case CLOSESUBPATH:
-      // case ENDSUBPATH:
+        // case ENDSUBPATH:
       {
         WPXPropertyList end;
         end.insert("libwpg:path-action", "Z");

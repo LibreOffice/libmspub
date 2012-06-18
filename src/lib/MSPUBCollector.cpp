@@ -80,17 +80,28 @@ void libmspub::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coor
 void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
-  WPXString stroke = graphicsProps["draw:stroke"]->getStr();
-  graphicsProps.insert("draw:stroke", "none");
-  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-  setCoordProps(coord);
-  m_closeEverything = true;
-  write(painter);
-  graphicsProps.insert("draw:stroke", stroke);
-  graphicsProps.insert("draw:fill", "none");
-  m_closeEverything = false;
-  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-  write(painter);
+  WPXString stroke = graphicsProps["draw:stroke"] ? graphicsProps["draw:stroke"]->getStr() : "none";
+  WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
+  if (stroke != "none" && fill != "none")
+    owner->m_painter->startLayer(WPXPropertyList());
+  if (fill != "none")
+  {
+    graphicsProps.insert("draw:stroke", "none");
+    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    setCoordProps(coord);
+    m_closeEverything = true;
+    write(painter);
+  }
+  if (stroke != "none")
+  {
+    graphicsProps.insert("draw:stroke", stroke);
+    graphicsProps.insert("draw:fill", "none");
+    m_closeEverything = false;
+    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    write(painter);
+  }
+  if (stroke != "none" && fill != "none")
+    owner->m_painter->endLayer();
 }
 
 void libmspub::Shape::setCoordProps(Coordinate coord)
@@ -285,9 +296,9 @@ void libmspub::GeometricShape::setCoordProps(Coordinate coord)
 
 WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
 {
-  if (fill)
+  if (m_fill)
   {
-    return fill->getProperties(&graphicsProps);
+    return m_fill->getProperties(&graphicsProps);
   }
   else
   {
@@ -298,9 +309,9 @@ WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
 
 WPXPropertyListVector libmspub::TextShape::updateGraphicsProps()
 {
-  if (fill)
+  if (m_fill)
   {
-    return fill->getProperties(&props);
+    return m_fill->getProperties(&props);
   }
   return WPXPropertyListVector();
 }
@@ -351,7 +362,7 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 
 void libmspub::FillableShape::setFill(Fill *f)
 {
-  fill = f;
+  m_fill = f;
 }
 
 void libmspub::GeometricShape::setLine(ColorReference line)

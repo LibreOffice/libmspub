@@ -142,6 +142,10 @@ double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int a
     unsigned adjustIndex = arg - PROP_ADJUST_VAL_FIRST;
     if (adjustIndex < shape.m_numDefaultAdjustValues)
     {
+      if ((shape.m_adjustShiftMask >> adjustIndex) & 0x1)
+      {
+        return m_adjustValues[adjustIndex] >> 16;
+      }
       return m_adjustValues[adjustIndex];
     }
     return 0;

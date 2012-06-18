@@ -86,17 +86,19 @@ struct CustomShape
   unsigned m_coordHeight;
   const Vertex *mp_gluePoints;
   unsigned m_numGluePoints;
+  unsigned char m_adjustShiftMask;
 
   Coordinate getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const;
 
-  CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const int *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints) :
+  CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const int *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints, unsigned char adjustShiftMask = 0) :
     mp_vertices(p_vertices), m_numVertices(numVertices),
     mp_elements(p_elements), m_numElements(numElements),
     mp_calculations(p_calculations), m_numCalculations(numCalculations),
     mp_defaultAdjustValues(p_defaultAdjustValues), m_numDefaultAdjustValues(numDefaultAdjustValues),
     mp_textRectangles(p_textRectangles), m_numTextRectangles(numTextRectangles),
     m_coordWidth(coordWidth), m_coordHeight(coordHeight),
-    mp_gluePoints(p_gluePoints), m_numGluePoints(numGluePoints)
+    mp_gluePoints(p_gluePoints), m_numGluePoints(numGluePoints),
+    m_adjustShiftMask(adjustShiftMask)
   {
   }
 };

@@ -1085,10 +1085,10 @@ const unsigned short BLOCK_ARC_SEGMENTS[] =
 
 const Calculation BLOCK_ARC_CALC[] =
 {
-  Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0), 
+  Calculation(0x400a, 10800, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x4009, 10800, PROP_ADJUST_VAL_FIRST, 0),
   Calculation(0x2000, 0x400, 10800, 0),
   Calculation(0x2000, 0x401, 10800, 0), Calculation(0x8000, 21600, 0, 0x402),
-  Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1), 
+  Calculation(0x8000, 10800, 0, PROP_ADJUST_VAL_FIRST + 1),
   Calculation(0x4000, 10800, PROP_ADJUST_VAL_FIRST + 1, 0),
   Calculation(0x600a, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST, 0),
   Calculation(0x6009, PROP_ADJUST_VAL_FIRST + 1, PROP_ADJUST_VAL_FIRST, 0),
@@ -5799,42 +5799,42 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
       case ARCTO:
       case ARC:
       {
-          bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
-          bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
-          for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
-          {
-            hasUnclosedElements = true;
-            unsigned startIndex = vertexIndex + 2;//(clockwise ? 3 : 2);
-            unsigned endIndex = vertexIndex + 3;//(clockwise ? 2 : 3);
-            double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-            double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
-            double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
-            double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
-            double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
-            double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
-            double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
-            double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
-            WPXPropertyList moveVertex;
-            moveVertex.insert("libwpg:path-action", move ? "L" : "M");
-            moveVertex.insert("svg:x", startX);
-            moveVertex.insert("svg:y", startY);
-            vertices.append(moveVertex);
-            WPXPropertyList endVertex;
-            endVertex.insert("libwpg:path-action", "A");
-            double startVecX = startX - (right + left) / 2;
-            double startVecY = (top + bottom) / 2 - startY;
-            double endVecX = endX - (right + left) / 2;
-            double endVecY = (top + bottom ) / 2 - endY;
-            double startAngle = atan2(startVecY, startVecX);
-            bool large = (endVecX * sin(startAngle) <= endVecY * cos(startAngle)) ? clockwise : !clockwise; //let $ be the angle of Start. Then this checks the sign of the y component of End rotated by -$. If the sign is negative and we are going counterclockwise, this is a short arc. Do the opposite for clockwise.
-            endVertex.insert("libwpg:large-arc", large ? 1 : 0);
-            endVertex.insert("libwpg:sweep", clockwise ? 1 : 0);
-            endVertex.insert("svg:x", endX);
-            endVertex.insert("svg:y", endY);
-            endVertex.insert("svg:rx", (right - left) / 2);
-            endVertex.insert("svg:ry", (bottom - top) / 2);
-            vertices.append(endVertex);
-          }
+        bool move = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO);
+        bool clockwise = (cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC);
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
+        {
+          hasUnclosedElements = true;
+          unsigned startIndex = vertexIndex + 2;//(clockwise ? 3 : 2);
+          unsigned endIndex = vertexIndex + 3;//(clockwise ? 2 : 3);
+          double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
+          double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+          double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
+          double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
+          double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
+          double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
+          WPXPropertyList moveVertex;
+          moveVertex.insert("libwpg:path-action", move ? "L" : "M");
+          moveVertex.insert("svg:x", startX);
+          moveVertex.insert("svg:y", startY);
+          vertices.append(moveVertex);
+          WPXPropertyList endVertex;
+          endVertex.insert("libwpg:path-action", "A");
+          double startVecX = startX - (right + left) / 2;
+          double startVecY = (top + bottom) / 2 - startY;
+          double endVecX = endX - (right + left) / 2;
+          double endVecY = (top + bottom ) / 2 - endY;
+          double startAngle = atan2(startVecY, startVecX);
+          bool large = (endVecX * sin(startAngle) <= endVecY * cos(startAngle)) ? clockwise : !clockwise; //let $ be the angle of Start. Then this checks the sign of the y component of End rotated by -$. If the sign is negative and we are going counterclockwise, this is a short arc. Do the opposite for clockwise.
+          endVertex.insert("libwpg:large-arc", large ? 1 : 0);
+          endVertex.insert("libwpg:sweep", clockwise ? 1 : 0);
+          endVertex.insert("svg:x", endX);
+          endVertex.insert("svg:y", endY);
+          endVertex.insert("svg:rx", (right - left) / 2);
+          endVertex.insert("svg:ry", (bottom - top) / 2);
+          vertices.append(endVertex);
+        }
       }
       break;
 

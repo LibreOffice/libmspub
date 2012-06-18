@@ -336,6 +336,12 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
 
 void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
+  // If a shape includes text, and if the font from the PUB file
+  // is not available in LibreOffice (unfortunately we haven't gotten embedded fonts working yet...)
+  // then the bounding box of the text might be different from the size of the shape.
+  // So which size should be used? We should compromise by using the size of the text for rectangular shapes,
+  // and the size of the shape for other shapes. However currently the size of the shape is used in all cases,
+  // causing ugliness in some documents.
   const CustomShape *shape = getCustomShape(m_type);
   if (shape)
   {

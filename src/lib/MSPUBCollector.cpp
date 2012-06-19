@@ -97,6 +97,7 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
     graphicsProps.insert("draw:stroke", stroke);
     graphicsProps.insert("draw:fill", "none");
     m_closeEverything = false;
+    setCoordProps(coord);
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     write(painter);
   }

@@ -45,7 +45,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapeFillsBySeqNum(), m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
-  m_shapeRotationsBySeqNum()
+  m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum()
 {
 }
 
@@ -346,7 +346,7 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   const CustomShape *shape = getCustomShape(m_type);
   if (shape)
   {
-    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation);
+    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation, m_flipV, m_flipH);
   }
   if (m_hasText && !m_closeEverything) // only fill in text on the second pass
   {
@@ -436,6 +436,11 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 bool libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, short rotation)
 {
   return m_shapeRotationsBySeqNum.insert(std::pair<const unsigned, short>(seqNum, rotation)).second;
+}
+
+bool libmspub::MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
+{
+  return m_shapeFlipsBySeqNum.insert(std::pair<const unsigned, std::pair<bool, bool> >(seqNum, std::pair<bool, bool>(flipVertical, flipHorizontal))).second;
 }
 
 bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
@@ -534,6 +539,12 @@ void libmspub::MSPUBCollector::assignImages()
     if (ptr_rotation)
     {
       shape->setClockwiseRotation(*ptr_rotation);
+    }
+    std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
+    if (ptr_flips)
+    {
+      shape->m_flipV = ptr_flips->first;
+      shape->m_flipH = ptr_flips->second;
     }
     if (index && *index - 1 < m_images.size())
     {

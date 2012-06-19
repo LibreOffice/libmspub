@@ -50,6 +50,8 @@
 #define FIELDID_ADJUST_VALUE_3         0x0149
 #define FIELDID_ROTATION               0x0004
 
+#define FLAG_FLIP_V (1 << 7)
+#define FLAG_FLIP_H (1 << 6)
 
 #endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

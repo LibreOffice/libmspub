@@ -87,6 +87,7 @@ public:
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
   bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
   bool setShapeRotation(unsigned seqNum, short rotation);
+  bool setShapeFlip(unsigned, bool, bool);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -140,6 +141,7 @@ private:
   std::set<unsigned> m_skipIfNotBgSeqNums;
   std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
   std::map<unsigned, short> m_shapeRotationsBySeqNum;
+  std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
 
   // helper functions
   void assignImages();

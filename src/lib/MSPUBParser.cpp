@@ -1019,6 +1019,10 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
               if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))
               {
                 m_collector->setShapeType(*shapeSeqNum, (ShapeType)(cFsp.initial >> 4));
+                std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
+                input->seek(cFsp.contentsOffset + 4, WPX_SEEK_SET);
+                unsigned flags = readU32(input);
+                m_collector->setShapeFlip(*shapeSeqNum, flags & FLAG_FLIP_V, flags & FLAG_FLIP_H);
               }
 
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);

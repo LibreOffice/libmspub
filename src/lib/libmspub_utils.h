@@ -97,6 +97,8 @@ void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
 
 bool stillReading(WPXInputStream *input, unsigned long until);
 
+unsigned correctModulo(int x, unsigned n);
+
 template <class MapT> typename MapT::mapped_type *getIfExists(MapT &map, const typename MapT::key_type &key)
 {
   typename MapT::iterator i = map.find(key);

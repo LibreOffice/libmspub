@@ -5670,11 +5670,35 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything)
+void rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
+{
+  double vecX = x - centerX;
+  double vecY = centerY - y;
+  double sinTheta = sin(rotation * PI / 180.);
+  double cosTheta = cos(rotation * PI / 180.);
+  double newVecX = cosTheta * vecX - sinTheta * vecY;
+  double newVecY = sinTheta * vecX + cosTheta * vecY;
+  x = centerX + newVecX;
+  y = centerY - newVecY;
+}
+
+void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation)
 {
   if (width == 0 || height == 0)
   {
     return;
+  }
+  double centerX = x + width / 2;
+  double centerY = y + height / 2;
+  clockwiseRotation = correctModulo(clockwiseRotation, 360);
+  if ( (clockwiseRotation >= 45 && clockwiseRotation < 135) || clockwiseRotation >= 225)
+  {
+    //MS PUB format gives start and end vertices for the bounding rectangle rotated by 90 degrees in this case.
+    rotateCounter(x, y, centerX, centerY, 90);
+    double temp = height;
+    height = width;
+    width = temp;
+    y -= height;
   }
   double divisorX = shape->m_coordWidth / width;
   double divisorY = shape->m_coordHeight / height;
@@ -5684,10 +5708,11 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
     for (unsigned i = 0; i < shape->m_numVertices; ++i)
     {
       WPXPropertyList vertex;
-      double vertexX = getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
-      double vertexY = getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
-      vertex.insert("svg:x", vertexX / divisorX + x);
-      vertex.insert("svg:y", vertexY / divisorY + y);
+      double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
+      double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
+      rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
+      vertex.insert("svg:x", vertexX);
+      vertex.insert("svg:y", vertexY);
       vertices.append(vertex);
     }
     painter->drawPolygon(vertices);
@@ -5891,10 +5916,11 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
           }
           hasUnclosedElements = false;
           WPXPropertyList moveVertex;
-          double newX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
-          double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
-          moveVertex.insert("svg:x", newX / divisorX + x);
-          moveVertex.insert("svg:y", newY / divisorY + y);
+          double newX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double newY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          rotateCounter(newX, newY, centerX, centerY, -clockwiseRotation);
+          moveVertex.insert("svg:x", newX);
+          moveVertex.insert("svg:y", newY);
           moveVertex.insert("libwpg:path-action", "M");
           vertices.append(moveVertex);
         }
@@ -5904,10 +5930,11 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
         {
           hasUnclosedElements = true;
           WPXPropertyList vertex;
-          double vertexX = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
-          double vertexY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
-          vertex.insert("svg:x", vertexX / divisorX + x);
-          vertex.insert("svg:y", vertexY / divisorY + y);
+          double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
+          double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
+          vertex.insert("svg:x", vertexX);
+          vertex.insert("svg:y", vertexY);
           vertex.insert("libwpg:path-action", "L");
           vertices.append(vertex);
         }

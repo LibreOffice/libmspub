@@ -1009,6 +1009,11 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 {
                   m_collector->setAdjustValue(*shapeSeqNum, 2, *ptr_adjust3);
                 }
+                int *ptr_rotation = (int *)getIfExists(foptValues, FIELDID_ROTATION);
+                if (ptr_rotation)
+                {
+                  m_collector->setShapeRotation(*shapeSeqNum, (short)((*ptr_rotation) >> 16));
+                }
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
               if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))

@@ -130,9 +130,9 @@ void libmspub::TextShape::write(libwpg::WPGPaintInterface *painter)
   painter->endTextObject();
 }
 
-void libmspub::GeometricShape::setRotation(short rotation)
+void libmspub::GeometricShape::setClockwiseRotation(short rotation)
 {
-  props.insert("libwpg:rotate", rotation);
+  m_clockwiseRotation = rotation;
 }
 
 double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int arg) const
@@ -345,7 +345,7 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   const CustomShape *shape = getCustomShape(m_type);
   if (shape)
   {
-    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything);
+    writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation);
   }
   if (m_hasText && !m_closeEverything) // only fill in text on the second pass
   {
@@ -532,7 +532,7 @@ void libmspub::MSPUBCollector::assignImages()
     short *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
     if (ptr_rotation)
     {
-      shape->setRotation(*ptr_rotation);
+      shape->setClockwiseRotation(*ptr_rotation);
     }
     if (index && *index - 1 < m_images.size())
     {

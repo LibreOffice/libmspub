@@ -34,6 +34,12 @@
 
 #define ZLIB_CHUNK 16384
 
+unsigned libmspub::correctModulo(int x, unsigned n) // returns the canonical representation of x in Z/nZ
+  //difference with C++ % operator is that this never returns negative values.
+{
+  return (x < 0) ? (n - (x % n)) : (x % n);
+}
+
 WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
 {
   WPXBinaryData inflated;

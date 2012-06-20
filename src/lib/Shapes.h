@@ -79,20 +79,6 @@ private:
     return *this;
   }
 };
-struct TextShape : public FillableShape
-{
-  TextShape(std::vector<TextParagraph> s, MSPUBCollector *o) : FillableShape(o), str(s) { }
-  std::vector<TextParagraph> str;
-protected:
-  void write(libwpg::WPGPaintInterface *painter);
-  WPXPropertyListVector updateGraphicsProps();
-private:
-  TextShape(const TextShape &) : FillableShape(NULL), str() { }
-  TextShape &operator=(const TextShape &)
-  {
-    return *this;
-  }
-};
 struct GeometricShape : public FillableShape
 {
   void setLine(ColorReference line);

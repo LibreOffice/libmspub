@@ -59,7 +59,6 @@ namespace libmspub
 class MSPUBCollector
 {
   friend struct Shape;
-  friend struct TextShape;
   friend struct GeometricShape;
   friend struct FillableShape;
   friend class Fill;

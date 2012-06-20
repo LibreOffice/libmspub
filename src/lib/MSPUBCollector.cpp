@@ -121,27 +121,6 @@ void libmspub::Shape::setCoordProps(Coordinate coord)
   owner->setRectCoordProps(coord, &props);
 }
 
-void libmspub::TextShape::write(libwpg::WPGPaintInterface *painter)
-{
-  painter->startTextObject(props, WPXPropertyListVector());
-  for (unsigned i_lines = 0; i_lines < str.size(); ++i_lines)
-  {
-    WPXPropertyList paraProps = owner->getParaStyleProps(str[i_lines].style, str[i_lines].style.defaultCharStyleIndex);
-    painter->startTextLine(paraProps);
-    for (unsigned i_spans = 0; i_spans < str[i_lines].spans.size(); ++i_spans)
-    {
-      WPXString text;
-      appendCharacters(text, str[i_lines].spans[i_spans].chars);
-      WPXPropertyList charProps = owner->getCharStyleProps(str[i_lines].spans[i_spans].style, str[i_lines].style.defaultCharStyleIndex);
-      painter->startTextSpan(charProps);
-      painter->insertText(text);
-      painter->endTextSpan();
-    }
-    painter->endTextLine();
-  }
-  painter->endTextObject();
-}
-
 void libmspub::GeometricShape::setClockwiseRotation(short rotation)
 {
   m_clockwiseRotation = rotation;
@@ -319,15 +298,6 @@ WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
   else
   {
     graphicsProps.insert("draw:fill", "none");
-  }
-  return WPXPropertyListVector();
-}
-
-WPXPropertyListVector libmspub::TextShape::updateGraphicsProps()
-{
-  if (m_fill)
-  {
-    return m_fill->getProperties(&props);
   }
   return WPXPropertyListVector();
 }

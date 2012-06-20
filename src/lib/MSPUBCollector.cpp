@@ -328,9 +328,10 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
 void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
 {
   owner->setRectCoordProps(m_textCoord, &props);
-  if (m_clockwiseRotation != 0)
+  short textRotation = correctModulo(m_clockwiseRotation + (m_flipV ? 180 : 0), 360);
+  if (textRotation != 0)
   {
-    props.insert("libwpg:rotate", m_clockwiseRotation);
+    props.insert("libwpg:rotate", textRotation);
   }
   painter->startTextObject(props, WPXPropertyListVector());
   for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)

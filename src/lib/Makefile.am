@@ -37,6 +37,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \
 	libmspub_utils.h \
+	ShapeFlags.h \
 	ShapeType.h \
 	Fill.h \
 	ColorReference.h \

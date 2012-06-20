@@ -41,6 +41,7 @@
 #define FIELDID_FILL_BACK_COLOR        0x0183
 #define FIELDID_FILL_BACK_OPACITY      0x0184
 #define FIELDID_LINE_COLOR             0x01C0
+#define FIELDID_LINE_STYLE_BOOL_PROPS  0x01FF
 #define FIELDID_FILL_TYPE              0x0180
 #define FIELDID_FILL_ANGLE             0x018B
 #define FIELDID_FILL_FOCUS             0x018C
@@ -50,8 +51,8 @@
 #define FIELDID_ADJUST_VALUE_3         0x0149
 #define FIELDID_ROTATION               0x0004
 
-#define FLAG_FLIP_V (1 << 7)
-#define FLAG_FLIP_H (1 << 6)
+#define FLAG_USE_LINE   (1 << 19)
+#define FLAG_LINE       (1 << 3)
 
 #endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

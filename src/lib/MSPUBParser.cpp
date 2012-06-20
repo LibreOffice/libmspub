@@ -42,6 +42,7 @@
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
 #include "ShapeType.h"
+#include "ShapeFlags.h"
 #include "Shapes.h"
 #include "Fill.h"
 #include "FillType.h"
@@ -983,10 +984,19 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                     MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
                   }
                 }
+                bool useLine = true;
                 unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
+                unsigned *ptr_lineFlags = getIfExists(foptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
+                if (ptr_lineFlags)
+                {
+                  if (((*ptr_lineFlags) & FLAG_USE_LINE) && !((*ptr_lineFlags) & FLAG_LINE))
+                  {
+                    useLine = false;
+                  }
+                }
                 bool skipIfNotBg = false;
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
-                if (ptr_lineColor)
+                if (ptr_lineColor && useLine)
                 {
                   m_collector->setShapeLineColor(*shapeSeqNum, ColorReference(*ptr_lineColor));
                 }
@@ -1022,7 +1032,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
                 input->seek(cFsp.contentsOffset + 4, WPX_SEEK_SET);
                 unsigned flags = readU32(input);
-                m_collector->setShapeFlip(*shapeSeqNum, flags & FLAG_FLIP_V, flags & FLAG_FLIP_H);
+                m_collector->setShapeFlip(*shapeSeqNum, flags & SF_FLIP_V, flags & SF_FLIP_H);
               }
 
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);

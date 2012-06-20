@@ -5269,6 +5269,7 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_CAN;
   case DONUT:
     return &CS_DONUT;
+  case TEXT_BOX:
   case TEXT_SIMPLE:
     return &CS_TEXT_SIMPLE;
   case STRAIGHT_CONNECTOR_1:

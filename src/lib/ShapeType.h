@@ -193,7 +193,8 @@ enum ShapeType
   ACTION_BUTTON_RETURN          = 197,
   ACTION_BUTTON_DOCUMENT        = 198,
   ACTION_BUTTON_SOUND           = 199,
-  ACTION_BUTTON_MOVIE           = 200
+  ACTION_BUTTON_MOVIE           = 200,
+  TEXT_BOX            = 202
 };
 } // libmspub
 #endif /* __SHAPETYPE_H__ */

@@ -88,6 +88,7 @@ struct GeometricShape : public FillableShape
   void setText(std::vector<TextParagraph> str);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
+  void writeText(libwpg::WPGPaintInterface *painter);
 
   std::vector<TextParagraph> m_str;
   bool m_hasText;

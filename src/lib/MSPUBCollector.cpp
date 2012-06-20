@@ -93,9 +93,10 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
   WPXString stroke = graphicsProps["draw:stroke"] ? graphicsProps["draw:stroke"]->getStr() : "none";
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill_ = hasFill();
-  if (stroke != "none" && hasFill_)
+  bool makeLayer = (int)(stroke != "none") + (int)(hasFill_) + (int)(m_hasText) > 1;
+  if (makeLayer)
     owner->m_painter->startLayer(WPXPropertyList());
-  if (hasFill())
+  if (hasFill_)
   {
     graphicsProps.insert("draw:stroke", "none");
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
@@ -112,7 +113,15 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     write(painter);
   }
-  if (stroke != "none" && hasFill_)
+  if (m_hasText)
+  {
+    graphicsProps.insert("draw:stroke", "none");
+    graphicsProps.insert("draw:fill", "none");
+    setCoordProps(coord);
+    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    writeText(painter);
+  }
+  if (makeLayer)
     owner->m_painter->endLayer();
 }
 
@@ -316,6 +325,28 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
   return FillableShape::updateGraphicsProps();
 }
 
+void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
+{
+  owner->setRectCoordProps(m_textCoord, &props);
+  painter->startTextObject(props, WPXPropertyListVector());
+  for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)
+  {
+    WPXPropertyList paraProps = owner->getParaStyleProps(m_str[i_lines].style, m_str[i_lines].style.defaultCharStyleIndex);
+    painter->startTextLine(paraProps);
+    for (unsigned i_spans = 0; i_spans < m_str[i_lines].spans.size(); ++i_spans)
+    {
+      WPXString text;
+      appendCharacters(text, m_str[i_lines].spans[i_spans].chars);
+      WPXPropertyList charProps = owner->getCharStyleProps(m_str[i_lines].spans[i_spans].style, m_str[i_lines].style.defaultCharStyleIndex);
+      painter->startTextSpan(charProps);
+      painter->insertText(text);
+      painter->endTextSpan();
+    }
+    painter->endTextLine();
+  }
+  painter->endTextObject();
+}
+
 void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
   // If a shape includes text, and if the font from the PUB file
@@ -328,27 +359,6 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   if (shape)
   {
     writeCustomShape(shape, props, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation, m_flipV, m_flipH);
-  }
-  if (m_hasText && !m_closeEverything) // only fill in text on the second pass
-  {
-    owner->setRectCoordProps(m_textCoord, &props);
-    painter->startTextObject(props, WPXPropertyListVector());
-    for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)
-    {
-      WPXPropertyList paraProps = owner->getParaStyleProps(m_str[i_lines].style, m_str[i_lines].style.defaultCharStyleIndex);
-      painter->startTextLine(paraProps);
-      for (unsigned i_spans = 0; i_spans < m_str[i_lines].spans.size(); ++i_spans)
-      {
-        WPXString text;
-        appendCharacters(text, m_str[i_lines].spans[i_spans].chars);
-        WPXPropertyList charProps = owner->getCharStyleProps(m_str[i_lines].spans[i_spans].style, m_str[i_lines].style.defaultCharStyleIndex);
-        painter->startTextSpan(charProps);
-        painter->insertText(text);
-        painter->endTextSpan();
-      }
-      painter->endTextLine();
-    }
-    painter->endTextObject();
   }
 }
 

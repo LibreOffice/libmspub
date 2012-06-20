@@ -434,7 +434,7 @@ void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
   // Still not flipping the actual image, but at least we rotate.
   // Note that this does not cause image fills of other types of shape
   // to be rotated correctly -- for this we would need support in ODG format
-  
+
   double centerX = m_x + m_width / 2;
   double centerY = m_y + m_height / 2;
   short clockwiseRotation = correctModulo(m_clockwiseRotation, 360);

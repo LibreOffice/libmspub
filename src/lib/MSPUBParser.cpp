@@ -1029,9 +1029,9 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 unsigned *ptr_right = getIfExists(foptValues, FIELDID_DY_TEXT_RIGHT);
                 unsigned *ptr_bottom = getIfExists(foptValues, FIELDID_DY_TEXT_BOTTOM);
                 m_collector->setShapeMargins(*shapeSeqNum, ptr_left ? *ptr_left : DEFAULT_MARGIN,
-                    ptr_top ? *ptr_top : DEFAULT_MARGIN,
-                    ptr_right ? *ptr_right : DEFAULT_MARGIN,
-                    ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
+                                             ptr_top ? *ptr_top : DEFAULT_MARGIN,
+                                             ptr_right ? *ptr_right : DEFAULT_MARGIN,
+                                             ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
               }
               input->seek(sp.contentsOffset, WPX_SEEK_SET);
               if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))

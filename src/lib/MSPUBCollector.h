@@ -113,7 +113,7 @@ private:
 
   struct Margins
   {
-    Margins(unsigned left, unsigned top, unsigned right, unsigned bottom) : 
+    Margins(unsigned left, unsigned top, unsigned right, unsigned bottom) :
       m_left(left), m_top(top), m_right(right), m_bottom(bottom) { }
     unsigned m_left, m_top, m_right, m_bottom;
   };

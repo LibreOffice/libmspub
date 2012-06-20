@@ -77,14 +77,24 @@ void libmspub::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coor
   write(painter);
 }
 
+bool libmspub::GeometricShape::hasFill()
+{
+  return (graphicsProps["draw:fill"]) ? (graphicsProps["draw:fill"]->getStr() != "none") : false;
+}
+
+bool libmspub::ImgShape::hasFill()
+{
+  return true;
+}
+
 void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
   WPXString stroke = graphicsProps["draw:stroke"] ? graphicsProps["draw:stroke"]->getStr() : "none";
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
-  if (stroke != "none" && fill != "none")
+  if (stroke != "none" && hasFill())
     owner->m_painter->startLayer(WPXPropertyList());
-  if (fill != "none")
+  if (hasFill())
   {
     graphicsProps.insert("draw:stroke", "none");
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
@@ -101,7 +111,7 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     write(painter);
   }
-  if (stroke != "none" && fill != "none")
+  if (stroke != "none" && hasFill())
     owner->m_painter->endLayer();
 }
 

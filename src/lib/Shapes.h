@@ -121,6 +121,7 @@ struct GeometricShape : public FillableShape
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false) { }
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
+  virtual bool hasFill();
   void setCoordProps(Coordinate coord);
   virtual void write(libwpg::WPGPaintInterface *painter);
   WPXPropertyListVector updateGraphicsProps();
@@ -156,6 +157,7 @@ struct ImgShape : public GeometricShape
   static const char *mimeByImgType(ImgType type);
 protected:
   virtual void write(libwpg::WPGPaintInterface *painter);
+  bool hasFill();
 private:
   void setMime_(ImgType type);
   ImgShape(const ImgShape &) : GeometricShape(), img() { }

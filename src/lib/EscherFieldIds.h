@@ -50,6 +50,10 @@
 #define FIELDID_ADJUST_VALUE_2         0x0148
 #define FIELDID_ADJUST_VALUE_3         0x0149
 #define FIELDID_ROTATION               0x0004
+#define FIELDID_DY_TEXT_LEFT           0x0081
+#define FIELDID_DY_TEXT_TOP            0x0082
+#define FIELDID_DY_TEXT_RIGHT          0x0083
+#define FIELDID_DY_TEXT_BOTTOM         0x0084
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

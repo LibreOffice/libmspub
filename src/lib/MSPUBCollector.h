@@ -87,6 +87,7 @@ public:
   bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
   bool setShapeRotation(unsigned seqNum, short rotation);
   bool setShapeFlip(unsigned, bool, bool);
+  bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -108,6 +109,13 @@ private:
     PageInfo() : m_shapeSeqNums(), m_shapeSeqNumsOrdered() { }
     std::vector<unsigned> m_shapeSeqNums;
     std::vector<unsigned> m_shapeSeqNumsOrdered;
+  };
+
+  struct Margins
+  {
+    Margins(unsigned left, unsigned top, unsigned right, unsigned bottom) : 
+      m_left(left), m_top(top), m_right(right), m_bottom(bottom) { }
+    unsigned m_left, m_top, m_right, m_bottom;
   };
 
   MSPUBCollector(const MSPUBCollector &);
@@ -141,6 +149,7 @@ private:
   std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
   std::map<unsigned, short> m_shapeRotationsBySeqNum;
   std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
+  std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
 
   // helper functions
   void assignImages();

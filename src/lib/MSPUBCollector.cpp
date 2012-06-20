@@ -45,8 +45,14 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapeFillsBySeqNum(), m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
-  m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum()
+  m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
+  m_shapeMarginsBySeqNum()
 {
+}
+
+bool libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
+{
+  return m_shapeMarginsBySeqNum.insert(std::pair<const unsigned, Margins>(seqNum, Margins(left, top, right, bottom))).second;
 }
 
 void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
@@ -333,6 +339,10 @@ void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
   {
     props.insert("libwpg:rotate", textRotation);
   }
+  props.insert("fo:padding-left", (double)m_left / EMUS_IN_INCH);
+  props.insert("fo:padding-top", (double)m_top / EMUS_IN_INCH);
+  props.insert("fo:padding-right", (double)m_right / EMUS_IN_INCH);
+  props.insert("fo:padding-bottom", (double)m_bottom / EMUS_IN_INCH);
   painter->startTextObject(props, WPXPropertyListVector());
   for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)
   {
@@ -602,6 +612,14 @@ void libmspub::MSPUBCollector::assignImages()
       if (ptr_fill && m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end())
       {
         shape->setFill(ptr_fill);
+      }
+      Margins *ptr_margin = getIfExists(m_shapeMarginsBySeqNum, seqNum);
+      if (ptr_margin)
+      {
+        shape->m_left = ptr_margin->m_left;
+        shape->m_top = ptr_margin->m_top;
+        shape->m_right = ptr_margin->m_right;
+        shape->m_bottom = ptr_margin->m_bottom;
       }
       for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
            iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)

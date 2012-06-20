@@ -92,7 +92,8 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
   WPXString stroke = graphicsProps["draw:stroke"] ? graphicsProps["draw:stroke"]->getStr() : "none";
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
-  if (stroke != "none" && hasFill())
+  bool hasFill_ = hasFill();
+  if (stroke != "none" && hasFill_)
     owner->m_painter->startLayer(WPXPropertyList());
   if (hasFill())
   {
@@ -111,7 +112,7 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     write(painter);
   }
-  if (stroke != "none" && hasFill())
+  if (stroke != "none" && hasFill_)
     owner->m_painter->endLayer();
 }
 

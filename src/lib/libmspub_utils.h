@@ -29,7 +29,10 @@
 #ifndef __LIBMSPUB_UTILS_H__
 #define __LIBMSPUB_UTILS_H__
 
+const double PI = 3.1415926;
+
 #include <stdio.h>
+#include <cmath>
 #include <vector>
 #include <map>
 #include <boost/ptr_container/ptr_map.hpp>
@@ -96,6 +99,9 @@ void readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigne
 void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
 
 bool stillReading(WPXInputStream *input, unsigned long until);
+
+void rotateCounter(double &x, double &y, double centerX, double centerY, short rotation);
+void flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal);
 
 unsigned correctModulo(int x, unsigned n);
 

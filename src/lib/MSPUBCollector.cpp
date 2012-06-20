@@ -383,6 +383,9 @@ libmspub::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBin
 {
   this->m_type = from.m_type;
   this->props = from.props;
+  this->m_clockwiseRotation = from.m_clockwiseRotation;
+  this->m_flipV = from.m_flipV;
+  this->m_flipH = from.m_flipH;
   setMime_(imgType);
 }
 
@@ -418,10 +421,30 @@ void libmspub::ImgShape::setMime_(ImgType imgType)
 }
 void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
 {
+  // Still not flipping the actual image, but at least we rotate.
+  // Note that this does not cause image fills of other types of shape
+  // to be rotated correctly -- for this we would need support in ODG format
+  
+  double centerX = m_x + m_width / 2;
+  double centerY = m_y + m_height / 2;
+  short clockwiseRotation = correctModulo(m_clockwiseRotation, 360);
+  if ( (clockwiseRotation >= 45 && clockwiseRotation < 135) || (clockwiseRotation >= 225 && clockwiseRotation < 315) )
+  {
+    //MS PUB format gives start and end vertices for the bounding rectangle rotated by 90 degrees in this case.
+    rotateCounter(m_x, m_y, centerX, centerY, 90);
+    double temp = m_height;
+    m_height = m_width;
+    m_width = temp;
+    m_y -= m_height;
+  }
   props.insert("svg:x", m_x);
   props.insert("svg:y", m_y);
   props.insert("svg:width", m_width);
   props.insert("svg:height", m_height);
+  if (m_clockwiseRotation != 0)
+  {
+    props.insert("libwpg:rotate", clockwiseRotation);
+  }
   painter->drawGraphicObject(props, img);
 }
 

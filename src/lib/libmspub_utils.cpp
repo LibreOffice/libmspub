@@ -34,6 +34,32 @@
 
 #define ZLIB_CHUNK 16384
 
+void libmspub::rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
+{
+  double vecX = x - centerX;
+  double vecY = centerY - y;
+  double sinTheta = sin(rotation * PI / 180.);
+  double cosTheta = cos(rotation * PI / 180.);
+  double newVecX = cosTheta * vecX - sinTheta * vecY;
+  double newVecY = sinTheta * vecX + cosTheta * vecY;
+  x = centerX + newVecX;
+  y = centerY - newVecY;
+}
+
+void libmspub::flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal)
+{
+  double vecX = x - centerX;
+  double vecY = centerY - y;
+  if (flipVertical)
+  {
+    y = centerY + vecY;
+  }
+  if (flipHorizontal)
+  {
+    x = centerX - vecX;
+  }
+}
+
 unsigned libmspub::correctModulo(int x, unsigned n) // returns the canonical representation of x in Z/nZ
 //difference with C++ % operator is that this never returns negative values.
 {

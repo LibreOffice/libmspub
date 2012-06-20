@@ -5671,32 +5671,6 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
-void rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
-{
-  double vecX = x - centerX;
-  double vecY = centerY - y;
-  double sinTheta = sin(rotation * PI / 180.);
-  double cosTheta = cos(rotation * PI / 180.);
-  double newVecX = cosTheta * vecX - sinTheta * vecY;
-  double newVecY = sinTheta * vecX + cosTheta * vecY;
-  x = centerX + newVecX;
-  y = centerY - newVecY;
-}
-
-void flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal)
-{
-  double vecX = x - centerX;
-  double vecY = centerY - y;
-  if (flipVertical)
-  {
-    y = centerY + vecY;
-  }
-  if (flipHorizontal)
-  {
-    x = centerX - vecX;
-  }
-}
-
 void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal)
 {
   if (width == 0 || height == 0)

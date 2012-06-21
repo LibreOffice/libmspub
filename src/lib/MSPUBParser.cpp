@@ -806,6 +806,8 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
   Alignment align = (Alignment)-1;
   unsigned lineSpacing = LINE_SPACING_UNIT;
   unsigned defaultCharStyleIndex = 0;
+  unsigned spaceBeforeEmu = 0;
+  unsigned spaceAfterEmu = 0;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
@@ -821,11 +823,18 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
       break;
     case PARAGRAPH_LINE_SPACING:
       lineSpacing = info.data;
+      break;
+    case PARAGRAPH_SPACE_BEFORE:
+      spaceBeforeEmu = info.data;
+      break;
+    case PARAGRAPH_SPACE_AFTER:
+      spaceAfterEmu = info.data;
+      break;
     default:
       break;
     }
   }
-  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing);
+  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, spaceBeforeEmu, spaceAfterEmu);
 }
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
 {

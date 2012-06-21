@@ -660,6 +660,18 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     percentString.sprintf("%u%%", percentage);
     ret.insert("fo:line-height", percentString);
   }
+  if (style.spaceAfterEmu != 0)
+  {
+    WPXString inchString;
+    inchString.sprintf("%fin", (double)style.spaceAfterEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-bottom", inchString);
+  }
+  if (style.spaceBeforeEmu != 0)
+  {
+    WPXString inchString;
+    inchString.sprintf("%fin", (double)style.spaceBeforeEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-top", inchString);
+  }
   return ret;
 }
 

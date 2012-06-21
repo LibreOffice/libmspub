@@ -672,6 +672,24 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     inchString.sprintf("%fin", (double)style.spaceBeforeEmu / EMUS_IN_INCH);
     ret.insert("fo:margin-top", inchString);
   }
+  if (style.firstLineIndentEmu != 0)
+  {
+    WPXString inchString;
+    inchString.sprintf("%fin", (double)style.firstLineIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:text-indent", inchString);
+  }
+  if (style.leftIndentEmu != 0)
+  {
+    WPXString inchString;
+    inchString.sprintf("%fin", (double)style.leftIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-left", inchString);
+  }
+  if (style.rightIndentEmu != 0)
+  {
+    WPXString inchString;
+    inchString.sprintf("%fin", (double)style.rightIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-right", inchString);
+  }
   return ret;
 }
 

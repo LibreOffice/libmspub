@@ -103,12 +103,15 @@ struct CharacterStyle
 
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT, unsigned sb = 0, unsigned sa = 0) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), spaceBeforeEmu(sb), spaceAfterEmu(sa) { }
+  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri) { }
   Alignment align;
   unsigned defaultCharStyleIndex;
   unsigned lineSpacing;
   unsigned spaceBeforeEmu;
   unsigned spaceAfterEmu;
+  int firstLineIndentEmu;
+  unsigned leftIndentEmu;
+  unsigned rightIndentEmu;
 };
 
 struct TextSpan

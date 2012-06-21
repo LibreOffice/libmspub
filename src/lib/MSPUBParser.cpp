@@ -545,7 +545,7 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       chunkReferences.push_back(quillChunkReference);
     }
   }
-  MSPUB_DEBUG_MSG(("Found %ld Quill chunks\n", chunkReferences.size()));
+  MSPUB_DEBUG_MSG(("Found %u Quill chunks\n", (unsigned)chunkReferences.size()));
   //Make sure we parse the STRS chunk before the TEXT chunk
   std::list<QuillChunkReference>::const_iterator textChunkReference = chunkReferences.end();
   bool parsedStrs = false;

@@ -50,6 +50,7 @@ enum ShapeType
   CUBE                 = 16,
   BALLOON              = 17,
   ARC_SHAPE            = 19,
+  LINE                 = 20,
   PLAQUE               = 21,
   CAN                  = 22,
   DONUT                = 23,

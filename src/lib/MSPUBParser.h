@@ -88,7 +88,7 @@ private:
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
-  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum);
+  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions);
   void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
@@ -115,6 +115,7 @@ private:
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;
   bool m_seenDocumentChunk;
+  std::vector<int> m_alternateShapeSeqNums;
 
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);

@@ -34,6 +34,7 @@ namespace libmspub
 enum MSPUBContentChunkType //Please fill this in and replace magic constants in MSPUBParser accordingly as you discover what a given chunk type means!
 {
   SHAPE    = 0x01,
+  ALTSHAPE = 0x20,
   DOCUMENT = 0x44,
   PAGE     = 0x43,
   PALETTE  = 0x5C

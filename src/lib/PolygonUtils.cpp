@@ -42,6 +42,20 @@
 
 using namespace libmspub;
 
+const Vertex LINE_VERTICES[] =
+{
+  Vertex(0, 0), Vertex(21600, 21600)
+};
+
+const CustomShape CS_LINE(
+  LINE_VERTICES, sizeof(LINE_VERTICES) / sizeof(Vertex),
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  NULL, 0,
+  21600, 21600,
+  NULL, 0);
+
 const Vertex WAVE_VERTICES[] =
 {
   Vertex(7 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(15 CALCULATED_VALUE, 9 CALCULATED_VALUE), Vertex(16 CALCULATED_VALUE, 10 CALCULATED_VALUE), Vertex(12 CALCULATED_VALUE, 0 CALCULATED_VALUE), Vertex(24 CALCULATED_VALUE, 1 CALCULATED_VALUE), Vertex(25 CALCULATED_VALUE, 26 CALCULATED_VALUE), Vertex(27 CALCULATED_VALUE, 28 CALCULATED_VALUE), Vertex(29 CALCULATED_VALUE, 1 CALCULATED_VALUE)
@@ -5314,6 +5328,8 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
     return &CS_SEAL_32;
   case WAVE:
     return &CS_WAVE;
+  case LINE:
+    return &CS_LINE;
   case FOLDED_CORNER:
     return &CS_FOLDED_CORNER;
   case LEFT_ARROW:

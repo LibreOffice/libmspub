@@ -51,7 +51,8 @@ libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collec
   : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
-    m_lastAddedImage(0), m_seenDocumentChunk(false)
+    m_lastAddedImage(0), m_seenDocumentChunk(false),
+    m_alternateShapeSeqNums()
 {
 }
 
@@ -451,7 +452,8 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x found\n", subInfo.data));
         unsigned long pos = input->tell();
         input->seek(ref->offset, WPX_SEEK_SET);
-        parseShape(input, subInfo.data, pageSeqNum);
+        bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
+        parseShape(input, subInfo.data, pageSeqNum, parseWithoutDimensions);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -459,7 +461,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum)
+bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions)
 {
   MSPUB_DEBUG_MSG(("parseShape: pageSeqNum 0x%x\n", pageSeqNum));
   unsigned long pos = input->tell();
@@ -485,7 +487,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       isText = true;
     }
   }
-  if (height > 0 && width > 0)
+  if ( (height > 0 && width > 0) || parseWithoutDimensions)
   {
     if (isText)
     {
@@ -1268,10 +1270,14 @@ libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReferen
       m_seenDocumentChunk = true;
       return &m_documentChunk;
     }
-    else if (type == SHAPE)
+    else if (type == SHAPE || type == ALTSHAPE)
     {
       MSPUB_DEBUG_MSG(("shape chunk: offset 0x%lx, seqnum 0x%x, parent seqnum: 0x%x\n", offset, m_lastSeenSeqNum, parentSeqNum));
       m_shapeChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      if (type == ALTSHAPE)
+      {
+        m_alternateShapeSeqNums.push_back(m_lastSeenSeqNum);
+      }
       return &m_shapeChunks.back();
     }
     else if (type == PALETTE)

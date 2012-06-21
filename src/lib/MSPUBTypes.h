@@ -34,6 +34,7 @@
 #include "MSPUBBlockType.h"
 #include "MSPUBBlockID.h"
 #include "MSPUBContentChunkType.h"
+#include "MSPUBConstants.h"
 
 namespace libmspub
 {
@@ -102,9 +103,10 @@ struct CharacterStyle
 
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0) : align(a), defaultCharStyleIndex(dCSI) { }
+  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls) { }
   Alignment align;
   unsigned defaultCharStyleIndex;
+  unsigned lineSpacing;
 };
 
 struct TextSpan

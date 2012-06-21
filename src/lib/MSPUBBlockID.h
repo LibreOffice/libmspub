@@ -55,7 +55,8 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   FONT_INDEX_CONTAINER_ID = 0x24,
   COLOR_INDEX_ID = 0x0,
   PARAGRAPH_ALIGNMENT = 0x04,
-  PARAGRAPH_DEFAULT_CHAR_STYLE = 0x19
+  PARAGRAPH_DEFAULT_CHAR_STYLE = 0x19,
+  PARAGRAPH_LINE_SPACING = 0x34
 };
 } // namespace libmspub
 

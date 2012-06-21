@@ -804,6 +804,7 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
 libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream *input)
 {
   Alignment align = (Alignment)-1;
+  unsigned lineSpacing = LINE_SPACING_UNIT;
   unsigned defaultCharStyleIndex = 0;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
@@ -818,11 +819,13 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     case PARAGRAPH_DEFAULT_CHAR_STYLE:
       defaultCharStyleIndex = info.data;
       break;
+    case PARAGRAPH_LINE_SPACING:
+      lineSpacing = info.data;
     default:
       break;
     }
   }
-  return ParagraphStyle(align, defaultCharStyleIndex);
+  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing);
 }
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
 {

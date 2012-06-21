@@ -652,6 +652,14 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     ret.insert("fo:text-align", "left");
     break;
   }
+  unsigned lineSpacing = style.lineSpacing;
+  if (lineSpacing != LINE_SPACING_UNIT)
+  {
+    unsigned percentage = (unsigned)(100 * (double)lineSpacing/LINE_SPACING_UNIT);
+    WPXString percentString;
+    percentString.sprintf("%u%%", percentage);
+    ret.insert("fo:line-height", percentString);
+  }
   return ret;
 }
 

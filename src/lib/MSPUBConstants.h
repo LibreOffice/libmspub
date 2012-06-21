@@ -32,6 +32,7 @@
 #define EMUS_IN_INCH 914400
 #define POINTS_IN_INCH 72
 #define DEFAULT_MARGIN 36576
+#define LINE_SPACING_UNIT 1219201
 
 #endif /* __MSPUBCONSTANTS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

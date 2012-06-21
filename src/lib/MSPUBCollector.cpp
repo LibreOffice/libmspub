@@ -655,40 +655,27 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   unsigned lineSpacing = style.lineSpacing;
   if (lineSpacing != LINE_SPACING_UNIT)
   {
-    unsigned percentage = (unsigned)(100 * (double)lineSpacing/LINE_SPACING_UNIT);
-    WPXString percentString;
-    percentString.sprintf("%u%%", percentage);
-    ret.insert("fo:line-height", percentString);
+    ret.insert("fo:line-height", (double)lineSpacing/LINE_SPACING_UNIT, WPX_PERCENT);
   }
   if (style.spaceAfterEmu != 0)
   {
-    WPXString inchString;
-    inchString.sprintf("%fin", (double)style.spaceAfterEmu / EMUS_IN_INCH);
-    ret.insert("fo:margin-bottom", inchString);
+    ret.insert("fo:margin-bottom", (double)style.spaceAfterEmu / EMUS_IN_INCH);
   }
   if (style.spaceBeforeEmu != 0)
   {
-    WPXString inchString;
-    inchString.sprintf("%fin", (double)style.spaceBeforeEmu / EMUS_IN_INCH);
-    ret.insert("fo:margin-top", inchString);
+    ret.insert("fo:margin-top", (double)style.spaceBeforeEmu / EMUS_IN_INCH);
   }
   if (style.firstLineIndentEmu != 0)
   {
-    WPXString inchString;
-    inchString.sprintf("%fin", (double)style.firstLineIndentEmu / EMUS_IN_INCH);
-    ret.insert("fo:text-indent", inchString);
+    ret.insert("fo:text-indent", (double)style.firstLineIndentEmu / EMUS_IN_INCH);
   }
   if (style.leftIndentEmu != 0)
   {
-    WPXString inchString;
-    inchString.sprintf("%fin", (double)style.leftIndentEmu / EMUS_IN_INCH);
-    ret.insert("fo:margin-left", inchString);
+    ret.insert("fo:margin-left", (double)style.leftIndentEmu / EMUS_IN_INCH);
   }
   if (style.rightIndentEmu != 0)
   {
-    WPXString inchString;
-    inchString.sprintf("%fin", (double)style.rightIndentEmu / EMUS_IN_INCH);
-    ret.insert("fo:margin-right", inchString);
+    ret.insert("fo:margin-right", (double)style.rightIndentEmu / EMUS_IN_INCH);
   }
   return ret;
 }

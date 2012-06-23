@@ -344,8 +344,17 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
   for (ccr_iterator_t iter = m_shapeChunks.begin(); iter != m_shapeChunks.end(); ++iter)
   {
     input->seek(iter->offset, WPX_SEEK_SET);
+    ccr_iterator_t i_page = std::find_if(m_pageChunks.begin(), m_pageChunks.end(), FindBySeqNum(iter->parentSeqNum));
+    if (i_page == m_pageChunks.end())
+    {
+      continue;
+    }
+    if (getPageTypeBySeqNumOld(i_page->seqNum) != NORMAL)
+    {
+      continue;
+    }
     // if the parent of this is a page and hasn't yet been added, then add it.
-    if ( (!m_collector->hasPage(iter->parentSeqNum)) && (std::find_if(m_pageChunks.begin(), m_pageChunks.end(), FindBySeqNum(iter->parentSeqNum)) != m_pageChunks.end()))
+    if (!m_collector->hasPage(iter->parentSeqNum))
     {
       m_collector->addPage(iter->parentSeqNum);
     }
@@ -1640,6 +1649,21 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
   }
   MSPUB_DEBUG_MSG(("parseBlock dataOffset 0x%lx, id 0x%x, type 0x%x, dataLength 0x%lx, integral data 0x%x\n", info.dataOffset, info.id, info.type, info.dataLength, info.data));
   return info;
+}
+
+libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNumOld(unsigned seqNum)
+{
+  switch(seqNum)
+  {
+  case 0x116:
+  case 0x108:
+  case 0x109:
+  case 0x10B:
+  case 0x10D:
+    return DUMMY_PAGE;
+  default:
+    return NORMAL;
+  }
 }
 
 libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)

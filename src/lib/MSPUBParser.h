@@ -123,6 +123,7 @@ private:
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);
   static PageType getPageTypeBySeqNum(unsigned seqNum);
+  static PageType getPageTypeBySeqNumOld(unsigned seqNum);
   static unsigned getEscherElementTailLength(unsigned short type);
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);

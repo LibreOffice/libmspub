@@ -222,6 +222,24 @@ uint32_t libmspub::readU32(WPXInputStream *input)
   return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
 }
 
+int32_t libmspub::readS32(WPXInputStream *input)
+{
+  return (int32_t)readU32(input);
+}
+
+uint64_t libmspub::readU64(WPXInputStream *input)
+{
+  uint64_t p0 = (uint64_t)readU8(input);
+  uint64_t p1 = (uint64_t)readU8(input);
+  uint64_t p2 = (uint64_t)readU8(input);
+  uint64_t p3 = (uint64_t)readU8(input);
+  uint64_t p4 = (uint64_t)readU8(input);
+  uint64_t p5 = (uint64_t)readU8(input);
+  uint64_t p6 = (uint64_t)readU8(input);
+  uint64_t p7 = (uint64_t)readU8(input);
+  return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
+}
+
 void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out)
 {
   unsigned long numBytesRead = 0;

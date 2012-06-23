@@ -44,6 +44,8 @@ const double PI = 3.1415926;
 typedef unsigned char uint8_t;
 typedef unsigned short uint16_t;
 typedef unsigned uint32_t;
+typedef int int32_t;
+typedef unsigned __int64 uint64_t;
 
 #else
 
@@ -94,6 +96,8 @@ uint32_t readU32(const unsigned char *input, unsigned offset);
 uint8_t readU8(WPXInputStream *input);
 uint16_t readU16(WPXInputStream *input);
 uint32_t readU32(WPXInputStream *input);
+uint64_t readU64(WPXInputStream *input);
+int32_t readS32(WPXInputStream *input);
 void readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out);
 
 void appendCharacters(WPXString &text, std::vector<unsigned char> characters);

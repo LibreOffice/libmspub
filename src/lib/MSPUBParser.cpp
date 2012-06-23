@@ -47,13 +47,149 @@
 #include "Fill.h"
 #include "FillType.h"
 
-libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector), m_blockInfo(), m_pageChunks(), m_shapeChunks(),
+libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector, bool isOldVersion)
+  : m_input(input), m_collector(collector),
+    m_isOldVersion(isOldVersion),
+    m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false),
     m_alternateShapeSeqNums()
 {
+}
+
+libmspub::Color libmspub::MSPUBParser::getColorBy98Hex(unsigned hex)
+{
+  switch ((hex >> 24) & 0xFF)
+  {
+  case 0x00:
+    return getColorBy98Index(hex & 0xFF);
+  case 0x20:
+    return Color(hex & 0xFF, (hex >> 8) & 0xFF, (hex >> 16) & 0xFF);
+  default:
+    return Color();
+  }
+}
+
+libmspub::Color libmspub::MSPUBParser::getColorBy98Index(unsigned char index)
+{
+  switch(index)
+  {
+  case 0x00:
+    return Color(0, 0, 0);
+  case 0x01:
+    return Color(0xff, 0xff, 0xff);
+  case 0x02:
+    return Color(0xff, 0, 0);
+  case 0x03:
+    return Color(0, 0xff, 0);
+  case 0x04:
+    return Color(0, 0, 0xff);
+  case 0x05:
+    return Color(0xff, 0xff, 0);
+  case 0x06:
+    return Color(0, 0xff, 0xff);
+  case 0x07:
+    return Color(0xff, 0, 0xff);
+  case 0x08:
+    return Color(128, 128, 128);
+  case 0x09:
+    return Color(192, 192, 192);
+  case 0x0A:
+    return Color(128, 0, 0);
+  case 0x0B:
+    return Color(0, 128, 0);
+  case 0x0C:
+    return Color(0, 0, 128);
+  case 0x0D:
+    return Color(128, 128, 0);
+  case 0x0E:
+    return Color(0, 128, 128);
+  case 0x0F:
+    return Color(128, 0, 128);
+  case 0x10:
+    return Color(255, 153, 51);
+  case 0x11:
+    return Color(51, 0, 51);
+  case 0x12:
+    return Color(0, 0, 153);
+  case 0x13:
+    return Color(0, 153, 0);
+  case 0x14:
+    return Color(153, 153, 0);
+  case 0x15:
+    return Color(204, 102, 0);
+  case 0x16:
+    return Color(153, 0, 0);
+  case 0x17:
+    return Color(204, 153, 204);
+  case 0x18:
+    return Color(102, 102, 255);
+  case 0x19:
+    return Color(102, 255, 102);
+  case 0x1A:
+    return Color(255, 255, 153);
+  case 0x1B:
+    return Color(255, 204, 153);
+  case 0x1C:
+    return Color(255, 102, 102);
+  case 0x1D:
+    return Color(255, 153, 0);
+  case 0x1E:
+    return Color(0, 102, 255);
+  case 0x1F:
+    return Color(255, 204, 0);
+  case 0x20:
+    return Color(153, 0, 51);
+  case 0x21:
+    return Color(102, 51, 0);
+  case 0x22:
+    return Color(66, 66, 66);
+  case 0x23:
+    return Color(255, 153, 102);
+  case 0x24:
+    return Color(153, 51, 0);
+  case 0x25:
+    return Color(255, 102, 0);
+  case 0x26:
+    return Color(51, 51, 0);
+  case 0x27:
+    return Color(153, 204, 0);
+  case 0x28:
+    return Color(255, 255, 153);
+  case 0x29:
+    return Color(0, 51, 0);
+  case 0x2A:
+    return Color(51, 153, 102);
+  case 0x2B:
+    return Color(204, 255, 204);
+  case 0x2C:
+    return Color(0, 51, 102);
+  case 0x2D:
+    return Color(51, 204, 204);
+  case 0x2E:
+    return Color(204, 255, 255);
+  case 0x2F:
+    return Color(51, 102, 255);
+  case 0x30:
+    return Color(0, 204, 255);
+  case 0x31:
+    return Color(153, 204, 255);
+  case 0x32:
+    return Color(51, 51, 153);
+  case 0x33:
+    return Color(102, 102, 153);
+  case 0x34:
+    return Color(153, 51, 102);
+  case 0x35:
+    return Color(204, 153, 255);
+  case 0x36:
+    return Color(51, 51, 51);
+  case 0x37:
+    return Color(150, 150, 150);
+  default:
+    return Color();
+  }
 }
 
 libmspub::MSPUBParser::~MSPUBParser()
@@ -103,8 +239,167 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
   return 0;
 }
 
+class FindBySeqNum
+{
+  unsigned seqNum;
+public:
+  FindBySeqNum(unsigned sn) : seqNum(sn) { }
+  bool operator()(const libmspub::ContentChunkReference &ref)
+  {
+    return ref.seqNum == seqNum;
+  }
+};
+
+// takes a color reference in 98 format and translates it into 2k2 format that collector understands.
+unsigned libmspub::MSPUBParser::translate98ColorReference(unsigned ref98)
+{
+  switch ((ref98 >> 24) & 0xFF)
+  {
+  case 0xC0: //index into user palette
+    return (ref98 & 0xFF) | (0x08 << 24);
+  default:
+    {
+      Color c = getColorBy98Hex(ref98);
+      return (c.r) | (c.g << 8) | (c.b << 16);
+    }
+  }
+}
+
+bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
+{
+  input->seek(0x16, WPX_SEEK_SET);
+  unsigned trailerOffset = readU32(input);
+  input->seek(trailerOffset, WPX_SEEK_SET);
+  unsigned numBlocks = readU16(input);
+  ContentChunkReference *last = NULL;
+  unsigned chunkOffset = 0;
+  for (unsigned i = 0; i < numBlocks; ++i)
+  {
+    input->seek(input->tell() + 2, WPX_SEEK_SET);
+    unsigned short id = readU16(input);
+    unsigned short parent = readU16(input);
+    chunkOffset = readU32(input);
+    if (last)
+    {
+      last->end = chunkOffset;
+    }
+    unsigned offset = input->tell();
+    input->seek(chunkOffset, WPX_SEEK_SET);
+    unsigned short typeMarker = readU16(input);
+    input->seek(offset, WPX_SEEK_SET);
+    switch (typeMarker)
+    {
+    case 0x0014:
+      m_pageChunks.push_back(ContentChunkReference(PAGE, chunkOffset, 0, id, parent));
+      last = &(m_pageChunks.back());
+      break;
+    case 0x0015:
+      m_documentChunk = ContentChunkReference(DOCUMENT, chunkOffset, 0, id, parent);
+      last = &m_documentChunk;
+      m_seenDocumentChunk = true;
+      break;
+    case 0x0005:
+    case 0x0007:
+      m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
+      last = &(m_shapeChunks.back());
+      break;
+    case 0x0047:
+      m_paletteChunks.push_back(ContentChunkReference(PALETTE, chunkOffset, 0, id, parent));
+      last = &(m_paletteChunks.back());
+      break;
+    default:
+      m_unknownChunks.push_back(ContentChunkReference(UNKNOWN_CHUNK, chunkOffset, 0, id, parent));
+      last = &(m_unknownChunks.back());
+      break;
+    }
+  }
+  if (last)
+  {
+    last->end = chunkOffset;
+  }
+  if (! m_seenDocumentChunk)
+  {
+    MSPUB_DEBUG_MSG(("No document chunk found.\n"));
+    return false;
+  }
+  input->seek(m_documentChunk.offset, WPX_SEEK_SET);
+  input->seek(0x14, WPX_SEEK_CUR);
+  unsigned width = readU32(input);
+  unsigned height = readU32(input);
+  m_collector->setWidthInEmu(width);
+  m_collector->setHeightInEmu(height);
+
+  for (ccr_iterator_t iter = m_paletteChunks.begin(); iter != m_paletteChunks.end(); ++iter)
+  {
+    input->seek(iter->offset, WPX_SEEK_SET);
+    input->seek(0xA0, WPX_SEEK_CUR);
+    for (unsigned i = 0; i < 8; ++i)
+    {
+      unsigned hex = readU32(input);
+      Color color = getColorBy98Hex(hex);
+      m_collector->addPaletteColor(color);
+    }
+  }
+
+  for (ccr_iterator_t iter = m_shapeChunks.begin(); iter != m_shapeChunks.end(); ++iter)
+  {
+    input->seek(iter->offset, WPX_SEEK_SET);
+    // if the parent of this is a page and hasn't yet been added, then add it.
+    if ( (!m_collector->hasPage(iter->parentSeqNum)) && (std::find_if(m_pageChunks.begin(), m_pageChunks.end(), FindBySeqNum(iter->parentSeqNum)) != m_pageChunks.end()))
+    {
+      m_collector->addPage(iter->parentSeqNum);
+    }
+    m_collector->addShape(iter->seqNum, iter->parentSeqNum);
+    unsigned short typeMarker = readU16(input);
+    switch (typeMarker)
+    {
+    case 0x0005:
+      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      break;
+    case 0x0007:
+      m_collector->setShapeType(iter->seqNum, ELLIPSE);
+      break;
+    default:
+      break;
+    }
+    input->seek(4, WPX_SEEK_CUR);
+    int xs = readS32(input);
+    int ys = readS32(input);
+    int xe = readS32(input);
+    int ye = readS32(input);
+    m_collector->setShapeCoordinatesInEmu(iter->seqNum, xs, ys, xe, ye);
+    input->seek(0x17, WPX_SEEK_CUR);
+    unsigned colorReference = readU32(input);
+    unsigned translatedColorReference = translate98ColorReference(colorReference);
+    m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedColorReference));
+    m_collector->setShapeOrder(iter->seqNum);
+  }
+  return true;
+}
+
+bool libmspub::MSPUBParser::parseOld()
+{
+  WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
+  if (!contents)
+  {
+    MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
+    return false;
+  }
+  if (!parseOldContents(contents))
+  {
+    MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
+    delete contents;
+    return false;
+  }
+  return m_collector->go();
+}
+
 bool libmspub::MSPUBParser::parse()
 {
+  if (m_isOldVersion)
+  {
+    return parseOld();
+  }
   MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isOLEStream())
     return false;
@@ -293,7 +588,6 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseContents\n"));
   input->seek(0x1a, WPX_SEEK_SET);
-
   unsigned trailerOffset = readU32(input);
   MSPUB_DEBUG_MSG(("MSPUBParser: trailerOffset %.8x\n", trailerOffset));
   input->seek(trailerOffset, WPX_SEEK_SET);
@@ -422,17 +716,6 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   }
   return true;
 }
-
-class FindBySeqNum
-{
-  unsigned seqNum;
-public:
-  FindBySeqNum(unsigned sn) : seqNum(sn) { }
-  bool operator()(const libmspub::ContentChunkReference &ref)
-  {
-    return ref.seqNum == seqNum;
-  }
-};
 
 bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
 {

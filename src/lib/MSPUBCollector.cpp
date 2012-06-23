@@ -50,6 +50,11 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
 {
 }
 
+bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
+{
+  return m_pagesBySeqNum.find(seqNum) != m_pagesBySeqNum.end();
+}
+
 bool libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
 {
   return m_shapeMarginsBySeqNum.insert(std::pair<const unsigned, Margins>(seqNum, Margins(left, top, right, bottom))).second;

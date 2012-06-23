@@ -48,7 +48,7 @@ class MSPUBCollector;
 class MSPUBParser
 {
 public:
-  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector);
+  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector, bool isOldVersion);
   virtual ~MSPUBParser();
   bool parse();
 private:
@@ -78,6 +78,8 @@ private:
   bool parseQuill(WPXInputStream *input);
   bool parseEscher(WPXInputStream *input);
   bool parseEscherDelay(WPXInputStream *input);
+  bool parseOld();
+  bool parseOldContents(WPXInputStream *input);
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
   EscherContainerInfo parseEscherContainer(WPXInputStream *input);
@@ -106,6 +108,7 @@ private:
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
+  bool m_isOldVersion;
   std::vector<MSPUBBlockInfo> m_blockInfo;
   std::vector<ContentChunkReference> m_pageChunks;
   std::vector<ContentChunkReference> m_shapeChunks;
@@ -124,6 +127,9 @@ private:
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
+  static Color getColorBy98Index(unsigned char index);
+  static Color getColorBy98Hex(unsigned hex);
+  static unsigned translate98ColorReference(unsigned ref98);
 };
 
 } // namespace libmspub

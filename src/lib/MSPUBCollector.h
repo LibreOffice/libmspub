@@ -102,6 +102,8 @@ public:
   void addPaletteColor(Color);
 
   bool go();
+
+  bool hasPage(unsigned seqNum) const;
 private:
 
   struct PageInfo

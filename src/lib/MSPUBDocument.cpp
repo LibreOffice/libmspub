@@ -35,6 +35,8 @@
 #include "MSPUBParser.h"
 #include "libmspub_utils.h"
 
+bool isOldVersion;
+
 /**
 Analyzes the content of an input stream to see if it can be parsed
 \param input The input stream
@@ -46,28 +48,32 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
   WPXInputStream *tmpStream = 0;
   try
   {
+    tmpStream = input->getDocumentOLEStream("Contents");
+    if (!tmpStream)
+      return false;
+    tmpStream->seek(0, WPX_SEEK_SET);
+    unsigned char magicVersionByte;
+    // Check the magic signature at the beginning of the Contents stream
+    if (! (0xe8 == readU8(tmpStream) && 0xac == readU8(tmpStream) && (0x2c == (magicVersionByte = readU8(tmpStream)) || 0x22 == magicVersionByte) && 0x00 == readU8(tmpStream)))
+    {
+      delete tmpStream;
+      return false;
+    }
+    isOldVersion = magicVersionByte == 0x22;
     if (!input->isOLEStream())
       return false;
     tmpStream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
     if (!tmpStream)
       return false;
     delete tmpStream;
-    tmpStream = input->getDocumentOLEStream("Escher/EscherStm");
-    if (!tmpStream)
-      return false;
-    delete tmpStream;
-    tmpStream = input->getDocumentOLEStream("Contents");
-    if (!tmpStream)
-      return false;
-    tmpStream->seek(0, WPX_SEEK_SET);
-    // Check the magic signature at the beginning of the Contents stream
-    if (0xe8 == readU8(tmpStream) && 0xac == readU8(tmpStream) && 0x2c == readU8(tmpStream) && 0x00 == readU8(tmpStream))
+    if (! isOldVersion)
     {
+      tmpStream = input->getDocumentOLEStream("Escher/EscherStm");
+      if (!tmpStream)
+        return false;
       delete tmpStream;
-      return true;
     }
-    delete tmpStream;
-    return false;
+    return true;
   }
   catch (...)
   {
@@ -89,7 +95,7 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
 {
   MSPUBCollector collector(painter);
   input->seek(0, WPX_SEEK_SET);
-  MSPUBParser parser(input, &collector);
+  MSPUBParser parser(input, &collector, isOldVersion);
   return parser.parse();
 }
 

@@ -38,7 +38,9 @@ enum MSPUBContentChunkType //Please fill this in and replace magic constants in 
   ALTSHAPE = 0x20,
   DOCUMENT = 0x44,
   PAGE     = 0x43,
-  PALETTE  = 0x5C
+  PALETTE  = 0x5C,
+  IMAGE_98, //these don't exist in Pub 2k3 so their value in the enum is not used.
+  IMAGE_98_DATA
 };
 } // namespace libmspub
 

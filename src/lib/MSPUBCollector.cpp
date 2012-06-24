@@ -52,7 +52,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
 
 bool libmspub::MSPUBCollector::setShapeLineWidth(unsigned seqNum, unsigned width)
 {
-  return m_shapeMarginsBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, width)).second;
+  return m_shapeLineWidthsBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, width)).second;
 }
 
 bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const

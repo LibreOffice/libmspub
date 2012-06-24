@@ -88,7 +88,7 @@ public:
   bool setShapeRotation(unsigned seqNum, short rotation);
   bool setShapeFlip(unsigned, bool, bool);
   bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
-  bool setShapeLineWidth(unsigned seqNum, unsigned char width);
+  bool setShapeLineWidth(unsigned seqNum, unsigned width);
 
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);

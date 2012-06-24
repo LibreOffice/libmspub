@@ -311,11 +311,11 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       m_seenDocumentChunk = true;
       break;
     case 0x0006:
-      m_shapeChunks.push_back(ContentChunkReference(98_IMAGE, chunkOffset, 0, id, parent));
+      m_shapeChunks.push_back(ContentChunkReference(IMAGE_98, chunkOffset, 0, id, parent));
       last = &(m_shapeChunks.back());
       break;
     case 0x0021:
-      m_98ImageDataChunks.push_back(ContentChunkReference(98_IMAGE_DATA, chunkOffset, 0, id, parent));
+      m_98ImageDataChunks.push_back(ContentChunkReference(IMAGE_98_DATA, chunkOffset, 0, id, parent));
       last = &(m_98ImageDataChunks.back());
       break;
     case 0x0005:
@@ -434,6 +434,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     unsigned translatedLeftColorReference = translate98ColorReference(leftColorReference);
     if (isRectangle)
     {
+#ifndef DEBUG
       input->seek(4, WPX_SEEK_CUR);
       unsigned char topLineWidth = readU8(input) % 0x80;
       unsigned topColorReference = readU32(input);
@@ -448,6 +449,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       unsigned char botLineWidth = readU8(input) % 0x80;
       unsigned botColorReference = readU32(input);
       unsigned translatedBotColorReference = translate98ColorReference(botColorReference);
+#endif
     }
 
     // FIXME: Separate line widths and colors for each side of a rectangle

@@ -104,7 +104,6 @@ struct GeometricShape : public FillableShape
   short m_clockwiseRotation;
   bool m_flipV, m_flipH;
   unsigned m_left, m_top, m_right, m_bottom; //emu
-  unsigned m_lineWidth;
   GeometricShape(unsigned psn, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE),
       m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
@@ -142,6 +141,8 @@ private:
   bool m_filledDefaultAdjustValues;
   Coordinate m_textCoord;
   bool m_closeEverything;
+public:
+  unsigned m_lineWidth;
 };
 struct ImgShape : public GeometricShape
 {

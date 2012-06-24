@@ -377,7 +377,18 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     int xe = readS32(input);
     int ye = readS32(input);
     m_collector->setShapeCoordinatesInEmu(iter->seqNum, xs, ys, xe, ye);
-    input->seek(0x17, WPX_SEEK_CUR);
+    input->seek(iter->offset + 0x2A, WPX_SEEK_SET);
+    unsigned char flags = readU8(input);
+    bool useFill = flags & (1 << 1);
+    if (useFill)
+    {
+      input->seek(iter->offset + 0x22, WPX_SEEK_SET);
+      unsigned fillColorReference = readU32(input);
+      unsigned translatedFillColorReference = translate98ColorReference(fillColorReference);
+      m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
+    }
+
+    input->seek(iter->offset + 0x2D, WPX_SEEK_SET);
     unsigned colorReference = readU32(input);
     unsigned translatedColorReference = translate98ColorReference(colorReference);
     m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedColorReference));

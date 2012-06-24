@@ -386,12 +386,14 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     m_collector->addShape(iter->seqNum, iter->parentSeqNum);
     unsigned short typeMarker = readU16(input);
     bool isImage = false;
+    bool isRectangle = false;
     switch (typeMarker)
     {
     case 0x0021:
       isImage = true;
     case 0x0005:
       m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      isRectangle = true;
       break;
     case 0x0007:
       m_collector->setShapeType(iter->seqNum, ELLIPSE);
@@ -426,10 +428,30 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
         m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
       }
     }
-    input->seek(iter->offset + 0x2D, WPX_SEEK_SET);
-    unsigned colorReference = readU32(input);
-    unsigned translatedColorReference = translate98ColorReference(colorReference);
-    m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedColorReference));
+    input->seek(iter->offset + 0x2C, WPX_SEEK_SET);
+    unsigned char leftLineWidth = readU8(input) % 0x80; // 0x81 is hairline which we emulate with width=1pt
+    unsigned leftColorReference = readU32(input);
+    unsigned translatedLeftColorReference = translate98ColorReference(leftColorReference);
+    if (isRectangle)
+    {
+      input->seek(4, WPX_SEEK_CUR);
+      unsigned char topLineWidth = readU8(input) % 0x80;
+      unsigned topColorReference = readU32(input);
+      unsigned translatedTopColorReference = translate98ColorReference(topColorReference);
+
+      input->seek(1, WPX_SEEK_CUR);
+      unsigned char rightLineWidth = readU8(input) % 0x80;
+      unsigned rightColorReference = readU32(input);
+      unsigned translatedRightColorReference = translate98ColorReference(rightColorReference);
+
+      input->seek(1, WPX_SEEK_CUR);
+      unsigned char botLineWidth = readU8(input) % 0x80;
+      unsigned botColorReference = readU32(input);
+      unsigned translatedBotColorReference = translate98ColorReference(botColorReference);
+    }
+
+    // FIXME: Separate line widths and colors for each side of a rectangle
+    m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedLeftColorReference));
     m_collector->setShapeOrder(iter->seqNum);
   }
   return true;

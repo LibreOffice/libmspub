@@ -46,8 +46,13 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
   m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
-  m_shapeMarginsBySeqNum()
+  m_shapeMarginsBySeqNum(), m_shapeLineWidthsBySeqNum()
 {
+}
+
+bool libmspub::MSPUBCollector::setShapeLineWidth(unsigned seqNum, unsigned width)
+{
+  return m_shapeMarginsBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, width)).second;
 }
 
 bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
@@ -328,6 +333,7 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
   {
     graphicsProps.insert("draw:stroke", "solid");
     graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(m_line.getFinalColor(owner->m_paletteColors)));
+    graphicsProps.insert("svg:stroke-width", (double)m_lineWidth / EMUS_IN_INCH);
   }
   else
   {
@@ -612,6 +618,11 @@ void libmspub::MSPUBCollector::assignImages()
       if (ptr_lineColor)
       {
         shape->setLine(*ptr_lineColor);
+        unsigned *ptr_lineWidth = getIfExists(m_shapeLineWidthsBySeqNum, seqNum);
+        if (ptr_lineWidth)
+        {
+          shape->m_lineWidth = *ptr_lineWidth;
+        }
       }
       Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
       if (ptr_fill && m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end())

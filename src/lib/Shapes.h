@@ -104,12 +104,14 @@ struct GeometricShape : public FillableShape
   short m_clockwiseRotation;
   bool m_flipV, m_flipH;
   unsigned m_left, m_top, m_right, m_bottom; //emu
+  unsigned m_lineWidth;
   GeometricShape(unsigned psn, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE),
       m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
-      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false) { }
+      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
+      m_lineWidth(9525) /* 0.75 pt. */ { }
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
   virtual bool hasFill();
@@ -121,7 +123,8 @@ protected:
       m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
-      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false) { }
+      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
+      m_lineWidth(9525) { }
 private:
   // This copy constructor is exactly like the default one. Does it make sense to have it?
   GeometricShape(const GeometricShape &)
@@ -129,7 +132,8 @@ private:
       m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
-      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false) { }
+      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
+      m_lineWidth(9525) { }
   GeometricShape &operator=(const GeometricShape &)
   {
     return *this;

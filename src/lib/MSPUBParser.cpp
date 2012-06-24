@@ -452,6 +452,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
 
     // FIXME: Separate line widths and colors for each side of a rectangle
     m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedLeftColorReference));
+    m_collector->setShapeLineWidth(iter->seqNum, leftLineWidth * EMUS_IN_INCH / POINTS_IN_INCH);
     m_collector->setShapeOrder(iter->seqNum);
   }
   return true;

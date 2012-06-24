@@ -114,6 +114,7 @@ private:
   std::vector<ContentChunkReference> m_shapeChunks;
   std::vector<ContentChunkReference> m_paletteChunks;
   std::vector<ContentChunkReference> m_unknownChunks;
+  std::vector<ContentChunkReference> m_98ImageDataChunks;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;

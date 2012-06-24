@@ -52,6 +52,7 @@ libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collec
     m_isOldVersion(isOldVersion),
     m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(),
+    m_98ImageDataChunks(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false),
     m_alternateShapeSeqNums()
@@ -250,6 +251,17 @@ public:
   }
 };
 
+class FindByParentSeqNum
+{
+  unsigned seqNum;
+public:
+  FindByParentSeqNum(unsigned sn) : seqNum(sn) { }
+  bool operator()(const libmspub::ContentChunkReference &ref)
+  {
+    return ref.parentSeqNum == seqNum;
+  }
+};
+
 // takes a color reference in 98 format and translates it into 2k2 format that collector understands.
 unsigned libmspub::MSPUBParser::translate98ColorReference(unsigned ref98)
 {
@@ -298,6 +310,14 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       last = &m_documentChunk;
       m_seenDocumentChunk = true;
       break;
+    case 0x0006:
+      m_shapeChunks.push_back(ContentChunkReference(98_IMAGE, chunkOffset, 0, id, parent));
+      last = &(m_shapeChunks.back());
+      break;
+    case 0x0021:
+      m_98ImageDataChunks.push_back(ContentChunkReference(98_IMAGE_DATA, chunkOffset, 0, id, parent));
+      last = &(m_98ImageDataChunks.back());
+      break;
     case 0x0005:
     case 0x0007:
       m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
@@ -341,6 +361,11 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     }
   }
 
+  for (ccr_iterator_t iter = m_98ImageDataChunks.begin(); iter != m_98ImageDataChunks.end(); ++iter)
+  {
+    input->seek(iter->offset, WPX_SEEK_SET);
+  }
+
   for (ccr_iterator_t iter = m_shapeChunks.begin(); iter != m_shapeChunks.end(); ++iter)
   {
     input->seek(iter->offset, WPX_SEEK_SET);
@@ -360,8 +385,11 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     }
     m_collector->addShape(iter->seqNum, iter->parentSeqNum);
     unsigned short typeMarker = readU16(input);
+    bool isImage = false;
     switch (typeMarker)
     {
+    case 0x0021:
+      isImage = true;
     case 0x0005:
       m_collector->setShapeType(iter->seqNum, RECTANGLE);
       break;
@@ -377,17 +405,27 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     int xe = readS32(input);
     int ye = readS32(input);
     m_collector->setShapeCoordinatesInEmu(iter->seqNum, xs, ys, xe, ye);
-    input->seek(iter->offset + 0x2A, WPX_SEEK_SET);
-    unsigned char flags = readU8(input);
-    bool useFill = flags & (1 << 1);
-    if (useFill)
+    if (isImage)
     {
-      input->seek(iter->offset + 0x22, WPX_SEEK_SET);
-      unsigned fillColorReference = readU32(input);
-      unsigned translatedFillColorReference = translate98ColorReference(fillColorReference);
-      m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
+      std::vector<ContentChunkReference>::const_iterator i_dataIndex =
+        std::find_if(m_98ImageDataChunks.begin(), m_98ImageDataChunks.end(), FindByParentSeqNum(iter->seqNum));
+      if (i_dataIndex != m_98ImageDataChunks.end())
+      {
+        m_collector->setShapeImgIndex(iter->seqNum, i_dataIndex - m_98ImageDataChunks.begin());
+      }
     }
-
+    else
+    {
+      input->seek(iter->offset + 0x2A, WPX_SEEK_SET);
+      unsigned char fillType = readU8(input);
+      if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
+      {
+        input->seek(iter->offset + 0x22, WPX_SEEK_SET);
+        unsigned fillColorReference = readU32(input);
+        unsigned translatedFillColorReference = translate98ColorReference(fillColorReference);
+        m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
+      }
+    }
     input->seek(iter->offset + 0x2D, WPX_SEEK_SET);
     unsigned colorReference = readU32(input);
     unsigned translatedColorReference = translate98ColorReference(colorReference);

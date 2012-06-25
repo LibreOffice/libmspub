@@ -59,13 +59,10 @@ protected:
 
   virtual WPXPropertyListVector updateGraphicsProps();
 
-  Shape() : props(), graphicsProps(), owner(NULL) { }
+  Shape();
 private:
-  Shape(const Shape &) : props(), graphicsProps(), owner(NULL) { }
-  Shape &operator=(const Shape &)
-  {
-    return *this;
-  }
+  Shape(const Shape &);
+  Shape &operator=(const Shape &);
 };
 struct FillableShape : public Shape
 {
@@ -75,11 +72,8 @@ struct FillableShape : public Shape
 protected:
   virtual WPXPropertyListVector updateGraphicsProps();
 private:
-  FillableShape(const FillableShape &) : Shape(NULL), m_fill(NULL) { }
-  FillableShape &operator=(const FillableShape &)
-  {
-    return *this;
-  }
+  FillableShape(const FillableShape &);
+  FillableShape &operator=(const FillableShape &);
 };
 struct GeometricShape : public FillableShape
 {
@@ -117,26 +111,10 @@ protected:
   void setCoordProps(Coordinate coord);
   virtual void write(libwpg::WPGPaintInterface *painter);
   WPXPropertyListVector updateGraphicsProps();
-  GeometricShape()
-    : FillableShape(NULL), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE),
-      m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
-      m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
-      m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
-      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
-      m_lineWidth(9525) { }
+  GeometricShape();
 private:
-  // This copy constructor is exactly like the default one. Does it make sense to have it?
-  GeometricShape(const GeometricShape &)
-    : FillableShape(NULL), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE),
-      m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
-      m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
-      m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
-      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
-      m_lineWidth(9525) { }
-  GeometricShape &operator=(const GeometricShape &)
-  {
-    return *this;
-  }
+  GeometricShape(const GeometricShape &);
+  GeometricShape &operator=(const GeometricShape &);
   mutable std::vector<bool> m_valuesSeen;
   bool m_filledDefaultAdjustValues;
   Coordinate m_textCoord;
@@ -158,11 +136,8 @@ protected:
   bool hasFill();
 private:
   void setMime_(ImgType type);
-  ImgShape(const ImgShape &) : GeometricShape(), img() { }
-  ImgShape &operator=(const ImgShape &)
-  {
-    return *this;
-  }
+  ImgShape(const ImgShape &);
+  ImgShape &operator=(const ImgShape &);
 };
 } // namespace libmspub
 #endif // __SHAPES_H__

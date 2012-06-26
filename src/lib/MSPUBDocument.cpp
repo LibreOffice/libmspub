@@ -36,7 +36,68 @@
 #include "MSPUBParser2k.h"
 #include "libmspub_utils.h"
 
-bool isOldVersion;
+namespace
+{
+
+enum MSPUBVersion
+{
+  MSPUB_UNKNOWN_VERSION = 0,
+  MSPUB_2K,
+  MSPUB_2K2
+};
+
+MSPUBVersion getVersion(WPXInputStream *input)
+{
+  MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
+  WPXInputStream *stream = 0;
+  try
+  {
+    if (!input->isOLEStream())
+      return MSPUB_UNKNOWN_VERSION;
+
+    stream = input->getDocumentOLEStream("Contents");
+    if (!stream)
+      return MSPUB_UNKNOWN_VERSION;
+
+    if (0xe8 != libmspub::readU8(stream) || 0xac != libmspub::readU8(stream))
+    {
+      delete stream;
+      return MSPUB_UNKNOWN_VERSION;
+    }
+
+    unsigned char magicVersionByte = libmspub::readU8(stream);
+
+    if (0x00 != libmspub::readU8(stream))
+    {
+      delete stream;
+      return MSPUB_UNKNOWN_VERSION;
+    }
+    switch(magicVersionByte)
+    {
+    case 0x2C:
+      version = MSPUB_2K2;
+      break;
+    case 0x22:
+      version =  MSPUB_2K;
+      break;
+    default:
+      break;
+    }
+    delete stream;
+    return version;
+  }
+  catch (...)
+  {
+    if (stream)
+      delete stream;
+    return MSPUB_UNKNOWN_VERSION;
+  }
+
+}
+
+} // anonymous namespace
+
+
 
 /**
 Analyzes the content of an input stream to see if it can be parsed
@@ -46,69 +107,32 @@ stream is a Microsoft Publisher Document that libmspub is able to parse
 */
 bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 {
-  WPXInputStream *tmpStream = 0;
+  WPXInputStream *stream = 0;
   try
   {
-    tmpStream = input->getDocumentOLEStream("Contents");
-    if (!tmpStream)
+    MSPUBVersion version = getVersion(input);
+	if (version == MSPUB_UNKNOWN_VERSION)
+	  return false;
+
+    stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
+    if (!stream)
       return false;
-    tmpStream->seek(0, WPX_SEEK_SET);
-    unsigned char magicVersionByte;
-    // Check the magic signature at the beginning of the Contents stream
-    if (! (0xe8 == readU8(tmpStream) && 0xac == readU8(tmpStream) && (0x2c == (magicVersionByte = readU8(tmpStream)) || 0x22 == magicVersionByte) && 0x00 == readU8(tmpStream)))
+    delete stream;
+
+    if (version == MSPUB_2K2)
     {
-      delete tmpStream;
-      return false;
-    }
-    isOldVersion = magicVersionByte == 0x22;
-    if (!input->isOLEStream())
-      return false;
-    tmpStream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
-    if (!tmpStream)
-      return false;
-    delete tmpStream;
-    if (! isOldVersion)
-    {
-      tmpStream = input->getDocumentOLEStream("Escher/EscherStm");
-      if (!tmpStream)
+      stream = input->getDocumentOLEStream("Escher/EscherStm");
+      if (!stream)
         return false;
-      delete tmpStream;
+      delete stream;
     }
     return true;
   }
   catch (...)
   {
-    if (tmpStream)
-      delete tmpStream;
+    if (stream)
+      delete stream;
     return false;
-  }
-}
-
-enum MSPUBVersion
-{
-  MSPUB_UNKNOWN_VERSION,
-  MSPUB_2K,
-  MSPUB_2K2
-};
-
-MSPUBVersion getVersion(WPXInputStream *input)
-{
-  WPXInputStream *stream = input->getDocumentOLEStream("Contents");
-  if (!stream)
-  {
-    return MSPUB_UNKNOWN_VERSION;
-  }
-  stream->seek(2, WPX_SEEK_SET);
-  unsigned char magicVersionByte = libmspub::readU8(stream);
-  stream->seek(0, WPX_SEEK_SET);
-  switch(magicVersionByte)
-  {
-  case 0x2C:
-    return MSPUB_2K2;
-  case 0x22:
-    return MSPUB_2K;
-  default:
-    return MSPUB_UNKNOWN_VERSION;
   }
 }
 

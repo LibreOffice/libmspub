@@ -95,8 +95,10 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
 {
   MSPUBCollector collector(painter);
   input->seek(0, WPX_SEEK_SET);
-  MSPUBParser parser(input, &collector, isOldVersion);
-  return parser.parse();
+  MSPUBParser *parser = isOldVersion ? new MSPUBParser2k(input, &collector) : new MSPUBParser(input, &collector);
+  bool result = parser->parse();
+  delete parser;
+  return result;
 }
 
 /**

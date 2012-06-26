@@ -47,24 +47,28 @@
 #include "Fill.h"
 #include "FillType.h"
 
-libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector, bool isOldVersion)
+libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
-    m_isOldVersion(isOldVersion),
     m_blockInfo(), m_pageChunks(), m_shapeChunks(),
     m_paletteChunks(), m_unknownChunks(),
-    m_98ImageDataChunks(),
     m_documentChunk(), m_lastSeenSeqNum(-1),
     m_lastAddedImage(0), m_seenDocumentChunk(false),
     m_alternateShapeSeqNums()
 {
 }
 
-libmspub::Color libmspub::MSPUBParser::getColorBy98Hex(unsigned hex)
+libmspub::MSPUBParser2k::MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector)
+  : MSPUBParser(input, collector),
+    m_imageDataChunks()
+{
+}
+
+libmspub::Color libmspub::MSPUBParser2k::getColorBy2kHex(unsigned hex)
 {
   switch ((hex >> 24) & 0xFF)
   {
   case 0x00:
-    return getColorBy98Index(hex & 0xFF);
+    return getColorBy2kIndex(hex & 0xFF);
   case 0x20:
     return Color(hex & 0xFF, (hex >> 8) & 0xFF, (hex >> 16) & 0xFF);
   default:
@@ -72,7 +76,7 @@ libmspub::Color libmspub::MSPUBParser::getColorBy98Hex(unsigned hex)
   }
 }
 
-libmspub::Color libmspub::MSPUBParser::getColorBy98Index(unsigned char index)
+libmspub::Color libmspub::MSPUBParser2k::getColorBy2kIndex(unsigned char index)
 {
   switch(index)
   {
@@ -197,6 +201,10 @@ libmspub::MSPUBParser::~MSPUBParser()
 {
 }
 
+libmspub::MSPUBParser2k::~MSPUBParser2k()
+{
+}
+
 short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variable-length block with the data length as the first DWORD
 {
   switch(type)
@@ -262,16 +270,16 @@ public:
   }
 };
 
-// takes a color reference in 98 format and translates it into 2k2 format that collector understands.
-unsigned libmspub::MSPUBParser::translate98ColorReference(unsigned ref98)
+// takes a color reference in 2k format and translates it into 2k2 format that collector understands.
+unsigned libmspub::MSPUBParser2k::translate2kColorReference(unsigned ref2k)
 {
-  switch ((ref98 >> 24) & 0xFF)
+  switch ((ref2k >> 24) & 0xFF)
   {
   case 0xC0: //index into user palette
-    return (ref98 & 0xFF) | (0x08 << 24);
+    return (ref2k & 0xFF) | (0x08 << 24);
   default:
     {
-      Color c = getColorBy98Hex(ref98);
+      Color c = getColorBy2kHex(ref2k);
       return (c.r) | (c.g << 8) | (c.b << 16);
     }
   }
@@ -294,9 +302,9 @@ unsigned short translateLineWidth(unsigned char lineWidth)
   }
 }
 
-libmspub::ShapeType getShapeTypeOld(unsigned char oldShapeSpecifier)
+libmspub::ShapeType getShapeType2k(unsigned char shapeSpecifier)
 {
-  switch (oldShapeSpecifier)
+  switch (shapeSpecifier)
   {
   case 0x1:
     return libmspub::ROUND_RECTANGLE;
@@ -307,7 +315,7 @@ libmspub::ShapeType getShapeTypeOld(unsigned char oldShapeSpecifier)
   }
 }
 
-bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
+bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
 {
   input->seek(0x16, WPX_SEEK_SET);
   unsigned trailerOffset = readU32(input);
@@ -341,12 +349,12 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       m_seenDocumentChunk = true;
       break;
     case 0x0002:
-      m_shapeChunks.push_back(ContentChunkReference(IMAGE_98, chunkOffset, 0, id, parent));
+      m_shapeChunks.push_back(ContentChunkReference(IMAGE_2K, chunkOffset, 0, id, parent));
       last = &(m_shapeChunks.back());
       break;
     case 0x0021:
-      m_98ImageDataChunks.push_back(ContentChunkReference(IMAGE_98_DATA, chunkOffset, 0, id, parent));
-      last = &(m_98ImageDataChunks.back());
+      m_imageDataChunks.push_back(ContentChunkReference(IMAGE_2K_DATA, chunkOffset, 0, id, parent));
+      last = &(m_imageDataChunks.back());
       break;
     case 0x0005:
     case 0x0007:
@@ -386,12 +394,12 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     for (unsigned i = 0; i < 8; ++i)
     {
       unsigned hex = readU32(input);
-      Color color = getColorBy98Hex(hex);
+      Color color = getColorBy2kHex(hex);
       m_collector->addPaletteColor(color);
     }
   }
 
-  for (ccr_iterator_t iter = m_98ImageDataChunks.begin(); iter != m_98ImageDataChunks.end(); ++iter)
+  for (ccr_iterator_t iter = m_imageDataChunks.begin(); iter != m_imageDataChunks.end(); ++iter)
   {
     input->seek(iter->offset + 4, WPX_SEEK_SET);
     unsigned toRead = readU32(input);
@@ -414,7 +422,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     {
       continue;
     }
-    if (getPageTypeBySeqNumOld(i_page->seqNum) != NORMAL)
+    if (getPageTypeBySeqNum(i_page->seqNum) != NORMAL)
     {
       continue;
     }
@@ -438,7 +446,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     case 0x0006:
       {
         input->seek(iter->seqNum + 0x31, WPX_SEEK_SET);
-        ShapeType shapeType = getShapeTypeOld(readU8(input));
+        ShapeType shapeType = getShapeType2k(readU8(input));
         if (shapeType != UNKNOWN_SHAPE)
         {
           m_collector->setShapeType(iter->seqNum, shapeType);
@@ -460,10 +468,10 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     if (isImage)
     {
       std::vector<ContentChunkReference>::const_iterator i_dataIndex =
-        std::find_if(m_98ImageDataChunks.begin(), m_98ImageDataChunks.end(), FindByParentSeqNum(iter->seqNum));
-      if (i_dataIndex != m_98ImageDataChunks.end())
+        std::find_if(m_imageDataChunks.begin(), m_imageDataChunks.end(), FindByParentSeqNum(iter->seqNum));
+      if (i_dataIndex != m_imageDataChunks.end())
       {
-        m_collector->setShapeImgIndex(iter->seqNum, 1 + i_dataIndex - m_98ImageDataChunks.begin());
+        m_collector->setShapeImgIndex(iter->seqNum, 1 + i_dataIndex - m_imageDataChunks.begin());
       }
     }
     else
@@ -474,7 +482,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       {
         input->seek(iter->offset + 0x22, WPX_SEEK_SET);
         unsigned fillColorReference = readU32(input);
-        unsigned translatedFillColorReference = translate98ColorReference(fillColorReference);
+        unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
         m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
       }
     }
@@ -482,14 +490,14 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     unsigned short leftLineWidth = readU8(input);
     bool leftLineExists = leftLineWidth != 0;
     unsigned leftColorReference = readU32(input);
-    unsigned translatedLeftColorReference = translate98ColorReference(leftColorReference);
+    unsigned translatedLeftColorReference = translate2kColorReference(leftColorReference);
     if (isRectangle)
     {
       input->seek(4, WPX_SEEK_CUR);
       unsigned char topLineWidth = readU8(input);
       bool topLineExists = topLineWidth != 0;
       unsigned topColorReference = readU32(input);
-      unsigned translatedTopColorReference = translate98ColorReference(topColorReference);
+      unsigned translatedTopColorReference = translate2kColorReference(topColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedTopColorReference),
             translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
@@ -497,7 +505,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       unsigned char rightLineWidth = readU8(input);
       bool rightLineExists = rightLineWidth != 0;
       unsigned rightColorReference = readU32(input);
-      unsigned translatedRightColorReference = translate98ColorReference(rightColorReference);
+      unsigned translatedRightColorReference = translate2kColorReference(rightColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedRightColorReference),
             translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
@@ -505,7 +513,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       unsigned char bottomLineWidth = readU8(input);
       bool bottomLineExists = bottomLineWidth != 0;
       unsigned bottomColorReference = readU32(input);
-      unsigned translatedBottomColorReference = translate98ColorReference(bottomColorReference);
+      unsigned translatedBottomColorReference = translate2kColorReference(bottomColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedBottomColorReference),
             translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
     }
@@ -516,7 +524,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser::parseOld()
+bool libmspub::MSPUBParser2k::parse()
 {
   WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
   if (!contents)
@@ -524,7 +532,7 @@ bool libmspub::MSPUBParser::parseOld()
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
     return false;
   }
-  if (!parseOldContents(contents))
+  if (!parseContents(contents))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
     delete contents;
@@ -535,10 +543,6 @@ bool libmspub::MSPUBParser::parseOld()
 
 bool libmspub::MSPUBParser::parse()
 {
-  if (m_isOldVersion)
-  {
-    return parseOld();
-  }
   MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isOLEStream())
     return false;
@@ -1782,7 +1786,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
   return info;
 }
 
-libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNumOld(unsigned seqNum)
+libmspub::PageType libmspub::MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
 {
   switch(seqNum)
   {

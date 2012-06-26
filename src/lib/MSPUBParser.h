@@ -48,10 +48,10 @@ class MSPUBCollector;
 class MSPUBParser
 {
 public:
-  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector, bool isOldVersion);
+  explicit MSPUBParser(WPXInputStream *input, MSPUBCollector *collector);
   virtual ~MSPUBParser();
-  bool parse();
-private:
+  virtual bool parse();
+protected:
 
   struct TextSpanReference
   {
@@ -74,12 +74,10 @@ private:
   MSPUBParser();
   MSPUBParser(const MSPUBParser &);
   MSPUBParser &operator=(const MSPUBParser &);
-  bool parseContents(WPXInputStream *input);
+  virtual bool parseContents(WPXInputStream *input);
   bool parseQuill(WPXInputStream *input);
   bool parseEscher(WPXInputStream *input);
   bool parseEscherDelay(WPXInputStream *input);
-  bool parseOld();
-  bool parseOldContents(WPXInputStream *input);
 
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
   EscherContainerInfo parseEscherContainer(WPXInputStream *input);
@@ -108,13 +106,11 @@ private:
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
-  bool m_isOldVersion;
   std::vector<MSPUBBlockInfo> m_blockInfo;
   std::vector<ContentChunkReference> m_pageChunks;
   std::vector<ContentChunkReference> m_shapeChunks;
   std::vector<ContentChunkReference> m_paletteChunks;
   std::vector<ContentChunkReference> m_unknownChunks;
-  std::vector<ContentChunkReference> m_98ImageDataChunks;
   ContentChunkReference m_documentChunk;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;
@@ -124,14 +120,25 @@ private:
   static short getBlockDataLength(unsigned type);
   static bool isBlockDataString(unsigned type);
   static PageType getPageTypeBySeqNum(unsigned seqNum);
-  static PageType getPageTypeBySeqNumOld(unsigned seqNum);
   static unsigned getEscherElementTailLength(unsigned short type);
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
-  static Color getColorBy98Index(unsigned char index);
-  static Color getColorBy98Hex(unsigned hex);
-  static unsigned translate98ColorReference(unsigned ref98);
+};
+
+class MSPUBParser2k : public MSPUBParser
+{
+  std::vector<ContentChunkReference> m_imageDataChunks;
+protected:
+  virtual bool parseContents(WPXInputStream *input);
+  static Color getColorBy2kIndex(unsigned char index);
+  static Color getColorBy2kHex(unsigned hex);
+  static unsigned translate2kColorReference(unsigned ref2k);
+  static PageType getPageTypeBySeqNum(unsigned seqNum);
+public:
+  explicit MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector);
+  bool parse();
+  virtual ~MSPUBParser2k();
 };
 
 } // namespace libmspub

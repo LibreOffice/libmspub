@@ -294,6 +294,19 @@ unsigned short translateLineWidth(unsigned char lineWidth)
   }
 }
 
+libmspub::ShapeType getShapeTypeOld(unsigned char oldShapeSpecifier)
+{
+  switch (oldShapeSpecifier)
+  {
+  case 0x1:
+    return libmspub::ROUND_RECTANGLE;
+  case 0x2:
+    return libmspub::RIGHT_TRIANGLE;
+  default:
+    return libmspub::UNKNOWN_SHAPE;
+  }
+}
+
 bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
 {
   input->seek(0x16, WPX_SEEK_SET);
@@ -422,13 +435,23 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       m_collector->setShapeType(iter->seqNum, RECTANGLE);
       isRectangle = true;
       break;
+    case 0x0006:
+      {
+        input->seek(iter->seqNum + 0x31, WPX_SEEK_SET);
+        ShapeType shapeType = getShapeTypeOld(readU8(input));
+        if (shapeType != UNKNOWN_SHAPE)
+        {
+          m_collector->setShapeType(iter->seqNum, shapeType);
+        }
+      }
+      break;
     case 0x0007:
       m_collector->setShapeType(iter->seqNum, ELLIPSE);
       break;
     default:
       break;
     }
-    input->seek(4, WPX_SEEK_CUR);
+    input->seek(iter->seqNum + 6, WPX_SEEK_CUR);
     int xs = readS32(input);
     int ys = readS32(input);
     int xe = readS32(input);

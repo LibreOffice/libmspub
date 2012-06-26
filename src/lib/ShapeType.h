@@ -33,6 +33,7 @@ namespace libmspub
 {
 enum ShapeType
 {
+  UNKNOWN_SHAPE        = -1,
   RECTANGLE            = 1,
   ROUND_RECTANGLE      = 2,
   ELLIPSE              = 3,

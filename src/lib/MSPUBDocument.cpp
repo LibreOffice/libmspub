@@ -83,6 +83,34 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
   }
 }
 
+enum MSPUBVersion
+{
+  MSPUB_UNKNOWN_VERSION,
+  MSPUB_2K,
+  MSPUB_2K2
+};
+
+MSPUBVersion getVersion(WPXInputStream *input)
+{
+  WPXInputStream *stream = input->getDocumentOLEStream("Contents");
+  if (!stream)
+  {
+    return MSPUB_UNKNOWN_VERSION;
+  }
+  stream->seek(2, WPX_SEEK_SET);
+  unsigned char magicVersionByte = libmspub::readU8(stream);
+  stream->seek(0, WPX_SEEK_SET);
+  switch(magicVersionByte)
+  {
+  case 0x2C:
+    return MSPUB_2K2;
+  case 0x22:
+    return MSPUB_2K;
+  default:
+    return MSPUB_UNKNOWN_VERSION;
+  }
+}
+
 /**
 Parses the input stream content. It will make callbacks to the functions provided by a
 WPGPaintInterface class implementation when needed. This is often commonly called the
@@ -95,7 +123,18 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
 {
   MSPUBCollector collector(painter);
   input->seek(0, WPX_SEEK_SET);
-  MSPUBParser *parser = isOldVersion ? new MSPUBParser2k(input, &collector) : new MSPUBParser(input, &collector);
+  MSPUBParser *parser;
+  switch (getVersion(input))
+  {
+  case MSPUB_2K:
+    parser = new MSPUBParser2k(input, &collector);
+    break;
+  case MSPUB_2K2:
+    parser = new MSPUBParser(input, &collector);
+    break;
+  default:
+    return false;
+  }
   bool result = parser->parse();
   delete parser;
   return result;

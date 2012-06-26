@@ -5687,7 +5687,7 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList & graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
+void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
   bool drawStroke = lines.size() > 0;
   if (width == 0 || height == 0)
@@ -5770,7 +5770,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList & grap
   else
   {
     WPXPropertyListVector vertices;
-    if (drawStroke) 
+    if (drawStroke)
     {
       // don't bother with different strokes for things defined by segments
       Line &first = lines[0];

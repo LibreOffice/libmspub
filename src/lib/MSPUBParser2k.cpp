@@ -201,10 +201,10 @@ unsigned libmspub::MSPUBParser2k::translate2kColorReference(unsigned ref2k)
   case 0xC0: //index into user palette
     return (ref2k & 0xFF) | (0x08 << 24);
   default:
-    {
-      Color c = getColorBy2kHex(ref2k);
-      return (c.r) | (c.g << 8) | (c.b << 16);
-    }
+  {
+    Color c = getColorBy2kHex(ref2k);
+    return (c.r) | (c.g << 8) | (c.b << 16);
+  }
   }
 }
 
@@ -350,15 +350,15 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       isRectangle = true;
       break;
     case 0x0006:
+    {
+      input->seek(iter->seqNum + 0x31, WPX_SEEK_SET);
+      ShapeType shapeType = getShapeType2k(readU8(input));
+      if (shapeType != UNKNOWN_SHAPE)
       {
-        input->seek(iter->seqNum + 0x31, WPX_SEEK_SET);
-        ShapeType shapeType = getShapeType2k(readU8(input));
-        if (shapeType != UNKNOWN_SHAPE)
-        {
-          m_collector->setShapeType(iter->seqNum, shapeType);
-        }
+        m_collector->setShapeType(iter->seqNum, shapeType);
       }
-      break;
+    }
+    break;
     case 0x0007:
       m_collector->setShapeType(iter->seqNum, ELLIPSE);
       break;
@@ -405,7 +405,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       unsigned topColorReference = readU32(input);
       unsigned translatedTopColorReference = translate2kColorReference(topColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedTopColorReference),
-            translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
+                                translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
       unsigned char rightLineWidth = readU8(input);
@@ -413,7 +413,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       unsigned rightColorReference = readU32(input);
       unsigned translatedRightColorReference = translate2kColorReference(rightColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedRightColorReference),
-            translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
+                                translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
       unsigned char bottomLineWidth = readU8(input);
@@ -421,10 +421,10 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       unsigned bottomColorReference = readU32(input);
       unsigned translatedBottomColorReference = translate2kColorReference(bottomColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedBottomColorReference),
-            translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
+                                translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
     }
     m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedLeftColorReference),
-          translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
+                              translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
     m_collector->setShapeOrder(iter->seqNum);
   }
   return true;

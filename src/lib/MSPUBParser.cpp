@@ -459,7 +459,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     default:
       break;
     }
-    input->seek(iter->seqNum + 6, WPX_SEEK_CUR);
+    input->seek(iter->offset + 6, WPX_SEEK_SET);
     int xs = readS32(input);
     int ys = readS32(input);
     int xe = readS32(input);

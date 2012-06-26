@@ -277,6 +277,23 @@ unsigned libmspub::MSPUBParser::translate98ColorReference(unsigned ref98)
   }
 }
 
+// Takes a line width specifier in Pub2k format and translates it into quarter points
+unsigned short translateLineWidth(unsigned char lineWidth)
+{
+  if (lineWidth == 0x81)
+  {
+    return 0;
+  }
+  else if (lineWidth > 0x81)
+  {
+    return ((lineWidth - 0x81) / 3) * 4 + ((lineWidth - 0x81) % 3) + 1;
+  }
+  else
+  {
+    return lineWidth * 4;
+  }
+}
+
 bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
 {
   input->seek(0x16, WPX_SEEK_SET);
@@ -310,7 +327,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       last = &m_documentChunk;
       m_seenDocumentChunk = true;
       break;
-    case 0x0006:
+    case 0x0002:
       m_shapeChunks.push_back(ContentChunkReference(IMAGE_98, chunkOffset, 0, id, parent));
       last = &(m_shapeChunks.back());
       break;
@@ -318,7 +335,6 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       m_98ImageDataChunks.push_back(ContentChunkReference(IMAGE_98_DATA, chunkOffset, 0, id, parent));
       last = &(m_98ImageDataChunks.back());
       break;
-    case 0x0002:
     case 0x0005:
     case 0x0007:
       m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
@@ -440,12 +456,8 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       }
     }
     input->seek(iter->offset + 0x2C, WPX_SEEK_SET);
-    unsigned char leftLineWidth = readU8(input);
+    unsigned short leftLineWidth = readU8(input);
     bool leftLineExists = leftLineWidth != 0;
-    if (leftLineWidth == 0x81)
-    {
-      leftLineWidth = 0;
-    }
     unsigned leftColorReference = readU32(input);
     unsigned translatedLeftColorReference = translate98ColorReference(leftColorReference);
     if (isRectangle)
@@ -453,41 +465,29 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       input->seek(4, WPX_SEEK_CUR);
       unsigned char topLineWidth = readU8(input);
       bool topLineExists = topLineWidth != 0;
-      if (topLineWidth == 0x81)
-      {
-        topLineWidth = 0;
-      }
       unsigned topColorReference = readU32(input);
       unsigned translatedTopColorReference = translate98ColorReference(topColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedTopColorReference),
-            topLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, topLineExists));
+            translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
       unsigned char rightLineWidth = readU8(input);
       bool rightLineExists = rightLineWidth != 0;
-      if (rightLineWidth == 0x81)
-      {
-        rightLineWidth = 0;
-      }
       unsigned rightColorReference = readU32(input);
       unsigned translatedRightColorReference = translate98ColorReference(rightColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedRightColorReference),
-            rightLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, rightLineExists));
+            translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
       unsigned char bottomLineWidth = readU8(input);
       bool bottomLineExists = bottomLineWidth != 0;
-      if (bottomLineWidth == 0x81)
-      {
-        bottomLineWidth = 0;
-      }
       unsigned bottomColorReference = readU32(input);
       unsigned translatedBottomColorReference = translate98ColorReference(bottomColorReference);
       m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedBottomColorReference),
-            bottomLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, bottomLineExists));
+            translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
     }
     m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedLeftColorReference),
-          leftLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, leftLineExists));
+          translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
     m_collector->setShapeOrder(iter->seqNum);
   }
   return true;

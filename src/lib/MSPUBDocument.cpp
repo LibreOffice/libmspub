@@ -124,7 +124,7 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
 {
   MSPUBCollector collector(painter);
   input->seek(0, WPX_SEEK_SET);
-  MSPUBParser *parser;
+  MSPUBParser *parser = 0;
   switch (getVersion(input))
   {
   case MSPUB_2K:

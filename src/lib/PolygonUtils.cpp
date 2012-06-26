@@ -5687,8 +5687,9 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
-void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList & /* props */, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal)
+void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList & graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
+  bool drawStroke = lines.size() > 0;
   if (width == 0 || height == 0)
   {
     return;
@@ -5707,24 +5708,77 @@ void libmspub::writeCustomShape(const CustomShape *shape, const WPXPropertyList 
   }
   double divisorX = shape->m_coordWidth / width;
   double divisorY = shape->m_coordHeight / height;
-  WPXPropertyListVector vertices;
   if (shape->mp_elements == NULL)
   {
-    for (unsigned i = 0; i < shape->m_numVertices; ++i)
+    if ((!graphicsProps["draw:fill"]) || (graphicsProps["draw:fill"]->getStr() == "none"))
     {
-      WPXPropertyList vertex;
-      double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
-      double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
-      rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
-      flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
-      vertex.insert("svg:x", vertexX);
-      vertex.insert("svg:y", vertexY);
-      vertices.append(vertex);
+      std::vector<Line>::const_iterator iter_line = lines.begin();
+      double vertexX, vertexY;
+      for (unsigned i = 0; i < shape->m_numVertices; ++i)
+      {
+        WPXPropertyListVector vertices;
+        WPXPropertyList vertex;
+        if (i > 0)
+        {
+          WPXPropertyList vertexStart;
+          vertexStart.insert("svg:x", vertexX);
+          vertexStart.insert("svg:y", vertexY);
+          vertices.append(vertexStart);
+        }
+        vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
+        vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
+        rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
+        flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
+        vertex.insert("svg:x", vertexX);
+        vertex.insert("svg:y", vertexY);
+        vertices.append(vertex);
+        if (i > 0)
+        {
+          if (drawStroke)
+          {
+            const Line &current = *iter_line;
+            graphicsProps.insert("draw:stroke", current.m_lineExists ? "solid" : "none");
+            graphicsProps.insert("svg:stroke-width", (double)(current.m_widthInEmu) / EMUS_IN_INCH);
+            graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(current.m_color.getFinalColor(caller->getPaletteColors())));
+            painter->setStyle(graphicsProps, WPXPropertyListVector());
+            if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
+            {
+              ++iter_line;
+            }
+          }
+          painter->drawPolyline(vertices);
+        }
+      }
     }
-    painter->drawPolygon(vertices);
+    else
+    {
+      WPXPropertyListVector vertices;
+      for (unsigned i = 0; i < shape->m_numVertices; ++i)
+      {
+        WPXPropertyList vertex;
+        double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
+        double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
+        rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
+        flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
+        vertex.insert("svg:x", vertexX);
+        vertex.insert("svg:y", vertexY);
+        vertices.append(vertex);
+      }
+      painter->drawPolygon(vertices);
+    }
   }
   else
   {
+    WPXPropertyListVector vertices;
+    if (drawStroke) 
+    {
+      // don't bother with different strokes for things defined by segments
+      Line &first = lines[0];
+      graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
+      graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
+      graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(caller->getPaletteColors())));
+      painter->setStyle(graphicsProps, WPXPropertyListVector());
+    }
     unsigned vertexIndex = 0;
     bool hasUnclosedElements = false;
     for (unsigned i = 0; i < shape->m_numElements; ++i)

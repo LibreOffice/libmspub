@@ -429,32 +429,54 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       }
     }
     input->seek(iter->offset + 0x2C, WPX_SEEK_SET);
-    unsigned char leftLineWidth = readU8(input) % 0x80; // 0x81 is hairline which we emulate with width=1pt
+    unsigned char leftLineWidth = readU8(input);
+    bool leftLineExists = leftLineWidth != 0;
+    if (leftLineWidth == 0x81)
+    {
+      leftLineWidth = 0;
+    }
     unsigned leftColorReference = readU32(input);
     unsigned translatedLeftColorReference = translate98ColorReference(leftColorReference);
     if (isRectangle)
     {
-#ifndef DEBUG
       input->seek(4, WPX_SEEK_CUR);
-      unsigned char topLineWidth = readU8(input) % 0x80;
+      unsigned char topLineWidth = readU8(input);
+      bool topLineExists = topLineWidth != 0;
+      if (topLineWidth == 0x81)
+      {
+        topLineWidth = 0;
+      }
       unsigned topColorReference = readU32(input);
       unsigned translatedTopColorReference = translate98ColorReference(topColorReference);
+      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedTopColorReference),
+            topLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, topLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
-      unsigned char rightLineWidth = readU8(input) % 0x80;
+      unsigned char rightLineWidth = readU8(input);
+      bool rightLineExists = rightLineWidth != 0;
+      if (rightLineWidth == 0x81)
+      {
+        rightLineWidth = 0;
+      }
       unsigned rightColorReference = readU32(input);
       unsigned translatedRightColorReference = translate98ColorReference(rightColorReference);
+      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedRightColorReference),
+            rightLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, rightLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
-      unsigned char botLineWidth = readU8(input) % 0x80;
-      unsigned botColorReference = readU32(input);
-      unsigned translatedBotColorReference = translate98ColorReference(botColorReference);
-#endif
+      unsigned char bottomLineWidth = readU8(input);
+      bool bottomLineExists = bottomLineWidth != 0;
+      if (bottomLineWidth == 0x81)
+      {
+        bottomLineWidth = 0;
+      }
+      unsigned bottomColorReference = readU32(input);
+      unsigned translatedBottomColorReference = translate98ColorReference(bottomColorReference);
+      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedBottomColorReference),
+            bottomLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, bottomLineExists));
     }
-
-    // FIXME: Separate line widths and colors for each side of a rectangle
-    m_collector->setShapeLineColor(iter->seqNum, ColorReference(translatedLeftColorReference));
-    m_collector->setShapeLineWidth(iter->seqNum, leftLineWidth * EMUS_IN_INCH / POINTS_IN_INCH);
+    m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedLeftColorReference),
+          leftLineWidth * EMUS_IN_INCH / POINTS_IN_INCH, leftLineExists));
     m_collector->setShapeOrder(iter->seqNum);
   }
   return true;
@@ -1391,7 +1413,8 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
                 if (ptr_lineColor && useLine)
                 {
-                  m_collector->setShapeLineColor(*shapeSeqNum, ColorReference(*ptr_lineColor));
+                  // default of 0.75pt for now
+                  m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), 9525, true));
                 }
                 if (ptr_fill)
                 {
@@ -1734,6 +1757,7 @@ libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNumOld(unsigned seqNum
   case 0x109:
   case 0x10B:
   case 0x10D:
+  case 0x119:
     return DUMMY_PAGE;
   default:
     return NORMAL;

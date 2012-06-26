@@ -104,7 +104,7 @@ struct CustomShape
 };
 
 const CustomShape *getCustomShape(ShapeType type);
-void writeCustomShape(const CustomShape *shape, const WPXPropertyList &props, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal);
+void writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

@@ -82,14 +82,13 @@ public:
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
-  bool setShapeLineColor(unsigned seqNum, ColorReference line);
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
   bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
   bool setShapeRotation(unsigned seqNum, short rotation);
   bool setShapeFlip(unsigned, bool, bool);
   bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
-  bool setShapeLineWidth(unsigned seqNum, unsigned width);
 
+  void addShapeLine(unsigned seqNum, Line line);
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
   void setWidthInEmu(unsigned long);
@@ -141,7 +140,7 @@ private:
   std::vector<unsigned> m_possibleImageShapeSeqNums;
   std::map<unsigned, unsigned> m_shapeImgIndicesBySeqNum;
   std::map<unsigned, Coordinate> m_shapeCoordinatesBySeqNum;
-  std::map<unsigned, ColorReference> m_shapeLineColorsBySeqNum;
+  std::map<unsigned, std::vector<Line> > m_shapeLinesBySeqNum;
   boost::ptr_map<unsigned, Fill> m_shapeFillsBySeqNum;
   std::vector<Color> m_paletteColors;
   std::vector<unsigned> m_shapeSeqNumsOrdered;
@@ -153,13 +152,13 @@ private:
   std::map<unsigned, short> m_shapeRotationsBySeqNum;
   std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
   std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
-  std::map<unsigned, unsigned> m_shapeLineWidthsBySeqNum;
 
   // helper functions
   void assignImages();
   void setRectCoordProps(Coordinate, WPXPropertyList *);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
+public:
   static WPXString getColorString(const Color &);
 };
 

@@ -43,6 +43,13 @@ struct Coordinate
   Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
   int m_xs, m_ys, m_xe, m_ye;
 };
+struct Line
+{
+  ColorReference m_color;
+  unsigned m_widthInEmu;
+  bool m_lineExists;
+  Line(ColorReference color, unsigned widthInEmu, bool lineExists) : m_color(color), m_widthInEmu(widthInEmu), m_lineExists(lineExists) { }
+};
 struct Shape
 {
   Shape(MSPUBCollector *o) : props(), graphicsProps(), owner(o) { }
@@ -77,7 +84,7 @@ private:
 };
 struct GeometricShape : public FillableShape
 {
-  void setLine(ColorReference line);
+  void addLine(ColorReference color, unsigned widthInEmu, bool lineExists);
   void fillDefaultAdjustValues();
   void setAdjustValue(unsigned index, int adjustValue);
   void setClockwiseRotation(short rotation);
@@ -91,8 +98,6 @@ struct GeometricShape : public FillableShape
   unsigned m_pageSeqNum;
   unsigned m_imgIndex;
   ShapeType m_type;
-  ColorReference m_line;
-  bool m_lineSet;
   double m_x, m_y, m_width, m_height;
   std::vector<int> m_adjustValues;
   short m_clockwiseRotation;
@@ -100,11 +105,12 @@ struct GeometricShape : public FillableShape
   unsigned m_left, m_top, m_right, m_bottom; //emu
   GeometricShape(unsigned psn, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE),
-      m_line(0x08000000), m_lineSet(false), m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
-      m_lineWidth(9525) /* 0.75 pt. */ { }
+      m_lines(), m_drawStroke(false) { }
+  std::vector<Color> getPaletteColors() const;
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
   virtual bool hasFill();
@@ -120,7 +126,8 @@ private:
   Coordinate m_textCoord;
   bool m_closeEverything;
 public:
-  unsigned m_lineWidth;
+  std::vector<Line> m_lines;
+  bool m_drawStroke;
 };
 struct ImgShape : public GeometricShape
 {

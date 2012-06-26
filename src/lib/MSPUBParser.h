@@ -44,6 +44,28 @@ class WPXInputStream;
 namespace libmspub
 {
 class MSPUBCollector;
+class FindBySeqNum
+{
+  unsigned seqNum;
+public:
+  FindBySeqNum(unsigned sn) : seqNum(sn) { }
+  bool operator()(const libmspub::ContentChunkReference &ref)
+  {
+    return ref.seqNum == seqNum;
+  }
+};
+
+class FindByParentSeqNum
+{
+  unsigned seqNum;
+public:
+  FindByParentSeqNum(unsigned sn) : seqNum(sn) { }
+  bool operator()(const libmspub::ContentChunkReference &ref)
+  {
+    return ref.parentSeqNum == seqNum;
+  }
+};
+
 
 class MSPUBParser
 {
@@ -124,21 +146,6 @@ protected:
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
-};
-
-class MSPUBParser2k : public MSPUBParser
-{
-  std::vector<ContentChunkReference> m_imageDataChunks;
-protected:
-  virtual bool parseContents(WPXInputStream *input);
-  static Color getColorBy2kIndex(unsigned char index);
-  static Color getColorBy2kHex(unsigned hex);
-  static unsigned translate2kColorReference(unsigned ref2k);
-  static PageType getPageTypeBySeqNum(unsigned seqNum);
-public:
-  explicit MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector);
-  bool parse();
-  virtual ~MSPUBParser2k();
 };
 
 } // namespace libmspub

@@ -33,6 +33,7 @@
 #include "MSPUBSVGGenerator.h"
 #include "MSPUBCollector.h"
 #include "MSPUBParser.h"
+#include "MSPUBParser2k.h"
 #include "libmspub_utils.h"
 
 bool isOldVersion;

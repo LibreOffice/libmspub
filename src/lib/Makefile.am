@@ -20,6 +20,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBCollector.cpp \
 	MSPUBDocument.cpp \
 	MSPUBParser.cpp \
+	MSPUBParser2k.cpp \
 	MSPUBStringVector.cpp \
 	MSPUBSVGGenerator.cpp \
 	Fill.cpp \
@@ -34,6 +35,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBConstants.h \
 	MSPUBContentChunkType.h \
 	MSPUBParser.h \
+	MSPUBParser2k.h \
 	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \
 	libmspub_utils.h \

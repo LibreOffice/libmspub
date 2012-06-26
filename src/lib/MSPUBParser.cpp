@@ -318,6 +318,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
       m_98ImageDataChunks.push_back(ContentChunkReference(IMAGE_98_DATA, chunkOffset, 0, id, parent));
       last = &(m_98ImageDataChunks.back());
       break;
+    case 0x0002:
     case 0x0005:
     case 0x0007:
       m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
@@ -363,7 +364,17 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
 
   for (ccr_iterator_t iter = m_98ImageDataChunks.begin(); iter != m_98ImageDataChunks.end(); ++iter)
   {
-    input->seek(iter->offset, WPX_SEEK_SET);
+    input->seek(iter->offset + 4, WPX_SEEK_SET);
+    unsigned toRead = readU32(input);
+    WPXBinaryData img;
+    while (toRead > 0 && stillReading(input, (unsigned long)-1))
+    {
+      unsigned long howManyRead = 0;
+      const unsigned char *buf = input->read(toRead, howManyRead);
+      img.append(buf, howManyRead);
+      toRead -= howManyRead;
+    }
+    m_collector->addImage(++m_lastAddedImage, WMF, img);
   }
 
   for (ccr_iterator_t iter = m_shapeChunks.begin(); iter != m_shapeChunks.end(); ++iter)
@@ -389,7 +400,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
     bool isRectangle = false;
     switch (typeMarker)
     {
-    case 0x0021:
+    case 0x0002:
       isImage = true;
     case 0x0005:
       m_collector->setShapeType(iter->seqNum, RECTANGLE);
@@ -413,7 +424,7 @@ bool libmspub::MSPUBParser::parseOldContents(WPXInputStream *input)
         std::find_if(m_98ImageDataChunks.begin(), m_98ImageDataChunks.end(), FindByParentSeqNum(iter->seqNum));
       if (i_dataIndex != m_98ImageDataChunks.end())
       {
-        m_collector->setShapeImgIndex(iter->seqNum, i_dataIndex - m_98ImageDataChunks.begin());
+        m_collector->setShapeImgIndex(iter->seqNum, 1 + i_dataIndex - m_98ImageDataChunks.begin());
       }
     }
     else

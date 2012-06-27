@@ -30,12 +30,14 @@
 #define __MSPUBPARSER2K_H__
 
 #include "MSPUBParser.h"
+#include "ShapeType.h"
 
 namespace libmspub
 {
 
 class MSPUBParser2k : public MSPUBParser
 {
+  static ShapeType getShapeType(unsigned char shapeSpecifier);
   std::vector<ContentChunkReference> m_imageDataChunks;
 protected:
   virtual bool parseContents(WPXInputStream *input);

@@ -111,8 +111,8 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
   try
   {
     MSPUBVersion version = getVersion(input);
-	if (version == MSPUB_UNKNOWN_VERSION)
-	  return false;
+    if (version == MSPUB_UNKNOWN_VERSION)
+      return false;
 
     stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
     if (!stream)

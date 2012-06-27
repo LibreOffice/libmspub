@@ -349,6 +349,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     case 0x0005:
     case 0x0006:
     case 0x0007:
+    case 0x0008:
       m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
       last = &(m_shapeChunks.back());
       break;
@@ -430,6 +431,9 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     {
     case 0x0002:
       isImage = true;
+      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      isRectangle = true;
+      break;
     case 0x0005:
       m_collector->setShapeType(iter->seqNum, RECTANGLE);
       isRectangle = true;
@@ -447,6 +451,15 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     case 0x0007:
       m_collector->setShapeType(iter->seqNum, ELLIPSE);
       break;
+    case 0x0008:
+    {
+      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      isRectangle = true;
+      input->seek(iter->offset + 0x58, WPX_SEEK_SET);
+      unsigned txtId = readU32(input);
+      m_collector->addTextShape(txtId, iter->seqNum, iter->parentSeqNum);
+    }
+    break;
     default:
       break;
     }
@@ -527,6 +540,18 @@ bool libmspub::MSPUBParser2k::parse()
   {
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
     delete contents;
+    return false;
+  }
+  WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
+  if (!quill)
+  {
+    MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));
+    return false;
+  }
+  if (!parseQuill(quill))
+  {
+    MSPUB_DEBUG_MSG(("Couldn't parse quill stream.\n"));
+    delete quill;
     return false;
   }
   return m_collector->go();

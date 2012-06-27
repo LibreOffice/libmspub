@@ -5689,7 +5689,7 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
 
 void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
-  bool drawStroke = lines.size() > 0;
+  bool drawStroke = !lines.empty();
   if (width == 0 || height == 0)
   {
     return;

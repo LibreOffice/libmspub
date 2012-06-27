@@ -111,7 +111,7 @@ bool libmspub::ImgShape::hasFill()
 void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
-  bool hasStroke = m_lines.size() > 0;
+  bool hasStroke = !m_lines.empty();
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill_ = hasFill();
   bool makeLayer = (int)(hasStroke) + (int)(hasFill_) + (int)(m_hasText) > 1;

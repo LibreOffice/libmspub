@@ -27,15 +27,30 @@
  */
 
 #include <libwpd-stream/WPXStream.h>
+#include <algorithm>
 #include "MSPUBParser2k.h"
+#include "ColorReference.h"
 #include "ShapeType.h"
 #include "libmspub_utils.h"
 #include "MSPUBCollector.h"
 
 libmspub::MSPUBParser2k::MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector)
   : MSPUBParser(input, collector),
-    m_imageDataChunks()
+    m_imageDataChunks(), m_quillColorEntries()
 {
+}
+
+unsigned libmspub::MSPUBParser2k::getColorIndexByQuillEntry(unsigned entry)
+{
+  unsigned translation = translate2kColorReference(entry);
+  std::vector<unsigned>::const_iterator i_entry = std::find(m_quillColorEntries.begin(), m_quillColorEntries.end(), translation);
+  if (i_entry == m_quillColorEntries.end())
+  {
+    m_quillColorEntries.push_back(translation);
+    m_collector->addTextColor(ColorReference(translation));
+    return m_quillColorEntries.size() - 1;
+  }
+  return i_entry - m_quillColorEntries.begin();
 }
 
 libmspub::MSPUBParser2k::~MSPUBParser2k()
@@ -63,8 +78,10 @@ libmspub::Color libmspub::MSPUBParser2k::getColorBy2kHex(unsigned hex)
 {
   switch ((hex >> 24) & 0xFF)
   {
+  case 0x80:
   case 0x00:
     return getColorBy2kIndex(hex & 0xFF);
+  case 0x90:
   case 0x20:
     return Color(hex & 0xFF, (hex >> 8) & 0xFF, (hex >> 16) & 0xFF);
   default:
@@ -199,6 +216,7 @@ unsigned libmspub::MSPUBParser2k::translate2kColorReference(unsigned ref2k)
   switch ((ref2k >> 24) & 0xFF)
   {
   case 0xC0: //index into user palette
+  case 0xE0:
     return (ref2k & 0xFF) | (0x08 << 24);
   default:
   {

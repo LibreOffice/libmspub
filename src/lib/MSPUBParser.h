@@ -74,6 +74,7 @@ public:
   virtual ~MSPUBParser();
   virtual bool parse();
 protected:
+  virtual unsigned getColorIndexByQuillEntry(unsigned entry);
 
   struct TextSpanReference
   {

@@ -61,6 +61,11 @@ libmspub::MSPUBParser::~MSPUBParser()
 {
 }
 
+unsigned libmspub::MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
+{
+  return entry;
+}
+
 short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variable-length block with the data length as the first DWORD
 {
   switch(type)
@@ -874,6 +879,9 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
     case TEXT_SIZE_2_ID:
       textSize2 = info.data;
       break;
+    case BARE_COLOR_INDEX_ID:
+      colorIndex = info.data;
+      break;
     case COLOR_INDEX_CONTAINER_ID:
       colorIndex = getColorIndex(input, info);
       break;
@@ -887,7 +895,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
       break;
     }
   }
-  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, colorIndex, fontIndex);
+  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, getColorIndexByQuillEntry(colorIndex), fontIndex);
 }
 
 unsigned libmspub::MSPUBParser::getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info)

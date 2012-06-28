@@ -39,8 +39,10 @@ class MSPUBParser2k : public MSPUBParser
 {
   static ShapeType getShapeType(unsigned char shapeSpecifier);
   std::vector<ContentChunkReference> m_imageDataChunks;
+  std::vector<unsigned> m_quillColorEntries;
 protected:
   virtual bool parseContents(WPXInputStream *input);
+  virtual unsigned getColorIndexByQuillEntry(unsigned entry);
   static Color getColorBy2kIndex(unsigned char index);
   static Color getColorBy2kHex(unsigned hex);
   static unsigned translate2kColorReference(unsigned ref2k);

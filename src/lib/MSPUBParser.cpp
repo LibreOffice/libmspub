@@ -1025,8 +1025,9 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
                 if (ptr_lineColor && useLine)
                 {
-                  // default of 0.75pt for now
-                  m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), 9525, true));
+                  unsigned *ptr_lineWidth = getIfExists(foptValues, FIELDID_LINE_WIDTH);
+                  unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
+                  m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
                 }
                 if (ptr_fill)
                 {

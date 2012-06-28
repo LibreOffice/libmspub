@@ -54,6 +54,7 @@
 #define FIELDID_DY_TEXT_TOP            0x0082
 #define FIELDID_DY_TEXT_RIGHT          0x0083
 #define FIELDID_DY_TEXT_BOTTOM         0x0084
+#define FIELDID_LINE_WIDTH             0x01CB
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

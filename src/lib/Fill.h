@@ -50,10 +50,7 @@ public:
   virtual ~Fill() { }
 private:
   Fill(const Fill &) : m_owner(NULL) { }
-  Fill &operator=(const Fill &)
-  {
-    return *this;
-  }
+  Fill &operator=(const Fill &);
 };
 
 class ImgFill : public Fill
@@ -67,10 +64,7 @@ public:
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false) { }
-  ImgFill &operator=(const ImgFill &)
-  {
-    return *this;
-  }
+  ImgFill &operator=(const ImgFill &);
 };
 
 class PatternFill : public ImgFill
@@ -82,10 +76,7 @@ public:
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   PatternFill(const PatternFill &) : ImgFill(0, NULL, true), m_fg(0x08000000), m_bg(0x08000000) { }
-  PatternFill &operator=(const ImgFill &)
-  {
-    return *this;
-  }
+  PatternFill &operator=(const ImgFill &);
 };
 
 class SolidFill : public Fill
@@ -97,10 +88,7 @@ public:
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   SolidFill(const SolidFill &) : Fill(NULL), m_color(0x08000000), m_opacity(1) { }
-  SolidFill &operator=(const SolidFill &)
-  {
-    return *this;
-  }
+  SolidFill &operator=(const SolidFill &);
 };
 
 class GradientFill : public Fill
@@ -120,10 +108,7 @@ public:
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0) { }
-  GradientFill &operator=(const GradientFill &)
-  {
-    return *this;
-  }
+  GradientFill &operator=(const GradientFill &);
 };
 }
 

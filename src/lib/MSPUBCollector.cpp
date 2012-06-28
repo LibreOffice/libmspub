@@ -114,7 +114,7 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
   bool hasStroke = !m_lines.empty();
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill_ = hasFill();
-  bool makeLayer = (int)(hasStroke) + (int)(hasFill_) + (int)(m_hasText) > 1;
+  bool makeLayer = (hasStroke && hasFill_) || (hasStroke && m_hasText) || (hasFill_ && m_hasText);
   if (makeLayer)
     owner->m_painter->startLayer(WPXPropertyList());
   graphicsProps.insert("draw:stroke", "none");
@@ -557,7 +557,7 @@ void libmspub::MSPUBCollector::assignImages()
   {
     unsigned seqNum = m_possibleImageShapeSeqNums[i];
     unsigned *index = getIfExists(m_shapeImgIndicesBySeqNum, seqNum);
-    GeometricShape *shape = (GeometricShape *)ptr_getIfExists(m_shapesBySeqNum, seqNum);
+    GeometricShape *shape = dynamic_cast<GeometricShape *>(ptr_getIfExists(m_shapesBySeqNum, seqNum));
     if (!shape)
     {
       MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", seqNum));

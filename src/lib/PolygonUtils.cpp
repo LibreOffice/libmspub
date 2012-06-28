@@ -5672,25 +5672,27 @@ double getSpecialIfNecessary(const libmspub::GeometricShape *caller, int val)
 
 Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const
 {
-  double divisorX = m_coordWidth / width;
-  double divisorY = m_coordHeight / height;
+  double scaleX = width * m_coordWidth;
+  double scaleY = height * m_coordHeight;
   if (m_numTextRectangles == 0)
   {
     return Coordinate(x, y, x + width, y + height);
   }
   const Vertex &start = mp_textRectangles[0].first;
   const Vertex &end = mp_textRectangles[0].second;
-  double startX = x + getSpecialIfNecessary(caller, start.m_x) / divisorX;
-  double startY = y + getSpecialIfNecessary(caller, start.m_y) / divisorY;
-  double endX = x + getSpecialIfNecessary(caller, end.m_x) / divisorX;
-  double endY = y + getSpecialIfNecessary(caller, end.m_y) / divisorY;
+  double startX = x + scaleX * getSpecialIfNecessary(caller, start.m_x);
+  double startY = y + scaleY * getSpecialIfNecessary(caller, start.m_y);
+  double endX = x + scaleX * getSpecialIfNecessary(caller, end.m_x);
+  double endY = y + scaleY * getSpecialIfNecessary(caller, end.m_y);
   return Coordinate(startX, startY, endX, endY);
 }
 
 void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
   bool drawStroke = !lines.empty();
-  if (width == 0 || height == 0)
+  bool horizontal = height == 0;
+  bool vertical = width == 0;
+  if (horizontal && vertical)
   {
     return;
   }
@@ -5706,8 +5708,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
     width = temp;
     y -= height;
   }
-  double divisorX = shape->m_coordWidth / width;
-  double divisorY = shape->m_coordHeight / height;
+  double scaleX = width / shape->m_coordWidth;
+  double scaleY = height / shape->m_coordHeight;;
   if (shape->mp_elements == NULL)
   {
     if ((!graphicsProps["draw:fill"]) || (graphicsProps["draw:fill"]->getStr() == "none"))
@@ -5725,8 +5727,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
           vertexStart.insert("svg:y", vertexY);
           vertices.append(vertexStart);
         }
-        vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
-        vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
+        vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
+        vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
         rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
         flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
         vertex.insert("svg:x", vertexX);
@@ -5756,8 +5758,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
       for (unsigned i = 0; i < shape->m_numVertices; ++i)
       {
         WPXPropertyList vertex;
-        double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x) / divisorX;
-        double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y) / divisorY;
+        double vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
+        double vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
         rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
         flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
         vertex.insert("svg:x", vertexX);
@@ -5794,14 +5796,14 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         {
           bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
           const Vertex &curr = shape->mp_vertices[vertexIndex];
-          double currX = x + getSpecialIfNecessary(caller, curr.m_x) / divisorX;
-          double currY = y + getSpecialIfNecessary(caller, curr.m_y) / divisorY;
+          double currX = x + scaleX * getSpecialIfNecessary(caller, curr.m_x);
+          double currY = y + scaleY * getSpecialIfNecessary(caller, curr.m_y);
           if (vertexIndex)
           {
             hasUnclosedElements = true;
             const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
-            double prevX = x + getSpecialIfNecessary(caller, prev.m_x) / divisorX;
-            double prevY = y + getSpecialIfNecessary(caller, prev.m_y) / divisorY;
+            double prevX = x + scaleX * getSpecialIfNecessary(caller, prev.m_x);
+            double prevY = y + scaleY * getSpecialIfNecessary(caller, prev.m_y);
             double tmpX = currX - prevX;
             double tmpY = currY - prevY;
             if ((tmpX < 0 && tmpY >= 0) || (tmpX >= 0 && tmpY < 0))
@@ -5877,8 +5879,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
               double newY = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
               rotateCounter(newX, newY, centerX, centerY, -clockwiseRotation);
               flipIfNecessary(newX, newY, centerX, centerY, flipVertical, flipHorizontal);
-              moveVertex.insert("svg:x", newX / divisorX + x);
-              moveVertex.insert("svg:y", newY / divisorY + y);
+              moveVertex.insert("svg:x", scaleX * newX + x);
+              moveVertex.insert("svg:y", scaleY * newY + y);
               moveVertex.insert("libwpg:path-action", "M");
               vertices.append(moveVertex);
               ++vertexIndex;
@@ -5899,14 +5901,14 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
           hasUnclosedElements = true;
           unsigned startIndex = vertexIndex + 2;//(clockwise ? 3 : 2);
           unsigned endIndex = vertexIndex + 3;//(clockwise ? 2 : 3);
-          double left = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-          double top = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
-          double right = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
-          double bottom = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
-          double startX = x + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x) / divisorX;
-          double startY = y + getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y) / divisorY;
-          double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x) / divisorX;
-          double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y) / divisorY;
+          double left = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double top = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
+          double right = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x);
+          double bottom = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y);
+          double startX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_x);
+          double startY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[startIndex].m_y);
+          double endX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_x);
+          double endY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[endIndex].m_y);
           WPXPropertyList moveVertex;
           rotateCounter(startX, startY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(startX, startY, centerX, centerY, flipVertical, flipHorizontal);
@@ -5949,10 +5951,10 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
           WPXPropertyList vertex;
           double startAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x);
           double endAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y);
-          double cx = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-          double cy = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
-          double rx = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
-          double ry = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+          double cx = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double cy = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
+          double rx = scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x);
+          double ry = scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y);
 
           // FIXME: Are angles supposed to be the actual angle of the point with the x-axis,
           // or the eccentric anomaly, or something else?
@@ -6000,8 +6002,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
           }
           hasUnclosedElements = false;
           WPXPropertyList moveVertex;
-          double newX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-          double newY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double newX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double newY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
           rotateCounter(newX, newY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(newX, newY, centerX, centerY, flipVertical, flipHorizontal);
           moveVertex.insert("svg:x", newX);
@@ -6015,8 +6017,8 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         {
           hasUnclosedElements = true;
           WPXPropertyList vertex;
-          double vertexX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-          double vertexY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
           rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
           vertex.insert("svg:x", vertexX);
@@ -6029,16 +6031,16 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           hasUnclosedElements = true;
-          double firstCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x) / divisorX;
-          double firstCtrlY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y) / divisorY;
+          double firstCtrlX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
+          double firstCtrlY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
           rotateCounter(firstCtrlX, firstCtrlY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(firstCtrlX, firstCtrlY, centerX, centerY, flipVertical, flipHorizontal);
-          double secondCtrlX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x) / divisorX;
-          double secondCtrlY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y) / divisorY;
+          double secondCtrlX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x);
+          double secondCtrlY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y);
           rotateCounter(secondCtrlX, secondCtrlY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(secondCtrlX, secondCtrlY, centerX, centerY, flipVertical, flipHorizontal);
-          double endX = x + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x) / divisorX;
-          double endY = y + getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y) / divisorY;
+          double endX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x);
+          double endY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y);
           rotateCounter(endX, endY, centerX, centerY, -clockwiseRotation);
           flipIfNecessary(endX, endY, centerX, centerY, flipVertical, flipHorizontal);
           WPXPropertyList bezier;

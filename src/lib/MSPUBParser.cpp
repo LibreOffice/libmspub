@@ -895,6 +895,8 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
       break;
     }
   }
+  //FIXME: Figure out what textSize2 is used for. Can we find a document where it differs from textSize1 ?
+  textSize2 = textSize1;
   return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, getColorIndexByQuillEntry(colorIndex), fontIndex);
 }
 

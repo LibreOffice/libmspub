@@ -5687,6 +5687,27 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
+struct LineInfo
+{
+  WPXPropertyListVector m_vertices;
+  double m_width;
+  WPXString m_color;
+  bool m_lineExists;
+  LineInfo(WPXPropertyListVector vertices, Line current, std::vector<Color> palette) : m_vertices(vertices),
+    m_width((double)(current.m_widthInEmu) / EMUS_IN_INCH),
+    m_color(libmspub::MSPUBCollector::getColorString(current.m_color.getFinalColor(palette))),
+    m_lineExists(current.m_lineExists) { }
+  void output(libwpg::WPGPaintInterface *painter, WPXPropertyList &graphicsProps)
+  {
+    graphicsProps.insert("draw:stroke", m_lineExists ? "solid" : "none");
+    graphicsProps.insert("svg:stroke-width", m_width);
+    graphicsProps.insert("svg:stroke-color", m_color);
+    painter->setStyle(graphicsProps, WPXPropertyListVector());
+    painter->drawPolyline(m_vertices);
+  }
+private:
+};
+
 void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
   bool drawStroke = !lines.empty();
@@ -5714,8 +5735,11 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
   {
     if ((!graphicsProps["draw:fill"]) || (graphicsProps["draw:fill"]->getStr() == "none"))
     {
+      std::vector<LineInfo> lineInfos;
       std::vector<Line>::const_iterator iter_line = lines.begin();
+      bool rectangle = lines.size() == 4; // ugly HACK: special handling for rectangles.
       double vertexX, vertexY;
+      double oldX, oldY; //before transformations like rotation and flip
       for (unsigned i = 0; i < shape->m_numVertices; ++i)
       {
         WPXPropertyListVector vertices;
@@ -5723,12 +5747,51 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         if (i > 0)
         {
           WPXPropertyList vertexStart;
-          vertexStart.insert("svg:x", vertexX);
-          vertexStart.insert("svg:y", vertexY);
+          double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+          switch (i - 1) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
+          {
+          case 0:
+            oldY += lineWidth / 2;
+            break;
+          case 1:
+            oldX -= lineWidth / 2;
+            break;
+          case 2:
+            oldY -= lineWidth / 2;
+            break;
+          case 3:
+            oldX += lineWidth / 2;
+            break;
+          }
+          rotateCounter(oldX, oldY, centerX, centerY, -clockwiseRotation);
+          flipIfNecessary(oldX, oldY, centerX, centerY, flipVertical, flipHorizontal);
+          vertexStart.insert("svg:x", oldX);
+          vertexStart.insert("svg:y", oldY);
           vertices.append(vertexStart);
         }
         vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
         vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
+        oldX = vertexX;
+        oldY = vertexY;
+        if (rectangle)
+        {
+          double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+          switch (i) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
+          {
+          case 1:
+            vertexY += lineWidth / 2;
+            break;
+          case 2:
+            vertexX -= lineWidth / 2;
+            break;
+          case 3:
+            vertexY -= lineWidth / 2;
+            break;
+          case 4:
+            vertexX += lineWidth / 2;
+            break;
+          }
+        }
         rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
         flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
         vertex.insert("svg:x", vertexX);
@@ -5738,17 +5801,31 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         {
           if (drawStroke)
           {
-            const Line &current = *iter_line;
-            graphicsProps.insert("draw:stroke", current.m_lineExists ? "solid" : "none");
-            graphicsProps.insert("svg:stroke-width", (double)(current.m_widthInEmu) / EMUS_IN_INCH);
-            graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(current.m_color.getFinalColor(caller->getPaletteColors())));
-            painter->setStyle(graphicsProps, WPXPropertyListVector());
+            WPXString stroke_color = libmspub::MSPUBCollector::getColorString(iter_line->m_color.getFinalColor(caller->getPaletteColors()));
             if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
             {
               ++iter_line;
             }
           }
-          painter->drawPolyline(vertices);
+          lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
+        }
+      }
+      if (rectangle)
+      {
+        LineInfo &top = lineInfos[0];
+        LineInfo &right = lineInfos[1];
+        LineInfo &bottom = lineInfos[2];
+        LineInfo &left = lineInfos[3];
+        top.output(painter, graphicsProps);
+        bottom.output(painter, graphicsProps);
+        left.output(painter, graphicsProps);
+        right.output(painter, graphicsProps);
+      }
+      else
+      {
+        for (unsigned i = 0; i < lineInfos.size(); ++i)
+        {
+          lineInfos[i].output(painter, graphicsProps);
         }
       }
     }

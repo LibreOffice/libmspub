@@ -44,6 +44,7 @@
 #define OFFICE_ART_BLIP_PICT          0xF01C
 #define OFFICE_ART_BLIP_TIFF          0xF020
 #define OFFICE_ART_FOPT               0xF00B
+#define OFFICE_ART_TERTIARY_FOPT      0xF122
 #define OFFICE_ART_FSP                0xF00A
 
 #endif /* __ESCHERCONTAINERTYPE_H__ */

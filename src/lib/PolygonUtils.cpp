@@ -5708,8 +5708,13 @@ struct LineInfo
 private:
 };
 
-void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
+void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
+  const CustomShape *shape = getCustomShape(shapeType);
+  if (!shape)
+  {
+    return;
+  }
   bool drawStroke = !lines.empty();
   bool horizontal = height == 0;
   bool vertical = width == 0;
@@ -5737,7 +5742,7 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
     {
       std::vector<LineInfo> lineInfos;
       std::vector<Line>::const_iterator iter_line = lines.begin();
-      bool rectangle = lines.size() == 4; // ugly HACK: special handling for rectangles.
+      bool rectangle = isShapeTypeRectangle(shapeType) && !lines.empty(); // ugly HACK: special handling for rectangle outlines.
       double vertexX, vertexY;
       double oldX, oldY; //before transformations like rotation and flip
       for (unsigned i = 0; i < shape->m_numVertices; ++i)
@@ -5799,27 +5804,38 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
         vertices.append(vertex);
         if (i > 0)
         {
+          lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
           if (drawStroke)
           {
-            WPXString stroke_color = libmspub::MSPUBCollector::getColorString(iter_line->m_color.getFinalColor(caller->getPaletteColors()));
             if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
             {
               ++iter_line;
             }
           }
-          lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
         }
       }
       if (rectangle)
       {
-        LineInfo &top = lineInfos[0];
-        LineInfo &right = lineInfos[1];
-        LineInfo &bottom = lineInfos[2];
-        LineInfo &left = lineInfos[3];
-        top.output(painter, graphicsProps);
-        bottom.output(painter, graphicsProps);
-        left.output(painter, graphicsProps);
-        right.output(painter, graphicsProps);
+        LineInfo *top = &lineInfos[0];
+        LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : NULL;
+        LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : NULL;
+        LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : NULL;
+        if(top)
+        {
+          top->output(painter, graphicsProps);
+        }
+        if (bottom)
+        {
+          bottom->output(painter, graphicsProps);
+        }
+        if (left)
+        {
+          left->output(painter, graphicsProps);
+        }
+        if (right)
+        {
+          right->output(painter, graphicsProps);
+        }
       }
       else
       {
@@ -6152,6 +6168,11 @@ void libmspub::writeCustomShape(const CustomShape *shape, WPXPropertyList &graph
     }
     painter->drawPath(vertices);
   }
+}
+
+bool libmspub::isShapeTypeRectangle(ShapeType type)
+{
+  return type == RECTANGLE || type == TEXT_BOX;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -376,11 +376,7 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   // So which size should be used? We should compromise by using the size of the text for rectangular shapes,
   // and the size of the shape for other shapes. However currently the size of the shape is used in all cases,
   // causing ugliness in some documents.
-  const CustomShape *shape = getCustomShape(m_type);
-  if (shape)
-  {
-    writeCustomShape(shape, graphicsProps, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation, m_flipV, m_flipH, m_drawStroke ? m_lines : std::vector<Line>());
-  }
+    writeCustomShape(m_type, graphicsProps, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation, m_flipV, m_flipH, m_drawStroke ? m_lines : std::vector<Line>());
 }
 
 void libmspub::FillableShape::setFill(Fill *f)

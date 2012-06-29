@@ -61,6 +61,11 @@ libmspub::MSPUBParser::~MSPUBParser()
 {
 }
 
+bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags)
+{
+  return !(flags && ((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE));
+}
+
 unsigned libmspub::MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
 {
   return entry;
@@ -982,13 +987,26 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
         libmspub::EscherContainerInfo cData;
         libmspub::EscherContainerInfo cAnchor;
         libmspub::EscherContainerInfo cFopt;
+        libmspub::EscherContainerInfo cTertiaryFopt;
         libmspub::EscherContainerInfo cFsp;
+        unsigned flipFlags = 0;
+        ShapeType st = RECTANGLE;
+        if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))
+        {
+          st = (ShapeType)(cFsp.initial >> 4);
+          std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
+          input->seek(cFsp.contentsOffset + 4, WPX_SEEK_SET);
+          flipFlags = readU32(input);
+        }
+        input->seek(sp.contentsOffset, WPX_SEEK_SET);
         if (findEscherContainer(input, sp, cData, OFFICE_ART_CLIENT_DATA))
         {
           std::map<unsigned short, unsigned> dataValues = extractEscherValues(input, cData);
           unsigned *shapeSeqNum = getIfExists(dataValues, FIELDID_SHAPE_ID);
           if (shapeSeqNum)
           {
+            m_collector->setShapeType(*shapeSeqNum, st);
+            m_collector->setShapeFlip(*shapeSeqNum, flipFlags & SF_FLIP_V, flipFlags & SF_FLIP_H);
             input->seek(sp.contentsOffset, WPX_SEEK_SET);
             m_collector->setShapeOrder(*shapeSeqNum);
             if (findEscherContainer(input, sp, cAnchor, OFFICE_ART_CLIENT_ANCHOR))
@@ -1011,16 +1029,9 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                     MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
                   }
                 }
-                bool useLine = true;
                 unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
                 unsigned *ptr_lineFlags = getIfExists(foptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
-                if (ptr_lineFlags)
-                {
-                  if (((*ptr_lineFlags) & FLAG_USE_LINE) && !((*ptr_lineFlags) & FLAG_LINE))
-                  {
-                    useLine = false;
-                  }
-                }
+                bool useLine = lineExistsByFlagPointer(ptr_lineFlags);
                 bool skipIfNotBg = false;
                 Fill *ptr_fill = getNewFill(foptValues, escherDelayIndices, skipIfNotBg);
                 if (ptr_lineColor && useLine)
@@ -1028,6 +1039,43 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                   unsigned *ptr_lineWidth = getIfExists(foptValues, FIELDID_LINE_WIDTH);
                   unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
                   m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
+                }
+                else
+                {
+                  input->seek(sp.contentsOffset, WPX_SEEK_SET);
+                  if (findEscherContainer(input, sp, cTertiaryFopt, OFFICE_ART_TERTIARY_FOPT))
+                  {
+                    std::map<unsigned short, unsigned> tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
+                    unsigned *ptr_topColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_COLOR);
+                    unsigned *ptr_topWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_WIDTH);
+                    unsigned *ptr_topFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_BOOL_PROPS);
+                    unsigned *ptr_rightColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_COLOR);
+                    unsigned *ptr_rightWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_WIDTH);
+                    unsigned *ptr_rightFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_BOOL_PROPS);
+                    unsigned *ptr_bottomColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_COLOR);
+                    unsigned *ptr_bottomWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_WIDTH);
+                    unsigned *ptr_bottomFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_BOOL_PROPS);
+                    unsigned *ptr_leftColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_COLOR);
+                    unsigned *ptr_leftWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_WIDTH);
+                    unsigned *ptr_leftFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_BOOL_PROPS);
+                    
+                    bool topExists = ptr_topColor && lineExistsByFlagPointer(ptr_topFlags);
+                    bool rightExists = ptr_rightColor && lineExistsByFlagPointer(ptr_rightFlags);
+                    bool bottomExists = ptr_bottomColor && lineExistsByFlagPointer(ptr_bottomFlags);
+                    bool leftExists = ptr_leftColor && lineExistsByFlagPointer(ptr_leftFlags);
+                    m_collector->addShapeLine(*shapeSeqNum,
+                        topExists ? Line(ColorReference(*ptr_topColor), ptr_topWidth ? *ptr_topWidth : 9525, true) :
+                          Line(ColorReference(0), 0, false));
+                    m_collector->addShapeLine(*shapeSeqNum,
+                        rightExists ? Line(ColorReference(*ptr_rightColor), ptr_rightWidth ? *ptr_rightWidth : 9525, true) :
+                          Line(ColorReference(0), 0, false));
+                    m_collector->addShapeLine(*shapeSeqNum,
+                        bottomExists ? Line(ColorReference(*ptr_bottomColor), ptr_bottomWidth ? *ptr_bottomWidth : 9525, true) :
+                          Line(ColorReference(0), 0, false));
+                    m_collector->addShapeLine(*shapeSeqNum,
+                        leftExists ? Line(ColorReference(*ptr_leftColor), ptr_leftWidth ? *ptr_leftWidth : 9525, true) :
+                          Line(ColorReference(0), 0, false));
+                  }
                 }
                 if (ptr_fill)
                 {
@@ -1061,15 +1109,6 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                                              ptr_top ? *ptr_top : DEFAULT_MARGIN,
                                              ptr_right ? *ptr_right : DEFAULT_MARGIN,
                                              ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
-              }
-              input->seek(sp.contentsOffset, WPX_SEEK_SET);
-              if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))
-              {
-                m_collector->setShapeType(*shapeSeqNum, (ShapeType)(cFsp.initial >> 4));
-                std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
-                input->seek(cFsp.contentsOffset + 4, WPX_SEEK_SET);
-                unsigned flags = readU32(input);
-                m_collector->setShapeFlip(*shapeSeqNum, flags & SF_FLIP_V, flags & SF_FLIP_H);
               }
 
               std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);

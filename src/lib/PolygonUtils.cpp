@@ -5820,14 +5820,6 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : NULL;
         LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : NULL;
         LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : NULL;
-        if(top)
-        {
-          top->output(painter, graphicsProps);
-        }
-        if (bottom)
-        {
-          bottom->output(painter, graphicsProps);
-        }
         if (left)
         {
           left->output(painter, graphicsProps);
@@ -5835,6 +5827,14 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         if (right)
         {
           right->output(painter, graphicsProps);
+        }
+        if (top)
+        {
+          top->output(painter, graphicsProps);
+        }
+        if (bottom)
+        {
+          bottom->output(painter, graphicsProps);
         }
       }
       else

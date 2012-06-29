@@ -1063,6 +1063,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                     bool rightExists = ptr_rightColor && lineExistsByFlagPointer(ptr_rightFlags);
                     bool bottomExists = ptr_bottomColor && lineExistsByFlagPointer(ptr_bottomFlags);
                     bool leftExists = ptr_leftColor && lineExistsByFlagPointer(ptr_leftFlags);
+
                     m_collector->addShapeLine(*shapeSeqNum,
                         topExists ? Line(ColorReference(*ptr_topColor), ptr_topWidth ? *ptr_topWidth : 9525, true) :
                           Line(ColorReference(0), 0, false));
@@ -1075,6 +1076,21 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
                     m_collector->addShapeLine(*shapeSeqNum,
                         leftExists ? Line(ColorReference(*ptr_leftColor), ptr_leftWidth ? *ptr_leftWidth : 9525, true) :
                           Line(ColorReference(0), 0, false));
+                  
+                    // Amazing feat of Microsoft engineering:
+                    // The detailed interaction of four flags describes ONE true/false property!
+                    
+                    if (ptr_leftFlags &&
+                        (*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN) &&
+                        (!(*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN_OK) || (*ptr_leftFlags & FLAG_LEFT_INSET_PEN_OK)) &&
+                        (*ptr_leftFlags & FLAG_LEFT_INSET_PEN))
+                    {
+                      m_collector->setShapeBorderPosition(*shapeSeqNum, INSIDE_SHAPE);
+                    }
+                    else
+                    {
+                      m_collector->setShapeBorderPosition(*shapeSeqNum, HALF_INSIDE_SHAPE);
+                    }
                   }
                 }
                 if (ptr_fill)

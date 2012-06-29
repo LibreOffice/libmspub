@@ -66,10 +66,14 @@
 #define FIELDID_LINE_BOTTOM_BOOL_PROPS 0x063F
 #define FIELDID_LINE_LEFT_COLOR        0x0540
 #define FIELDID_LINE_LEFT_WIDTH        0x054B
-#define FIELDID_LINE_LEFT_BOOL_PROPS   0x0575
+#define FIELDID_LINE_LEFT_BOOL_PROPS   0x057F
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)
+#define FLAG_USE_LEFT_INSET_PEN (1 << 22)
+#define FLAG_USE_LEFT_INSET_PEN_OK (1 << 21)
+#define FLAG_LEFT_INSET_PEN (1 << 6)
+#define FLAG_LEFT_INSET_PEN_OK (1 << 5)
 
 #endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

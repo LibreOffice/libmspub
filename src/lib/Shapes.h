@@ -109,7 +109,8 @@ struct GeometricShape : public FillableShape
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
-      m_lines(), m_drawStroke(false) { }
+      m_lines(), m_drawStroke(false),
+      m_borderPosition(HALF_INSIDE_SHAPE) { }
   std::vector<Color> getPaletteColors() const;
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
@@ -128,6 +129,7 @@ private:
 public:
   std::vector<Line> m_lines;
   bool m_drawStroke;
+  BorderPosition m_borderPosition;
 };
 struct ImgShape : public GeometricShape
 {

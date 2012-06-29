@@ -87,6 +87,7 @@ public:
   bool setShapeRotation(unsigned seqNum, short rotation);
   bool setShapeFlip(unsigned, bool, bool);
   bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
+  bool setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
 
   void addShapeLine(unsigned seqNum, Line line);
   void setShapeOrder(unsigned seqNum);
@@ -152,6 +153,8 @@ private:
   std::map<unsigned, short> m_shapeRotationsBySeqNum;
   std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
   std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
+  // BorderPositions are irrelevant except for rectangular shapes.
+  std::map<unsigned, BorderPosition> m_shapeBorderPositionsBySeqNum;
 
   // helper functions
   void assignImages();

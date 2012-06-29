@@ -38,6 +38,12 @@
 
 namespace libmspub
 {
+enum BorderPosition
+{
+  INSIDE_SHAPE,
+  HALF_INSIDE_SHAPE,
+  OUTSIDE_SHAPE
+};
 
 enum Alignment
 {

@@ -442,6 +442,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       m_collector->addPage(iter->parentSeqNum);
     }
     m_collector->addShape(iter->seqNum, iter->parentSeqNum);
+    m_collector->setShapeBorderPosition(iter->seqNum, INSIDE_SHAPE); // This appears to be the only possibility for MSPUB2k
     unsigned short typeMarker = readU16(input);
     bool isImage = false;
     bool isRectangle = false;

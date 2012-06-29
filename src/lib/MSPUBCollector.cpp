@@ -46,13 +46,18 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
   m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
-  m_shapeMarginsBySeqNum()
+  m_shapeMarginsBySeqNum(), m_shapeBorderPositionsBySeqNum()
 {
 }
 
 void libmspub::MSPUBCollector::addShapeLine(unsigned seqNum, Line line)
 {
   m_shapeLinesBySeqNum[seqNum].push_back(line);
+}
+
+bool libmspub::MSPUBCollector::setShapeBorderPosition(unsigned seqNum, BorderPosition pos)
+{
+  return m_shapeBorderPositionsBySeqNum.insert(std::pair<const unsigned, BorderPosition>(seqNum, pos)).second;
 }
 
 bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
@@ -131,14 +136,82 @@ void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordi
     graphicsProps.insert("draw:stroke", "solid");
     m_closeEverything = false;
     m_drawStroke = true;
-    setCoordProps(coord);
+    if (isShapeTypeRectangle(m_type))
+    {
+      Coordinate fudged = coord;
+      unsigned topFudge = 0;
+      unsigned rightFudge = 0;
+      unsigned bottomFudge = 0;
+      unsigned leftFudge = 0;
+      switch (m_borderPosition)
+      {
+      case HALF_INSIDE_SHAPE:
+        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu / 2 : 0;
+        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu / 2 : 0;
+        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu / 2 : 0;
+        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu / 2 : 0;
+        break;
+      case OUTSIDE_SHAPE:
+        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu : 0;
+        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu : 0;
+        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu : 0;
+        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu : 0;
+        break;
+      case INSIDE_SHAPE:
+      default:
+        break;
+      }
+      fudged.m_xs -= leftFudge;
+      fudged.m_xe += rightFudge;
+      fudged.m_ys -= topFudge;
+      fudged.m_ye += bottomFudge;
+      setCoordProps(fudged);
+    }
+    else
+    {
+      setCoordProps(coord);
+    }
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     write(painter);
   }
   if (m_hasText)
   {
     graphicsProps.insert("draw:fill", "none");
-    setCoordProps(coord);
+    if (isShapeTypeRectangle(m_type))
+    {
+      Coordinate fudged = coord;
+      unsigned topFudge = 0;
+      unsigned rightFudge = 0;
+      unsigned bottomFudge = 0;
+      unsigned leftFudge = 0;
+      switch (m_borderPosition)
+      {
+      case HALF_INSIDE_SHAPE:
+        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu / 2 : 0;
+        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu / 2 : 0;
+        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu / 2 : 0;
+        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu / 2 : 0;
+        break;
+      case INSIDE_SHAPE:
+        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu : 0;
+        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu : 0;
+        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu : 0;
+        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu : 0;
+        break;
+      case OUTSIDE_SHAPE:
+      default:
+        break;
+      }
+      fudged.m_xs += leftFudge;
+      fudged.m_xe -= rightFudge;
+      fudged.m_ys += topFudge;
+      fudged.m_ye -= bottomFudge;
+      setCoordProps(fudged);
+    }
+    else
+    {
+      setCoordProps(coord);
+    }
     owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
     writeText(painter);
   }
@@ -619,6 +692,8 @@ void libmspub::MSPUBCollector::assignImages()
         shape->m_right = ptr_margin->m_right;
         shape->m_bottom = ptr_margin->m_bottom;
       }
+      BorderPosition *ptr_bp = getIfExists(m_shapeBorderPositionsBySeqNum, seqNum);
+      shape->m_borderPosition = ptr_bp ? *ptr_bp : HALF_INSIDE_SHAPE;
       for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
            iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)
       {

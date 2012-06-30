@@ -54,6 +54,7 @@ libmspub::MSPUBStringVector::MSPUBStringVector(const MSPUBStringVector &vec)
 
 libmspub::MSPUBStringVector::~MSPUBStringVector()
 {
+  delete m_pImpl;
 }
 
 libmspub::MSPUBStringVector &libmspub::MSPUBStringVector::operator=(const MSPUBStringVector &vec)

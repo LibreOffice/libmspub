@@ -117,7 +117,7 @@ WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
   }
   while (ret != Z_STREAM_END);
   inflateEnd(&strm);
-  return ret == Z_STREAM_END ? inflated : WPXBinaryData();
+  return inflated;
 }
 
 namespace

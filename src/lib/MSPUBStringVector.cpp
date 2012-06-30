@@ -36,7 +36,6 @@ class MSPUBStringVectorImpl
 {
 public:
   MSPUBStringVectorImpl() : m_strings() {}
-  MSPUBStringVectorImpl(const MSPUBStringVectorImpl &impl) : m_strings(impl.m_strings) {}
   ~MSPUBStringVectorImpl() {}
   std::vector<WPXString> m_strings;
 };

@@ -38,6 +38,7 @@
 #include <cmath>
 
 #include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
@@ -50,17 +51,20 @@
 #include "ColorReference.h"
 #include "PolygonUtils.h"
 #include "Shapes.h"
+#include "ShapeGroupPainter.h"
+#include "ShapeGroup.h"
 
 #define PI 3.14159265
 
 namespace libmspub
 {
-
 class MSPUBCollector
 {
+  //TODO Refactor this class to avoid relying on a list of friend declarations
   friend struct Shape;
   friend struct GeometricShape;
   friend struct FillableShape;
+  friend class ShapeGroupPainter;
   friend class Fill;
   friend class ImgFill;
   friend class SolidFill;
@@ -77,7 +81,8 @@ public:
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
-  bool addShape(unsigned seqNum, unsigned pageSeqNum);
+  bool addShape(unsigned seqNum);
+  bool setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
   bool setShapeType(unsigned seqNum, ShapeType type);
   bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
@@ -88,6 +93,9 @@ public:
   bool setShapeFlip(unsigned, bool, bool);
   bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
   bool setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
+
+  void beginGroup();
+  bool endGroup();
 
   void addShapeLine(unsigned seqNum, Line line);
   void setShapeOrder(unsigned seqNum);
@@ -109,9 +117,8 @@ private:
 
   struct PageInfo
   {
-    PageInfo() : m_shapeSeqNums(), m_shapeSeqNumsOrdered() { }
-    std::vector<unsigned> m_shapeSeqNums;
-    std::vector<unsigned> m_shapeSeqNumsOrdered;
+    std::vector<ShapeGroupElement *> m_shapeGroupsOrdered;
+    PageInfo() : m_shapeGroupsOrdered() { }
   };
 
   struct Margins
@@ -155,6 +162,8 @@ private:
   std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
   // BorderPositions are irrelevant except for rectangular shapes.
   std::map<unsigned, BorderPosition> m_shapeBorderPositionsBySeqNum;
+  ShapeGroup *m_currentShapeGroup;
+  boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
 
   // helper functions
   void assignImages();
@@ -164,7 +173,6 @@ private:
 public:
   static WPXString getColorString(const Color &);
 };
-
 } // namespace libmspub
 
 #endif /* __MSPUBCOLLECTOR_H__ */

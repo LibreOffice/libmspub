@@ -26,6 +26,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Fill.cpp \
 	libmspub_utils.cpp \
 	PolygonUtils.cpp \
+	ShapeGroupPainter.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -44,7 +45,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Fill.h \
 	ColorReference.h \
 	PolygonUtils.h \
-	Shapes.h
+	Shapes.h \
+	ShapeGroupPainter.h
 
 if OS_WIN32
 

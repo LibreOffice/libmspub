@@ -28,6 +28,7 @@
  */
 
 #include "MSPUBCollector.h"
+#include "ShapeGroupPainter.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
@@ -46,8 +47,33 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
   m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
-  m_shapeMarginsBySeqNum(), m_shapeBorderPositionsBySeqNum()
+  m_shapeMarginsBySeqNum(), m_shapeBorderPositionsBySeqNum(),
+  m_currentShapeGroup(NULL), m_topLevelShapes()
 {
+}
+
+void libmspub::MSPUBCollector::beginGroup()
+{
+  ShapeGroup *tmp = new ShapeGroup(m_currentShapeGroup);
+  if (!m_currentShapeGroup)
+  {
+    m_topLevelShapes.push_back(tmp);
+  }
+  else
+  {
+    m_currentShapeGroup->m_elements.push_back(tmp);
+  }
+  m_currentShapeGroup = tmp;
+}
+
+bool libmspub::MSPUBCollector::endGroup()
+{
+  if (!m_currentShapeGroup)
+  {
+    return false;
+  }
+  m_currentShapeGroup = m_currentShapeGroup->m_parent;
+  return true;
 }
 
 void libmspub::MSPUBCollector::addShapeLine(unsigned seqNum, Line line)
@@ -77,7 +103,15 @@ void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqN
 
 void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
 {
-  m_shapeSeqNumsOrdered.push_back(seqNum);
+  ShapeGroupElementLeaf *tmp = new ShapeGroupElementLeaf(m_currentShapeGroup, seqNum);
+  if (!m_currentShapeGroup)
+  {
+    m_topLevelShapes.push_back(tmp);
+  }
+  else
+  {
+    m_currentShapeGroup->m_elements.push_back(tmp);
+  }
 }
 
 void libmspub::MSPUBCollector::addPaletteColor(Color c)
@@ -699,6 +733,11 @@ void libmspub::MSPUBCollector::assignImages()
       {
         shape->setAdjustValue(iter->first, iter->second);
       }
+      unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, seqNum);
+      if (ptr_pageSeqNum)
+      {
+        shape->m_pageSeqNum = *ptr_pageSeqNum;
+      }
     }
   }
 }
@@ -814,16 +853,16 @@ bool libmspub::MSPUBCollector::go()
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
   assignImages();
-  // order the shapes in each page
-  for (unsigned i = 0; i < m_shapeSeqNumsOrdered.size(); ++i)
+  for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
-    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_shapeSeqNumsOrdered[i]);
+    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getFirstShapeSeqNum());
     if (ptr_pageSeqNum)
     {
+      m_topLevelShapes[i].setPage(*ptr_pageSeqNum);
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
       if (ptr_page)
       {
-        ptr_page->m_shapeSeqNumsOrdered.push_back(m_shapeSeqNumsOrdered[i]);
+        ptr_page->m_shapeGroupsOrdered.push_back(&m_topLevelShapes[i]);
       }
     }
   }
@@ -838,8 +877,8 @@ bool libmspub::MSPUBCollector::go()
     {
       pageProps.insert("svg:height", m_height);
     }
-    const std::vector<unsigned> &shapeSeqNumsOrdered = i->second.m_shapeSeqNumsOrdered; // for readability
-    if (!shapeSeqNumsOrdered.empty())
+    const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = i->second.m_shapeGroupsOrdered; // for readability
+    if (!shapeGroupsOrdered.empty())
     {
       m_painter->startGraphics(pageProps);
       unsigned *ptr_fillSeqNum = getIfExists(m_bgShapeSeqNumsByPageSeqNum, i->first);
@@ -854,25 +893,10 @@ bool libmspub::MSPUBCollector::go()
           bg.output(m_painter, wholePage);
         }
       }
-      for (unsigned i_seqNums = 0; i_seqNums < shapeSeqNumsOrdered.size(); ++i_seqNums)
+      for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)
       {
-        Shape *shape = ptr_getIfExists(m_shapesBySeqNum, shapeSeqNumsOrdered[i_seqNums]);
-        if (shape)
-        {
-          Coordinate *coord = getIfExists(m_shapeCoordinatesBySeqNum, shapeSeqNumsOrdered[i_seqNums]);
-          if (coord)
-          {
-            shape->output(m_painter, *coord);
-          }
-          else
-          {
-            MSPUB_DEBUG_MSG(("Could not output shape of seqnum 0x%x: no coordinates provided\n", shapeSeqNumsOrdered[i_seqNums]));
-          }
-        }
-        else
-        {
-          MSPUB_DEBUG_MSG(("No shape with seqnum 0x%x found in collector\n", shapeSeqNumsOrdered[i_seqNums]));
-        }
+        ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i_group];
+        shapeGroup->paint(ShapeGroupPainter(this));
       }
       m_painter->endGraphics();
     }
@@ -913,17 +937,16 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
   return true;
 }
 
-bool libmspub::MSPUBCollector::addShape(unsigned seqNum, unsigned pageSeqNum)
+bool libmspub::MSPUBCollector::addShape(unsigned seqNum)
 {
-  m_shapesBySeqNum.insert(seqNum, new GeometricShape(pageSeqNum, this));
+  m_shapesBySeqNum.insert(seqNum, new GeometricShape(this));
   m_possibleImageShapeSeqNums.push_back(seqNum);
-  PageInfo *page = getIfExists(m_pagesBySeqNum, pageSeqNum);
-  if (page)
-  {
-    page->m_shapeSeqNums.push_back(seqNum);
-    m_pageSeqNumsByShapeSeqNum.insert(std::pair<unsigned, unsigned>(seqNum, pageSeqNum));
-  }
   return true;
+}
+
+bool libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)
+{
+  return m_pageSeqNumsByShapeSeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, pageSeqNum)).second;
 }
 
 void libmspub::MSPUBCollector::addTextColor(ColorReference c)

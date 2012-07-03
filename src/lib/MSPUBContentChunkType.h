@@ -39,6 +39,7 @@ enum MSPUBContentChunkType //Please fill this in and replace magic constants in 
   DOCUMENT = 0x44,
   PAGE     = 0x43,
   PALETTE  = 0x5C,
+  GROUP    = 0x30,
   IMAGE_2K, //these don't exist in Pub 2k3 so their value in the enum is not used.
   IMAGE_2K_DATA
 };

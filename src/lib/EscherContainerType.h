@@ -46,6 +46,8 @@
 #define OFFICE_ART_FOPT               0xF00B
 #define OFFICE_ART_TERTIARY_FOPT      0xF122
 #define OFFICE_ART_FSP                0xF00A
+#define OFFICE_ART_FSPGR              0xF009
+#define OFFICE_ART_CHILD_ANCHOR       0xF00F
 
 #endif /* __ESCHERCONTAINERTYPE_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

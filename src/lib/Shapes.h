@@ -32,6 +32,7 @@
 #include <map>
 
 #include "MSPUBConstants.h"
+#include "ShapeType.h"
 
 namespace libmspub
 {
@@ -103,8 +104,16 @@ struct GeometricShape : public FillableShape
   short m_clockwiseRotation;
   bool m_flipV, m_flipH;
   unsigned m_left, m_top, m_right, m_bottom; //emu
-  GeometricShape(unsigned psn, MSPUBCollector *o)
-    : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(psn), m_imgIndex(0), m_type(RECTANGLE),
+  GeometricShape(MSPUBCollector *o)
+    : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
+      m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
+      m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
+      m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
+      m_lines(), m_drawStroke(false),
+      m_borderPosition(HALF_INSIDE_SHAPE) { }
+  GeometricShape(unsigned pageSeqNum, MSPUBCollector *o)
+    : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(pageSeqNum), m_imgIndex(0), m_type(RECTANGLE),
       m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
       m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),

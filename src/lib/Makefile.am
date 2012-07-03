@@ -46,7 +46,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ColorReference.h \
 	PolygonUtils.h \
 	Shapes.h \
-	ShapeGroupPainter.h
+	ShapeGroupPainter.h \
+	ShapeGroup.h
 
 if OS_WIN32
 

@@ -1241,6 +1241,20 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     short fillFocus = ptr_fillFocus ? ((int)(*ptr_fillFocus) << 16) >> 16 : 0;
     angle = ptr_angle ? *ptr_angle : 0;
     angle >>= 16; //it's actually only 16 bits
+    // Don't try to figure out what sense the following switch statement makes.
+    // The angles are just offset by 90 degrees in the file format in some cases.
+    // It seems totally arbitrary -- maybe an MS bug ?
+    switch (angle)
+    {
+    case -135:
+      angle = -45;
+      break;
+    case -45:
+      angle = 225;
+      break;
+    default:
+      break;
+    }
 
     GradientFill *ret = new GradientFill(m_collector, angle);
     if (fillFocus ==  0)

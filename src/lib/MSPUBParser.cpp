@@ -1286,7 +1286,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x08000000);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1 ] >= 0)
     {
-     return new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back);
+      return new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back);
     }
   }
   default:

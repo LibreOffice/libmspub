@@ -154,11 +154,6 @@ bool libmspub::GeometricShape::hasFill()
   return (graphicsProps["draw:fill"]) ? (graphicsProps["draw:fill"]->getStr() != "none") : false;
 }
 
-bool libmspub::ImgShape::hasFill()
-{
-  return true;
-}
-
 void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
 {
   WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
@@ -508,76 +503,6 @@ void libmspub::GeometricShape::addLine(ColorReference color, unsigned widthInEmu
   m_lines.push_back(Line(color, widthInEmu, lineExists));
 }
 
-libmspub::ImgShape::ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o) :
-  GeometricShape(from.m_pageSeqNum, o), img(i)
-{
-  this->m_type = from.m_type;
-  this->props = from.props;
-  this->m_clockwiseRotation = from.m_clockwiseRotation;
-  this->m_flipV = from.m_flipV;
-  this->m_flipH = from.m_flipH;
-  setMime_(imgType);
-}
-
-const char *libmspub::ImgShape::mimeByImgType(ImgType type)
-{
-  switch (type)
-  {
-  case PNG:
-    return "image/png";
-  case JPEG:
-    return "image/jpeg";
-  case DIB:
-    return "image/bmp";
-  case PICT:
-    return "image/pict";
-  case WMF:
-    return "image/wmf";
-  case EMF:
-    return "image/emf";
-  case TIFF:
-    return "image/tiff";
-  default:
-    MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
-    return 0;
-  }
-}
-
-void libmspub::ImgShape::setMime_(ImgType imgType)
-{
-  const char *mimetype = mimeByImgType(imgType);
-  if (mimetype)
-    props.insert("libwpg:mime-type", mimetype);
-}
-void libmspub::ImgShape::write(libwpg::WPGPaintInterface *painter)
-{
-  // Still not flipping the actual image, but at least we rotate.
-  // Note that this does not cause image fills of other types of shape
-  // to be rotated correctly -- for this we would need support in ODG format
-
-  double centerX = m_x + m_width / 2;
-  double centerY = m_y + m_height / 2;
-  short clockwiseRotation = correctModulo(m_clockwiseRotation, 360);
-  if ( (clockwiseRotation >= 45 && clockwiseRotation < 135) || (clockwiseRotation >= 225 && clockwiseRotation < 315) )
-  {
-    //MS PUB format gives start and end vertices for the bounding rectangle rotated by 90 degrees in this case.
-    rotateCounter(m_x, m_y, centerX, centerY, 90);
-    double temp = m_height;
-    m_height = m_width;
-    m_width = temp;
-    m_y -= m_height;
-  }
-  props.insert("svg:x", m_x);
-  props.insert("svg:y", m_y);
-  props.insert("svg:width", m_width);
-  props.insert("svg:height", m_height);
-  if (m_clockwiseRotation != 0)
-  {
-    props.insert("libwpg:rotate", clockwiseRotation);
-  }
-  painter->drawGraphicObject(props, img);
-}
-
 libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
@@ -709,67 +634,66 @@ void libmspub::MSPUBCollector::assignImages()
       shape->m_flipV = ptr_flips->first;
       shape->m_flipH = ptr_flips->second;
     }
-    if (index && *index - 1 < m_images.size())
+    ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
+    if (type)
     {
-      ImgShape *toInsert = new ImgShape(*shape, m_images[*index - 1].first, m_images[*index - 1].second, this);
-      m_shapesBySeqNum.erase(seqNum);
-      m_shapesBySeqNum.insert(seqNum, toInsert);
+      shape->m_type = *type;
     }
     else
     {
-      ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
-      if (type)
+      MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
+    }
+    std::pair<unsigned, unsigned> *ptr_textInfo = getIfExists(m_textInfoBySeqNum, seqNum);
+    if (ptr_textInfo)
+    {
+      unsigned stringId = ptr_textInfo->first;
+      std::vector<TextParagraph> *ptr_str = getIfExists(m_textStringsById, stringId);
+      if (ptr_str)
       {
-        shape->m_type = *type;
+        shape->setText(*ptr_str);
       }
-      else
+    }
+    shape->fillDefaultAdjustValues();
+    std::vector<Line> *ptr_lines = getIfExists(m_shapeLinesBySeqNum, seqNum);
+    if (ptr_lines)
+    {
+      for (unsigned j = 0; j < ptr_lines->size(); ++j)
       {
-        MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
+        shape->addLine((*ptr_lines)[j].m_color, (*ptr_lines)[j].m_widthInEmu, (*ptr_lines)[j].m_lineExists);
       }
-      std::pair<unsigned, unsigned> *ptr_textInfo = getIfExists(m_textInfoBySeqNum, seqNum);
-      if (ptr_textInfo)
+    }
+    if (index)
+    {
+      m_shapeFillsBySeqNum.erase(seqNum);
+      if (*index - 1 < m_images.size())
       {
-        unsigned stringId = ptr_textInfo->first;
-        std::vector<TextParagraph> *ptr_str = getIfExists(m_textStringsById, stringId);
-        if (ptr_str)
-        {
-          shape->setText(*ptr_str);
-        }
+        m_shapeFillsBySeqNum.insert(seqNum, new ImgFill(*index, this, false));
       }
-      shape->fillDefaultAdjustValues();
-      std::vector<Line> *ptr_lines = getIfExists(m_shapeLinesBySeqNum, seqNum);
-      if (ptr_lines)
-      {
-        for (unsigned j = 0; j < ptr_lines->size(); ++j)
-        {
-          shape->addLine((*ptr_lines)[j].m_color, (*ptr_lines)[j].m_widthInEmu, (*ptr_lines)[j].m_lineExists);
-        }
-      }
-      Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
-      if (ptr_fill && m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end())
-      {
-        shape->setFill(ptr_fill);
-      }
-      Margins *ptr_margin = getIfExists(m_shapeMarginsBySeqNum, seqNum);
-      if (ptr_margin)
-      {
-        shape->m_left = ptr_margin->m_left;
-        shape->m_top = ptr_margin->m_top;
-        shape->m_right = ptr_margin->m_right;
-        shape->m_bottom = ptr_margin->m_bottom;
-      }
-      BorderPosition *ptr_bp = getIfExists(m_shapeBorderPositionsBySeqNum, seqNum);
-      shape->m_borderPosition = ptr_bp ? *ptr_bp : HALF_INSIDE_SHAPE;
-      for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
-           iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)
-      {
-        shape->setAdjustValue(iter->first, iter->second);
-      }
-      unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, seqNum);
-      if (ptr_pageSeqNum)
-      {
-        shape->m_pageSeqNum = *ptr_pageSeqNum;
-      }
+    }
+    Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
+    if (ptr_fill && (index || m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end()))
+    {
+      shape->setFill(ptr_fill);
+    }
+    Margins *ptr_margin = getIfExists(m_shapeMarginsBySeqNum, seqNum);
+    if (ptr_margin)
+    {
+      shape->m_left = ptr_margin->m_left;
+      shape->m_top = ptr_margin->m_top;
+      shape->m_right = ptr_margin->m_right;
+      shape->m_bottom = ptr_margin->m_bottom;
+    }
+    BorderPosition *ptr_bp = getIfExists(m_shapeBorderPositionsBySeqNum, seqNum);
+    shape->m_borderPosition = ptr_bp ? *ptr_bp : HALF_INSIDE_SHAPE;
+    for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
+         iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)
+    {
+      shape->setAdjustValue(iter->first, iter->second);
+    }
+    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, seqNum);
+    if (ptr_pageSeqNum)
+    {
+      shape->m_pageSeqNum = *ptr_pageSeqNum;
     }
   }
 }

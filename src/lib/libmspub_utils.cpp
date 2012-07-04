@@ -34,6 +34,30 @@
 
 #define ZLIB_CHUNK 16384
 
+const char *libmspub::mimeByImgType(ImgType type)
+{
+  switch (type)
+  {
+  case PNG:
+    return "image/png";
+  case JPEG:
+    return "image/jpeg";
+  case DIB:
+    return "image/bmp";
+  case PICT:
+    return "image/pict";
+  case WMF:
+    return "image/wmf";
+  case EMF:
+    return "image/emf";
+  case TIFF:
+    return "image/tiff";
+  default:
+    MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
+    return 0;
+  }
+}
+
 void libmspub::rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
 {
   double vecX = x - centerX;

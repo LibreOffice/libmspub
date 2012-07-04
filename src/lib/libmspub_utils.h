@@ -39,6 +39,8 @@ const double PI = 3.1415926;
 #include <libwpd/libwpd.h>
 #include <libwpd-stream/libwpd-stream.h>
 
+#include "MSPUBTypes.h"
+
 #ifdef _MSC_VER
 
 typedef unsigned char uint8_t;
@@ -90,6 +92,8 @@ typedef unsigned __int64 uint64_t;
 
 namespace libmspub
 {
+const char *mimeByImgType(ImgType type);
+
 uint16_t readU16(const unsigned char *input, unsigned offset);
 uint32_t readU32(const unsigned char *input, unsigned offset);
 

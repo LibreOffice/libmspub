@@ -144,23 +144,6 @@ public:
   bool m_drawStroke;
   BorderPosition m_borderPosition;
 };
-struct ImgShape : public GeometricShape
-{
-  ImgShape(const GeometricShape &from, ImgType imgType, WPXBinaryData i, MSPUBCollector *o);
-  ImgShape(ImgType type, WPXBinaryData i, WPXPropertyList /* p */, unsigned psn, MSPUBCollector *o) : GeometricShape(psn, o), img(i)
-  {
-    setMime_(type);
-  }
-  WPXBinaryData img;
-  static const char *mimeByImgType(ImgType type);
-protected:
-  virtual void write(libwpg::WPGPaintInterface *painter);
-  bool hasFill();
-private:
-  void setMime_(ImgType type);
-  ImgShape(const ImgShape &);
-  ImgShape &operator=(const ImgShape &);
-};
 } // namespace libmspub
 #endif // __SHAPES_H__
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

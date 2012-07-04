@@ -46,7 +46,7 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
   if (m_imgIndex <= m_owner->m_images.size())
   {
     const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
-    out->insert("libwpg:mime-type", ImgShape::mimeByImgType(img.first));
+    out->insert("libwpg:mime-type", mimeByImgType(img.first));
     out->insert("draw:fill-image", img.second.getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
     if (! m_isTexture)
@@ -87,7 +87,7 @@ WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
       fixedImg.append(data->getDataBuffer() + 0x36 + 8, data->size() - 0x36 - 8);
       data = &fixedImg;
     }
-    out->insert("libwpg:mime-type", ImgShape::mimeByImgType(type));
+    out->insert("libwpg:mime-type", mimeByImgType(type));
     out->insert("draw:fill-image", data->getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
   }

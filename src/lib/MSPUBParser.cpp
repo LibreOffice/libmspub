@@ -1060,10 +1060,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
       {
         m_collector->setCurrentGroupSeqNum(*shapeSeqNum);
       }
-      else
-      {
-        m_collector->setShapeOrder(*shapeSeqNum);
-      }
+      m_collector->setShapeOrder(*shapeSeqNum);
       std::set<unsigned short> anchorTypes;
       anchorTypes.insert(OFFICE_ART_CLIENT_ANCHOR);
       anchorTypes.insert(OFFICE_ART_CHILD_ANCHOR);

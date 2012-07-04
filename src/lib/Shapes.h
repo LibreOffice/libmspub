@@ -50,6 +50,10 @@ struct Line
   unsigned m_widthInEmu;
   bool m_lineExists;
   Line(ColorReference color, unsigned widthInEmu, bool lineExists) : m_color(color), m_widthInEmu(widthInEmu), m_lineExists(lineExists) { }
+  bool operator==(const Line &r) const
+  {
+    return m_color == r.m_color && m_widthInEmu == r.m_widthInEmu && m_lineExists == r.m_lineExists;
+  }
 };
 struct Shape
 {

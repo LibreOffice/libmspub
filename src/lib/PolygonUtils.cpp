@@ -5708,6 +5708,117 @@ struct LineInfo
 private:
 };
 
+void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::vector<Line> &lines,
+    double centerX, double centerY, double clockwiseRotation, const GeometricShape *caller,
+    bool flipHorizontal, bool flipVertical, double x, double y, double scaleX, double scaleY,
+    bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter)
+{
+  std::vector<LineInfo> lineInfos;
+  std::vector<Line>::const_iterator iter_line = lines.begin();
+  bool rectangle = isShapeTypeRectangle(shapeType) && !lines.empty(); // ugly HACK: special handling for rectangle outlines.
+  double vertexX, vertexY;
+  double oldX, oldY; //before transformations like rotation and flip
+  for (unsigned i = 0; i < shape->m_numVertices; ++i)
+  {
+    WPXPropertyListVector vertices;
+    WPXPropertyList vertex;
+    if (i > 0)
+    {
+      WPXPropertyList vertexStart;
+      double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+      switch (i - 1) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
+      {
+      case 0:
+        oldY += lineWidth / 2;
+        break;
+      case 1:
+        oldX -= lineWidth / 2;
+        break;
+      case 2:
+        oldY -= lineWidth / 2;
+        break;
+      case 3:
+        oldX += lineWidth / 2;
+        break;
+      }
+      rotateCounter(oldX, oldY, centerX, centerY, -clockwiseRotation);
+      flipIfNecessary(oldX, oldY, centerX, centerY, flipVertical, flipHorizontal);
+      vertexStart.insert("svg:x", oldX);
+      vertexStart.insert("svg:y", oldY);
+      vertices.append(vertexStart);
+    }
+    vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
+    vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
+    oldX = vertexX;
+    oldY = vertexY;
+    if (rectangle)
+    {
+      double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+      switch (i) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
+      {
+      case 1:
+        vertexY += lineWidth / 2;
+        break;
+      case 2:
+        vertexX -= lineWidth / 2;
+        break;
+      case 3:
+        vertexY -= lineWidth / 2;
+        break;
+      case 4:
+        vertexX += lineWidth / 2;
+        break;
+      }
+    }
+    rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
+    flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
+    vertex.insert("svg:x", vertexX);
+    vertex.insert("svg:y", vertexY);
+    vertices.append(vertex);
+    if (i > 0)
+    {
+      lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
+      if (drawStroke)
+      {
+        if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
+        {
+          ++iter_line;
+        }
+      }
+    }
+  }
+  if (rectangle)
+  {
+    LineInfo *top = &lineInfos[0];
+    LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : NULL;
+    LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : NULL;
+    LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : NULL;
+    if (left)
+    {
+      left->output(painter, graphicsProps);
+    }
+    if (right)
+    {
+      right->output(painter, graphicsProps);
+    }
+    if (top)
+    {
+      top->output(painter, graphicsProps);
+    }
+    if (bottom)
+    {
+      bottom->output(painter, graphicsProps);
+    }
+  }
+  else
+  {
+    for (unsigned i = 0; i < lineInfos.size(); ++i)
+    {
+      lineInfos[i].output(painter, graphicsProps);
+    }
+  }
+}
+
 void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines)
 {
   const CustomShape *shape = getCustomShape(shapeType);
@@ -5736,116 +5847,34 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
   }
   double scaleX = width / shape->m_coordWidth;
   double scaleY = height / shape->m_coordHeight;;
+  bool allLinesSame = true;
+  for (unsigned i = 0; allLinesSame && i + 1< lines.size(); ++i)
+  {
+    const Line &l1 = lines[i];
+    const Line &l2 = lines[i + 1];
+    allLinesSame = l1 == l2;
+  }
   if (shape->mp_elements == NULL)
   {
+    bool shouldDrawShape = true;
     if ((!graphicsProps["draw:fill"]) || (graphicsProps["draw:fill"]->getStr() == "none"))
     {
-      std::vector<LineInfo> lineInfos;
-      std::vector<Line>::const_iterator iter_line = lines.begin();
-      bool rectangle = isShapeTypeRectangle(shapeType) && !lines.empty(); // ugly HACK: special handling for rectangle outlines.
-      double vertexX, vertexY;
-      double oldX, oldY; //before transformations like rotation and flip
-      for (unsigned i = 0; i < shape->m_numVertices; ++i)
+      if (!allLinesSame)
       {
-        WPXPropertyListVector vertices;
-        WPXPropertyList vertex;
-        if (i > 0)
-        {
-          WPXPropertyList vertexStart;
-          double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
-          switch (i - 1) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
-          {
-          case 0:
-            oldY += lineWidth / 2;
-            break;
-          case 1:
-            oldX -= lineWidth / 2;
-            break;
-          case 2:
-            oldY -= lineWidth / 2;
-            break;
-          case 3:
-            oldX += lineWidth / 2;
-            break;
-          }
-          rotateCounter(oldX, oldY, centerX, centerY, -clockwiseRotation);
-          flipIfNecessary(oldX, oldY, centerX, centerY, flipVertical, flipHorizontal);
-          vertexStart.insert("svg:x", oldX);
-          vertexStart.insert("svg:y", oldY);
-          vertices.append(vertexStart);
-        }
-        vertexX = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
-        vertexY = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
-        oldX = vertexX;
-        oldY = vertexY;
-        if (rectangle)
-        {
-          double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
-          switch (i) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
-          {
-          case 1:
-            vertexY += lineWidth / 2;
-            break;
-          case 2:
-            vertexX -= lineWidth / 2;
-            break;
-          case 3:
-            vertexY -= lineWidth / 2;
-            break;
-          case 4:
-            vertexX += lineWidth / 2;
-            break;
-          }
-        }
-        rotateCounter(vertexX, vertexY, centerX, centerY, -clockwiseRotation);
-        flipIfNecessary(vertexX, vertexY, centerX, centerY, flipVertical, flipHorizontal);
-        vertex.insert("svg:x", vertexX);
-        vertex.insert("svg:y", vertexY);
-        vertices.append(vertex);
-        if (i > 0)
-        {
-          lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
-          if (drawStroke)
-          {
-            if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
-            {
-              ++iter_line;
-            }
-          }
-        }
+        drawEmulatedLine(shape, shapeType, lines, centerX, centerY, clockwiseRotation, caller,
+            flipHorizontal, flipVertical, x, y, scaleX, scaleY, drawStroke, graphicsProps, painter);
+        shouldDrawShape = false;
       }
-      if (rectangle)
+      else if (drawStroke)
       {
-        LineInfo *top = &lineInfos[0];
-        LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : NULL;
-        LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : NULL;
-        LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : NULL;
-        if (left)
-        {
-          left->output(painter, graphicsProps);
-        }
-        if (right)
-        {
-          right->output(painter, graphicsProps);
-        }
-        if (top)
-        {
-          top->output(painter, graphicsProps);
-        }
-        if (bottom)
-        {
-          bottom->output(painter, graphicsProps);
-        }
-      }
-      else
-      {
-        for (unsigned i = 0; i < lineInfos.size(); ++i)
-        {
-          lineInfos[i].output(painter, graphicsProps);
-        }
+        Line &first = lines[0];
+        graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
+        graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
+        graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(caller->getPaletteColors())));
+        painter->setStyle(graphicsProps, WPXPropertyListVector());
       }
     }
-    else
+    if (shouldDrawShape)
     {
       WPXPropertyListVector vertices;
       for (unsigned i = 0; i < shape->m_numVertices; ++i)

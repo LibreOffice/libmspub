@@ -27,6 +27,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	libmspub_utils.cpp \
 	PolygonUtils.cpp \
 	ShapeGroupPainter.cpp \
+	ColorReference.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \

@@ -41,45 +41,13 @@ class ColorReference
   static const unsigned char CHANGE_INTENSITY = 0x10;
   static const unsigned char BLACK_BASE = 0x1;
   static const unsigned char WHITE_BASE  = 0x2;
-  Color getRealColor(unsigned c, const std::vector<Color> &palette) const
-  {
-    unsigned char type = (c >> 24) & 0xFF;
-    if (type == 0x08)
-    {
-      if ((c & 0xFFFFFF) >= palette.size())
-      {
-        return Color();
-      }
-      return palette[c & 0xFFFFFF];
-    }
-    return Color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF);
-  }
+  Color getRealColor(unsigned c, const std::vector<Color> &palette) const;
 public:
   explicit ColorReference(unsigned color) : m_baseColor(color), m_modifiedColor(color) { }
   ColorReference(unsigned baseColor, unsigned modifiedColor) : m_baseColor(baseColor), m_modifiedColor(modifiedColor) { }
-  Color getFinalColor(const std::vector<Color> &palette) const
-  {
-    unsigned char modifiedType = (m_modifiedColor >> 24) & 0xFF;
-    if (modifiedType == CHANGE_INTENSITY)
-    {
-      Color c = getRealColor(m_baseColor, palette);
-      unsigned char changeIntensityBase = (m_modifiedColor >> 8) & 0xFF;
-      double intensity = (double)((m_modifiedColor >> 16) & 0xFF) / 0xFF;
-      if (changeIntensityBase == BLACK_BASE)
-      {
-        return Color(c.r * intensity, c.g * intensity, c.b * intensity);
-      }
-      if (changeIntensityBase == WHITE_BASE)
-      {
-        return Color(c.r + (255 - c.r) * (1 - intensity), c.g + (255 - c.g) * (1 - intensity), c.b + (255 - c.b) * (1 - intensity));
-      }
-      return Color();
-    }
-    else
-    {
-      return getRealColor(m_modifiedColor, palette);
-    }
-  }
+  Color getFinalColor(const std::vector<Color> &palette) const;
+public:
+  friend bool operator==(const libmspub::ColorReference &, const libmspub::ColorReference &);
 };
 }
 

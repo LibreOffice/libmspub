@@ -89,7 +89,7 @@ public:
   bool setShapeImgIndex(unsigned seqNum, unsigned index);
   bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
   bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
-  bool setShapeRotation(unsigned seqNum, short rotation);
+  bool setShapeRotation(unsigned seqNum, double rotation);
   bool setShapeFlip(unsigned, bool, bool);
   bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
   bool setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
@@ -109,6 +109,7 @@ public:
   void addDefaultCharacterStyle(const CharacterStyle &style);
   void addDefaultParagraphStyle(const ParagraphStyle &style);
   void addPaletteColor(Color);
+  bool setCurrentGroupSeqNum(unsigned seqNum);
 
   bool go();
 
@@ -157,16 +158,18 @@ private:
   std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
   std::set<unsigned> m_skipIfNotBgSeqNums;
   std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
-  std::map<unsigned, short> m_shapeRotationsBySeqNum;
+  std::map<unsigned, double> m_shapeRotationsBySeqNum;
   std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
   std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
   // BorderPositions are irrelevant except for rectangular shapes.
   std::map<unsigned, BorderPosition> m_shapeBorderPositionsBySeqNum;
   ShapeGroup *m_currentShapeGroup;
   boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
+  std::map<unsigned, ShapeGroup *> m_groupsBySeqNum;
 
   // helper functions
   void assignImages();
+  void assignGroups();
   void setRectCoordProps(Coordinate, WPXPropertyList *);
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);

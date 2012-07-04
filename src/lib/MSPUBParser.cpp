@@ -1025,7 +1025,8 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
   libmspub::EscherContainerInfo cTertiaryFopt;
   libmspub::EscherContainerInfo cFsp;
   libmspub::EscherContainerInfo cFspgr;
-  unsigned flipFlags = 0;
+  unsigned shapeFlags = 0;
+  bool isGroupLeader = false;
   ShapeType st = RECTANGLE;
   if (findEscherContainer(input, sp, cFspgr, OFFICE_ART_FSPGR))
   {
@@ -1042,7 +1043,8 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
     st = (ShapeType)(cFsp.initial >> 4);
     std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
     input->seek(cFsp.contentsOffset + 4, WPX_SEEK_SET);
-    flipFlags = readU32(input);
+    shapeFlags = readU32(input);
+    isGroupLeader = shapeFlags & SF_GROUP;
   }
   input->seek(sp.contentsOffset, WPX_SEEK_SET);
   if (findEscherContainer(input, sp, cData, OFFICE_ART_CLIENT_DATA))
@@ -1052,15 +1054,23 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
     if (shapeSeqNum)
     {
       m_collector->setShapeType(*shapeSeqNum, st);
-      m_collector->setShapeFlip(*shapeSeqNum, flipFlags & SF_FLIP_V, flipFlags & SF_FLIP_H);
+      m_collector->setShapeFlip(*shapeSeqNum, shapeFlags & SF_FLIP_V, shapeFlags & SF_FLIP_H);
       input->seek(sp.contentsOffset, WPX_SEEK_SET);
-      m_collector->setShapeOrder(*shapeSeqNum);
+      if (isGroupLeader)
+      {
+        m_collector->setCurrentGroupSeqNum(*shapeSeqNum);
+      }
+      else
+      {
+        m_collector->setShapeOrder(*shapeSeqNum);
+      }
       std::set<unsigned short> anchorTypes;
       anchorTypes.insert(OFFICE_ART_CLIENT_ANCHOR);
       anchorTypes.insert(OFFICE_ART_CHILD_ANCHOR);
-      if (findEscherContainerWithTypeInSet(input, sp, cAnchor, anchorTypes))
+      bool foundAnchor;
+      if ((foundAnchor = findEscherContainerWithTypeInSet(input, sp, cAnchor, anchorTypes)) || isGroupLeader)
       {
-        MSPUB_DEBUG_MSG(("Found Escher data for shape of seqnum 0x%x\n", *shapeSeqNum));
+        MSPUB_DEBUG_MSG(("Found Escher data for %s of seqnum 0x%x\n", isGroupLeader ? "group" : "shape", *shapeSeqNum));
         input->seek(sp.contentsOffset, WPX_SEEK_SET);
         if (findEscherContainer(input, sp, cFopt, OFFICE_ART_FOPT))
         {
@@ -1175,26 +1185,29 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                        ptr_right ? *ptr_right : DEFAULT_MARGIN,
                                        ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
         }
-        if (cAnchor.type == OFFICE_ART_CLIENT_ANCHOR)
+        if (foundAnchor)
         {
-          std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
-          if (definesRelativeCoordinates)
+          if (cAnchor.type == OFFICE_ART_CLIENT_ANCHOR)
           {
-            groupCoord.m_xs = anchorData[FIELDID_XS];
-            groupCoord.m_ys = anchorData[FIELDID_YS];
-            groupCoord.m_xe = anchorData[FIELDID_XE];
-            groupCoord.m_ye = anchorData[FIELDID_YE];
+            std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
+            if (definesRelativeCoordinates)
+            {
+              groupCoord.m_xs = anchorData[FIELDID_XS];
+              groupCoord.m_ys = anchorData[FIELDID_YS];
+              groupCoord.m_xe = anchorData[FIELDID_XE];
+              groupCoord.m_ye = anchorData[FIELDID_YE];
+            }
+            m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
           }
-          m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
-        }
-        else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
-        {
-          input->seek(cAnchor.contentsOffset, WPX_SEEK_SET);
-          int xs = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
-          int ys = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
-          int xe = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
-          int ye = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
-          m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, xs, ys, xe, ye);
+          else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
+          {
+            input->seek(cAnchor.contentsOffset, WPX_SEEK_SET);
+            int xs = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
+            int ys = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
+            int xe = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
+            int ye = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
+            m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, xs, ys, xe, ye);
+          }
         }
       }
       if (!topLevel)

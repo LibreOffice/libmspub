@@ -2,9 +2,9 @@
 #include "MSPUBCollector.h"
 #include "ShapeGroup.h"
 
-void libmspub::ShapeGroupPainter::group()
+void libmspub::ShapeGroupPainter::group(WPXPropertyList layerProperties)
 {
-  m_owner->m_painter->startLayer(WPXPropertyList());
+  m_owner->m_painter->startLayer(layerProperties);
 }
 void libmspub::ShapeGroupPainter::shape(unsigned seqNum)
 {

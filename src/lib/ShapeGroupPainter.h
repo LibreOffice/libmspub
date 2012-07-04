@@ -1,5 +1,8 @@
 #ifndef __SHAPEGROUPPAINTER_H__
 #define __SHAPEGROUPPAINTER_H__
+
+#include <libwpd/WPXPropertyList.h>
+
 namespace libmspub
 {
 class MSPUBCollector;
@@ -10,7 +13,7 @@ public:
   ShapeGroupPainter(MSPUBCollector *owner) : m_owner(owner)
   {
   }
-  void group();
+  void group(WPXPropertyList layerProperties);
   void shape(unsigned seqNum);
   void endGroup();
 };

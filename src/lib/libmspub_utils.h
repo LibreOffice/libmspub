@@ -98,6 +98,8 @@ uint16_t readU16(WPXInputStream *input);
 uint32_t readU32(WPXInputStream *input);
 uint64_t readU64(WPXInputStream *input);
 int32_t readS32(WPXInputStream *input);
+double readFixedPoint(WPXInputStream *input);
+double toFixedPoint(int fp);
 void readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out);
 
 void appendCharacters(WPXString &text, std::vector<unsigned char> characters);
@@ -108,6 +110,7 @@ void rotateCounter(double &x, double &y, double centerX, double centerY, short r
 void flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal);
 
 unsigned correctModulo(int x, unsigned n);
+double doubleModulo(double x, double y);
 
 template <class MapT> typename MapT::mapped_type *getIfExists(MapT &map, const typename MapT::key_type &key)
 {

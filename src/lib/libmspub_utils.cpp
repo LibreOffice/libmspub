@@ -46,6 +46,35 @@ void libmspub::rotateCounter(double &x, double &y, double centerX, double center
   y = centerY - newVecY;
 }
 
+double libmspub::doubleModulo(double x, double y)
+{
+  if (y <= 0) // y <= 0 doesn't make sense
+  {
+    return x;
+  }
+  while (x < 0)
+  {
+    x += y;
+  }
+  while (x >= y)
+  {
+    x -= y;
+  }
+  return x;
+}
+
+double libmspub::toFixedPoint(int fp)
+{
+  unsigned short fractionalPart = ((unsigned short) fp) & 0xFFFF;
+  short integralPart = fp >> 16;
+  return integralPart + fractionalPart / 65536.;
+}
+
+double libmspub::readFixedPoint(WPXInputStream *input)
+{
+  return toFixedPoint(readS32(input));
+}
+
 void libmspub::flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal)
 {
   double vecX = x - centerX;

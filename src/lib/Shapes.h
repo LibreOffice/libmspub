@@ -88,7 +88,7 @@ struct GeometricShape : public FillableShape
   void addLine(ColorReference color, unsigned widthInEmu, bool lineExists);
   void fillDefaultAdjustValues();
   void setAdjustValue(unsigned index, int adjustValue);
-  void setClockwiseRotation(short rotation);
+  void setClockwiseRotation(double rotation);
   void setText(std::vector<TextParagraph> str);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
@@ -101,7 +101,7 @@ struct GeometricShape : public FillableShape
   ShapeType m_type;
   double m_x, m_y, m_width, m_height;
   std::vector<int> m_adjustValues;
-  short m_clockwiseRotation;
+  double m_clockwiseRotation;
   bool m_flipV, m_flipH;
   unsigned m_left, m_top, m_right, m_bottom; //emu
   GeometricShape(MSPUBCollector *o)

@@ -48,7 +48,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
   m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
   m_shapeMarginsBySeqNum(), m_shapeBorderPositionsBySeqNum(),
-  m_currentShapeGroup(NULL), m_topLevelShapes()
+  m_currentShapeGroup(NULL), m_topLevelShapes(),
+  m_groupsBySeqNum()
 {
 }
 
@@ -99,6 +100,17 @@ bool libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, u
 void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
 {
   m_bgShapeSeqNumsByPageSeqNum[pageSeqNum] = seqNum;
+}
+
+bool libmspub::MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
+{
+  if (!m_currentShapeGroup)
+  {
+    return false;
+  }
+  m_currentShapeGroup->m_seqNum = seqNum;
+  m_groupsBySeqNum.insert(std::pair<unsigned, ShapeGroup *>(seqNum, m_currentShapeGroup));
+  return true;
 }
 
 void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
@@ -258,7 +270,7 @@ void libmspub::Shape::setCoordProps(Coordinate coord)
   owner->setRectCoordProps(coord, &props);
 }
 
-void libmspub::GeometricShape::setClockwiseRotation(short rotation)
+void libmspub::GeometricShape::setClockwiseRotation(double rotation)
 {
   m_clockwiseRotation = rotation;
 }
@@ -447,7 +459,7 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
 void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
 {
   owner->setRectCoordProps(m_textCoord, &props);
-  short textRotation = correctModulo(m_clockwiseRotation + (m_flipV ? 180 : 0), 360);
+  double textRotation = doubleModulo(m_clockwiseRotation + (m_flipV ? 180 : 0), 360);
   if (textRotation != 0)
   {
     props.insert("libwpg:rotate", textRotation);
@@ -570,9 +582,9 @@ libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-bool libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, short rotation)
+bool libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, double rotation)
 {
-  return m_shapeRotationsBySeqNum.insert(std::pair<const unsigned, short>(seqNum, rotation)).second;
+  return m_shapeRotationsBySeqNum.insert(std::pair<const unsigned, double>(seqNum, rotation)).second;
 }
 
 bool libmspub::MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
@@ -654,6 +666,26 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
   m_fonts.push_back(name);
 }
 
+void libmspub::MSPUBCollector::assignGroups()
+{
+  for (std::map<unsigned, ShapeGroup *>::iterator i = m_groupsBySeqNum.begin();
+       i != m_groupsBySeqNum.end(); ++i)
+  {
+    ShapeGroup &group = *(i->second);
+    unsigned seqNum = i->first;
+    double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
+    if (ptr_rotation)
+    {
+      group.m_clockwiseRotation = *ptr_rotation;
+    }
+    std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
+    if (ptr_flips)
+    {
+      group.m_flipV = ptr_flips->first;
+      group.m_flipH = ptr_flips->second;
+    }
+  }
+}
 void libmspub::MSPUBCollector::assignImages()
 {
   for (unsigned i = 0; i < m_possibleImageShapeSeqNums.size(); ++i)
@@ -666,7 +698,7 @@ void libmspub::MSPUBCollector::assignImages()
       MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", seqNum));
       return;
     }
-    short *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
+    double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
     if (ptr_rotation)
     {
       shape->setClockwiseRotation(*ptr_rotation);
@@ -853,6 +885,7 @@ bool libmspub::MSPUBCollector::go()
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
   assignImages();
+  assignGroups();
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
     unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getFirstShapeSeqNum());

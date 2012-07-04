@@ -27,7 +27,8 @@ class ShapeGroup : public ShapeGroupElement
   ShapeGroup &operator=(const ShapeGroup &);
 public:
   boost::ptr_vector<ShapeGroupElement> m_elements;
-  ShapeGroup(ShapeGroup *parent) : ShapeGroupElement(parent), m_elements()
+  ShapeGroup(ShapeGroup *parent) : ShapeGroupElement(parent), m_elements(), m_seqNum(0),
+    m_clockwiseRotation(0), m_flipH(false), m_flipV(false)
   {
   }
   unsigned getFirstShapeSeqNum() const
@@ -51,13 +52,17 @@ public:
   }
   void paint(ShapeGroupPainter p)
   {
-    p.group();
+    p.group(WPXPropertyList());
     for (unsigned i = 0; i < m_elements.size(); ++i)
     {
       m_elements[i].paint(p);
     }
     p.endGroup();
   }
+  unsigned m_seqNum;
+  double m_clockwiseRotation;
+  bool m_flipH;
+  bool m_flipV;
 };
 class ShapeGroupElementLeaf : public ShapeGroupElement
 {

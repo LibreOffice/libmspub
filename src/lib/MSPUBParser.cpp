@@ -1199,10 +1199,16 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
           {
             input->seek(cAnchor.contentsOffset, WPX_SEEK_SET);
-            int xs = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
-            int ys = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
-            int xe = readU32(input) - thisRelativeTo.m_xs + groupCoord.m_xs;
-            int ye = readU32(input) - thisRelativeTo.m_ys + groupCoord.m_ys;
+            int coordSystemWidth = thisRelativeTo.m_xe - thisRelativeTo.m_xs;
+            int coordSystemHeight = thisRelativeTo.m_ye - thisRelativeTo.m_ys;
+            int groupWidth = groupCoord.m_xe - groupCoord.m_xs;
+            int groupHeight = groupCoord.m_ye - groupCoord.m_ys;
+            double widthScale = (double)groupWidth / coordSystemWidth;
+            double heightScale = (double)groupHeight / coordSystemHeight;
+            int xs = (readU32(input) - thisRelativeTo.m_xs) * widthScale + groupCoord.m_xs;
+            int ys = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
+            int xe = (readU32(input) - thisRelativeTo.m_xs) * widthScale + groupCoord.m_xs;
+            int ye = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
             m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, xs, ys, xe, ye);
           }
         }

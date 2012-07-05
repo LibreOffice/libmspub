@@ -2312,7 +2312,14 @@ const CustomShape CS_OCTAGON(
 
 const Vertex ROUND_RECTANGLE_VERTICES[] =
 {
-  Vertex(7 CALCULATED_VALUE, 0), Vertex(0, 8 CALCULATED_VALUE), Vertex(0, 9 CALCULATED_VALUE), Vertex(7 CALCULATED_VALUE, 21600), Vertex(10 CALCULATED_VALUE, 21600), Vertex(21600, 9 CALCULATED_VALUE), Vertex(21600, 8 CALCULATED_VALUE), Vertex(10 CALCULATED_VALUE, 0)
+  Vertex(7 CALCULATED_VALUE, 0),
+  Vertex(0, 8 CALCULATED_VALUE),
+  Vertex(0, 9 CALCULATED_VALUE),
+  Vertex(7 CALCULATED_VALUE, 21600),
+  Vertex(10 CALCULATED_VALUE, 21600),
+  Vertex(21600, 9 CALCULATED_VALUE),
+  Vertex(21600, 8 CALCULATED_VALUE),
+  Vertex(10 CALCULATED_VALUE, 0)
 };
 
 const unsigned short ROUND_RECTANGLE_SEGMENTS[] =
@@ -2322,7 +2329,21 @@ const unsigned short ROUND_RECTANGLE_SEGMENTS[] =
 
 const Calculation ROUND_RECTANGLE_CALC[] =
 {
-  Calculation(0x000E, 0, 45, 0), Calculation(0x6009, PROP_ADJUST_VAL_FIRST, OTHER_CALC_VAL, 0), Calculation(0x2001, OTHER_CALC_VAL | 1, 3163, 7636), Calculation(0x6000, PROP_GEO_LEFT, OTHER_CALC_VAL | 2, 0), Calculation(0x6000, PROP_GEO_TOP, OTHER_CALC_VAL | 2, 0), Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL | 2), Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL | 2), Calculation(0x6000, PROP_GEO_LEFT, PROP_ADJUST_VAL_FIRST, 0), Calculation(0x6000, PROP_GEO_TOP, PROP_ADJUST_VAL_FIRST, 0), Calculation(0xA000, PROP_GEO_BOTTOM, 0, PROP_ADJUST_VAL_FIRST), Calculation(0xA000, PROP_GEO_RIGHT, 0, PROP_ADJUST_VAL_FIRST)
+  Calculation(0x000E, 0, 45, 0),                                  // 0
+  Calculation(0x6009, PROP_ADJUST_VAL_FIRST, OTHER_CALC_VAL, 0),  // 1
+  Calculation(0x2001, OTHER_CALC_VAL | 1, 3163, 7636),            // 2
+  Calculation(0x6000, PROP_GEO_LEFT, OTHER_CALC_VAL | 2, 0),      // 3
+  Calculation(0x6000, PROP_GEO_TOP, OTHER_CALC_VAL | 2, 0),       // 4
+  Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL | 2),     // 5
+  Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL | 2),    // 6
+  Calculation(0x6000, PROP_GEO_LEFT, OTHER_CALC_VAL | 13, 0),   // 7
+  Calculation(0x6000, PROP_GEO_TOP, OTHER_CALC_VAL | 14, 0),    // 8
+  Calculation(0xA000, PROP_GEO_BOTTOM, 0, OTHER_CALC_VAL | 14), // 9
+  Calculation(0xA000, PROP_GEO_RIGHT, 0, OTHER_CALC_VAL | 13),  // 10
+  Calculation(0x2005, ASPECT_RATIO, 1, 0),                           // 11
+  Calculation(0x2004, ASPECT_RATIO, 1, 0),                           // 12
+  Calculation(0xA001, PROP_ADJUST_VAL_FIRST, 1, OTHER_CALC_VAL | 11), // 13
+  Calculation(0x6001, PROP_ADJUST_VAL_FIRST, OTHER_CALC_VAL | 12, 1) // 14
 };
 
 const TextRectangle ROUND_RECTANGLE_TRS[] =

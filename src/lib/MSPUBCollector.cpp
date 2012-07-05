@@ -285,6 +285,10 @@ double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int a
     }
     return 0;
   }
+  if (arg == ASPECT_RATIO)
+  {
+    return (double)m_width / m_height;
+  }
   if (arg & OTHER_CALC_VAL)
   {
     return getCalculationValue(arg & 0xff, true);
@@ -324,7 +328,8 @@ double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recurs
   }
   if (m_valuesSeen[index])
   {
-    //recursion detected
+    //recursion detected. This is the simplest way to avoid infinite recursion, at the "cost"
+    // of making custom shape parsing not Turing-complete ;)
     return 0;
   }
   m_valuesSeen[index] = true;

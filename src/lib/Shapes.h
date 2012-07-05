@@ -33,6 +33,7 @@
 
 #include "MSPUBConstants.h"
 #include "ShapeType.h"
+#include "VectorTransformation2D.h"
 
 namespace libmspub
 {
@@ -92,11 +93,11 @@ struct GeometricShape : public FillableShape
   void addLine(ColorReference color, unsigned widthInEmu, bool lineExists);
   void fillDefaultAdjustValues();
   void setAdjustValue(unsigned index, int adjustValue);
-  void setClockwiseRotation(double rotation);
   void setText(std::vector<TextParagraph> str);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
   void writeText(libwpg::WPGPaintInterface *painter);
+  void setTransformation(VectorTransformation2D transform);
 
   std::vector<TextParagraph> m_str;
   bool m_hasText;
@@ -104,26 +105,26 @@ struct GeometricShape : public FillableShape
   unsigned m_imgIndex;
   ShapeType m_type;
   double m_x, m_y, m_width, m_height;
+  VectorTransformation2D m_transform;
   std::vector<int> m_adjustValues;
-  double m_clockwiseRotation;
-  bool m_flipV, m_flipH;
   unsigned m_left, m_top, m_right, m_bottom; //emu
   GeometricShape(MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE),
-      m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
-      m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(IDENTITY_TRANSFORMATION),
+      m_adjustValues(),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
-      m_borderPosition(HALF_INSIDE_SHAPE) { }
+      m_borderPosition(HALF_INSIDE_SHAPE),
+      m_coordinatesRotated90(false) { }
   GeometricShape(unsigned pageSeqNum, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(pageSeqNum), m_imgIndex(0), m_type(RECTANGLE),
-      m_x(0), m_y(0), m_width(0), m_height(0), m_adjustValues(),
-      m_clockwiseRotation(0), m_flipV(false), m_flipH(false),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(IDENTITY_TRANSFORMATION), m_adjustValues(),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
-      m_borderPosition(HALF_INSIDE_SHAPE) { }
+      m_borderPosition(HALF_INSIDE_SHAPE),
+      m_coordinatesRotated90(false) { }
   std::vector<Color> getPaletteColors() const;
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
@@ -143,6 +144,7 @@ public:
   std::vector<Line> m_lines;
   bool m_drawStroke;
   BorderPosition m_borderPosition;
+  bool m_coordinatesRotated90;
 };
 } // namespace libmspub
 #endif // __SHAPES_H__

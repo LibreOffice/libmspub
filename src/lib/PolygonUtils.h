@@ -35,6 +35,7 @@
 
 #include "MSPUBCollector.h"
 #include "Shapes.h"
+#include "VectorTransformation2D.h"
 
 namespace libmspub
 {
@@ -106,7 +107,7 @@ struct CustomShape
 
 const CustomShape *getCustomShape(ShapeType type);
 bool isShapeTypeRectangle(ShapeType type);
-void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller, bool closeEverything, short clockwiseRotation, bool flipVertical, bool flipHorizontal, std::vector<Line> lines);
+void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

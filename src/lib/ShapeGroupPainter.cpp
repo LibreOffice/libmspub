@@ -1,13 +1,14 @@
-#include "ShapeGroupPainter.h"
 #include "MSPUBCollector.h"
 #include "ShapeGroup.h"
+#include "ShapeGroupPainter.h"
 
-void libmspub::ShapeGroupPainter::group(WPXPropertyList layerProperties)
+void libmspub::ShapeGroupPainter::group(ShapeGroup * /*group*/)
 {
-  m_owner->m_painter->startLayer(layerProperties);
+  m_owner->m_painter->startLayer(WPXPropertyList());
 }
-void libmspub::ShapeGroupPainter::shape(unsigned seqNum)
+void libmspub::ShapeGroupPainter::shape(ShapeGroupElementLeaf *leaf)
 {
+  unsigned seqNum = leaf->getFirstShapeSeqNum();
   Shape *myShape = ptr_getIfExists(m_owner->m_shapesBySeqNum, seqNum);
   if (myShape)
   {

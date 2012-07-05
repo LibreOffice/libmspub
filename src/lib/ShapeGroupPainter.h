@@ -6,15 +6,27 @@
 namespace libmspub
 {
 class MSPUBCollector;
-class ShapeGroupPainter
+class ShapeGroup;
+class ShapeGroupElementLeaf;
+class ShapeGroupVisitor
+{
+public:
+  virtual void group(ShapeGroup *group) = 0;
+  virtual void shape(ShapeGroupElementLeaf *leaf) = 0;
+  virtual void endGroup() = 0;
+  virtual ~ShapeGroupVisitor() { }
+};
+class ShapeGroupPainter : public ShapeGroupVisitor
 {
   MSPUBCollector *m_owner;
+  ShapeGroupPainter &operator=(const ShapeGroupPainter &);
+  ShapeGroupPainter(const ShapeGroupPainter &);
 public:
   ShapeGroupPainter(MSPUBCollector *owner) : m_owner(owner)
   {
   }
-  void group(WPXPropertyList layerProperties);
-  void shape(unsigned seqNum);
+  void group(ShapeGroup *group);
+  void shape(ShapeGroupElementLeaf *leaf);
   void endGroup();
 };
 }

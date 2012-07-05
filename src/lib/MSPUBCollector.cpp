@@ -265,9 +265,9 @@ void libmspub::Shape::setCoordProps(Coordinate coord)
   owner->setRectCoordProps(coord, &props);
 }
 
-void libmspub::GeometricShape::setClockwiseRotation(double rotation)
+void libmspub::GeometricShape::setTransformation(VectorTransformation2D t)
 {
-  m_clockwiseRotation = rotation;
+  m_transform = t;
 }
 
 double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int arg) const
@@ -459,10 +459,10 @@ WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
 void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
 {
   owner->setRectCoordProps(m_textCoord, &props);
-  double textRotation = doubleModulo(m_clockwiseRotation + (m_flipV ? 180 : 0), 360);
+  double textRotation = m_transform.getRotation();
   if (textRotation != 0)
   {
-    props.insert("libwpg:rotate", textRotation);
+    props.insert("libwpg:rotate", textRotation * 180 / M_PI);
   }
   props.insert("fo:padding-left", (double)m_left / EMUS_IN_INCH);
   props.insert("fo:padding-top", (double)m_top / EMUS_IN_INCH);
@@ -495,7 +495,24 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   // So which size should be used? We should compromise by using the size of the text for rectangular shapes,
   // and the size of the shape for other shapes. However currently the size of the shape is used in all cases,
   // causing ugliness in some documents.
-  writeCustomShape(m_type, graphicsProps, painter, m_x, m_y, m_height, m_width, this, m_closeEverything, m_clockwiseRotation, m_flipV, m_flipH, m_drawStroke ? m_lines : std::vector<Line>());
+  double x, y, height, width;
+  if (m_coordinatesRotated90)
+  {
+    int centerX = m_x + m_width / 2;
+    int centerY = m_y + m_height / 2;
+    x = centerX - m_height / 2;
+    y = centerY - m_width / 2;
+    height = m_width;
+    width = m_height;
+  }
+  else
+  {
+    x = m_x;
+    y = m_y;
+    height = m_height;
+    width = m_width;
+  }
+  writeCustomShape(m_type, graphicsProps, painter, x, y, height, width, this, m_closeEverything, m_transform, m_drawStroke ? m_lines : std::vector<Line>());
 }
 
 void libmspub::FillableShape::setFill(Fill *f)
@@ -604,16 +621,12 @@ void libmspub::MSPUBCollector::assignGroups()
     ShapeGroup &group = *(i->second);
     unsigned seqNum = i->first;
     double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
-    if (ptr_rotation)
-    {
-      group.m_clockwiseRotation = *ptr_rotation;
-    }
+    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(-(*ptr_rotation) * M_PI / 180.)
+                                 : IDENTITY_TRANSFORMATION;
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
-    if (ptr_flips)
-    {
-      group.m_flipV = ptr_flips->first;
-      group.m_flipH = ptr_flips->second;
-    }
+    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) :
+                                   IDENTITY_TRANSFORMATION;
+    group.m_transform = rot * flips;
   }
 }
 void libmspub::MSPUBCollector::assignImages()
@@ -629,16 +642,17 @@ void libmspub::MSPUBCollector::assignImages()
       return;
     }
     double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
-    if (ptr_rotation)
+    double clockwiseRotation = ptr_rotation ? *ptr_rotation : 0;
+    clockwiseRotation = correctModulo(clockwiseRotation, 360);
+    if ( (clockwiseRotation >= 45 && clockwiseRotation < 135) || (clockwiseRotation >= 225 && clockwiseRotation < 315) )
     {
-      shape->setClockwiseRotation(*ptr_rotation);
+      shape->m_coordinatesRotated90 = true;
     }
+    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(
+                                   -(*ptr_rotation) * M_PI / 180.) : IDENTITY_TRANSFORMATION;
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
-    if (ptr_flips)
-    {
-      shape->m_flipV = ptr_flips->first;
-      shape->m_flipH = ptr_flips->second;
-    }
+    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) : IDENTITY_TRANSFORMATION;
+    shape->m_transform = rot * flips;
     ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
     if (type)
     {
@@ -858,7 +872,8 @@ bool libmspub::MSPUBCollector::go()
       for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)
       {
         ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i_group];
-        shapeGroup->paint(ShapeGroupPainter(this));
+        ShapeGroupPainter p(this);
+        shapeGroup->visit(&p);
       }
       m_painter->endGraphics();
     }

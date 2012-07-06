@@ -2,6 +2,8 @@
 #define __SHAPEGROUP_H__
 #include "VectorTransformation2D.h"
 #include "ShapeGroupPainter.h"
+#include "MSPUBConstants.h"
+#include "Coordinate.h"
 #include <boost/ptr_container/ptr_vector.hpp>
 namespace libmspub
 {
@@ -11,7 +13,8 @@ class ShapeGroupElement
 public:
   ShapeGroup *m_parent;
   VectorTransformation2D m_transform;
-  ShapeGroupElement(ShapeGroup *parent) : m_parent(parent), m_transform(IDENTITY_TRANSFORMATION)
+  Coordinate m_coordinates;
+  ShapeGroupElement(ShapeGroup *parent) : m_parent(parent), m_transform(IDENTITY_TRANSFORMATION), m_coordinates()
   {
   }
   virtual unsigned getPageSeqNum() const = 0;

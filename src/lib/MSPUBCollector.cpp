@@ -512,7 +512,7 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
     height = m_height;
     width = m_width;
   }
-  writeCustomShape(m_type, graphicsProps, painter, x, y, height, width, this, m_closeEverything, m_transform, m_drawStroke ? m_lines : std::vector<Line>());
+  writeCustomShape(m_type, graphicsProps, painter, x, y, height, width, this, m_closeEverything, m_foldedTransform, m_drawStroke ? m_lines : std::vector<Line>());
 }
 
 void libmspub::FillableShape::setFill(Fill *f)
@@ -627,6 +627,11 @@ void libmspub::MSPUBCollector::assignGroups()
     VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) :
                                    IDENTITY_TRANSFORMATION;
     group.m_transform = rot * flips;
+    Coordinate *ptr_coords = getIfExists(m_shapeCoordinatesBySeqNum, seqNum);
+    if (ptr_coords)
+    {
+      group.m_coordinates = *ptr_coords;
+    }
   }
 }
 void libmspub::MSPUBCollector::assignImages()

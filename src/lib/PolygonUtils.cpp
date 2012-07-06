@@ -5853,7 +5853,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
   }
   Vector2D center(x + width / 2, y + height / 2);
   double scaleX = width / shape->m_coordWidth;
-  double scaleY = height / shape->m_coordHeight;;
+  double scaleY = height / shape->m_coordHeight;
   bool allLinesSame = true;
   for (unsigned i = 0; allLinesSame && i + 1< lines.size(); ++i)
   {

@@ -31,6 +31,7 @@
 #include <vector>
 #include <map>
 
+#include "Coordinate.h"
 #include "MSPUBConstants.h"
 #include "ShapeType.h"
 #include "VectorTransformation2D.h"
@@ -39,12 +40,6 @@ namespace libmspub
 {
 class MSPUBCollector;
 struct CustomShape;
-struct Coordinate
-{
-  Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
-  Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
-  int m_xs, m_ys, m_xe, m_ye;
-};
 struct Line
 {
   ColorReference m_color;
@@ -116,7 +111,7 @@ struct GeometricShape : public FillableShape
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
       m_borderPosition(HALF_INSIDE_SHAPE),
-      m_coordinatesRotated90(false) { }
+      m_coordinatesRotated90(false), m_foldedTransform(IDENTITY_TRANSFORMATION) { }
   GeometricShape(unsigned pageSeqNum, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(pageSeqNum), m_imgIndex(0), m_type(RECTANGLE),
       m_x(0), m_y(0), m_width(0), m_height(0), m_transform(IDENTITY_TRANSFORMATION), m_adjustValues(),
@@ -124,7 +119,7 @@ struct GeometricShape : public FillableShape
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
       m_borderPosition(HALF_INSIDE_SHAPE),
-      m_coordinatesRotated90(false) { }
+      m_coordinatesRotated90(false), m_foldedTransform(IDENTITY_TRANSFORMATION) { }
   std::vector<Color> getPaletteColors() const;
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:
@@ -145,6 +140,7 @@ public:
   bool m_drawStroke;
   BorderPosition m_borderPosition;
   bool m_coordinatesRotated90;
+  VectorTransformation2D m_foldedTransform;
 };
 } // namespace libmspub
 #endif // __SHAPES_H__

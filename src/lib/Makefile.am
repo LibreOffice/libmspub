@@ -51,7 +51,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Shapes.h \
 	ShapeGroupPainter.h \
 	ShapeGroup.h \
-	VectorTransformation2D.h
+	VectorTransformation2D.h \
+	Coordinate.h
 
 if OS_WIN32
 

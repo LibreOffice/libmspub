@@ -38,11 +38,11 @@ libmspub::VectorTransformation2D libmspub::operator*(const VectorTransformation2
 {
   VectorTransformation2D ret;
   ret.m_m11 = l.m_m11 * r.m_m11 + l.m_m12 * r.m_m21;
-  ret.m_m12 = l.m_m11 * r.m_m21 + l.m_m12 * r.m_m22;
-  ret.m_m21 = l.m_m21 * r.m_m11 + l.m_m22 * r.m_m12;
+  ret.m_m12 = l.m_m11 * r.m_m12 + l.m_m12 * r.m_m22;
+  ret.m_m21 = l.m_m21 * r.m_m11 + l.m_m22 * r.m_m21;
   ret.m_m22 = l.m_m21 * r.m_m12 + l.m_m22 * r.m_m22;
-  ret.m_x   = l.m_m11 * r.m_x   + l.m_m12 * r.m_y;
-  ret.m_y   = l.m_m21 * r.m_x   + l.m_m22 * r.m_y;
+  ret.m_x   = l.m_m11 * r.m_x   + l.m_m12 * r.m_y + l.m_x;
+  ret.m_y   = l.m_m21 * r.m_x   + l.m_m22 * r.m_y + l.m_y;
   return ret;
 }
 

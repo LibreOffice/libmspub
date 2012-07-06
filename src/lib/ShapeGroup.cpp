@@ -35,14 +35,28 @@ libmspub::VectorTransformation2D libmspub::ShapeGroup::getFoldedTransform()
   {
     return m_transform;
   }
-  return m_parent->getFoldedTransform() * m_transform;
+  double centerX = ((double)m_coordinates.m_xs + (double)m_coordinates.m_xe) / (2 * EMUS_IN_INCH);
+  double centerY = ((double)m_coordinates.m_ys + (double)m_coordinates.m_ye) / (2 * EMUS_IN_INCH);
+  double parentCenterX = ((double)m_parent->m_coordinates.m_xs + (double)m_parent->m_coordinates.m_xe) / (2 * EMUS_IN_INCH);
+  double parentCenterY = ((double)m_parent->m_coordinates.m_ys + (double)m_parent->m_coordinates.m_ye) / (2 * EMUS_IN_INCH);
+  double offsetX = centerX - parentCenterX;
+  double offsetY = centerY - parentCenterY;
+  VectorTransformation2D parentTransform = m_parent->getFoldedTransform();
+  return VectorTransformation2D::fromTranslate(-offsetX, -offsetY) * parentTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
 }
 
 libmspub::VectorTransformation2D libmspub::ShapeGroupElementLeaf::getFoldedTransform(VectorTransformation2D init)
 {
   if (m_parent)
   {
-    return m_parent->getFoldedTransform() * init;
+    double centerX = ((double)m_coordinates.m_xs + (double)m_coordinates.m_xe) / (2 * EMUS_IN_INCH);
+    double centerY = ((double)m_coordinates.m_ys + (double)m_coordinates.m_ye) / (2 * EMUS_IN_INCH);
+    double parentCenterX = ((double)m_parent->m_coordinates.m_xs + (double)m_parent->m_coordinates.m_xe) / (2 * EMUS_IN_INCH);
+    double parentCenterY = ((double)m_parent->m_coordinates.m_ys + (double)m_parent->m_coordinates.m_ye) / (2 * EMUS_IN_INCH);
+    double offsetX = centerX - parentCenterX;
+    double offsetY = centerY - parentCenterY;
+    VectorTransformation2D parentTransform = m_parent->getFoldedTransform();
+    return VectorTransformation2D::fromTranslate(-offsetX, -offsetY) * parentTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * init;
   }
   return init;
 }

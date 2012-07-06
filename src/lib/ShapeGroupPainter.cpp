@@ -15,6 +15,12 @@ void libmspub::ShapeGroupPainter::shape(ShapeGroupElementLeaf *leaf)
     Coordinate *coord = getIfExists(m_owner->m_shapeCoordinatesBySeqNum, seqNum);
     if (coord)
     {
+      GeometricShape *casted = dynamic_cast<GeometricShape *>(myShape);
+      leaf->m_coordinates = *coord;
+      if (casted)
+      {
+        casted->m_foldedTransform = leaf->getFoldedTransform(casted->m_transform);
+      }
       myShape->output(m_owner->m_painter, *coord);
     }
     else

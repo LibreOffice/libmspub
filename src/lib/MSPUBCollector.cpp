@@ -498,8 +498,8 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   double x, y, height, width;
   if (m_coordinatesRotated90)
   {
-    int centerX = m_x + m_width / 2;
-    int centerY = m_y + m_height / 2;
+    double centerX = m_x + m_width / 2;
+    double centerY = m_y + m_height / 2;
     x = centerX - m_height / 2;
     y = centerY - m_width / 2;
     height = m_width;
@@ -621,7 +621,7 @@ void libmspub::MSPUBCollector::assignGroups()
     ShapeGroup &group = *(i->second);
     unsigned seqNum = i->first;
     double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
-    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(-(*ptr_rotation) * M_PI / 180.)
+    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians((*ptr_rotation) * M_PI / 180.)
                                  : IDENTITY_TRANSFORMATION;
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
     VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) :
@@ -649,7 +649,7 @@ void libmspub::MSPUBCollector::assignImages()
       shape->m_coordinatesRotated90 = true;
     }
     VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(
-                                   -(*ptr_rotation) * M_PI / 180.) : IDENTITY_TRANSFORMATION;
+                                   (*ptr_rotation) * M_PI / 180.) : IDENTITY_TRANSFORMATION;
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
     VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) : IDENTITY_TRANSFORMATION;
     shape->m_transform = rot * flips;

@@ -27,7 +27,7 @@
  */
 
 #include "VectorTransformation2D.h"
-#include <cmath>
+#include <math.h>
 
 libmspub::VectorTransformation2D::VectorTransformation2D() : m_m11(0), m_m12(0), m_m21(0), m_m22(0), m_x(0), m_y(0)
 {
@@ -68,12 +68,10 @@ libmspub::VectorTransformation2D libmspub::VectorTransformation2D::fromTranslate
 libmspub::VectorTransformation2D libmspub::VectorTransformation2D::fromCounterRadians(double theta)
 {
   VectorTransformation2D ret;
-  double cos = std::cos(theta);
-  double sin = std::sin(theta);
-  ret.m_m11 = cos;
-  ret.m_m12 = -sin;
-  ret.m_m21 = sin;
-  ret.m_m22 = cos;
+  ret.m_m11 = cos(theta);
+  ret.m_m12 = -sin(theta);
+  ret.m_m21 = sin(theta);
+  ret.m_m22 = cos(theta);
   return ret;
 }
 
@@ -105,13 +103,13 @@ libmspub::Vector2D libmspub::operator-(const Vector2D &l, const Vector2D &r)
 
 double libmspub::VectorTransformation2D::getRotation() const
 {
-  if (std::abs(getHorizontalScaling()) > 0.0001)
+  if (fabs(getHorizontalScaling()) > 0.0001)
   {
-    return std::atan2(m_m21, m_m11);
+    return atan2(m_m21, m_m11);
   }
-  if (std::abs(getVerticalScaling()) > 0.0001)
+  if (fabs(getVerticalScaling()) > 0.0001)
   {
-    return std::atan2(-m_m12, m_m22);
+    return atan2(-m_m12, m_m22);
   }
   return 0;
 }

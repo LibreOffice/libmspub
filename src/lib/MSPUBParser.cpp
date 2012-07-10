@@ -31,7 +31,7 @@
 #include <string>
 #include <algorithm>
 #include <string.h>
-#include <libwpd-stream/WPXStream.h>
+#include <libwpd-stream/libwpd-stream.h>
 #include <zlib.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"

@@ -87,7 +87,35 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\src\lib\ColorReference.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Fill.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\libmspub_utils.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBCollector.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\MSPUBDocument.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBParser.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBParser2k.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBStringVector.cpp
 # End Source File
 # Begin Source File
 
@@ -95,7 +123,19 @@ SOURCE=..\..\src\lib\MSPUBSVGGenerator.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\libmspub_utils.cpp
+SOURCE=..\..\src\lib\PolygonUtils.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeGroup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeGroupPainter.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\VectorTransformation2D.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -103,11 +143,27 @@ SOURCE=..\..\src\lib\libmspub_utils.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
-SOURCE=..\..\src\lib\MSPUBDocument.h
+SOURCE=..\..\src\lib\ColorReference.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\MSPUBSVGGenerator.h
+SOURCE=..\..\src\lib\Coordinate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\EscherContainerType.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\EscherFieldIds.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Fill.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\FillType.h
 # End Source File
 # Begin Source File
 
@@ -116,6 +172,78 @@ SOURCE=..\..\src\lib\libmspub.h
 # Begin Source File
 
 SOURCE=..\..\src\lib\libmspub_utils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBBlockID.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBBlockType.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBCollector.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBConstants.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBContentChunkType.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBDocument.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBParser.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBParser2k.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBStringVector.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBSVGGenerator.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBTypes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\PolygonUtils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeFlags.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeGroup.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeGroupPainter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Shapes.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeType.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\VectorTransformation2D.h
 # End Source File
 # End Group
 # End Target

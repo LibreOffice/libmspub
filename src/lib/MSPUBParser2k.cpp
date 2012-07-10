@@ -27,7 +27,7 @@
  * instead of those above.
  */
 
-#include <libwpd-stream/WPXStream.h>
+#include <libwpd-stream/libwpd-stream.h>
 #include <algorithm>
 #include "MSPUBParser2k.h"
 #include "ColorReference.h"

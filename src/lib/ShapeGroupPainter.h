@@ -1,7 +1,7 @@
 #ifndef __SHAPEGROUPPAINTER_H__
 #define __SHAPEGROUPPAINTER_H__
 
-#include <libwpd/WPXPropertyList.h>
+#include <libwpd/libwpd.h>
 
 namespace libmspub
 {

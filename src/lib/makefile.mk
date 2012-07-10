@@ -33,13 +33,18 @@ INCPRE+=-I$(SOLARVER)$/$(INPATH)$/inc$/external/zlib
 .ENDIF
 
 SLOFILES= \
+    $(SLO)$/ColorReference.obj \
     $(SLO)$/Fill.obj \
     $(SLO)$/MSPUBCollector.obj \
     $(SLO)$/MSPUBDocument.obj \
+    $(SLO)$/MSPUBParser2k.obj \
     $(SLO)$/MSPUBParser.obj \
     $(SLO)$/MSPUBStringVector.obj \
     $(SLO)$/MSPUBSVGGenerator.obj \
     $(SLO)$/PolygonUtils.obj \
+    $(SLO)$/ShapeGroup.obj \
+    $(SLO)$/ShapeGroupPainter.obj \
+    $(SLO)$/VectorTransformation2D.obj \
     $(SLO)$/libmspub_utils.obj
 
 LIB1ARCHIV=$(LB)$/libmspublib.a

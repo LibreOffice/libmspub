@@ -43,6 +43,15 @@ bool operator==(const libmspub::ColorReference &l, const libmspub::ColorReferenc
 {
   return l.m_baseColor == r.m_baseColor && l.m_modifiedColor == r.m_modifiedColor;
 }
+
+const unsigned char ColorReference::PALETTE;
+
+const unsigned char ColorReference::CHANGE_INTENSITY;
+
+const unsigned char ColorReference::BLACK_BASE;
+
+const unsigned char ColorReference::WHITE_BASE;
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

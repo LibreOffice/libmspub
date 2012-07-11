@@ -45,8 +45,8 @@ class VectorTransformation2D
 {
   double m_m11, m_m12, m_m21, m_m22;
   double m_x, m_y;
-  VectorTransformation2D();
 public:
+  VectorTransformation2D();
   Vector2D transform(Vector2D original) const;
   Vector2D transformWithOrigin(Vector2D v, Vector2D origin) const;
   double getRotation() const;
@@ -58,7 +58,6 @@ public:
   static VectorTransformation2D fromCounterRadians(double theta);
 };
 VectorTransformation2D operator*(const VectorTransformation2D &l, const VectorTransformation2D &r);
-const VectorTransformation2D IDENTITY_TRANSFORMATION = VectorTransformation2D::fromFlips(false, false);
 } // namespace libmspub
 
 #endif /* __VECTORTRANSFORMATION2D_H__ */

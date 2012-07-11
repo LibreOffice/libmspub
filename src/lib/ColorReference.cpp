@@ -44,13 +44,13 @@ bool operator==(const libmspub::ColorReference &l, const libmspub::ColorReferenc
   return l.m_baseColor == r.m_baseColor && l.m_modifiedColor == r.m_modifiedColor;
 }
 
-// const unsigned char ColorReference::COLOR_PALETTE;
+// const unsigned char ColorReference::COLOR_PALETTE = 0x8;
 
-const unsigned char ColorReference::CHANGE_INTENSITY;
+const unsigned char ColorReference::CHANGE_INTENSITY = 0x10;
 
-const unsigned char ColorReference::BLACK_BASE;
+const unsigned char ColorReference::BLACK_BASE = 0x1;
 
-const unsigned char ColorReference::WHITE_BASE;
+const unsigned char ColorReference::WHITE_BASE = 0x2;
 
 }
 

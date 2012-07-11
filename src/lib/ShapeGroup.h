@@ -14,7 +14,7 @@ public:
   ShapeGroup *m_parent;
   VectorTransformation2D m_transform;
   Coordinate m_coordinates;
-  ShapeGroupElement(ShapeGroup *parent) : m_parent(parent), m_transform(IDENTITY_TRANSFORMATION), m_coordinates()
+  ShapeGroupElement(ShapeGroup *parent) : m_parent(parent), m_transform(VectorTransformation2D()), m_coordinates()
   {
   }
   virtual unsigned getPageSeqNum() const = 0;

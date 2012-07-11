@@ -29,7 +29,7 @@
 #include "VectorTransformation2D.h"
 #include <math.h>
 
-libmspub::VectorTransformation2D::VectorTransformation2D() : m_m11(0), m_m12(0), m_m21(0), m_m22(0), m_x(0), m_y(0)
+libmspub::VectorTransformation2D::VectorTransformation2D() : m_m11(1), m_m12(0), m_m21(0), m_m22(1), m_x(0), m_y(0)
 {
 }
 

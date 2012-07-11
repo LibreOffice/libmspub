@@ -105,21 +105,21 @@ struct GeometricShape : public FillableShape
   unsigned m_left, m_top, m_right, m_bottom; //emu
   GeometricShape(MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(0), m_imgIndex(0), m_type(RECTANGLE),
-      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(IDENTITY_TRANSFORMATION),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(VectorTransformation2D()),
       m_adjustValues(),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
       m_borderPosition(HALF_INSIDE_SHAPE),
-      m_coordinatesRotated90(false), m_foldedTransform(IDENTITY_TRANSFORMATION) { }
+      m_coordinatesRotated90(false), m_foldedTransform(VectorTransformation2D()) { }
   GeometricShape(unsigned pageSeqNum, MSPUBCollector *o)
     : FillableShape(o), m_str(), m_hasText(false), m_pageSeqNum(pageSeqNum), m_imgIndex(0), m_type(RECTANGLE),
-      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(IDENTITY_TRANSFORMATION), m_adjustValues(),
+      m_x(0), m_y(0), m_width(0), m_height(0), m_transform(VectorTransformation2D()), m_adjustValues(),
       m_left(DEFAULT_MARGIN), m_top(DEFAULT_MARGIN), m_right(DEFAULT_MARGIN), m_bottom(DEFAULT_MARGIN),
       m_valuesSeen(), m_filledDefaultAdjustValues(false), m_textCoord(), m_closeEverything(false),
       m_lines(), m_drawStroke(false),
       m_borderPosition(HALF_INSIDE_SHAPE),
-      m_coordinatesRotated90(false), m_foldedTransform(IDENTITY_TRANSFORMATION) { }
+      m_coordinatesRotated90(false), m_foldedTransform(VectorTransformation2D()) { }
   std::vector<Color> getPaletteColors() const;
   void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
 protected:

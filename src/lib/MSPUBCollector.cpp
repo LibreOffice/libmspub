@@ -628,10 +628,10 @@ void libmspub::MSPUBCollector::assignGroups()
     unsigned seqNum = i->first;
     double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
     VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians((*ptr_rotation) * M_PI / 180.)
-                                 : IDENTITY_TRANSFORMATION;
+                                 : VectorTransformation2D();
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
     VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) :
-                                   IDENTITY_TRANSFORMATION;
+                                   VectorTransformation2D();
     group.m_transform = rot * flips;
     Coordinate *ptr_coords = getIfExists(m_shapeCoordinatesBySeqNum, seqNum);
     if (ptr_coords)
@@ -660,9 +660,9 @@ void libmspub::MSPUBCollector::assignImages()
       shape->m_coordinatesRotated90 = true;
     }
     VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(
-                                   (*ptr_rotation) * M_PI / 180.) : IDENTITY_TRANSFORMATION;
+                                   (*ptr_rotation) * M_PI / 180.) : VectorTransformation2D();
     std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
-    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) : IDENTITY_TRANSFORMATION;
+    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) : VectorTransformation2D();
     shape->m_transform = rot * flips;
     ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
     if (type)

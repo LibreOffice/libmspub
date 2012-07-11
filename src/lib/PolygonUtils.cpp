@@ -26,8 +26,8 @@
  * instead of those above.
  */
 
-#include <cstddef> // for NULL
-#include <cmath>
+#include <stddef.h> // for NULL
+#include <math.h>
 
 #include <libwpg/libwpg.h>
 
@@ -38,7 +38,10 @@
 
 #define CALCULATED_VALUE | 0x80000000
 
-#define PI 3.14159265
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 
 using namespace libmspub;
 
@@ -6034,15 +6037,15 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           //
           // assuming eccentric anomaly for now
           WPXPropertyList moveVertex;
-          Vector2D start(cx + rx * cos(startAngle * PI / 180),
-                         cy + ry * sin(startAngle * PI / 180));
+          Vector2D start(cx + rx * cos(startAngle * M_PI / 180),
+                         cy + ry * sin(startAngle * M_PI / 180));
           start = transform.transformWithOrigin(start, center);
           moveVertex.insert("libwpg:path-action", "M");
           moveVertex.insert("svg:x", start.m_x);
           moveVertex.insert("svg:y", start.m_y);
           vertices.append(moveVertex);
-          Vector2D half(cx + rx * cos(endAngle * PI / 360),
-                        cy + ry * sin(endAngle * PI / 360));
+          Vector2D half(cx + rx * cos(endAngle * M_PI / 360),
+                        cy + ry * sin(endAngle * M_PI / 360));
           half = transform.transformWithOrigin(half, center);
           WPXPropertyList halfVertex;
           halfVertex.insert("libwpg:path-action", "A");
@@ -6052,8 +6055,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           halfVertex.insert("svg:ry", ry * transform.getVerticalScaling());
           halfVertex.insert("libwpg:rotate", transform.getRotation() * 180 / M_PI);
           vertices.append(halfVertex);
-          Vector2D end(cx + rx * cos(endAngle * PI / 180),
-                       cy + ry * sin(endAngle * PI / 180));
+          Vector2D end(cx + rx * cos(endAngle * M_PI / 180),
+                       cy + ry * sin(endAngle * M_PI / 180));
           end = transform.transformWithOrigin(end, center);
           vertex.insert("svg:x", end.m_x);
           vertex.insert("svg:y", end.m_y);

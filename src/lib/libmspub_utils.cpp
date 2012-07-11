@@ -30,8 +30,13 @@
  */
 
 #include <string.h> // for memcpy
+#include <math.h>
 #include <zlib.h>
 #include "libmspub_utils.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #define ZLIB_CHUNK 16384
 
@@ -63,8 +68,8 @@ void libmspub::rotateCounter(double &x, double &y, double centerX, double center
 {
   double vecX = x - centerX;
   double vecY = centerY - y;
-  double sinTheta = sin(rotation * PI / 180.);
-  double cosTheta = cos(rotation * PI / 180.);
+  double sinTheta = sin(rotation * M_PI / 180.);
+  double cosTheta = cos(rotation * M_PI / 180.);
   double newVecX = cosTheta * vecX - sinTheta * vecY;
   double newVecY = sinTheta * vecX + cosTheta * vecY;
   x = centerX + newVecX;

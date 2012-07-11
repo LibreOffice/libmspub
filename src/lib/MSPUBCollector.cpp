@@ -28,12 +28,17 @@
  * instead of those above.
  */
 
+#include <math.h>
 #include "MSPUBCollector.h"
 #include "ShapeGroupPainter.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
@@ -364,11 +369,11 @@ double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recurs
   case 7:
     return sqrt(valOne * valTwo * valThree);
   case 8:
-    return atan2(valTwo, valOne) / (PI / 180);
+    return atan2(valTwo, valOne) / (M_PI / 180);
   case 9:
-    return valOne * sin(valTwo * (PI / 180) );
+    return valOne * sin(valTwo * (M_PI / 180) );
   case 10:
-    return valOne * cos(valTwo * (PI / 180) );
+    return valOne * cos(valTwo * (M_PI / 180) );
   case 11:
     return valOne * cos(atan2(valThree, valTwo));
   case 12:
@@ -382,9 +387,9 @@ double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recurs
   case 0x80:
     return sqrt(valThree * valThree - valOne * valOne);
   case 0x81:
-    return (cos(valThree * (PI / 180)) * (valOne - 10800) + sin(valThree * (PI / 180)) * (valTwo - 10800)) + 10800;
+    return (cos(valThree * (M_PI / 180)) * (valOne - 10800) + sin(valThree * (M_PI / 180)) * (valTwo - 10800)) + 10800;
   case 0x82:
-    return -(sin(valThree * (PI / 180)) * (valOne - 10800) - cos(valThree * (PI / 180)) * (valTwo - 10800)) + 10800;
+    return -(sin(valThree * (M_PI / 180)) * (valOne - 10800) - cos(valThree * (M_PI / 180)) * (valTwo - 10800)) + 10800;
   default:
     return 0;
   }

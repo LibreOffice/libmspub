@@ -30,10 +30,7 @@
 #ifndef __LIBMSPUB_UTILS_H__
 #define __LIBMSPUB_UTILS_H__
 
-const double PI = 3.1415926;
-
 #include <stdio.h>
-#include <cmath>
 #include <vector>
 #include <map>
 #include <boost/ptr_container/ptr_map.hpp>

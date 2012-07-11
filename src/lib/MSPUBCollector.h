@@ -36,7 +36,6 @@
 #include <set>
 #include <string>
 #include <algorithm>
-#include <cmath>
 
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -54,8 +53,6 @@
 #include "Shapes.h"
 #include "ShapeGroupPainter.h"
 #include "ShapeGroup.h"
-
-#define PI 3.14159265
 
 namespace libmspub
 {

@@ -44,7 +44,7 @@ bool operator==(const libmspub::ColorReference &l, const libmspub::ColorReferenc
   return l.m_baseColor == r.m_baseColor && l.m_modifiedColor == r.m_modifiedColor;
 }
 
-const unsigned char ColorReference::PALETTE;
+// const unsigned char ColorReference::COLOR_PALETTE;
 
 const unsigned char ColorReference::CHANGE_INTENSITY;
 

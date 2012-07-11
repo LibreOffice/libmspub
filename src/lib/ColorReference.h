@@ -37,7 +37,7 @@ class ColorReference
 {
   unsigned m_baseColor;
   unsigned m_modifiedColor;
-  static const unsigned char PALETTE = 0x8;
+//  static const unsigned char COLOR_PALETTE = 0x8;
   static const unsigned char CHANGE_INTENSITY = 0x10;
   static const unsigned char BLACK_BASE = 0x1;
   static const unsigned char WHITE_BASE  = 0x2;

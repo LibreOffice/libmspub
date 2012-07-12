@@ -5738,7 +5738,7 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
                       bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter)
 {
   std::vector<LineInfo> lineInfos;
-  std::vector<Line>::const_iterator iter_line = lines.begin();
+  unsigned i_line = 0;
   bool rectangle = isShapeTypeRectangle(shapeType) && !lines.empty(); // ugly HACK: special handling for rectangle outlines.
   Vector2D vector(0, 0);
   Vector2D old(0, 0);
@@ -5749,7 +5749,7 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
     if (i > 0)
     {
       WPXPropertyList vertexStart;
-      double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+      double lineWidth = (double)(lines[i_line].m_widthInEmu) / EMUS_IN_INCH;
       switch (i - 1) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
       {
       case 0:
@@ -5775,7 +5775,7 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
     old = vector;
     if (rectangle)
     {
-      double lineWidth = (double)(iter_line->m_widthInEmu) / EMUS_IN_INCH;
+      double lineWidth = (double)(lines[i_line].m_widthInEmu) / EMUS_IN_INCH;
       switch (i) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
       {
       case 1:
@@ -5798,12 +5798,12 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
     vertices.append(vertex);
     if (i > 0)
     {
-      lineInfos.push_back(LineInfo(vertices, *iter_line, caller->getPaletteColors()));
+      lineInfos.push_back(LineInfo(vertices, lines[i_line], caller->getPaletteColors()));
       if (drawStroke)
       {
-        if (iter_line + 1 < lines.end()) // continue using the last element if we run out of lines.
+        if (i_line + 1 < lines.size()) // continue using the last element if we run out of lines.
         {
-          ++iter_line;
+          ++i_line;
         }
       }
     }

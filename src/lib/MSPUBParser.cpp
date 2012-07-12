@@ -44,7 +44,6 @@
 #include "libmspub_utils.h"
 #include "ShapeType.h"
 #include "ShapeFlags.h"
-#include "Shapes.h"
 #include "Fill.h"
 #include "FillType.h"
 
@@ -1061,7 +1060,10 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
       {
         m_collector->setCurrentGroupSeqNum(*shapeSeqNum);
       }
-      m_collector->setShapeOrder(*shapeSeqNum);
+      else
+      {
+        m_collector->setShapeOrder(*shapeSeqNum);
+      }
       std::set<unsigned short> anchorTypes;
       anchorTypes.insert(OFFICE_ART_CLIENT_ANCHOR);
       anchorTypes.insert(OFFICE_ART_CHILD_ANCHOR);
@@ -1090,7 +1092,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           unsigned *ptr_lineFlags = getIfExists(foptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
           bool useLine = lineExistsByFlagPointer(ptr_lineFlags);
           bool skipIfNotBg = false;
-          Fill *ptr_fill = getNewFill(foptValues, skipIfNotBg);
+          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues, skipIfNotBg);
           if (ptr_lineColor && useLine)
           {
             unsigned *ptr_lineWidth = getIfExists(foptValues, FIELDID_LINE_WIDTH);
@@ -1222,10 +1224,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
   }
 }
 
-libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
+boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
     bool &skipIfNotBg)
 {
-  // don't worry about memory leaks; everything created here is deleted when the Collector goes out of scope.
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
   switch (fillType)
@@ -1238,9 +1239,9 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     if (ptr_fillColor)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
-      return new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector);
+      return boost::shared_ptr<Fill>(new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector));
     }
-    return NULL;
+    return boost::shared_ptr<Fill>();
   }
   case GRADIENT: //FIXME: The handling of multi-color gradients here is quite bad.
   {
@@ -1273,7 +1274,7 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
       break;
     }
 
-    GradientFill *ret = new GradientFill(m_collector, angle);
+    boost::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle));
     if (fillFocus ==  0)
     {
       ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
@@ -1304,9 +1305,9 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
-      return new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE);
+      return boost::shared_ptr<Fill>(new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE));
     }
-    return NULL;
+    return boost::shared_ptr<Fill>();
   }
   case PATTERN:
   {
@@ -1317,11 +1318,11 @@ libmspub::Fill *libmspub::MSPUBParser::getNewFill(const std::map<unsigned short,
     ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x08000000);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1 ] >= 0)
     {
-      return new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back);
+      return boost::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));
     }
   }
   default:
-    return NULL;
+    return boost::shared_ptr<Fill>();
   }
 }
 

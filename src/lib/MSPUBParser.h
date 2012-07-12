@@ -35,12 +35,14 @@
 #include <vector>
 #include <memory>
 
+#include <boost/shared_ptr.hpp>
+
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
 
 #include "MSPUBTypes.h"
 #include "Fill.h"
-#include "Shapes.h"
+#include "Coordinate.h"
 
 class WPXInputStream;
 
@@ -131,7 +133,7 @@ protected:
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
-  Fill *getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg);
+  boost::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

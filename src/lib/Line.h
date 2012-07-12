@@ -25,34 +25,24 @@
  * in which case the provisions of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
+#ifndef __LINE_H__
+#define __LINE_H__
+#include "ColorReference.h"
 
-#ifndef __COORDINATE_H__
-#define __COORDINATE_H__
-#include "MSPUBConstants.h"
 namespace libmspub
 {
-struct Coordinate
+struct Line
 {
-  Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
-  Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
-  int m_xs, m_ys, m_xe, m_ye;
-  double getXIn(double pageWidth) const
+  ColorReference m_color;
+  unsigned m_widthInEmu;
+  bool m_lineExists;
+  Line(ColorReference color, unsigned widthInEmu, bool lineExists) : m_color(color), m_widthInEmu(widthInEmu), m_lineExists(lineExists) { }
+  bool operator==(const Line &r) const
   {
-    return pageWidth / 2 + double(m_xs) / EMUS_IN_INCH;
-  }
-  double getYIn(double pageHeight) const
-  {
-    return pageHeight / 2 + double(m_ys) / EMUS_IN_INCH;
-  }
-  double getWidthIn() const
-  {
-    return double(m_xe - m_xs) / EMUS_IN_INCH;
-  }
-  double getHeightIn() const
-  {
-    return double(m_ye - m_ys) / EMUS_IN_INCH;
+    return m_color == r.m_color && m_widthInEmu == r.m_widthInEmu && m_lineExists == r.m_lineExists;
   }
 };
 }
+
 #endif
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

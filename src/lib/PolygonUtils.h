@@ -29,13 +29,15 @@
 #ifndef __POLYGONUTILS_H__
 #define __POLYGONUTILS_H__
 
-#include <utility> // for std::pair
+#include <utility>
+#include <vector>
 
 #include <libwpg/libwpg.h>
+#include <boost/function.hpp>
 
-#include "MSPUBCollector.h"
-#include "Shapes.h"
 #include "VectorTransformation2D.h"
+#include "Coordinate.h"
+#include "Line.h"
 
 namespace libmspub
 {
@@ -89,7 +91,7 @@ struct CustomShape
   unsigned m_numGluePoints;
   unsigned char m_adjustShiftMask;
 
-  Coordinate getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const;
+  Coordinate getTextRectangle(double x, double y, double width, double height, boost::function<double (unsigned index)> calculator) const;
 
   CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const int *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints, unsigned char adjustShiftMask = 0) :
     mp_vertices(p_vertices), m_numVertices(numVertices),
@@ -106,7 +108,7 @@ struct CustomShape
 
 const CustomShape *getCustomShape(ShapeType type);
 bool isShapeTypeRectangle(ShapeType type);
-void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const GeometricShape *caller, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines);
+void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

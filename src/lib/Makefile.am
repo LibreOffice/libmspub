@@ -26,10 +26,9 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Fill.cpp \
 	libmspub_utils.cpp \
 	PolygonUtils.cpp \
-	ShapeGroupPainter.cpp \
+	ShapeGroupElement.cpp \
 	ColorReference.cpp \
 	VectorTransformation2D.cpp \
-	ShapeGroup.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -49,10 +48,12 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ColorReference.h \
 	PolygonUtils.h \
 	Shapes.h \
-	ShapeGroupPainter.h \
-	ShapeGroup.h \
 	VectorTransformation2D.h \
-	Coordinate.h
+	Coordinate.h \
+	ShapeGroupElement.h \
+	ShapeInfo.h \
+	Line.h \
+	Margins.h
 
 if OS_WIN32
 

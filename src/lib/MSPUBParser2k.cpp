@@ -27,8 +27,12 @@
  * instead of those above.
  */
 
-#include <libwpd-stream/libwpd-stream.h>
 #include <algorithm>
+
+#include <boost/shared_ptr.hpp>
+
+#include <libwpd-stream/libwpd-stream.h>
+
 #include "MSPUBParser2k.h"
 #include "ColorReference.h"
 #include "ShapeType.h"
@@ -508,7 +512,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
         input->seek(iter->offset + 0x22, WPX_SEEK_SET);
         unsigned fillColorReference = readU32(input);
         unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
-        m_collector->setShapeFill(iter->seqNum, new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector), false);
+        m_collector->setShapeFill(iter->seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
       }
     }
     input->seek(iter->offset + 0x2C, WPX_SEEK_SET);

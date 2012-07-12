@@ -1,0 +1,46 @@
+#ifndef __SHAPEGROUPELEMENT_H__
+#define __SHAPEGROUPELEMENT_H__
+#include <boost/optional.hpp>
+#include <boost/function.hpp>
+#include <vector>
+
+#include "ShapeInfo.h"
+#include "VectorTransformation2D.h"
+
+namespace libmspub
+{
+class ShapeGroupElement
+{
+  boost::optional<ShapeInfo> m_shapeInfo;
+  ShapeGroupElement *m_parent;
+  std::vector<ShapeGroupElement *> m_children;
+  unsigned m_seqNum;
+  ShapeGroupElement &operator=(const ShapeGroupElement &); //not implemented
+  ShapeGroupElement(const ShapeGroupElement &); //not implemented
+  VectorTransformation2D m_transform;
+  bool m_isRotated90;
+public:
+  ShapeGroupElement(ShapeGroupElement *parent);
+  ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum);
+  void setShapeInfo(const ShapeInfo &shapeInfo);
+  void setup(boost::function<void(ShapeGroupElement &self)> visitor);
+  void visit(boost::function<
+             boost::function<void(void)>
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90)> visitor,
+             const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform) const;
+  void visit(boost::function<
+             boost::function<void(void)>
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90)> visitor) const;
+  bool isGroup() const;
+  ShapeGroupElement *getParent();
+  const ShapeGroupElement *getParent() const;
+  void setSeqNum(unsigned seqNum);
+  void setTransform(const VectorTransformation2D &transform);
+  void setIsRotated90(bool isRotated90);
+  bool getIsRotated90() const;
+  unsigned getSeqNum() const;
+};
+}
+
+#endif
+/* vim:set shiftwidth=2 softtabstop=2 expandtab: */

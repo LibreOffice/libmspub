@@ -30,11 +30,64 @@
 
 #include <math.h>
 #include "MSPUBCollector.h"
-#include "ShapeGroupPainter.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
+#include "Coordinate.h"
+
+void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props) const
+{
+  int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
+  double x_center = m_width / 2;
+  double y_center = m_height / 2;
+  props->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
+  props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
+  props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
+  props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
+}
+
+libmspub::Coordinate getFudgedCoordinates(libmspub::Coordinate coord, const std::vector<libmspub::Line> &lines, bool makeBigger, libmspub::BorderPosition borderPosition)
+{
+  libmspub::Coordinate fudged = coord;
+  unsigned topFudge = 0;
+  unsigned rightFudge = 0;
+  unsigned bottomFudge = 0;
+  unsigned leftFudge = 0;
+  switch (borderPosition)
+  {
+  case libmspub::HALF_INSIDE_SHAPE:
+    topFudge = (!lines.empty()) ? lines[0].m_widthInEmu / 2 : 0;
+    rightFudge = (lines.size() > 1) ? lines[1].m_widthInEmu / 2 : 0;
+    bottomFudge = (lines.size() > 2) ? lines[2].m_widthInEmu / 2 : 0;
+    leftFudge = (lines.size() > 3) ? lines[3].m_widthInEmu / 2 : 0;
+    break;
+  case libmspub::OUTSIDE_SHAPE:
+    topFudge = (!lines.empty()) ? lines[0].m_widthInEmu : 0;
+    rightFudge = (lines.size() > 1) ? lines[1].m_widthInEmu : 0;
+    bottomFudge = (lines.size() > 2) ? lines[2].m_widthInEmu : 0;
+    leftFudge = (lines.size() > 3) ? lines[3].m_widthInEmu : 0;
+    break;
+  case libmspub::INSIDE_SHAPE:
+  default:
+    break;
+  }
+  if (makeBigger)
+  {
+    fudged.m_xs -= leftFudge;
+    fudged.m_xe += rightFudge;
+    fudged.m_ys -= topFudge;
+    fudged.m_ye += bottomFudge;
+  }
+  else
+  {
+    fudged.m_xs += leftFudge;
+    fudged.m_xe -= rightFudge;
+    fudged.m_ys += topFudge;
+    fudged.m_ye -= bottomFudge;
+  }
+  return fudged;
+}
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -44,31 +97,25 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false),
   m_numPages(0), m_textStringsById(), m_pagesBySeqNum(),
-  m_shapesBySeqNum(), m_images(),
+  m_images(),
   m_textColors(), m_fonts(),
   m_defaultCharStyles(), m_defaultParaStyles(), m_shapeTypesBySeqNum(),
-  m_possibleImageShapeSeqNums(), m_shapeImgIndicesBySeqNum(),
-  m_shapeCoordinatesBySeqNum(), m_shapeLinesBySeqNum(),
-  m_shapeFillsBySeqNum(), m_paletteColors(), m_shapeSeqNumsOrdered(),
-  m_pageSeqNumsByShapeSeqNum(), m_textInfoBySeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
-  m_skipIfNotBgSeqNums(), m_adjustValuesByIndexBySeqNum(),
-  m_shapeRotationsBySeqNum(), m_shapeFlipsBySeqNum(),
-  m_shapeMarginsBySeqNum(), m_shapeBorderPositionsBySeqNum(),
+  m_possibleImageShapeSeqNums(),
+  m_paletteColors(), m_shapeSeqNumsOrdered(),
+  m_pageSeqNumsByShapeSeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
+  m_skipIfNotBgSeqNums(),
   m_currentShapeGroup(NULL), m_topLevelShapes(),
-  m_groupsBySeqNum()
+  m_groupsBySeqNum(), m_shapeInfosBySeqNum(),
+  m_calculationValuesSeen()
 {
 }
 
 void libmspub::MSPUBCollector::beginGroup()
 {
-  ShapeGroup *tmp = new ShapeGroup(m_currentShapeGroup);
+  ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup);
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);
-  }
-  else
-  {
-    m_currentShapeGroup->m_elements.push_back(tmp);
   }
   m_currentShapeGroup = tmp;
 }
@@ -79,18 +126,18 @@ bool libmspub::MSPUBCollector::endGroup()
   {
     return false;
   }
-  m_currentShapeGroup = m_currentShapeGroup->m_parent;
+  m_currentShapeGroup = m_currentShapeGroup->getParent();
   return true;
 }
 
 void libmspub::MSPUBCollector::addShapeLine(unsigned seqNum, Line line)
 {
-  m_shapeLinesBySeqNum[seqNum].push_back(line);
+  m_shapeInfosBySeqNum[seqNum].m_lines.push_back(line);
 }
 
-bool libmspub::MSPUBCollector::setShapeBorderPosition(unsigned seqNum, BorderPosition pos)
+void libmspub::MSPUBCollector::setShapeBorderPosition(unsigned seqNum, BorderPosition pos)
 {
-  return m_shapeBorderPositionsBySeqNum.insert(std::pair<const unsigned, BorderPosition>(seqNum, pos)).second;
+  m_shapeInfosBySeqNum[seqNum].m_borderPosition = pos;
 }
 
 bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
@@ -98,9 +145,9 @@ bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
   return m_pagesBySeqNum.find(seqNum) != m_pagesBySeqNum.end();
 }
 
-bool libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
+void libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
 {
-  return m_shapeMarginsBySeqNum.insert(std::pair<const unsigned, Margins>(seqNum, Margins(left, top, right, bottom))).second;
+  m_shapeInfosBySeqNum[seqNum].m_margins = Margins(left, top, right, bottom);
 }
 
 void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
@@ -114,21 +161,17 @@ bool libmspub::MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
   {
     return false;
   }
-  m_currentShapeGroup->m_seqNum = seqNum;
-  m_groupsBySeqNum.insert(std::pair<unsigned, ShapeGroup *>(seqNum, m_currentShapeGroup));
+  m_currentShapeGroup->setSeqNum(seqNum);
+  m_groupsBySeqNum.insert(std::pair<unsigned, ShapeGroupElement *>(seqNum, m_currentShapeGroup));
   return true;
 }
 
 void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
 {
-  ShapeGroupElementLeaf *tmp = new ShapeGroupElementLeaf(m_currentShapeGroup, seqNum);
+  ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup, seqNum);
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);
-  }
-  else
-  {
-    m_currentShapeGroup->m_elements.push_back(tmp);
   }
 }
 
@@ -137,167 +180,231 @@ void libmspub::MSPUBCollector::addPaletteColor(Color c)
   m_paletteColors.push_back(c);
 }
 
-WPXPropertyListVector libmspub::Shape::updateGraphicsProps()
+void no_op()
 {
-  return WPXPropertyListVector();
 }
 
-void libmspub::Shape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
+void endShapeGroup(libwpg::WPGPaintInterface *painter)
 {
-  WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
-  owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-  setCoordProps(coord);
-  write(painter);
+  painter->endLayer();
 }
 
-std::vector<libmspub::Color> libmspub::GeometricShape::getPaletteColors() const
+std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) const
 {
-  return owner->m_paletteColors;
-}
-
-bool libmspub::GeometricShape::hasFill()
-{
-  return (graphicsProps["draw:fill"]) ? (graphicsProps["draw:fill"]->getStr() != "none") : false;
-}
-
-void libmspub::GeometricShape::output(libwpg::WPGPaintInterface *painter, Coordinate coord)
-{
-  WPXPropertyListVector graphicsPropsVector = updateGraphicsProps();
-  bool hasStroke = !m_lines.empty();
-  WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
-  bool hasFill_ = hasFill();
-  bool makeLayer = (hasStroke && hasFill_) || (hasStroke && m_hasText) || (hasFill_ && m_hasText);
-  if (makeLayer)
-    owner->m_painter->startLayer(WPXPropertyList());
-  graphicsProps.insert("draw:stroke", "none");
-  if (hasFill_)
+  std::vector<int> ret;
+  const CustomShape *ptr_shape = getCustomShape(info.m_type.get_value_or(RECTANGLE));
+  if (ptr_shape)
   {
-    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-    setCoordProps(coord);
-    m_closeEverything = true;
-    write(painter);
+    for (unsigned i = 0; i < ptr_shape->m_numDefaultAdjustValues; ++i)
+    {
+      ret.push_back(ptr_shape->mp_defaultAdjustValues[i]);
+    }
   }
+  for (std::map<unsigned, int>::const_iterator i = info.m_adjustValuesByIndex.begin();
+       i != info.m_adjustValuesByIndex.end(); ++i)
+  {
+    unsigned index = i->first;
+    int adjustVal = i->second;
+    for (unsigned j = info.m_adjustValues.size(); j <= index; ++j)
+    {
+      ret.push_back(0);
+    }
+    ret[index] = adjustVal;
+  }
+  return ret;
+}
+
+boost::optional<std::vector<libmspub::TextParagraph> > libmspub::MSPUBCollector::getShapeText(const ShapeInfo &info) const
+{
+  if (info.m_textInfo.is_initialized())
+  {
+    unsigned stringId = info.m_textInfo.get().first;
+    const std::vector<TextParagraph> *ptr_str = getIfExists_const(m_textStringsById, stringId);
+    if (ptr_str)
+    {
+      return *ptr_str;
+    }
+  }
+  return boost::optional<std::vector<TextParagraph> >();
+}
+
+void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
+{
+  ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, elt.getSeqNum());
+  if (ptr_info)
+  {
+    elt.setShapeInfo(*ptr_info);
+    unsigned rotation = ptr_info->m_rotation.get_value_or(0);
+    rotation = std::fmod(rotation, 360);
+    elt.setIsRotated90( (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315));
+    VectorTransformation2D rot = VectorTransformation2D::fromCounterRadians(rotation);
+    std::pair<bool, bool> flips = ptr_info->m_flips.get_value_or(std::pair<bool, bool>(false, false));
+    VectorTransformation2D flipsTransform = VectorTransformation2D::fromFlips(flips.second, flips.first);
+    elt.setTransform(rot * flipsTransform);
+  }
+}
+
+
+boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90) const
+{
+  std::vector<int> adjustValues = getShapeAdjustValues(info);
+  if (isGroup)
+  {
+    m_painter->startLayer(WPXPropertyList());
+    return boost::bind(&endShapeGroup, m_painter);
+  }
+  WPXPropertyList graphicsProps;
+  WPXPropertyListVector graphicsPropsVector;
+  if (info.m_fill)
+  {
+    graphicsPropsVector = info.m_fill->getProperties(&graphicsProps);
+  }
+  bool hasStroke = !info.m_lines.empty();
+  WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
+  bool hasFill = fill != "none";
+  boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
+  bool hasText = maybeText.is_initialized();
+  bool makeLayer = (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
+  if (makeLayer)
+  {
+    m_painter->startLayer(WPXPropertyList());
+  }
+  graphicsProps.insert("draw:stroke", "none");
+  const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+  BorderPosition borderPosition = info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
+  ShapeType type = info.m_type.get_value_or(RECTANGLE);
+  if (hasFill)
+  {
+    double x, y, height, width;
+    if (isRotated90)
+    {
+      double initialX = coord.getXIn(m_width);
+      double initialY = coord.getYIn(m_height);
+      double initialWidth = coord.getWidthIn();
+      double initialHeight = coord.getHeightIn();
+      double centerX = initialX + initialWidth / 2;
+      double centerY = initialY + initialHeight / 2;
+      x = centerX - initialHeight / 2;
+      y = centerY - initialWidth / 2;
+      height = initialWidth;
+      width = initialHeight;
+    }
+    else
+    {
+      x = coord.getXIn(m_width);
+      y = coord.getYIn(m_height);
+      height = coord.getHeightIn();
+      width = coord.getWidthIn();
+    }
+    m_painter->setStyle(graphicsProps, graphicsPropsVector);
+
+    writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
+                     true, foldedTransform,
+                     std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors);
+  }
+  const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)
   {
+    Coordinate strokeCoord = isShapeTypeRectangle(type) ?
+                             getFudgedCoordinates(coord, lines, true, borderPosition) : coord;
+    double x, y, height, width;
+    if (isRotated90)
+    {
+      double initialX = strokeCoord.getXIn(m_width);
+      double initialY = strokeCoord.getYIn(m_height);
+      double initialWidth = strokeCoord.getWidthIn();
+      double initialHeight = strokeCoord.getHeightIn();
+      double centerX = initialX + initialWidth / 2;
+      double centerY = initialY + initialHeight / 2;
+      x = centerX - initialHeight / 2;
+      y = centerY - initialWidth / 2;
+      height = initialWidth;
+      width = initialHeight;
+    }
+    else
+    {
+      x = strokeCoord.getXIn(m_width);
+      y = strokeCoord.getYIn(m_height);
+      height = strokeCoord.getHeightIn();
+      width = strokeCoord.getWidthIn();
+    }
     graphicsProps.insert("draw:fill", "none");
     graphicsProps.insert("draw:stroke", "solid");
-    m_closeEverything = false;
-    m_drawStroke = true;
-    if (isShapeTypeRectangle(m_type))
-    {
-      Coordinate fudged = coord;
-      unsigned topFudge = 0;
-      unsigned rightFudge = 0;
-      unsigned bottomFudge = 0;
-      unsigned leftFudge = 0;
-      switch (m_borderPosition)
-      {
-      case HALF_INSIDE_SHAPE:
-        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu / 2 : 0;
-        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu / 2 : 0;
-        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu / 2 : 0;
-        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu / 2 : 0;
-        break;
-      case OUTSIDE_SHAPE:
-        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu : 0;
-        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu : 0;
-        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu : 0;
-        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu : 0;
-        break;
-      case INSIDE_SHAPE:
-      default:
-        break;
-      }
-      fudged.m_xs -= leftFudge;
-      fudged.m_xe += rightFudge;
-      fudged.m_ys -= topFudge;
-      fudged.m_ye += bottomFudge;
-      setCoordProps(fudged);
-    }
-    else
-    {
-      setCoordProps(coord);
-    }
-    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-    write(painter);
+    m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
+                     false, foldedTransform, lines,
+                     boost::bind(
+                       &libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
+                     ),
+                     m_paletteColors);
   }
-  if (m_hasText)
+  if (hasText)
   {
+    const std::vector<TextParagraph> &text = maybeText.get();
     graphicsProps.insert("draw:fill", "none");
-    if (isShapeTypeRectangle(m_type))
+    Coordinate textCoord = isShapeTypeRectangle(type) ?
+                           getFudgedCoordinates(coord, lines, false, borderPosition) : coord;
+    m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    WPXPropertyList props;
+    setRectCoordProps(textCoord, &props);
+    double textRotation = thisTransform.getRotation();
+    if (textRotation != 0)
     {
-      Coordinate fudged = coord;
-      unsigned topFudge = 0;
-      unsigned rightFudge = 0;
-      unsigned bottomFudge = 0;
-      unsigned leftFudge = 0;
-      switch (m_borderPosition)
+      props.insert("libwpg:rotate", textRotation * 180 / M_PI);
+    }
+    Margins margins = info.m_margins.get_value_or(Margins());
+    props.insert("fo:padding-left", (double)margins.m_left / EMUS_IN_INCH);
+    props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
+    props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
+    props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
+    m_painter->startTextObject(props, WPXPropertyListVector());
+    for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
+    {
+      WPXPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.defaultCharStyleIndex);
+      m_painter->startTextLine(paraProps);
+      for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
       {
-      case HALF_INSIDE_SHAPE:
-        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu / 2 : 0;
-        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu / 2 : 0;
-        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu / 2 : 0;
-        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu / 2 : 0;
-        break;
-      case INSIDE_SHAPE:
-        topFudge = (!m_lines.empty()) ? m_lines[0].m_widthInEmu : 0;
-        rightFudge = (m_lines.size() > 1) ? m_lines[1].m_widthInEmu : 0;
-        bottomFudge = (m_lines.size() > 2) ? m_lines[2].m_widthInEmu : 0;
-        leftFudge = (m_lines.size() > 3) ? m_lines[3].m_widthInEmu : 0;
-        break;
-      case OUTSIDE_SHAPE:
-      default:
-        break;
+        WPXString textString;
+        appendCharacters(textString, text[i_lines].spans[i_spans].chars);
+        WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.defaultCharStyleIndex);
+        m_painter->startTextSpan(charProps);
+        m_painter->insertText(textString);
+        m_painter->endTextSpan();
       }
-      fudged.m_xs += leftFudge;
-      fudged.m_xe -= rightFudge;
-      fudged.m_ys += topFudge;
-      fudged.m_ye -= bottomFudge;
-      setCoordProps(fudged);
+      m_painter->endTextLine();
     }
-    else
-    {
-      setCoordProps(coord);
-    }
-    owner->m_painter->setStyle(graphicsProps, graphicsPropsVector);
-    writeText(painter);
+    m_painter->endTextObject();
   }
   if (makeLayer)
-    owner->m_painter->endLayer();
+  {
+    m_painter->endLayer();
+  }
+  return &no_op;
 }
 
-void libmspub::Shape::setCoordProps(Coordinate coord)
-{
-  owner->setRectCoordProps(coord, &props);
-}
-
-void libmspub::GeometricShape::setTransformation(VectorTransformation2D t)
-{
-  m_transform = t;
-}
-
-double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int arg) const
+double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const
 {
   if (PROP_ADJUST_VAL_FIRST <= arg && PROP_ADJUST_VAL_LAST >= arg)
   {
     unsigned adjustIndex = arg - PROP_ADJUST_VAL_FIRST;
-    if (adjustIndex < shape.m_numDefaultAdjustValues)
+    if (adjustIndex < adjustValues.size())
     {
       if ((shape.m_adjustShiftMask >> adjustIndex) & 0x1)
       {
-        return m_adjustValues[adjustIndex] >> 16;
+        return adjustValues[adjustIndex] >> 16;
       }
-      return m_adjustValues[adjustIndex];
+      return adjustValues[adjustIndex];
     }
     return 0;
   }
   if (arg == ASPECT_RATIO)
   {
-    return (double)m_width / m_height;
+    const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+    return (double)coord.getWidthIn() / coord.getHeightIn();
   }
   if (arg & OTHER_CALC_VAL)
   {
-    return getCalculationValue(arg & 0xff, true);
+    return getCalculationValue(info, arg & 0xff, true, adjustValues);
   }
   switch (arg)
   {
@@ -315,9 +422,9 @@ double libmspub::GeometricShape::getSpecialValue(const CustomShape &shape, int a
   return 0;
 }
 
-double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recursiveEntry) const
+double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const
 {
-  const CustomShape *p_shape = getCustomShape(m_type);
+  const CustomShape *p_shape = getCustomShape(info.m_type.get_value_or(RECTANGLE));
   if (! p_shape)
   {
     return 0;
@@ -329,26 +436,26 @@ double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recurs
   }
   if (! recursiveEntry)
   {
-    m_valuesSeen.clear();
-    m_valuesSeen.resize(shape.m_numCalculations);
+    m_calculationValuesSeen.clear();
+    m_calculationValuesSeen.resize(shape.m_numCalculations);
   }
-  if (m_valuesSeen[index])
+  if (m_calculationValuesSeen[index])
   {
-    //recursion detected. This is the simplest way to avoid infinite recursion, at the "cost"
-    // of making custom shape parsing not Turing-complete ;)
+    //recursion detected. The simplest way to avoid infinite recursion, at the "cost"
+    // of making custom shape parsing not Turing-complete ;), is to ban recursion entirely.
     return 0;
   }
-  m_valuesSeen[index] = true;
+  m_calculationValuesSeen[index] = true;
 
   const Calculation &c = shape.mp_calculations[index];
   bool oneSpecial = (c.m_flags & 0x2000) != 0;
   bool twoSpecial = (c.m_flags & 0x4000) != 0;
   bool threeSpecial = (c.m_flags & 0x8000) != 0;
 
-  double valOne = oneSpecial ? getSpecialValue(shape, c.m_argOne) : c.m_argOne;
-  double valTwo = twoSpecial ? getSpecialValue(shape, c.m_argTwo) : c.m_argTwo;
-  double valThree = threeSpecial ? getSpecialValue(shape, c.m_argThree) : c.m_argThree;
-  m_valuesSeen[index] = false;
+  double valOne = oneSpecial ? getSpecialValue(info, shape, c.m_argOne, adjustValues) : c.m_argOne;
+  double valTwo = twoSpecial ? getSpecialValue(info, shape, c.m_argTwo, adjustValues) : c.m_argTwo;
+  double valThree = threeSpecial ? getSpecialValue(info, shape, c.m_argThree, adjustValues) : c.m_argThree;
+  m_calculationValuesSeen[index] = false;
   switch (c.m_flags & 0xFF)
   {
   case 0:
@@ -394,105 +501,7 @@ double libmspub::GeometricShape::getCalculationValue(unsigned index, bool recurs
     return 0;
   }
 }
-
-void libmspub::GeometricShape::fillDefaultAdjustValues()
-{
-  if (m_filledDefaultAdjustValues)
-  {
-    return;
-  }
-  m_filledDefaultAdjustValues = true;
-  const CustomShape *def = getCustomShape(m_type);
-  if (def)
-  {
-    for (unsigned i = 0; i < def->m_numDefaultAdjustValues; ++i)
-    {
-      m_adjustValues.push_back(def->mp_defaultAdjustValues[i]);
-    }
-  }
-}
-
-void libmspub::GeometricShape::setAdjustValue(unsigned index, int adjustValue)
-{
-  for (unsigned i = m_adjustValues.size(); i <= index; ++i)
-  {
-    m_adjustValues.push_back(0);
-  }
-  m_adjustValues[index] = adjustValue;
-}
-
-void libmspub::GeometricShape::setText(std::vector<TextParagraph> str)
-{
-  m_str = str;
-  m_hasText = true;
-}
-
-void libmspub::GeometricShape::setCoordProps(Coordinate coord)
-{
-  m_x = owner->m_width / 2 + (double)(coord.m_xs) / EMUS_IN_INCH;
-  m_y = owner->m_height / 2 + (double)(coord.m_ys) / EMUS_IN_INCH;
-  m_width = (double)(coord.m_xe - coord.m_xs) / EMUS_IN_INCH;
-  m_height = (double)(coord.m_ye - coord.m_ys) / EMUS_IN_INCH;
-  const CustomShape *p_shape = getCustomShape(m_type);
-  if (p_shape)
-  {
-    m_textCoord = p_shape->getTextRectangle(coord.m_xs, coord.m_ys, coord.m_xe - coord.m_xs, coord.m_ye - coord.m_ys, this);
-  }
-  else
-  {
-    m_textCoord = coord;
-  }
-}
-
-WPXPropertyListVector libmspub::FillableShape::updateGraphicsProps()
-{
-  if (m_fill)
-  {
-    return m_fill->getProperties(&graphicsProps);
-  }
-  else
-  {
-    graphicsProps.insert("draw:fill", "none");
-  }
-  return WPXPropertyListVector();
-}
-
-WPXPropertyListVector libmspub::GeometricShape::updateGraphicsProps()
-{
-  return FillableShape::updateGraphicsProps();
-}
-
-void libmspub::GeometricShape::writeText(libwpg::WPGPaintInterface *painter)
-{
-  owner->setRectCoordProps(m_textCoord, &props);
-  double textRotation = m_transform.getRotation();
-  if (textRotation != 0)
-  {
-    props.insert("libwpg:rotate", textRotation * 180 / M_PI);
-  }
-  props.insert("fo:padding-left", (double)m_left / EMUS_IN_INCH);
-  props.insert("fo:padding-top", (double)m_top / EMUS_IN_INCH);
-  props.insert("fo:padding-right", (double)m_right / EMUS_IN_INCH);
-  props.insert("fo:padding-bottom", (double)m_bottom / EMUS_IN_INCH);
-  painter->startTextObject(props, WPXPropertyListVector());
-  for (unsigned i_lines = 0; i_lines < m_str.size(); ++i_lines)
-  {
-    WPXPropertyList paraProps = owner->getParaStyleProps(m_str[i_lines].style, m_str[i_lines].style.defaultCharStyleIndex);
-    painter->startTextLine(paraProps);
-    for (unsigned i_spans = 0; i_spans < m_str[i_lines].spans.size(); ++i_spans)
-    {
-      WPXString text;
-      appendCharacters(text, m_str[i_lines].spans[i_spans].chars);
-      WPXPropertyList charProps = owner->getCharStyleProps(m_str[i_lines].spans[i_spans].style, m_str[i_lines].style.defaultCharStyleIndex);
-      painter->startTextSpan(charProps);
-      painter->insertText(text);
-      painter->endTextSpan();
-    }
-    painter->endTextLine();
-  }
-  painter->endTextObject();
-}
-
+/*
 void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
 {
   // If a shape includes text, and if the font from the PUB file
@@ -501,58 +510,32 @@ void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
   // So which size should be used? We should compromise by using the size of the text for rectangular shapes,
   // and the size of the shape for other shapes. However currently the size of the shape is used in all cases,
   // causing ugliness in some documents.
-  double x, y, height, width;
-  if (m_coordinatesRotated90)
-  {
-    double centerX = m_x + m_width / 2;
-    double centerY = m_y + m_height / 2;
-    x = centerX - m_height / 2;
-    y = centerY - m_width / 2;
-    height = m_width;
-    width = m_height;
-  }
-  else
-  {
-    x = m_x;
-    y = m_y;
-    height = m_height;
-    width = m_width;
-  }
   writeCustomShape(m_type, graphicsProps, painter, x, y, height, width, this, m_closeEverything, m_foldedTransform, m_drawStroke ? m_lines : std::vector<Line>());
 }
-
-void libmspub::FillableShape::setFill(Fill *f)
-{
-  m_fill = f;
-}
-
-void libmspub::GeometricShape::addLine(ColorReference color, unsigned widthInEmu, bool lineExists)
-{
-  m_lines.push_back(Line(color, widthInEmu, lineExists));
-}
+*/
 
 libmspub::MSPUBCollector::~MSPUBCollector()
 {
 }
 
-bool libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, double rotation)
+void libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, double rotation)
 {
-  return m_shapeRotationsBySeqNum.insert(std::pair<const unsigned, double>(seqNum, rotation)).second;
+  m_shapeInfosBySeqNum[seqNum].m_rotation = rotation;
 }
 
-bool libmspub::MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
+void libmspub::MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
 {
-  return m_shapeFlipsBySeqNum.insert(std::pair<const unsigned, std::pair<bool, bool> >(seqNum, std::pair<bool, bool>(flipVertical, flipHorizontal))).second;
+  m_shapeInfosBySeqNum[seqNum].m_flips = std::pair<bool, bool>(flipVertical, flipHorizontal);
 }
 
-bool libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
+void libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
 {
-  return m_shapeTypesBySeqNum.insert(std::pair<const unsigned, ShapeType>(seqNum, type)).second;
+  m_shapeInfosBySeqNum[seqNum].m_type = type;
 }
 
-bool libmspub::MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, int adjust)
+void libmspub::MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, int adjust)
 {
-  return m_adjustValuesByIndexBySeqNum[seqNum].insert(std::pair<const unsigned, int>(index, adjust)).second;
+  m_shapeInfosBySeqNum[seqNum].m_adjustValuesByIndex[index] = adjust;
 }
 
 void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
@@ -576,42 +559,29 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   return true;
 }
 
-bool libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
+void libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
 {
-  return m_textInfoBySeqNum.insert(std::pair<unsigned, std::pair<unsigned,unsigned> >(
-                                     seqNum, std::pair<unsigned, unsigned>(stringId, pageSeqNum))).second;
+  m_shapeInfosBySeqNum[seqNum].m_textInfo = std::pair<unsigned, unsigned>(stringId, pageSeqNum);
 }
 
-bool libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
+void libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
 {
   MSPUB_DEBUG_MSG(("Setting image index of shape with seqnum 0x%x to 0x%x\n", seqNum, index));
-  return m_shapeImgIndicesBySeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, index)).second;
+  m_shapeInfosBySeqNum[seqNum].m_imgIndex = index;
 }
 
-bool libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg)
+void libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)
 {
-  m_shapeFillsBySeqNum.insert(seqNum, fill);
+  m_shapeInfosBySeqNum[seqNum].m_fill = fill;
   if (skipIfNotBg)
   {
     m_skipIfNotBgSeqNums.insert(seqNum);
   }
-  return true;
 }
 
-void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props)
+void libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
 {
-  int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
-  double x_center = m_width / 2;
-  double y_center = m_height / 2;
-  props->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
-  props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
-  props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
-  props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
-}
-
-bool libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
-{
-  return m_shapeCoordinatesBySeqNum.insert(std::pair<const unsigned, Coordinate>(seqNum, Coordinate(xs, ys, xe, ye))).second;
+  m_shapeInfosBySeqNum[seqNum].m_coordinates = Coordinate(xs, ys, xe, ye);
 }
 
 void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
@@ -619,116 +589,7 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
   m_fonts.push_back(name);
 }
 
-void libmspub::MSPUBCollector::assignGroups()
-{
-  for (std::map<unsigned, ShapeGroup *>::iterator i = m_groupsBySeqNum.begin();
-       i != m_groupsBySeqNum.end(); ++i)
-  {
-    ShapeGroup &group = *(i->second);
-    unsigned seqNum = i->first;
-    double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
-    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians((*ptr_rotation) * M_PI / 180.)
-                                 : VectorTransformation2D();
-    std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
-    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) :
-                                   VectorTransformation2D();
-    group.m_transform = rot * flips;
-    Coordinate *ptr_coords = getIfExists(m_shapeCoordinatesBySeqNum, seqNum);
-    if (ptr_coords)
-    {
-      group.m_coordinates = *ptr_coords;
-    }
-  }
-}
-void libmspub::MSPUBCollector::assignImages()
-{
-  for (unsigned i = 0; i < m_possibleImageShapeSeqNums.size(); ++i)
-  {
-    unsigned seqNum = m_possibleImageShapeSeqNums[i];
-    unsigned *index = getIfExists(m_shapeImgIndicesBySeqNum, seqNum);
-    GeometricShape *shape = dynamic_cast<GeometricShape *>(ptr_getIfExists(m_shapesBySeqNum, seqNum));
-    if (!shape)
-    {
-      MSPUB_DEBUG_MSG(("Could not find shape of seqnum 0x%x in assignImages\n", seqNum));
-      return;
-    }
-    double *ptr_rotation = getIfExists(m_shapeRotationsBySeqNum, seqNum);
-    double clockwiseRotation = ptr_rotation ? *ptr_rotation : 0;
-    clockwiseRotation = correctModulo(clockwiseRotation, 360);
-    if ( (clockwiseRotation >= 45 && clockwiseRotation < 135) || (clockwiseRotation >= 225 && clockwiseRotation < 315) )
-    {
-      shape->m_coordinatesRotated90 = true;
-    }
-    VectorTransformation2D rot = ptr_rotation ? VectorTransformation2D::fromCounterRadians(
-                                   (*ptr_rotation) * M_PI / 180.) : VectorTransformation2D();
-    std::pair<bool, bool> *ptr_flips = getIfExists(m_shapeFlipsBySeqNum, seqNum);
-    VectorTransformation2D flips = ptr_flips ? VectorTransformation2D::fromFlips(ptr_flips->second, ptr_flips->first) : VectorTransformation2D();
-    shape->m_transform = rot * flips;
-    ShapeType *type = getIfExists(m_shapeTypesBySeqNum, seqNum);
-    if (type)
-    {
-      shape->m_type = *type;
-    }
-    else
-    {
-      MSPUB_DEBUG_MSG(("Could not find shape type for shape of seqnum 0x%x\n", m_possibleImageShapeSeqNums[i]));
-    }
-    std::pair<unsigned, unsigned> *ptr_textInfo = getIfExists(m_textInfoBySeqNum, seqNum);
-    if (ptr_textInfo)
-    {
-      unsigned stringId = ptr_textInfo->first;
-      std::vector<TextParagraph> *ptr_str = getIfExists(m_textStringsById, stringId);
-      if (ptr_str)
-      {
-        shape->setText(*ptr_str);
-      }
-    }
-    shape->fillDefaultAdjustValues();
-    std::vector<Line> *ptr_lines = getIfExists(m_shapeLinesBySeqNum, seqNum);
-    if (ptr_lines)
-    {
-      for (unsigned j = 0; j < ptr_lines->size(); ++j)
-      {
-        shape->addLine((*ptr_lines)[j].m_color, (*ptr_lines)[j].m_widthInEmu, (*ptr_lines)[j].m_lineExists);
-      }
-    }
-    if (index)
-    {
-      m_shapeFillsBySeqNum.erase(seqNum);
-      if (*index - 1 < m_images.size())
-      {
-        m_shapeFillsBySeqNum.insert(seqNum, new ImgFill(*index, this, false));
-      }
-    }
-    Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, seqNum);
-    if (ptr_fill && (index || m_skipIfNotBgSeqNums.find(seqNum) == m_skipIfNotBgSeqNums.end()))
-    {
-      shape->setFill(ptr_fill);
-    }
-    Margins *ptr_margin = getIfExists(m_shapeMarginsBySeqNum, seqNum);
-    if (ptr_margin)
-    {
-      shape->m_left = ptr_margin->m_left;
-      shape->m_top = ptr_margin->m_top;
-      shape->m_right = ptr_margin->m_right;
-      shape->m_bottom = ptr_margin->m_bottom;
-    }
-    BorderPosition *ptr_bp = getIfExists(m_shapeBorderPositionsBySeqNum, seqNum);
-    shape->m_borderPosition = ptr_bp ? *ptr_bp : HALF_INSIDE_SHAPE;
-    for (std::map<unsigned, int>::const_iterator iter= m_adjustValuesByIndexBySeqNum[seqNum].begin();
-         iter != m_adjustValuesByIndexBySeqNum[seqNum].end(); ++iter)
-    {
-      shape->setAdjustValue(iter->first, iter->second);
-    }
-    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, seqNum);
-    if (ptr_pageSeqNum)
-    {
-      shape->m_pageSeqNum = *ptr_pageSeqNum;
-    }
-  }
-}
-
-WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, unsigned defaultParaStyleIndex)
+WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, unsigned defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
   const ParagraphStyle &defaultParaStyle = defaultParaStyleIndex < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex] : _nothing;
@@ -778,7 +639,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   return ret;
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, unsigned defaultCharStyleIndex)
+WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, unsigned defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
   const CharacterStyle &defaultCharStyle = defaultCharStyleIndex < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex] : _nothing;
@@ -838,14 +699,12 @@ bool libmspub::MSPUBCollector::go()
   {
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
-  assignImages();
-  assignGroups();
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
-    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getFirstShapeSeqNum());
+    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getSeqNum());
+    m_topLevelShapes[i].setup(boost::bind(&libmspub::MSPUBCollector::setupShapeStructures, this, _1));
     if (ptr_pageSeqNum)
     {
-      m_topLevelShapes[i].setPage(*ptr_pageSeqNum);
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
       if (ptr_page)
       {
@@ -868,23 +727,24 @@ bool libmspub::MSPUBCollector::go()
     if (!shapeGroupsOrdered.empty())
     {
       m_painter->startGraphics(pageProps);
-      unsigned *ptr_fillSeqNum = getIfExists(m_bgShapeSeqNumsByPageSeqNum, i->first);
+      const unsigned *ptr_fillSeqNum = getIfExists(m_bgShapeSeqNumsByPageSeqNum, i->first);
       if (ptr_fillSeqNum)
       {
-        Fill *ptr_fill = ptr_getIfExists(m_shapeFillsBySeqNum, *ptr_fillSeqNum);
+        boost::shared_ptr<const Fill> ptr_fill;
+        const ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
+        if (ptr_info)
+        {
+          ptr_fill = ptr_info->m_fill;
+        }
         if (ptr_fill)
         {
-          GeometricShape bg(i->first, this);
-          bg.setFill(ptr_fill);
-          Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
-          bg.output(m_painter, wholePage);
+          //REALLYFIXME
         }
       }
       for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)
       {
         ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i_group];
-        ShapeGroupPainter p(this);
-        shapeGroup->visit(&p);
+        shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5, _6));
       }
       m_painter->endGraphics();
     }
@@ -927,14 +787,14 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum)
 {
-  m_shapesBySeqNum.insert(seqNum, new GeometricShape(this));
   m_possibleImageShapeSeqNums.push_back(seqNum);
   return true;
 }
 
-bool libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)
+void libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)
 {
-  return m_pageSeqNumsByShapeSeqNum.insert(std::pair<const unsigned, unsigned>(seqNum, pageSeqNum)).second;
+  m_shapeInfosBySeqNum[seqNum].m_pageSeqNum = pageSeqNum;
+  m_pageSeqNumsByShapeSeqNum[seqNum] = pageSeqNum;
 }
 
 void libmspub::MSPUBCollector::addTextColor(ColorReference c)

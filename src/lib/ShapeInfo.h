@@ -25,32 +25,40 @@
  * in which case the provisions of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
-
-#ifndef __COORDINATE_H__
-#define __COORDINATE_H__
-#include "MSPUBConstants.h"
+#ifndef __SHAPEINFO_H__
+#define __SHAPEINFO_H__
+#include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
+#include <map>
+#include <vector>
+#include "ShapeType.h"
+#include "Coordinate.h"
+#include "Line.h"
+#include "Margins.h"
+#include "MSPUBTypes.h"
+#include "Fill.h"
 namespace libmspub
 {
-struct Coordinate
+struct ShapeInfo
 {
-  Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
-  Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
-  int m_xs, m_ys, m_xe, m_ye;
-  double getXIn(double pageWidth) const
+  boost::optional<ShapeType> m_type;
+  boost::optional<unsigned> m_imgIndex;
+  boost::optional<Coordinate> m_coordinates;
+  std::vector<Line> m_lines;
+  boost::optional<unsigned> m_pageSeqNum;
+  boost::optional<std::pair<unsigned, unsigned> > m_textInfo;
+  std::map<unsigned, int> m_adjustValuesByIndex;
+  std::vector<int> m_adjustValues;
+  boost::optional<double> m_rotation;
+  boost::optional<std::pair<bool, bool> > m_flips;
+  boost::optional<Margins> m_margins;
+  boost::optional<BorderPosition> m_borderPosition; // Irrelevant except for rectangular shapes
+  boost::shared_ptr<Fill> m_fill;
+  ShapeInfo() : m_type(), m_imgIndex(), m_coordinates(), m_lines(), m_pageSeqNum(),
+    m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
+    m_rotation(), m_flips(), m_margins(), m_borderPosition(),
+    m_fill()
   {
-    return pageWidth / 2 + double(m_xs) / EMUS_IN_INCH;
-  }
-  double getYIn(double pageHeight) const
-  {
-    return pageHeight / 2 + double(m_ys) / EMUS_IN_INCH;
-  }
-  double getWidthIn() const
-  {
-    return double(m_xe - m_xs) / EMUS_IN_INCH;
-  }
-  double getHeightIn() const
-  {
-    return double(m_ye - m_ys) / EMUS_IN_INCH;
   }
 };
 }

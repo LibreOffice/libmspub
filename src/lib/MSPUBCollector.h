@@ -39,6 +39,8 @@
 
 #include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/bind.hpp>
+#include <boost/function.hpp>
 
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
@@ -47,22 +49,17 @@
 #include "libmspub_utils.h"
 #include "MSPUBContentChunkType.h"
 #include "ShapeType.h"
+#include "Coordinate.h"
+#include "ShapeGroupElement.h"
 #include "Fill.h"
 #include "ColorReference.h"
 #include "PolygonUtils.h"
-#include "Shapes.h"
-#include "ShapeGroupPainter.h"
-#include "ShapeGroup.h"
+#include "ShapeInfo.h"
 
 namespace libmspub
 {
 class MSPUBCollector
 {
-  //TODO Refactor this class to avoid relying on a list of friend declarations
-  friend struct Shape;
-  friend struct GeometricShape;
-  friend struct FillableShape;
-  friend class ShapeGroupPainter;
   friend class Fill;
   friend class ImgFill;
   friend class SolidFill;
@@ -77,20 +74,20 @@ public:
   // collector functions
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
-  bool addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
+  void addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   bool addShape(unsigned seqNum);
-  bool setShapePage(unsigned seqNum, unsigned pageSeqNum);
+  void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
-  bool setShapeType(unsigned seqNum, ShapeType type);
-  bool setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
-  bool setShapeImgIndex(unsigned seqNum, unsigned index);
-  bool setShapeFill(unsigned seqNum, Fill *fill, bool skipIfNotBg);
-  bool setAdjustValue(unsigned seqNum, unsigned index, int adjust);
-  bool setShapeRotation(unsigned seqNum, double rotation);
-  bool setShapeFlip(unsigned, bool, bool);
-  bool setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
-  bool setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
+  void setShapeType(unsigned seqNum, ShapeType type);
+  void setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
+  void setShapeImgIndex(unsigned seqNum, unsigned index);
+  void setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg);
+  void setAdjustValue(unsigned seqNum, unsigned index, int adjust);
+  void setShapeRotation(unsigned seqNum, double rotation);
+  void setShapeFlip(unsigned, bool, bool);
+  void setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
+  void setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
 
   void beginGroup();
   bool endGroup();
@@ -120,13 +117,6 @@ private:
     PageInfo() : m_shapeGroupsOrdered() { }
   };
 
-  struct Margins
-  {
-    Margins(unsigned left, unsigned top, unsigned right, unsigned bottom) :
-      m_left(left), m_top(top), m_right(right), m_bottom(bottom) { }
-    unsigned m_left, m_top, m_right, m_bottom;
-  };
-
   MSPUBCollector(const MSPUBCollector &);
   MSPUBCollector &operator=(const MSPUBCollector &);
 
@@ -137,7 +127,6 @@ private:
   unsigned short m_numPages;
   std::map<unsigned, std::vector<TextParagraph> > m_textStringsById;
   std::map<unsigned, PageInfo> m_pagesBySeqNum;
-  boost::ptr_map<unsigned, Shape> m_shapesBySeqNum; // boost::ptr_map is used instead of std::map to support Shape polymorphism
   std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
   std::vector<ColorReference> m_textColors;
   std::vector<std::vector<unsigned char> > m_fonts;
@@ -145,32 +134,27 @@ private:
   std::vector<ParagraphStyle> m_defaultParaStyles;
   std::map<unsigned, ShapeType> m_shapeTypesBySeqNum;
   std::vector<unsigned> m_possibleImageShapeSeqNums;
-  std::map<unsigned, unsigned> m_shapeImgIndicesBySeqNum;
-  std::map<unsigned, Coordinate> m_shapeCoordinatesBySeqNum;
-  std::map<unsigned, std::vector<Line> > m_shapeLinesBySeqNum;
-  boost::ptr_map<unsigned, Fill> m_shapeFillsBySeqNum;
   std::vector<Color> m_paletteColors;
   std::vector<unsigned> m_shapeSeqNumsOrdered;
   std::map<unsigned, unsigned> m_pageSeqNumsByShapeSeqNum;
-  std::map<unsigned, std::pair<unsigned, unsigned> > m_textInfoBySeqNum;
   std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
   std::set<unsigned> m_skipIfNotBgSeqNums;
-  std::map<unsigned, std::map<unsigned, int> > m_adjustValuesByIndexBySeqNum;
-  std::map<unsigned, double> m_shapeRotationsBySeqNum;
-  std::map<unsigned, std::pair<bool, bool> > m_shapeFlipsBySeqNum;
-  std::map<unsigned, Margins> m_shapeMarginsBySeqNum;
-  // BorderPositions are irrelevant except for rectangular shapes.
-  std::map<unsigned, BorderPosition> m_shapeBorderPositionsBySeqNum;
-  ShapeGroup *m_currentShapeGroup;
+  ShapeGroupElement *m_currentShapeGroup;
   boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
-  std::map<unsigned, ShapeGroup *> m_groupsBySeqNum;
-
+  std::map<unsigned, ShapeGroupElement *> m_groupsBySeqNum;
+  std::map<unsigned, ShapeInfo> m_shapeInfosBySeqNum;
+  mutable std::vector<bool> m_calculationValuesSeen;
   // helper functions
-  void assignImages();
-  void assignGroups();
-  void setRectCoordProps(Coordinate, WPXPropertyList *);
-  WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex);
-  WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex);
+  std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
+  void setRectCoordProps(Coordinate, WPXPropertyList *) const;
+  boost::optional<std::vector<libmspub::TextParagraph> > getShapeText(const ShapeInfo &info) const;
+  void setupShapeStructures(ShapeGroupElement &elt);
+  boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90) const;
+  double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
+
+  WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex) const;
+  WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex) const;
+  double getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const;
 public:
   static WPXString getColorString(const Color &);
 };

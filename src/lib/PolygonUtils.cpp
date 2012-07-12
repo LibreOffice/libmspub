@@ -5688,13 +5688,13 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   return ShapeElementCommand(cmd, count);
 }
 
-double getSpecialIfNecessary(const libmspub::GeometricShape *caller, int val)
+double getSpecialIfNecessary(boost::function<double (unsigned index)> calculator, int val)
 {
   bool special = val & 0x80000000;
-  return special ? caller->getCalculationValue(val ^ 0x80000000) : val;
+  return special ? calculator(val ^ 0x80000000) : val;
 }
 
-Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, const libmspub::GeometricShape *caller) const
+Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double (unsigned index)> calculator) const
 {
   double scaleX = width * m_coordWidth;
   double scaleY = height * m_coordHeight;
@@ -5704,10 +5704,10 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   }
   const Vertex &start = mp_textRectangles[0].first;
   const Vertex &end = mp_textRectangles[0].second;
-  double startX = x + scaleX * getSpecialIfNecessary(caller, start.m_x);
-  double startY = y + scaleY * getSpecialIfNecessary(caller, start.m_y);
-  double endX = x + scaleX * getSpecialIfNecessary(caller, end.m_x);
-  double endY = y + scaleY * getSpecialIfNecessary(caller, end.m_y);
+  double startX = x + scaleX * getSpecialIfNecessary(calculator, start.m_x);
+  double startY = y + scaleY * getSpecialIfNecessary(calculator, start.m_y);
+  double endX = x + scaleX * getSpecialIfNecessary(calculator, end.m_x);
+  double endY = y + scaleY * getSpecialIfNecessary(calculator, end.m_y);
   return Coordinate(startX, startY, endX, endY);
 }
 
@@ -5733,9 +5733,11 @@ private:
 };
 
 void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::vector<Line> &lines,
-                      Vector2D center, VectorTransformation2D transform, const GeometricShape *caller,
+                      Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
-                      bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter)
+                      bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter,
+                      boost::function<double (unsigned index)> calculator,
+                      const std::vector<Color> &palette)
 {
   std::vector<LineInfo> lineInfos;
   unsigned i_line = 0;
@@ -5770,8 +5772,8 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
       vertexStart.insert("svg:y", old.m_y);
       vertices.append(vertexStart);
     }
-    vector.m_x = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x);
-    vector.m_y = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y);
+    vector.m_x = x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_x);
+    vector.m_y = y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_y);
     old = vector;
     if (rectangle)
     {
@@ -5798,7 +5800,7 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
     vertices.append(vertex);
     if (i > 0)
     {
-      lineInfos.push_back(LineInfo(vertices, lines[i_line], caller->getPaletteColors()));
+      lineInfos.push_back(LineInfo(vertices, lines[i_line], palette));
       if (drawStroke)
       {
         if (i_line + 1 < lines.size()) // continue using the last element if we run out of lines.
@@ -5840,7 +5842,7 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
   }
 }
 
-void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, const libmspub::GeometricShape *caller, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines)
+void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette)
 {
   const CustomShape *shape = getCustomShape(shapeType);
   if (!shape)
@@ -5871,8 +5873,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     {
       if (!allLinesSame)
       {
-        drawEmulatedLine(shape, shapeType, lines, center, transform, caller,
-                         x, y, scaleX, scaleY, drawStroke, graphicsProps, painter);
+        drawEmulatedLine(shape, shapeType, lines, center, transform,
+                         x, y, scaleX, scaleY, drawStroke, graphicsProps, painter, calculator, palette);
         shouldDrawShape = false;
       }
       else if (drawStroke)
@@ -5880,7 +5882,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         Line &first = lines[0];
         graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
         graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
-        graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(caller->getPaletteColors())));
+        graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
         painter->setStyle(graphicsProps, WPXPropertyListVector());
       }
     }
@@ -5890,8 +5892,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       for (unsigned i = 0; i < shape->m_numVertices; ++i)
       {
         WPXPropertyList vertex;
-        Vector2D vector(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_x),
-                        y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[i].m_y));
+        Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_x),
+                        y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_y));
         vector = transform.transformWithOrigin(vector, center);
         vertex.insert("svg:x", vector.m_x);
         vertex.insert("svg:y", vector.m_y);
@@ -5909,7 +5911,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       Line &first = lines[0];
       graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
       graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
-      graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(caller->getPaletteColors())));
+      graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
       painter->setStyle(graphicsProps, WPXPropertyListVector());
     }
     unsigned vertexIndex = 0;
@@ -5927,13 +5929,13 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
           const Vertex &curr = shape->mp_vertices[vertexIndex];
-          Vector2D curr2D(x + scaleX * getSpecialIfNecessary(caller, curr.m_x), y + scaleY * getSpecialIfNecessary(caller, curr.m_y));
+          Vector2D curr2D(x + scaleX * getSpecialIfNecessary(calculator, curr.m_x), y + scaleY * getSpecialIfNecessary(calculator, curr.m_y));
           if (vertexIndex)
           {
             hasUnclosedElements = true;
             const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
-            double prevX = x + scaleX * getSpecialIfNecessary(caller, prev.m_x);
-            double prevY = y + scaleY * getSpecialIfNecessary(caller, prev.m_y);
+            double prevX = x + scaleX * getSpecialIfNecessary(calculator, prev.m_x);
+            double prevY = y + scaleY * getSpecialIfNecessary(calculator, prev.m_y);
             double tmpX = curr2D.m_x - prevX;
             double tmpY = curr2D.m_y - prevY;
             if ((tmpX < 0 && tmpY >= 0) || (tmpX >= 0 && tmpY < 0))
@@ -6000,7 +6002,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
                 vertices.append(closeVertex);
               }
               hasUnclosedElements = false;
-              Vector2D new_(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x), y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y));
+              Vector2D new_(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x), y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
               new_ = transform.transformWithOrigin(new_, center);
               moveVertex.insert("svg:x", new_.m_x);
               moveVertex.insert("svg:y", new_.m_y);
@@ -6025,12 +6027,12 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           hasUnclosedElements = true;
           WPXPropertyList vertex;
-          double startAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x);
-          double endAngle = getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y);
-          double cx = x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x);
-          double cy = y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y);
-          double rx = scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x);
-          double ry = scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y);
+          double startAngle = getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x);
+          double endAngle = getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y);
+          double cx = x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x);
+          double cy = y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y);
+          double rx = scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_x);
+          double ry = scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_y);
 
           // FIXME: Are angles supposed to be the actual angle of the point with the x-axis,
           // or the eccentric anomaly, or something else?
@@ -6078,8 +6080,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           }
           hasUnclosedElements = false;
           WPXPropertyList moveVertex;
-          Vector2D new_(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x),
-                        y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y));
+          Vector2D new_(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
+                        y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
           new_ = transform.transformWithOrigin(new_, center);
           moveVertex.insert("svg:x", new_.m_x);
           moveVertex.insert("svg:y", new_.m_y);
@@ -6092,8 +6094,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           hasUnclosedElements = true;
           WPXPropertyList vertex;
-          Vector2D vector(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x),
-                          y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y));
+          Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
+                          y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
           vector = transform.transformWithOrigin(vector, center);
 
           vertex.insert("svg:x", vector.m_x);
@@ -6106,14 +6108,14 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           hasUnclosedElements = true;
-          Vector2D firstCtrl(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_x),
-                             y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex].m_y));
+          Vector2D firstCtrl(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
+                             y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
           firstCtrl = transform.transformWithOrigin(firstCtrl, center);
-          Vector2D secondCtrl(x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_x),
-                              y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 1].m_y));
+          Vector2D secondCtrl(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_x),
+                              y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_y));
           secondCtrl = transform.transformWithOrigin(secondCtrl, center);
-          Vector2D end( x + scaleX * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_x),
-                        y + scaleY * getSpecialIfNecessary(caller, shape->mp_vertices[vertexIndex + 2].m_y));
+          Vector2D end( x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x),
+                        y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y));
           end = transform.transformWithOrigin(end, center);
           WPXPropertyList bezier;
           bezier.insert("libwpg:path-action", "C");

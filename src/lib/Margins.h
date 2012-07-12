@@ -25,33 +25,16 @@
  * in which case the provisions of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
-
-#ifndef __COORDINATE_H__
-#define __COORDINATE_H__
-#include "MSPUBConstants.h"
+#ifndef __MARGINS_H__
+#define __MARGINS_H__
 namespace libmspub
 {
-struct Coordinate
+struct Margins
 {
-  Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
-  Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
-  int m_xs, m_ys, m_xe, m_ye;
-  double getXIn(double pageWidth) const
-  {
-    return pageWidth / 2 + double(m_xs) / EMUS_IN_INCH;
-  }
-  double getYIn(double pageHeight) const
-  {
-    return pageHeight / 2 + double(m_ys) / EMUS_IN_INCH;
-  }
-  double getWidthIn() const
-  {
-    return double(m_xe - m_xs) / EMUS_IN_INCH;
-  }
-  double getHeightIn() const
-  {
-    return double(m_ye - m_ys) / EMUS_IN_INCH;
-  }
+  Margins(unsigned left, unsigned top, unsigned right, unsigned bottom) :
+    m_left(left), m_top(top), m_right(right), m_bottom(bottom) { }
+  Margins() : m_left(0), m_top(0), m_right(0), m_bottom(0) { }
+  unsigned m_left, m_top, m_right, m_bottom;
 };
 }
 #endif

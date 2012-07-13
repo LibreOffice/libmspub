@@ -53,7 +53,7 @@ struct ShapeInfo
   boost::optional<std::pair<bool, bool> > m_flips;
   boost::optional<Margins> m_margins;
   boost::optional<BorderPosition> m_borderPosition; // Irrelevant except for rectangular shapes
-  boost::shared_ptr<Fill> m_fill;
+  boost::shared_ptr<const Fill> m_fill;
   ShapeInfo() : m_type(), m_imgIndex(), m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),

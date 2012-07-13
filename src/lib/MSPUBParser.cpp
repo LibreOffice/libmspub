@@ -1197,8 +1197,8 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           {
             std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
             absolute = Coordinate(anchorData[FIELDID_XS],
-                anchorData[FIELDID_YS], anchorData[FIELDID_XE],
-                anchorData[FIELDID_YE]);
+                                  anchorData[FIELDID_YS], anchorData[FIELDID_XE],
+                                  anchorData[FIELDID_YE]);
           }
           else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
           {
@@ -1230,11 +1230,11 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             int ye = ys + initialWidth;
             absolute = Coordinate(xs, ys, xe, ye);
           }
-          m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, 
-              absolute.m_xs,
-              absolute.m_ys,
-              absolute.m_xe,
-              absolute.m_ye);
+          m_collector->setShapeCoordinatesInEmu(*shapeSeqNum,
+                                                absolute.m_xs,
+                                                absolute.m_ys,
+                                                absolute.m_xe,
+                                                absolute.m_ye);
           if (definesRelativeCoordinates)
           {
             parentGroupAbsoluteCoord = absolute;

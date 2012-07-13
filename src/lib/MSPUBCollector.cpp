@@ -713,6 +713,13 @@ bool libmspub::MSPUBCollector::go()
         if (ptr_fill)
         {
           //REALLYFIXME
+          ShapeInfo bg;
+          bg.m_type = RECTANGLE;
+          Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
+          bg.m_coordinates = wholePage;
+          bg.m_pageSeqNum = i->first;
+          bg.m_fill = ptr_fill;
+          paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
         }
       }
       for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)

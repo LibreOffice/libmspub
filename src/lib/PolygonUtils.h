@@ -29,7 +29,6 @@
 #ifndef __POLYGONUTILS_H__
 #define __POLYGONUTILS_H__
 
-#include <utility>
 #include <vector>
 
 #include <libwpg/libwpg.h>

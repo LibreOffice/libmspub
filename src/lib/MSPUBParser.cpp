@@ -1228,7 +1228,11 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     bool &skipIfNotBg)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
-  FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
+  if (!ptr_fillType)
+  {
+    return boost::shared_ptr<Fill>();
+  }
+  FillType fillType = *ptr_fillType;
   switch (fillType)
   {
   case SOLID:

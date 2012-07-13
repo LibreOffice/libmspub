@@ -1253,11 +1253,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     bool &skipIfNotBg)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
-  if (!ptr_fillType)
-  {
-    return boost::shared_ptr<Fill>();
-  }
-  FillType fillType = *ptr_fillType;
+  FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
   switch (fillType)
   {
   case SOLID:
@@ -1265,7 +1261,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
     const unsigned *ptr_fieldStyleProps = getIfExists_const(foptProperties, FIELDID_FIELD_STYLE_BOOL_PROPS);
     skipIfNotBg = ptr_fieldStyleProps && (*ptr_fieldStyleProps & 0xF0) == 0;
-    if (ptr_fillColor)
+    if (ptr_fillColor && !skipIfNotBg)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
       return boost::shared_ptr<Fill>(new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector));

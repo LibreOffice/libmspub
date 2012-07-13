@@ -51,26 +51,25 @@ const int ASPECT_RATIO          = 0x600;
 
 class MSPUBCollector;
 
-struct Vertex
+typedef struct
 {
   int m_x;
   int m_y;
-  Vertex(int x, int y) : m_x(x), m_y(y) { }
-};
+}  Vertex;
 
-struct Calculation
+typedef struct
 {
   int m_flags;
   int m_argOne;
   int m_argTwo;
   int m_argThree;
-  Calculation(int flags, int argOne, int argTwo, int argThree) : m_flags(flags), m_argOne(argOne),
-    m_argTwo(argTwo), m_argThree(argThree)
-  {
-  }
-};
+} Calculation;
 
-typedef std::pair<Vertex, Vertex> TextRectangle;
+typedef struct
+{
+  Vertex first;
+  Vertex second;
+} TextRectangle;
 
 struct CustomShape
 {

@@ -1212,6 +1212,13 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             int ys = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
             int xe = (readU32(input) - thisRelativeTo.m_xs) * widthScale + groupCoord.m_xs;
             int ye = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
+            if (definesRelativeCoordinates)
+            {
+              groupCoord.m_xs = xs;
+              groupCoord.m_ys = ys;
+              groupCoord.m_xe = xe;
+              groupCoord.m_ye = ye;
+            }
             m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, xs, ys, xe, ye);
           }
         }

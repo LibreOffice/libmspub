@@ -121,7 +121,7 @@ protected:
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk);
-  void parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord);
+  void parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
   void parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, unsigned short type);

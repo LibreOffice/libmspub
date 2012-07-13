@@ -992,7 +992,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
   return true;
 }
 
-void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
+void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
 {
   libmspub::EscherContainerInfo shapeOrGroup;
   std::set<unsigned short> types;

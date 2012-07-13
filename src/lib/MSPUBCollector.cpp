@@ -235,7 +235,7 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
   {
     elt.setShapeInfo(*ptr_info);
     unsigned rotation = ptr_info->m_rotation.get_value_or(0);
-    rotation = std::fmod(rotation, 360);
+    rotation = fmod(rotation, 360);
     elt.setIsRotated90( (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315));
     VectorTransformation2D rot = VectorTransformation2D::fromCounterRadians(rotation);
     std::pair<bool, bool> flips = ptr_info->m_flips.get_value_or(std::pair<bool, bool>(false, false));

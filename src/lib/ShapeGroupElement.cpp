@@ -28,7 +28,7 @@
  */
 #include "ShapeGroupElement.h"
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform(IDENTITY_TRANSFORMATION), m_isRotated90(false)
+libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform(), m_isRotated90(false)
 {
   if (m_parent)
   {
@@ -36,7 +36,7 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_sh
   }
 }
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform(IDENTITY_TRANSFORMATION), m_isRotated90(false)
+libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform(), m_isRotated90(false)
 {
   if (m_parent)
   {
@@ -103,7 +103,7 @@ void libmspub::ShapeGroupElement::visit(boost::function<
                                         > visitor) const
 {
   Coordinate origin;
-  VectorTransformation2D identity = IDENTITY_TRANSFORMATION;
+  VectorTransformation2D identity;
   visit(visitor, origin, identity);
 }
 

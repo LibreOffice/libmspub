@@ -42,6 +42,10 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+// Recent versions of GCC spew C++11 compatibility warnings for this file.
+// Until I know how to fix it, I am disabling with this pragma for the time being.
+//
+#pragma GCC diagnostic ignored "-Wnarrowing"
 
 using namespace libmspub;
 

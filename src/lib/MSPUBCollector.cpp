@@ -234,12 +234,13 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
   if (ptr_info)
   {
     elt.setShapeInfo(*ptr_info);
+    std::pair<bool, bool> flips = ptr_info->m_flips.get_value_or(std::pair<bool, bool>(false, false));
+    VectorTransformation2D flipsTransform = VectorTransformation2D::fromFlips(flips.second, flips.first);
     double rotation = ptr_info->m_rotation.get_value_or(0);
     rotation = doubleModulo(rotation, 360);
     elt.setIsRotated90( (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315));
-    VectorTransformation2D rot = VectorTransformation2D::fromCounterRadians(rotation * M_PI / 180);
-    std::pair<bool, bool> flips = ptr_info->m_flips.get_value_or(std::pair<bool, bool>(false, false));
-    VectorTransformation2D flipsTransform = VectorTransformation2D::fromFlips(flips.second, flips.first);
+    bool rotBackwards = flips.first ^ flips.second;
+    VectorTransformation2D rot = VectorTransformation2D::fromCounterRadians((rotBackwards ? -rotation : rotation) * M_PI / 180);
     elt.setTransform(rot * flipsTransform);
   }
 }

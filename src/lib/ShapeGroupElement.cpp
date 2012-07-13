@@ -28,7 +28,7 @@
  */
 #include "ShapeGroupElement.h"
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform(), m_isRotated90(false)
+libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform()
 {
   if (m_parent)
   {
@@ -36,22 +36,12 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_sh
   }
 }
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform(), m_isRotated90(false)
+libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
 {
   if (m_parent)
   {
     m_parent->m_children.push_back(this);
   }
-}
-
-void libmspub::ShapeGroupElement::setIsRotated90(bool isRotated90)
-{
-  m_isRotated90 = isRotated90;
-}
-
-bool libmspub::ShapeGroupElement::getIsRotated90() const
-{
-  return m_isRotated90;
 }
 
 void libmspub::ShapeGroupElement::setShapeInfo(const ShapeInfo &shapeInfo)
@@ -75,7 +65,7 @@ void libmspub::ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &
 
 void libmspub::ShapeGroupElement::visit(boost::function<
                                         boost::function<void(void)>
-                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform, bool isRotated90)
+                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform)
                                         > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
 {
   const ShapeInfo &info = m_shapeInfo.get_value_or(ShapeInfo());
@@ -88,8 +78,7 @@ void libmspub::ShapeGroupElement::visit(boost::function<
   double offsetY = centerY - relativeCenterY;
   VectorTransformation2D foldedTransform = VectorTransformation2D::fromTranslate(-offsetX, -offsetY)
       * parentFoldedTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
-  boost::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform,
-                                        m_isRotated90);
+  boost::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform);
   for (unsigned i = 0; i < m_children.size(); ++i)
   {
     m_children[i]->visit(visitor, coord, foldedTransform);
@@ -99,7 +88,7 @@ void libmspub::ShapeGroupElement::visit(boost::function<
 
 void libmspub::ShapeGroupElement::visit(boost::function<
                                         boost::function<void(void)>
-                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform, bool isRotated90)
+                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform)
                                         > visitor) const
 {
   Coordinate origin;

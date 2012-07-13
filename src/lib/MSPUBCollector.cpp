@@ -106,8 +106,14 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_skipIfNotBgSeqNums(),
   m_currentShapeGroup(NULL), m_topLevelShapes(),
   m_groupsBySeqNum(), m_shapeInfosBySeqNum(),
+  m_shapesWithCoordinatesRotated90(),
   m_calculationValuesSeen()
 {
+}
+
+void libmspub::MSPUBCollector::setShapeCoordinatesRotated90(unsigned seqNum)
+{
+  m_shapesWithCoordinatesRotated90.insert(seqNum);
 }
 
 void libmspub::MSPUBCollector::beginGroup()
@@ -238,7 +244,6 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
     VectorTransformation2D flipsTransform = VectorTransformation2D::fromFlips(flips.second, flips.first);
     double rotation = ptr_info->m_rotation.get_value_or(0);
     rotation = doubleModulo(rotation, 360);
-    elt.setIsRotated90( (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315));
     bool rotBackwards = flips.first ^ flips.second;
     VectorTransformation2D rot = VectorTransformation2D::fromCounterRadians((rotBackwards ? -rotation : rotation) * M_PI / 180);
     elt.setTransform(rot * flipsTransform);
@@ -246,7 +251,7 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
 }
 
 
-boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90) const
+boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const
 {
   std::vector<int> adjustValues = getShapeAdjustValues(info);
   if (isGroup)
@@ -281,26 +286,10 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   if (hasFill)
   {
     double x, y, height, width;
-    if (isRotated90)
-    {
-      double initialX = coord.getXIn(m_width);
-      double initialY = coord.getYIn(m_height);
-      double initialWidth = coord.getWidthIn();
-      double initialHeight = coord.getHeightIn();
-      double centerX = initialX + initialWidth / 2;
-      double centerY = initialY + initialHeight / 2;
-      x = centerX - initialHeight / 2;
-      y = centerY - initialWidth / 2;
-      height = initialWidth;
-      width = initialHeight;
-    }
-    else
-    {
-      x = coord.getXIn(m_width);
-      y = coord.getYIn(m_height);
-      height = coord.getHeightIn();
-      width = coord.getWidthIn();
-    }
+    x = coord.getXIn(m_width);
+    y = coord.getYIn(m_height);
+    height = coord.getHeightIn();
+    width = coord.getWidthIn();
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
@@ -313,26 +302,10 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     Coordinate strokeCoord = isShapeTypeRectangle(type) ?
                              getFudgedCoordinates(coord, lines, true, borderPosition) : coord;
     double x, y, height, width;
-    if (isRotated90)
-    {
-      double initialX = strokeCoord.getXIn(m_width);
-      double initialY = strokeCoord.getYIn(m_height);
-      double initialWidth = strokeCoord.getWidthIn();
-      double initialHeight = strokeCoord.getHeightIn();
-      double centerX = initialX + initialWidth / 2;
-      double centerY = initialY + initialHeight / 2;
-      x = centerX - initialHeight / 2;
-      y = centerY - initialWidth / 2;
-      height = initialWidth;
-      width = initialHeight;
-    }
-    else
-    {
-      x = strokeCoord.getXIn(m_width);
-      y = strokeCoord.getYIn(m_height);
-      height = strokeCoord.getHeightIn();
-      width = strokeCoord.getWidthIn();
-    }
+    x = strokeCoord.getXIn(m_width);
+    y = strokeCoord.getYIn(m_height);
+    height = strokeCoord.getHeightIn();
+    width = strokeCoord.getWidthIn();
     graphicsProps.insert("draw:fill", "none");
     graphicsProps.insert("draw:stroke", "solid");
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
@@ -749,7 +722,7 @@ bool libmspub::MSPUBCollector::go()
       for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)
       {
         ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i_group];
-        shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5, _6));
+        shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
       }
       m_painter->endGraphics();
     }

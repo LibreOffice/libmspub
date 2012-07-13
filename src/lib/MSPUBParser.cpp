@@ -992,7 +992,7 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
   return true;
 }
 
-void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate &relativeTo, Coordinate &groupCoord)
+void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
 {
   libmspub::EscherContainerInfo shapeOrGroup;
   std::set<unsigned short> types;
@@ -1004,20 +1004,20 @@ void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherC
     {
     case OFFICE_ART_SPGR_CONTAINER:
       m_collector->beginGroup();
-      parseShapeGroup(input, shapeOrGroup, false, relativeTo, groupCoord);
+      parseShapeGroup(input, shapeOrGroup, false, parentCoordinateSystem, parentGroupAbsoluteCoord);
       m_collector->endGroup();
       break;
     case OFFICE_ART_SP_CONTAINER:
-      parseEscherShape(input, shapeOrGroup, topLevel, relativeTo, groupCoord);
+      parseEscherShape(input, shapeOrGroup, topLevel, parentCoordinateSystem, parentGroupAbsoluteCoord);
       break;
     }
     input->seek(shapeOrGroup.contentsOffset + shapeOrGroup.contentsLength + getEscherElementTailLength(shapeOrGroup.type), WPX_SEEK_SET);
   }
 }
 
-void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, bool topLevel, Coordinate &relativeTo, Coordinate &groupCoord)
+void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
 {
-  Coordinate thisRelativeTo = relativeTo;
+  Coordinate thisParentCoordinateSystem = parentCoordinateSystem;
   bool definesRelativeCoordinates = false;
   libmspub::EscherContainerInfo cData;
   libmspub::EscherContainerInfo cAnchor;
@@ -1031,10 +1031,10 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
   if (findEscherContainer(input, sp, cFspgr, OFFICE_ART_FSPGR))
   {
     input->seek(cFspgr.contentsOffset, WPX_SEEK_SET);
-    relativeTo.m_xs = readU32(input);
-    relativeTo.m_ys = readU32(input);
-    relativeTo.m_xe = readU32(input);
-    relativeTo.m_ye = readU32(input);
+    parentCoordinateSystem.m_xs = readU32(input);
+    parentCoordinateSystem.m_ys = readU32(input);
+    parentCoordinateSystem.m_xe = readU32(input);
+    parentCoordinateSystem.m_ye = readU32(input);
     definesRelativeCoordinates = true;
   }
   input->seek(sp.contentsOffset, WPX_SEEK_SET);
@@ -1068,6 +1068,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
       anchorTypes.insert(OFFICE_ART_CLIENT_ANCHOR);
       anchorTypes.insert(OFFICE_ART_CHILD_ANCHOR);
       bool foundAnchor;
+      bool rotated90 = false;
       if ((foundAnchor = findEscherContainerWithTypeInSet(input, sp, cAnchor, anchorTypes)) || isGroupLeader)
       {
         MSPUB_DEBUG_MSG(("Found Escher data for %s of seqnum 0x%x\n", isGroupLeader ? "group" : "shape", *shapeSeqNum));
@@ -1174,7 +1175,11 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           int *ptr_rotation = (int *)getIfExists(foptValues, FIELDID_ROTATION);
           if (ptr_rotation)
           {
-            m_collector->setShapeRotation(*shapeSeqNum, (short)((*ptr_rotation) >> 16));
+            double rotation = doubleModulo(toFixedPoint(*ptr_rotation), 360);
+            m_collector->setShapeRotation(*shapeSeqNum, short(rotation));
+            //FIXME : make MSPUBCollector handle double shape rotations
+            rotated90 = (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315);
+
           }
           unsigned *ptr_left = getIfExists(foptValues, FIELDID_DY_TEXT_LEFT);
           unsigned *ptr_top = getIfExists(foptValues, FIELDID_DY_TEXT_TOP);
@@ -1187,39 +1192,52 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
         }
         if (foundAnchor)
         {
+          Coordinate absolute;
           if (cAnchor.type == OFFICE_ART_CLIENT_ANCHOR)
           {
             std::map<unsigned short, unsigned> anchorData = extractEscherValues(input, cAnchor);
-            if (definesRelativeCoordinates)
-            {
-              groupCoord.m_xs = anchorData[FIELDID_XS];
-              groupCoord.m_ys = anchorData[FIELDID_YS];
-              groupCoord.m_xe = anchorData[FIELDID_XE];
-              groupCoord.m_ye = anchorData[FIELDID_YE];
-            }
-            m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, anchorData[FIELDID_XS], anchorData[FIELDID_YS], anchorData[FIELDID_XE], anchorData[FIELDID_YE]);
+            absolute = Coordinate(anchorData[FIELDID_XS],
+                anchorData[FIELDID_YS], anchorData[FIELDID_XE],
+                anchorData[FIELDID_YE]);
           }
           else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
           {
             input->seek(cAnchor.contentsOffset, WPX_SEEK_SET);
-            int coordSystemWidth = thisRelativeTo.m_xe - thisRelativeTo.m_xs;
-            int coordSystemHeight = thisRelativeTo.m_ye - thisRelativeTo.m_ys;
-            int groupWidth = groupCoord.m_xe - groupCoord.m_xs;
-            int groupHeight = groupCoord.m_ye - groupCoord.m_ys;
+            int coordSystemWidth = thisParentCoordinateSystem.m_xe - thisParentCoordinateSystem.m_xs;
+            int coordSystemHeight = thisParentCoordinateSystem.m_ye - thisParentCoordinateSystem.m_ys;
+            int groupWidth = parentGroupAbsoluteCoord.m_xe - parentGroupAbsoluteCoord.m_xs;
+            int groupHeight = parentGroupAbsoluteCoord.m_ye - parentGroupAbsoluteCoord.m_ys;
             double widthScale = (double)groupWidth / coordSystemWidth;
             double heightScale = (double)groupHeight / coordSystemHeight;
-            int xs = (readU32(input) - thisRelativeTo.m_xs) * widthScale + groupCoord.m_xs;
-            int ys = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
-            int xe = (readU32(input) - thisRelativeTo.m_xs) * widthScale + groupCoord.m_xs;
-            int ye = (readU32(input) - thisRelativeTo.m_ys) * heightScale + groupCoord.m_ys;
-            if (definesRelativeCoordinates)
-            {
-              groupCoord.m_xs = xs;
-              groupCoord.m_ys = ys;
-              groupCoord.m_xe = xe;
-              groupCoord.m_ye = ye;
-            }
-            m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, xs, ys, xe, ye);
+            int xs = (readU32(input) - thisParentCoordinateSystem.m_xs) * widthScale + parentGroupAbsoluteCoord.m_xs;
+            int ys = (readU32(input) - thisParentCoordinateSystem.m_ys) * heightScale + parentGroupAbsoluteCoord.m_ys;
+            int xe = (readU32(input) - thisParentCoordinateSystem.m_xs) * widthScale + parentGroupAbsoluteCoord.m_xs;
+            int ye = (readU32(input) - thisParentCoordinateSystem.m_ys) * heightScale + parentGroupAbsoluteCoord.m_ys;
+
+            absolute = Coordinate(xs, ys, xe, ye);
+          }
+          if (rotated90)
+          {
+            int initialX = absolute.m_xs;
+            int initialY = absolute.m_ys;
+            int initialWidth = absolute.m_xe - absolute.m_xs;
+            int initialHeight = absolute.m_ye - absolute.m_ys;
+            int centerX = initialX + initialWidth / 2;
+            int centerY = initialY + initialHeight / 2;
+            int xs = centerX - initialHeight / 2;
+            int ys = centerY - initialWidth / 2;
+            int xe = xs + initialHeight;
+            int ye = ys + initialWidth;
+            absolute = Coordinate(xs, ys, xe, ye);
+          }
+          m_collector->setShapeCoordinatesInEmu(*shapeSeqNum, 
+              absolute.m_xs,
+              absolute.m_ys,
+              absolute.m_xe,
+              absolute.m_ye);
+          if (definesRelativeCoordinates)
+          {
+            parentGroupAbsoluteCoord = absolute;
           }
         }
       }

@@ -88,6 +88,7 @@ public:
   void setShapeFlip(unsigned, bool, bool);
   void setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
   void setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
+  void setShapeCoordinatesRotated90(unsigned seqNum);
 
   void beginGroup();
   bool endGroup();
@@ -143,13 +144,14 @@ private:
   boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
   std::map<unsigned, ShapeGroupElement *> m_groupsBySeqNum;
   std::map<unsigned, ShapeInfo> m_shapeInfosBySeqNum;
+  std::set<unsigned> m_shapesWithCoordinatesRotated90;
   mutable std::vector<bool> m_calculationValuesSeen;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   void setRectCoordProps(Coordinate, WPXPropertyList *) const;
   boost::optional<std::vector<libmspub::TextParagraph> > getShapeText(const ShapeInfo &info) const;
   void setupShapeStructures(ShapeGroupElement &elt);
-  boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90) const;
+  boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 
   WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex) const;

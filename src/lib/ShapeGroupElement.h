@@ -18,7 +18,6 @@ class ShapeGroupElement
   ShapeGroupElement &operator=(const ShapeGroupElement &); //not implemented
   ShapeGroupElement(const ShapeGroupElement &); //not implemented
   VectorTransformation2D m_transform;
-  bool m_isRotated90;
 public:
   ShapeGroupElement(ShapeGroupElement *parent);
   ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum);
@@ -26,18 +25,16 @@ public:
   void setup(boost::function<void(ShapeGroupElement &self)> visitor);
   void visit(boost::function<
              boost::function<void(void)>
-             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90)> visitor,
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor,
              const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform) const;
   void visit(boost::function<
              boost::function<void(void)>
-             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform, bool isRotated90)> visitor) const;
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor) const;
   bool isGroup() const;
   ShapeGroupElement *getParent();
   const ShapeGroupElement *getParent() const;
   void setSeqNum(unsigned seqNum);
   void setTransform(const VectorTransformation2D &transform);
-  void setIsRotated90(bool isRotated90);
-  bool getIsRotated90() const;
   unsigned getSeqNum() const;
 };
 }

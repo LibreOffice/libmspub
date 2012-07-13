@@ -45,7 +45,11 @@
 // Recent versions of GCC spew C++11 compatibility warnings for this file.
 // Until I know how to fix it, I am disabling with this pragma for the time being.
 //
+#ifdef __GNUC__
+#if (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 7))
 #pragma GCC diagnostic ignored "-Wnarrowing"
+#endif
+#endif
 
 using namespace libmspub;
 

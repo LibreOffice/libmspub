@@ -151,6 +151,9 @@ private:
   void setRectCoordProps(Coordinate, WPXPropertyList *) const;
   boost::optional<std::vector<libmspub::TextParagraph> > getShapeText(const ShapeInfo &info) const;
   void setupShapeStructures(ShapeGroupElement &elt);
+  void addBlackToPaletteIfNecessary();
+  void assignShapesToPages();
+  void writePage(unsigned pageSeqNum, const PageInfo &pageInfo) const;
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 

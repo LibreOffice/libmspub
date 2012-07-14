@@ -667,12 +667,16 @@ WPXString libmspub::MSPUBCollector::getColorString(const Color &color)
   return ret;
 }
 
-bool libmspub::MSPUBCollector::go()
+void libmspub::MSPUBCollector::addBlackToPaletteIfNecessary()
 {
   if (m_paletteColors.size() < 8)
   {
     m_paletteColors.insert(m_paletteColors.begin(), Color());
   }
+}
+
+void libmspub::MSPUBCollector::assignShapesToPages()
+{
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
     unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getSeqNum());
@@ -686,48 +690,60 @@ bool libmspub::MSPUBCollector::go()
       }
     }
   }
-  for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin(); i != m_pagesBySeqNum.end(); ++i)
+}
+
+void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum, const PageInfo &pageInfo) const
+{
+  WPXPropertyList pageProps;
+  if (m_widthSet)
   {
-    WPXPropertyList pageProps;
-    if (m_widthSet)
+    pageProps.insert("svg:width", m_width);
+  }
+  if (m_heightSet)
+  {
+    pageProps.insert("svg:height", m_height);
+  }
+  const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
+  if (!shapeGroupsOrdered.empty())
+  {
+    m_painter->startGraphics(pageProps);
+    const unsigned *ptr_fillSeqNum = getIfExists_const(m_bgShapeSeqNumsByPageSeqNum, pageSeqNum);
+    if (ptr_fillSeqNum)
     {
-      pageProps.insert("svg:width", m_width);
-    }
-    if (m_heightSet)
-    {
-      pageProps.insert("svg:height", m_height);
-    }
-    const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = i->second.m_shapeGroupsOrdered; // for readability
-    if (!shapeGroupsOrdered.empty())
-    {
-      m_painter->startGraphics(pageProps);
-      const unsigned *ptr_fillSeqNum = getIfExists(m_bgShapeSeqNumsByPageSeqNum, i->first);
-      if (ptr_fillSeqNum)
+      boost::shared_ptr<const Fill> ptr_fill;
+      const ShapeInfo *ptr_info = getIfExists_const(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
+      if (ptr_info)
       {
-        boost::shared_ptr<const Fill> ptr_fill;
-        const ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
-        if (ptr_info)
-        {
-          ptr_fill = ptr_info->m_fill;
-        }
-        if (ptr_fill)
-        {
-          ShapeInfo bg;
-          bg.m_type = RECTANGLE;
-          Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
-          bg.m_coordinates = wholePage;
-          bg.m_pageSeqNum = i->first;
-          bg.m_fill = ptr_fill;
-          paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
-        }
+        ptr_fill = ptr_info->m_fill;
       }
-      for (unsigned i_group = 0; i_group < shapeGroupsOrdered.size(); ++i_group)
+      if (ptr_fill)
       {
-        ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i_group];
-        shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+        ShapeInfo bg;
+        bg.m_type = RECTANGLE;
+        Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
+        bg.m_coordinates = wholePage;
+        bg.m_pageSeqNum = pageSeqNum;
+        bg.m_fill = ptr_fill;
+        paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
       }
-      m_painter->endGraphics();
     }
+    for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
+    {
+      ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
+      shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+    }
+    m_painter->endGraphics();
+  }
+}
+
+bool libmspub::MSPUBCollector::go()
+{
+  addBlackToPaletteIfNecessary();
+  assignShapesToPages();
+  for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
+      i != m_pagesBySeqNum.end(); ++i)
+  {
+    writePage(i->first, i->second);
   }
   return true;
 }

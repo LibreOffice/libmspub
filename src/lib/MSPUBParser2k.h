@@ -38,7 +38,7 @@ namespace libmspub
 class MSPUBParser2k : public MSPUBParser
 {
   static ShapeType getShapeType(unsigned char shapeSpecifier);
-  std::vector<ContentChunkReference> m_imageDataChunks;
+  std::vector<unsigned> m_imageDataChunkIndices;
   std::vector<unsigned> m_quillColorEntries;
 protected:
   virtual bool parseContents(WPXInputStream *input);

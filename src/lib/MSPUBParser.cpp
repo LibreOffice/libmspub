@@ -49,10 +49,11 @@
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
-    m_blockInfo(), m_pageChunks(), m_shapeChunks(),
-    m_paletteChunks(), m_unknownChunks(),
-    m_documentChunk(), m_lastSeenSeqNum(-1),
-    m_lastAddedImage(0), m_seenDocumentChunk(false),
+    m_blockInfo(), m_contentChunks(),
+    m_pageChunkIndices(), m_shapeChunkIndices(),
+    m_paletteChunkIndices(), m_unknownChunkIndices(),
+    m_documentChunkIndex(), m_lastSeenSeqNum(-1),
+    m_lastAddedImage(0),
     m_alternateShapeSeqNums(), m_escherDelayIndices()
 {
 }
@@ -314,7 +315,6 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
     MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%lx, id %i, type 0x%x, dataLength 0x%lx\n", i+1, trailerPart.startPosition, trailerPart.id, trailerPart.type, trailerPart.dataLength));
     if (trailerPart.type == TRAILER_DIRECTORY)
     {
-      ContentChunkReference *lastSeen = NULL;
 
       while (stillReading(input, trailerPart.dataOffset + trailerPart.dataLength))
       {
@@ -322,43 +322,45 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
         ++m_lastSeenSeqNum;
         if (m_blockInfo.back().type == GENERAL_CONTAINER)
         {
-          ContentChunkReference *next = parseContentChunkReference(input, m_blockInfo.back());
-          if (next)
+          if (parseContentChunkReference(input, m_blockInfo.back()))
           {
-            if (lastSeen)
+            if (m_contentChunks.size() > 1)
             {
-              lastSeen->end = next->offset;
+              m_contentChunks[m_contentChunks.size() - 2].end
+                = m_contentChunks.back().offset;
             }
-            lastSeen = next;
           }
         }
         else(skipBlock(input, m_blockInfo.back()));
       }
-      if (lastSeen)
+      if (m_contentChunks.size() > 0)
       {
-        lastSeen->end = trailerPart.dataOffset + trailerPart.dataLength;
+        m_contentChunks.back().end = trailerPart.dataOffset + trailerPart.dataLength;
       }
-      if (!m_seenDocumentChunk)
+      if (!m_documentChunkIndex.is_initialized())
       {
         return false;
       }
-      for (ccr_iterator_t iter1 = m_paletteChunks.begin(); iter1 != m_paletteChunks.end(); ++iter1)
+      const ContentChunkReference &documentChunk = m_contentChunks.at(m_documentChunkIndex.get());
+      for (unsigned i_pal = 0; i_pal < m_paletteChunkIndices.size(); ++i_pal)
       {
-        input->seek(iter1->offset, WPX_SEEK_SET);
-        if (! parsePaletteChunk(input, *iter1))
+        const ContentChunkReference &paletteChunk = m_contentChunks.at(m_paletteChunkIndices[i_pal]);
+        input->seek(paletteChunk.offset, WPX_SEEK_SET);
+        if (! parsePaletteChunk(input, paletteChunk))
         {
           return false;
         }
       }
-      input->seek(m_documentChunk.offset, WPX_SEEK_SET);
-      if (!parseDocumentChunk(input, m_documentChunk))
+      input->seek(documentChunk.offset, WPX_SEEK_SET);
+      if (!parseDocumentChunk(input, documentChunk))
       {
         return false;
       }
-      for (ccr_iterator_t iter2 = m_pageChunks.begin(); iter2 != m_pageChunks.end(); ++iter2)
+      for (unsigned i_page = 0; i_page < m_pageChunkIndices.size(); ++i_page)
       {
-        input->seek(iter2->offset, WPX_SEEK_SET);
-        if (!parsePageChunk(input, *iter2))
+        const ContentChunkReference &pageChunk = m_contentChunks.at(m_pageChunkIndices[i_page]);
+        input->seek(pageChunk.offset, WPX_SEEK_SET);
+        if (!parsePageChunk(input, pageChunk))
         {
           return false;
         }
@@ -441,18 +443,27 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
     libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
     if (subInfo.type == SHAPE_SEQNUM)
     {
-      std::vector<libmspub::ContentChunkReference>::const_iterator ref = std::find_if(m_shapeChunks.begin(), m_shapeChunks.end(), FindBySeqNum(subInfo.data));
-      if (ref == m_shapeChunks.end())
+      int index = -1;
+      for (unsigned i = 0; i < m_shapeChunkIndices.size(); ++i)
+      {
+        if (m_contentChunks[m_shapeChunkIndices[i]].seqNum == subInfo.data)
+        {
+          index = m_shapeChunkIndices[i];
+          break;
+        }
+      }
+      if (index == -1)
       {
         MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x not found!\n", subInfo.data));
       }
       else
       {
+        const ContentChunkReference &ref = m_contentChunks[index];
         MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x found\n", subInfo.data));
         unsigned long pos = input->tell();
-        input->seek(ref->offset, WPX_SEEK_SET);
+        input->seek(ref.offset, WPX_SEEK_SET);
         bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
-        parseShape(input, subInfo.data, pageSeqNum, parseWithoutDimensions, ref->type == GROUP);
+        parseShape(input, subInfo.data, pageSeqNum, parseWithoutDimensions, ref.type == GROUP);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -1415,7 +1426,7 @@ std::map<unsigned short, unsigned> libmspub::MSPUBParser::extractEscherValues(WP
 }
 
 
-libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
+bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, const libmspub::MSPUBBlockInfo block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
@@ -1450,34 +1461,38 @@ libmspub::ContentChunkReference *libmspub::MSPUBParser::parseContentChunkReferen
     if (type == PAGE)
     {
       MSPUB_DEBUG_MSG(("page chunk: offset 0x%lx, seqnum 0x%x\n", offset, m_lastSeenSeqNum));
-      m_pageChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
-      return &m_pageChunks.back();
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_pageChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
+      return true;
     }
     else if (type == DOCUMENT)
     {
       MSPUB_DEBUG_MSG(("document chunk: offset 0x%lx, seqnum 0x%x\n", offset, m_lastSeenSeqNum));
-      m_documentChunk = ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0);
-      m_seenDocumentChunk = true;
-      return &m_documentChunk;
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_documentChunkIndex = unsigned(m_contentChunks.size() - 1);
+      return true;
     }
     else if (type == SHAPE || type == ALTSHAPE || type == GROUP)
     {
       MSPUB_DEBUG_MSG(("shape chunk: offset 0x%lx, seqnum 0x%x, parent seqnum: 0x%x\n", offset, m_lastSeenSeqNum, parentSeqNum));
-      m_shapeChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_shapeChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       if (type == ALTSHAPE)
       {
         m_alternateShapeSeqNums.push_back(m_lastSeenSeqNum);
       }
-      return &m_shapeChunks.back();
+      return true;
     }
     else if (type == PALETTE)
     {
-      m_paletteChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
-      return &m_paletteChunks.back();
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_paletteChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
+      return true;
     }
-    m_unknownChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+    m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+    m_unknownChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
   }
-  return NULL;
+  return false;
 }
 
 bool libmspub::MSPUBParser::isBlockDataString(unsigned type)

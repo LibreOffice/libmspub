@@ -36,6 +36,7 @@
 #include <memory>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/optional.hpp>
 
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
@@ -110,7 +111,7 @@ protected:
   MSPUBBlockInfo parseBlock(WPXInputStream *input, bool skipHierarchicalData = false);
   EscherContainerInfo parseEscherContainer(WPXInputStream *input);
 
-  ContentChunkReference *parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
+  bool parseContentChunkReference(WPXInputStream *input, MSPUBBlockInfo block);
   QuillChunkReference parseQuillChunkReference(WPXInputStream *input);
   bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
@@ -138,14 +139,14 @@ protected:
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;
   std::vector<MSPUBBlockInfo> m_blockInfo;
-  std::vector<ContentChunkReference> m_pageChunks;
-  std::vector<ContentChunkReference> m_shapeChunks;
-  std::vector<ContentChunkReference> m_paletteChunks;
-  std::vector<ContentChunkReference> m_unknownChunks;
-  ContentChunkReference m_documentChunk;
+  std::vector<ContentChunkReference> m_contentChunks;
+  std::vector<unsigned> m_pageChunkIndices;
+  std::vector<unsigned> m_shapeChunkIndices;
+  std::vector<unsigned> m_paletteChunkIndices;
+  std::vector<unsigned> m_unknownChunkIndices;
+  boost::optional<unsigned> m_documentChunkIndex;
   int m_lastSeenSeqNum;
   unsigned m_lastAddedImage;
-  bool m_seenDocumentChunk;
   std::vector<int> m_alternateShapeSeqNums;
   std::vector<int> m_escherDelayIndices;
 

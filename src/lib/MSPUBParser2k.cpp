@@ -41,7 +41,7 @@
 
 libmspub::MSPUBParser2k::MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector)
   : MSPUBParser(input, collector),
-    m_imageDataChunks(), m_quillColorEntries()
+    m_imageDataChunkIndices(), m_quillColorEntries()
 {
 }
 
@@ -334,7 +334,6 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   unsigned trailerOffset = readU32(input);
   input->seek(trailerOffset, WPX_SEEK_SET);
   unsigned numBlocks = readU16(input);
-  ContentChunkReference *last = NULL;
   unsigned chunkOffset = 0;
   for (unsigned i = 0; i < numBlocks; ++i)
   {
@@ -342,9 +341,9 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     unsigned short id = readU16(input);
     unsigned short parent = readU16(input);
     chunkOffset = readU32(input);
-    if (last)
+    if (m_contentChunks.size() > 0)
     {
-      last->end = chunkOffset;
+      m_contentChunks.back().end = chunkOffset;
     }
     unsigned offset = input->tell();
     input->seek(chunkOffset, WPX_SEEK_SET);
@@ -353,60 +352,60 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     switch (typeMarker)
     {
     case 0x0014:
-      m_pageChunks.push_back(ContentChunkReference(PAGE, chunkOffset, 0, id, parent));
-      last = &(m_pageChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(PAGE, chunkOffset, 0, id, parent));
+      m_pageChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     case 0x0015:
-      m_documentChunk = ContentChunkReference(DOCUMENT, chunkOffset, 0, id, parent);
-      last = &m_documentChunk;
-      m_seenDocumentChunk = true;
+      m_contentChunks.push_back(ContentChunkReference(DOCUMENT, chunkOffset, 0, id, parent));
+      m_documentChunkIndex = unsigned(m_contentChunks.size() - 1);
       break;
     case 0x0002:
-      m_shapeChunks.push_back(ContentChunkReference(IMAGE_2K, chunkOffset, 0, id, parent));
-      last = &(m_shapeChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(IMAGE_2K, chunkOffset, 0, id, parent));
+      m_shapeChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     case 0x0021:
-      m_imageDataChunks.push_back(ContentChunkReference(IMAGE_2K_DATA, chunkOffset, 0, id, parent));
-      last = &(m_imageDataChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(IMAGE_2K_DATA, chunkOffset, 0, id, parent));
+      m_imageDataChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     case 0x0005:
     case 0x0006:
     case 0x0007:
     case 0x0008:
-      m_shapeChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
-      last = &(m_shapeChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(SHAPE, chunkOffset, 0, id, parent));
+      m_shapeChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     case 0x0047:
-      m_paletteChunks.push_back(ContentChunkReference(PALETTE, chunkOffset, 0, id, parent));
-      last = &(m_paletteChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(PALETTE, chunkOffset, 0, id, parent));
+      m_paletteChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     default:
-      m_unknownChunks.push_back(ContentChunkReference(UNKNOWN_CHUNK, chunkOffset, 0, id, parent));
-      last = &(m_unknownChunks.back());
+      m_contentChunks.push_back(ContentChunkReference(UNKNOWN_CHUNK, chunkOffset, 0, id, parent));
+      m_unknownChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       break;
     }
   }
-  if (last)
+  if (m_contentChunks.size() > 0)
   {
-    last->end = chunkOffset;
+    m_contentChunks.back().end = chunkOffset;
   }
-  if (! m_seenDocumentChunk)
+  if (!m_documentChunkIndex.is_initialized())
   {
     MSPUB_DEBUG_MSG(("No document chunk found.\n"));
     return false;
   }
-  input->seek(m_documentChunk.offset, WPX_SEEK_SET);
+  input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, WPX_SEEK_SET);
   input->seek(0x14, WPX_SEEK_CUR);
   unsigned width = readU32(input);
   unsigned height = readU32(input);
   m_collector->setWidthInEmu(width);
   m_collector->setHeightInEmu(height);
 
-  for (ccr_iterator_t iter = m_paletteChunks.begin(); iter != m_paletteChunks.end(); ++iter)
+  for (unsigned i = 0; i < m_paletteChunkIndices.size(); ++i)
   {
-    input->seek(iter->offset, WPX_SEEK_SET);
+    const ContentChunkReference &chunk = m_contentChunks.at(m_paletteChunkIndices[i]);
+    input->seek(chunk.offset, WPX_SEEK_SET);
     input->seek(0xA0, WPX_SEEK_CUR);
-    for (unsigned i = 0; i < 8; ++i)
+    for (unsigned j = 0; j < 8; ++j)
     {
       unsigned hex = readU32(input);
       Color color = getColorBy2kHex(hex);
@@ -414,9 +413,10 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     }
   }
 
-  for (ccr_iterator_t iter = m_imageDataChunks.begin(); iter != m_imageDataChunks.end(); ++iter)
+  for (unsigned i = 0; i < m_imageDataChunkIndices.size(); ++i)
   {
-    input->seek(iter->offset + 4, WPX_SEEK_SET);
+    const ContentChunkReference &chunk = m_contentChunks.at(m_imageDataChunkIndices[i]);
+    input->seek(chunk.offset + 4, WPX_SEEK_SET);
     unsigned toRead = readU32(input);
     WPXBinaryData img;
     while (toRead > 0 && stillReading(input, (unsigned long)-1))
@@ -429,26 +429,36 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     m_collector->addImage(++m_lastAddedImage, WMF, img);
   }
 
-  for (ccr_iterator_t iter = m_shapeChunks.begin(); iter != m_shapeChunks.end(); ++iter)
+  for (unsigned i = 0; i < m_shapeChunkIndices.size(); ++i)
   {
-    input->seek(iter->offset, WPX_SEEK_SET);
-    ccr_iterator_t i_page = std::find_if(m_pageChunks.begin(), m_pageChunks.end(), FindBySeqNum(iter->parentSeqNum));
-    if (i_page == m_pageChunks.end())
+    const ContentChunkReference &chunk = m_contentChunks.at(m_shapeChunkIndices[i]);
+    input->seek(chunk.offset, WPX_SEEK_SET);
+    int i_page = -1;
+    for (unsigned j = 0; j < m_pageChunkIndices.size(); ++j)
+    {
+      unsigned pageIndex = m_pageChunkIndices[j];
+      if (m_contentChunks.at(pageIndex).seqNum == chunk.parentSeqNum)
+      {
+        i_page = pageIndex;
+        break;
+      }
+    }
+    if (i_page == -1)
     {
       continue;
     }
-    if (getPageTypeBySeqNum(i_page->seqNum) != NORMAL)
+    if (getPageTypeBySeqNum(m_contentChunks[i_page].seqNum) != NORMAL)
     {
       continue;
     }
     // if the parent of this is a page and hasn't yet been added, then add it.
-    if (!m_collector->hasPage(iter->parentSeqNum))
+    if (!m_collector->hasPage(chunk.parentSeqNum))
     {
-      m_collector->addPage(iter->parentSeqNum);
+      m_collector->addPage(chunk.parentSeqNum);
     }
-    m_collector->addShape(iter->seqNum);
-    m_collector->setShapePage(iter->seqNum, iter->parentSeqNum);
-    m_collector->setShapeBorderPosition(iter->seqNum, INSIDE_SHAPE); // This appears to be the only possibility for MSPUB2k
+    m_collector->addShape(chunk.seqNum);
+    m_collector->setShapePage(chunk.seqNum, chunk.parentSeqNum);
+    m_collector->setShapeBorderPosition(chunk.seqNum, INSIDE_SHAPE); // This appears to be the only possibility for MSPUB2k
     unsigned short typeMarker = readU16(input);
     bool isImage = false;
     bool isRectangle = false;
@@ -456,66 +466,73 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
     {
     case 0x0002:
       isImage = true;
-      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      m_collector->setShapeType(chunk.seqNum, RECTANGLE);
       isRectangle = true;
       break;
     case 0x0005:
-      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      m_collector->setShapeType(chunk.seqNum, RECTANGLE);
       isRectangle = true;
       break;
     case 0x0006:
     {
-      input->seek(iter->offset + 0x31, WPX_SEEK_SET);
+      input->seek(chunk.offset + 0x31, WPX_SEEK_SET);
       ShapeType shapeType = getShapeType(readU8(input));
       if (shapeType != UNKNOWN_SHAPE)
       {
-        m_collector->setShapeType(iter->seqNum, shapeType);
+        m_collector->setShapeType(chunk.seqNum, shapeType);
       }
     }
     break;
     case 0x0007:
-      m_collector->setShapeType(iter->seqNum, ELLIPSE);
+      m_collector->setShapeType(chunk.seqNum, ELLIPSE);
       break;
     case 0x0008:
     {
-      m_collector->setShapeType(iter->seqNum, RECTANGLE);
+      m_collector->setShapeType(chunk.seqNum, RECTANGLE);
       isRectangle = true;
-      input->seek(iter->offset + 0x58, WPX_SEEK_SET);
+      input->seek(chunk.offset + 0x58, WPX_SEEK_SET);
       unsigned txtId = readU32(input);
-      m_collector->addTextShape(txtId, iter->seqNum, iter->parentSeqNum);
+      m_collector->addTextShape(txtId, chunk.seqNum, chunk.parentSeqNum);
     }
     break;
     default:
       break;
     }
-    input->seek(iter->offset + 6, WPX_SEEK_SET);
+    input->seek(chunk.offset + 6, WPX_SEEK_SET);
     int xs = readS32(input);
     int ys = readS32(input);
     int xe = readS32(input);
     int ye = readS32(input);
-    m_collector->setShapeCoordinatesInEmu(iter->seqNum, xs, ys, xe, ye);
+    m_collector->setShapeCoordinatesInEmu(chunk.seqNum, xs, ys, xe, ye);
     if (isImage)
     {
-      std::vector<ContentChunkReference>::const_iterator i_dataIndex =
-        std::find_if(m_imageDataChunks.begin(), m_imageDataChunks.end(), FindByParentSeqNum(iter->seqNum));
-      if (i_dataIndex != m_imageDataChunks.end())
+      int i_dataIndex = -1;
+      for (unsigned j = 0; j < m_imageDataChunkIndices.size(); ++j)
       {
-        m_collector->setShapeImgIndex(iter->seqNum, 1 + i_dataIndex - m_imageDataChunks.begin());
+        if (m_contentChunks.at(m_imageDataChunkIndices[j]).parentSeqNum == chunk.seqNum)
+        {
+          i_dataIndex = m_imageDataChunkIndices[j];
+          break;
+        }
+      }
+      if (i_dataIndex >= 0)
+      {
+        m_collector->setShapeImgIndex(chunk.seqNum, i_dataIndex + 1);
       }
     }
     else
     {
-      input->seek(iter->offset + 0x2A, WPX_SEEK_SET);
+      input->seek(chunk.offset + 0x2A, WPX_SEEK_SET);
       unsigned char fillType = readU8(input);
       if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
       {
-        input->seek(iter->offset + 0x22, WPX_SEEK_SET);
+        input->seek(chunk.offset + 0x22, WPX_SEEK_SET);
         unsigned fillColorReference = readU32(input);
         unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
-        m_collector->setShapeFill(iter->seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
+        m_collector->setShapeFill(chunk.seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
       }
     }
-    input->seek(iter->offset + 0x2C, WPX_SEEK_SET);
+    input->seek(chunk.offset + 0x2C, WPX_SEEK_SET);
     unsigned short leftLineWidth = readU8(input);
     bool leftLineExists = leftLineWidth != 0;
     unsigned leftColorReference = readU32(input);
@@ -527,7 +544,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       bool topLineExists = topLineWidth != 0;
       unsigned topColorReference = readU32(input);
       unsigned translatedTopColorReference = translate2kColorReference(topColorReference);
-      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedTopColorReference),
+      m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedTopColorReference),
                                 translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
@@ -535,7 +552,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       bool rightLineExists = rightLineWidth != 0;
       unsigned rightColorReference = readU32(input);
       unsigned translatedRightColorReference = translate2kColorReference(rightColorReference);
-      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedRightColorReference),
+      m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedRightColorReference),
                                 translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
       input->seek(1, WPX_SEEK_CUR);
@@ -543,12 +560,12 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       bool bottomLineExists = bottomLineWidth != 0;
       unsigned bottomColorReference = readU32(input);
       unsigned translatedBottomColorReference = translate2kColorReference(bottomColorReference);
-      m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedBottomColorReference),
+      m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedBottomColorReference),
                                 translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
     }
-    m_collector->addShapeLine(iter->seqNum, Line(ColorReference(translatedLeftColorReference),
+    m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedLeftColorReference),
                               translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
-    m_collector->setShapeOrder(iter->seqNum);
+    m_collector->setShapeOrder(chunk.seqNum);
   }
   return true;
 }

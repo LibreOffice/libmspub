@@ -712,7 +712,6 @@ bool libmspub::MSPUBCollector::go()
         }
         if (ptr_fill)
         {
-          //REALLYFIXME
           ShapeInfo bg;
           bg.m_type = RECTANGLE;
           Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);

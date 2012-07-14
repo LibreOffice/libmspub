@@ -239,6 +239,14 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
   ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, elt.getSeqNum());
   if (ptr_info)
   {
+    if (ptr_info->m_imgIndex.is_initialized())
+    {
+      unsigned index = ptr_info->m_imgIndex.get();
+      if (index - 1 < m_images.size())
+      {
+        ptr_info->m_fill = boost::shared_ptr<const Fill>(new ImgFill(index, this, false));
+      }
+    }
     elt.setShapeInfo(*ptr_info);
     std::pair<bool, bool> flips = ptr_info->m_flips.get_value_or(std::pair<bool, bool>(false, false));
     VectorTransformation2D flipsTransform = VectorTransformation2D::fromFlips(flips.second, flips.first);

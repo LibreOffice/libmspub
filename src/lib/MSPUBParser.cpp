@@ -492,13 +492,9 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
     {
       if (isText)
       {
-        //FIXME : Should we do something with this redundant height and width? Or at least assert that it is equal?
         m_collector->addTextShape(textId, seqNum, pageSeqNum);
       }
-      //else
-      //{
       m_collector->addShape(seqNum);
-      //}
     }
     m_collector->setShapePage(seqNum, pageSeqNum);
   }

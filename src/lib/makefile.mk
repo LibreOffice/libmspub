@@ -42,8 +42,7 @@ SLOFILES= \
     $(SLO)$/MSPUBStringVector.obj \
     $(SLO)$/MSPUBSVGGenerator.obj \
     $(SLO)$/PolygonUtils.obj \
-    $(SLO)$/ShapeGroup.obj \
-    $(SLO)$/ShapeGroupPainter.obj \
+    $(SLO)$/ShapeGroupElement.obj \
     $(SLO)$/VectorTransformation2D.obj \
     $(SLO)$/libmspub_utils.obj
 

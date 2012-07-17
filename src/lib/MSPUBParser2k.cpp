@@ -377,6 +377,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       m_imageDataChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       m_chunkChildIndicesById[parent].push_back(unsigned(m_contentChunks.size() - 1));
       break;
+    case 0x0004:
     case 0x0005:
     case 0x0006:
     case 0x0007:
@@ -496,10 +497,15 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   bool isImage = false;
   bool isRectangle = false;
   bool isGroup = false;
+  bool isLine = false;
   switch (typeMarker)
   {
   case 0x000F:
     isGroup = true;
+    break;
+  case 0x0004:
+    isLine = true;
+    m_collector->setShapeType(chunk.seqNum, LINE);
     break;
   case 0x0002:
     isImage = true;
@@ -543,6 +549,13 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   int xe = readS32(input);
   int ye = readS32(input);
   m_collector->setShapeCoordinatesInEmu(chunk.seqNum, xs, ys, xe, ye);
+  // shape transforms are NOT compounded with group transforms. They are equal to what they would be
+  // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
+  // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
+  if (isGroup && !isLine)
+  {
+    m_collector->setShapeRotation(chunk.seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
+  }
   if (isGroup)
   {
     bool retVal = true;
@@ -559,10 +572,6 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
     m_collector->endGroup();
     return retVal;
   }
-  // shape transforms are NOT compounded with group transforms. They are equal to what they would be
-  // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
-  // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
-  m_collector->setShapeRotation(chunk.seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
   if (isImage)
   {
     int i_dataIndex = -1;

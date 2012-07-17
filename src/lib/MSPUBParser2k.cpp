@@ -535,8 +535,9 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   default:
     break;
   }
-  input->seek(chunk.offset + 6, WPX_SEEK_SET);
   m_collector->addShape(chunk.seqNum);
+  input->seek(chunk.offset + 4, WPX_SEEK_SET);
+  unsigned short counterRotationInDegreeTenths = readU16(input);
   int xs = readS32(input);
   int ys = readS32(input);
   int xe = readS32(input);
@@ -558,6 +559,10 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
     m_collector->endGroup();
     return retVal;
   }
+  // shape transforms are NOT compounded with group transforms. They are equal to what they would be
+  // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
+  // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
+  m_collector->setShapeRotation(chunk.seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
   if (isImage)
   {
     int i_dataIndex = -1;

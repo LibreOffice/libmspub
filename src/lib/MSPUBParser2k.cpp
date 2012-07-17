@@ -498,6 +498,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   bool isRectangle = false;
   bool isGroup = false;
   bool isLine = false;
+  boost::optional<unsigned> flagsOffset;
   switch (typeMarker)
   {
   case 0x000F:
@@ -505,6 +506,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
     break;
   case 0x0004:
     isLine = true;
+    flagsOffset = 0x41;
     m_collector->setShapeType(chunk.seqNum, LINE);
     break;
   case 0x0002:
@@ -520,6 +522,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   {
     input->seek(chunk.offset + 0x31, WPX_SEEK_SET);
     ShapeType shapeType = getShapeType(readU8(input));
+    flagsOffset = 0x33;
     if (shapeType != UNKNOWN_SHAPE)
     {
       m_collector->setShapeType(chunk.seqNum, shapeType);
@@ -549,10 +552,20 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   int xe = readS32(input);
   int ye = readS32(input);
   m_collector->setShapeCoordinatesInEmu(chunk.seqNum, xs, ys, xe, ye);
+  if (flagsOffset.is_initialized())
+  {
+    input->seek(chunk.offset + flagsOffset.get(), WPX_SEEK_SET);
+    unsigned char flags = readU8(input);
+    bool flipV = flags & 0x1;
+    bool flipH = flags & (0x2 | 0x10); // FIXME: this is a guess
+    m_collector->setShapeFlip(chunk.seqNum, flipV, flipH);
+  }
   // shape transforms are NOT compounded with group transforms. They are equal to what they would be
   // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
   // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
-  if (isGroup && !isLine)
+  //
+  // Furthermore, line rotations are redundant and need to be treated as zero.
+  if (!isGroup && !isLine)
   {
     m_collector->setShapeRotation(chunk.seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
   }

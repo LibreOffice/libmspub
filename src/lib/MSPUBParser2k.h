@@ -29,6 +29,9 @@
 #ifndef __MSPUBPARSER2K_H__
 #define __MSPUBPARSER2K_H__
 
+#include <vector>
+#include <map>
+
 #include "MSPUBParser.h"
 #include "ShapeType.h"
 
@@ -40,6 +43,12 @@ class MSPUBParser2k : public MSPUBParser
   static ShapeType getShapeType(unsigned char shapeSpecifier);
   std::vector<unsigned> m_imageDataChunkIndices;
   std::vector<unsigned> m_quillColorEntries;
+  std::map<unsigned, std::vector<unsigned> > m_chunkChildIndicesById;
+
+  // helper functions
+  bool parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
+      boost::optional<unsigned> pageSeqNum = boost::optional<unsigned>(),
+      bool ignoreIfNotTopLevel = true);
 protected:
   virtual bool parseContents(WPXInputStream *input);
   virtual unsigned getColorIndexByQuillEntry(unsigned entry);

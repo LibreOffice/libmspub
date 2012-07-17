@@ -592,7 +592,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
     {
       if (m_contentChunks.at(m_imageDataChunkIndices[j]).parentSeqNum == chunk.seqNum)
       {
-        i_dataIndex = m_imageDataChunkIndices[j];
+        i_dataIndex = j;
         break;
       }
     }

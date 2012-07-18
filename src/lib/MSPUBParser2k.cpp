@@ -498,7 +498,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   bool isRectangle = false;
   bool isGroup = false;
   bool isLine = false;
-  boost::optional<unsigned> flagsOffset;
+  unsigned flagsOffset(0);
   switch (typeMarker)
   {
   case 0x000F:
@@ -552,9 +552,9 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   int xe = readS32(input);
   int ye = readS32(input);
   m_collector->setShapeCoordinatesInEmu(chunk.seqNum, xs, ys, xe, ye);
-  if (flagsOffset.is_initialized())
+  if (flagsOffset)
   {
-    input->seek(chunk.offset + flagsOffset.get(), WPX_SEEK_SET);
+    input->seek(chunk.offset + flagsOffset, WPX_SEEK_SET);
     unsigned char flags = readU8(input);
     bool flipV = flags & 0x1;
     bool flipH = flags & (0x2 | 0x10); // FIXME: this is a guess

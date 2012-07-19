@@ -273,7 +273,15 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   {
     graphicsPropsVector = info.m_fill->getProperties(&graphicsProps);
   }
-  bool hasStroke = !info.m_lines.empty();
+  bool hasStroke = false;
+  for (unsigned i = 0; i < info.m_lines.size(); ++i)
+  {
+    hasStroke = hasStroke || info.m_lines[i].m_lineExists;
+    if (hasStroke)
+    {
+      break;
+    }
+  }
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);

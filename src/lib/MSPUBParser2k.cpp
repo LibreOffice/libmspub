@@ -685,11 +685,12 @@ libmspub::PageType libmspub::MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
   {
   case 0x116:
   case 0x108:
-  case 0x109:
   case 0x10B:
   case 0x10D:
   case 0x119:
     return DUMMY_PAGE;
+  case 0x109:
+    return MASTER;
   default:
     return NORMAL;
   }

@@ -412,9 +412,14 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
 {
   MSPUB_DEBUG_MSG(("parsePageChunk: offset 0x%lx, end 0x%lx, seqnum 0x%x, parent 0x%x\n", input->tell(), chunk.end, chunk.seqNum, chunk.parentSeqNum));
   unsigned long length = readU32(input);
-  if (getPageTypeBySeqNum(chunk.seqNum) == NORMAL)
+  PageType type = getPageTypeBySeqNum(chunk.seqNum);
+  if (type == NORMAL || type == MASTER)
   {
     m_collector->addPage(chunk.seqNum);
+    if (type == MASTER)
+    {
+      m_collector->designateMasterPage(chunk.seqNum);
+    }
   }
   while (stillReading(input, chunk.offset + length))
   {

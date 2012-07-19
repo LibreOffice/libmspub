@@ -708,8 +708,9 @@ void libmspub::MSPUBCollector::assignShapesToPages()
   }
 }
 
-void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum, const PageInfo &pageInfo) const
+void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
 {
+  const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
   WPXPropertyList pageProps;
   if (m_widthSet)
   {
@@ -723,32 +724,53 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum, const PageInfo &pa
   if (!shapeGroupsOrdered.empty())
   {
     m_painter->startGraphics(pageProps);
-    const unsigned *ptr_fillSeqNum = getIfExists_const(m_bgShapeSeqNumsByPageSeqNum, pageSeqNum);
-    if (ptr_fillSeqNum)
+    bool hasMaster = m_masterPageSeqNum.is_initialized();
+    if (hasMaster)
     {
-      boost::shared_ptr<const Fill> ptr_fill;
-      const ShapeInfo *ptr_info = getIfExists_const(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
-      if (ptr_info)
-      {
-        ptr_fill = ptr_info->m_fill;
-      }
-      if (ptr_fill)
-      {
-        ShapeInfo bg;
-        bg.m_type = RECTANGLE;
-        Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
-        bg.m_coordinates = wholePage;
-        bg.m_pageSeqNum = pageSeqNum;
-        bg.m_fill = ptr_fill;
-        paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
-      }
+      writePageBackground(m_masterPageSeqNum.get());
     }
-    for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
+    writePageBackground(pageSeqNum);
+    if (hasMaster)
     {
-      ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
-      shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+      writePageShapes(m_masterPageSeqNum.get());
     }
+    writePageShapes(pageSeqNum);
     m_painter->endGraphics();
+  }
+}
+
+void libmspub::MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
+{
+  const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
+  const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
+  for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
+  {
+    ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
+    shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+  }
+}
+
+void libmspub::MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
+{
+  const unsigned *ptr_fillSeqNum = getIfExists_const(m_bgShapeSeqNumsByPageSeqNum, pageSeqNum);
+  if (ptr_fillSeqNum)
+  {
+    boost::shared_ptr<const Fill> ptr_fill;
+    const ShapeInfo *ptr_info = getIfExists_const(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
+    if (ptr_info)
+    {
+      ptr_fill = ptr_info->m_fill;
+    }
+    if (ptr_fill)
+    {
+      ShapeInfo bg;
+      bg.m_type = RECTANGLE;
+      Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
+      bg.m_coordinates = wholePage;
+      bg.m_pageSeqNum = pageSeqNum;
+      bg.m_fill = ptr_fill;
+      paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
+    }
   }
 }
 
@@ -756,10 +778,14 @@ bool libmspub::MSPUBCollector::go()
 {
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
+  unsigned masterSeqNum = m_masterPageSeqNum.get_value_or(0);
   for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
       i != m_pagesBySeqNum.end(); ++i)
   {
-    writePage(i->first, i->second);
+    if (i->first != masterSeqNum)
+    {
+      writePage(i->first);
+    }
   }
   return true;
 }
@@ -812,6 +838,11 @@ void libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum
 void libmspub::MSPUBCollector::addTextColor(ColorReference c)
 {
   m_textColors.push_back(c);
+}
+
+void libmspub::MSPUBCollector::designateMasterPage(unsigned seqNum)
+{
+  m_masterPageSeqNum = seqNum;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

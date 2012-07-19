@@ -89,6 +89,7 @@ public:
   void setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
   void setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
   void setShapeCoordinatesRotated90(unsigned seqNum);
+  void designateMasterPage(unsigned seqNum);
 
   void beginGroup();
   bool endGroup();
@@ -146,6 +147,7 @@ private:
   std::map<unsigned, ShapeInfo> m_shapeInfosBySeqNum;
   std::set<unsigned> m_shapesWithCoordinatesRotated90;
   mutable std::vector<bool> m_calculationValuesSeen;
+  boost::optional<unsigned> m_masterPageSeqNum;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   void setRectCoordProps(Coordinate, WPXPropertyList *) const;
@@ -153,7 +155,10 @@ private:
   void setupShapeStructures(ShapeGroupElement &elt);
   void addBlackToPaletteIfNecessary();
   void assignShapesToPages();
-  void writePage(unsigned pageSeqNum, const PageInfo &pageInfo) const;
+  void writePage(unsigned pageSeqNum) const;
+  void writePageShapes(unsigned pageSeqNum) const;
+  void writePageBackground(unsigned pageSeqNum) const;
+  
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 

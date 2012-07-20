@@ -107,7 +107,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_currentShapeGroup(NULL), m_topLevelShapes(),
   m_groupsBySeqNum(), m_shapeInfosBySeqNum(),
   m_shapesWithCoordinatesRotated90(),
-  m_calculationValuesSeen()
+  m_calculationValuesSeen(), m_masterPageSeqNum()
 {
 }
 

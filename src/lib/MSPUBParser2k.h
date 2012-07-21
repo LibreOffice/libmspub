@@ -58,7 +58,7 @@ protected:
   static PageType getPageTypeBySeqNum(unsigned seqNum);
 public:
   explicit MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector);
-  bool parse();
+  virtual bool parse();
   virtual ~MSPUBParser2k();
 };
 

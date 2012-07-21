@@ -29,6 +29,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ShapeGroupElement.cpp \
 	ColorReference.cpp \
 	VectorTransformation2D.cpp \
+	MSPUBParser97.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -53,7 +54,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ShapeGroupElement.h \
 	ShapeInfo.h \
 	Line.h \
-	Margins.h
+	Margins.h \
+	MSPUBParser97.h
 
 if OS_WIN32
 

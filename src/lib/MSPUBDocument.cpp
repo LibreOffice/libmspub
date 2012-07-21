@@ -35,6 +35,7 @@
 #include "MSPUBCollector.h"
 #include "MSPUBParser.h"
 #include "MSPUBParser2k.h"
+#include "MSPUBParser97.h"
 #include "libmspub_utils.h"
 
 namespace
@@ -115,14 +116,13 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
     if (version == MSPUB_UNKNOWN_VERSION)
       return false;
 
-    stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
-    if (!stream)
-      return false;
-    delete stream;
-
     if (version == MSPUB_2K2)
     {
       stream = input->getDocumentOLEStream("Escher/EscherStm");
+      if (!stream)
+        return false;
+      delete stream;
+      stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
       if (!stream)
         return false;
       delete stream;
@@ -153,8 +153,21 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
   switch (getVersion(input))
   {
   case MSPUB_2K:
+  {
     parser = new MSPUBParser2k(input, &collector);
+    WPXInputStream *stream = 0;
+    stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
+    if (!stream)
+    {
+      parser = new MSPUBParser97(input, &collector);
+    }
+    else
+    {
+      delete stream;
+      parser = new MSPUBParser2k(input, &collector);
+    }
     break;
+  }
   case MSPUB_2K2:
     parser = new MSPUBParser(input, &collector);
     break;

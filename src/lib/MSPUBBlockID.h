@@ -62,7 +62,9 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   PARAGRAPH_SPACE_AFTER  = 0x13,
   PARAGRAPH_FIRST_LINE_INDENT = 0xC,
   PARAGRAPH_LEFT_INDENT = 0xD,
-  PARAGRAPH_RIGHT_INDENT = 0xE
+  PARAGRAPH_RIGHT_INDENT = 0xE,
+  THIS_MASTER_NAME = 0xE,
+  APPLIED_MASTER_NAME = 0xD
 };
 } // namespace libmspub
 

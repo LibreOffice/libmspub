@@ -413,13 +413,9 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   MSPUB_DEBUG_MSG(("parsePageChunk: offset 0x%lx, end 0x%lx, seqnum 0x%x, parent 0x%x\n", input->tell(), chunk.end, chunk.seqNum, chunk.parentSeqNum));
   unsigned long length = readU32(input);
   PageType type = getPageTypeBySeqNum(chunk.seqNum);
-  if (type == NORMAL || type == MASTER)
+  if (type == NORMAL)
   {
     m_collector->addPage(chunk.seqNum);
-    if (type == MASTER)
-    {
-      m_collector->designateMasterPage(chunk.seqNum);
-    }
   }
   while (stillReading(input, chunk.offset + length))
   {
@@ -431,6 +427,20 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
     else if (info.id == PAGE_SHAPES)
     {
       parseShapes(input, info, chunk.seqNum);
+    }
+    else if (info.id == THIS_MASTER_NAME)
+    {
+      for (unsigned i = 0; i < info.stringData.size(); ++i)
+      {
+        if (info.stringData[i] != 0)
+        {
+          m_collector->designateMasterPage(chunk.seqNum);
+        }
+      }
+    }
+    else if (info.id == APPLIED_MASTER_NAME)
+    {
+      m_collector->setMasterPage(chunk.seqNum, info.data);
     }
     else
     {
@@ -1577,8 +1587,6 @@ libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
 {
   switch(seqNum)
   {
-  case 0x107:
-    return MASTER;
   case 0x10d:
   case 0x110:
   case 0x113:

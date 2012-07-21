@@ -106,8 +106,10 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_skipIfNotBgSeqNums(),
   m_currentShapeGroup(NULL), m_topLevelShapes(),
   m_groupsBySeqNum(), m_shapeInfosBySeqNum(),
+  m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
-  m_calculationValuesSeen(), m_masterPageSeqNum()
+  m_masterPagesByPageSeqNum(),
+  m_calculationValuesSeen()
 {
 }
 
@@ -708,6 +710,17 @@ void libmspub::MSPUBCollector::assignShapesToPages()
   }
 }
 
+boost::optional<unsigned> libmspub::MSPUBCollector::getMasterPageSeqNum(unsigned pageSeqNum) const
+{
+  boost::optional<unsigned> toReturn;
+  const unsigned *ptr_masterSeqNum = getIfExists_const(m_masterPagesByPageSeqNum, pageSeqNum);
+  if (ptr_masterSeqNum && m_masterPages.find(*ptr_masterSeqNum) != m_masterPages.end())
+  {
+    return *ptr_masterSeqNum;
+  }
+  return toReturn;
+}
+
 void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
 {
   const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
@@ -724,15 +737,16 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
   if (!shapeGroupsOrdered.empty())
   {
     m_painter->startGraphics(pageProps);
-    bool hasMaster = m_masterPageSeqNum.is_initialized();
+    boost::optional<unsigned> masterSeqNum = getMasterPageSeqNum(pageSeqNum);
+    bool hasMaster = masterSeqNum.is_initialized();
     if (hasMaster)
     {
-      writePageBackground(m_masterPageSeqNum.get());
+      writePageBackground(masterSeqNum.get());
     }
     writePageBackground(pageSeqNum);
     if (hasMaster)
     {
-      writePageShapes(m_masterPageSeqNum.get());
+      writePageShapes(masterSeqNum.get());
     }
     writePageShapes(pageSeqNum);
     m_painter->endGraphics();
@@ -774,15 +788,19 @@ void libmspub::MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
   }
 }
 
+bool libmspub::MSPUBCollector::pageIsMaster(unsigned pageSeqNum) const
+{
+  return m_masterPages.find(pageSeqNum) != m_masterPages.end();
+}
+
 bool libmspub::MSPUBCollector::go()
 {
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
-  unsigned masterSeqNum = m_masterPageSeqNum.get_value_or(0);
   for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
       i != m_pagesBySeqNum.end(); ++i)
   {
-    if (i->first != masterSeqNum)
+    if (!pageIsMaster(i->first))
     {
       writePage(i->first);
     }
@@ -842,7 +860,12 @@ void libmspub::MSPUBCollector::addTextColor(ColorReference c)
 
 void libmspub::MSPUBCollector::designateMasterPage(unsigned seqNum)
 {
-  m_masterPageSeqNum = seqNum;
+  m_masterPages.insert(seqNum);
+}
+
+void libmspub::MSPUBCollector::setMasterPage(unsigned seqNum, unsigned masterPageSeqNum)
+{
+  m_masterPagesByPageSeqNum[seqNum] = masterPageSeqNum;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

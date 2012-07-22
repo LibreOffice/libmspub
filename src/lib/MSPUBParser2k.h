@@ -67,6 +67,8 @@ protected:
   virtual bool parseDocument(WPXInputStream *input);
   virtual unsigned getColorIndexByQuillEntry(unsigned entry);
   virtual int translateCoordinateIfNecessary(int coordinate) const;
+  virtual unsigned getFirstLineOffset() const;
+  virtual unsigned getSecondLineOffset() const;
   static Color getColorBy2kIndex(unsigned char index);
   static Color getColorBy2kHex(unsigned hex);
   static unsigned translate2kColorReference(unsigned ref2k);

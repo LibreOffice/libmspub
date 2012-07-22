@@ -39,6 +39,8 @@ class MSPUBParser97 : public MSPUBParser2k
 
   bool parseDocument(WPXInputStream *input);
   int translateCoordinateIfNecessary(int coordinate) const;
+  unsigned getFirstLineOffset() const;
+  unsigned getSecondLineOffset() const;
 public:
   MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector);
   bool parse();

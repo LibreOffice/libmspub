@@ -678,17 +678,27 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
   }
 }
 
+unsigned libmspub::MSPUBParser2k::getFirstLineOffset() const
+{
+  return 0x2C;
+}
+
+unsigned libmspub::MSPUBParser2k::getSecondLineOffset() const
+{
+  return 0x35;
+}
+
 void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRectangle, unsigned offset,
     unsigned seqNum)
 {
-  input->seek(offset + 0x2C, WPX_SEEK_SET);
+  input->seek(offset + getFirstLineOffset(), WPX_SEEK_SET);
   unsigned short leftLineWidth = readU8(input);
   bool leftLineExists = leftLineWidth != 0;
   unsigned leftColorReference = readU32(input);
   unsigned translatedLeftColorReference = translate2kColorReference(leftColorReference);
   if (isRectangle)
   {
-    input->seek(4, WPX_SEEK_CUR);
+    input->seek(offset + getSecondLineOffset(), WPX_SEEK_SET);
     unsigned char topLineWidth = readU8(input);
     bool topLineExists = topLineWidth != 0;
     unsigned topColorReference = readU32(input);

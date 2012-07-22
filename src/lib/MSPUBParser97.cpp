@@ -79,4 +79,14 @@ int libmspub::MSPUBParser97::translateCoordinateIfNecessary(int coordinate) cons
   }
 }
 
+unsigned libmspub::MSPUBParser97::getFirstLineOffset() const
+{
+  return 0x22;
+}
+
+unsigned libmspub::MSPUBParser97::getSecondLineOffset() const
+{
+  return 0x2D;
+}
+
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

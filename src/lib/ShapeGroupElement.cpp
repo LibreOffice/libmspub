@@ -36,6 +36,14 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_sh
   }
 }
 
+libmspub::ShapeGroupElement::~ShapeGroupElement()
+{
+  for (unsigned i = 0; i < m_chidren.size(); ++i)
+  {
+    delete m_children[i];
+  }
+}
+
 libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
 {
   if (m_parent)

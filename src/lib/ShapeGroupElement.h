@@ -21,6 +21,7 @@ class ShapeGroupElement
 public:
   ShapeGroupElement(ShapeGroupElement *parent);
   ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum);
+  ~ShapeGroupElement();
   void setShapeInfo(const ShapeInfo &shapeInfo);
   void setup(boost::function<void(ShapeGroupElement &self)> visitor);
   void visit(boost::function<

@@ -35,6 +35,10 @@ namespace libmspub
 {
 class MSPUBParser97 : public MSPUBParser2k
 {
+  bool m_isBanner;
+
+  bool parseDocument(WPXInputStream *input);
+  int translateCoordinateIfNecessary(int coordinate) const;
 public:
   MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector);
   bool parse();

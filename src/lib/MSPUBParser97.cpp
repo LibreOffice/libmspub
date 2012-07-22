@@ -30,7 +30,7 @@
 #include "MSPUBCollector.h"
 
 libmspub::MSPUBParser97::MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector)
-  : MSPUBParser2k(input, collector)
+  : MSPUBParser2k(input, collector), m_isBanner(false)
 {
 }
 
@@ -49,6 +49,34 @@ bool libmspub::MSPUBParser97::parse()
     return false;
   }
   return m_collector->go();
+}
+
+bool libmspub::MSPUBParser97::parseDocument(WPXInputStream *input)
+{
+  if (m_documentChunkIndex.is_initialized())
+  {
+    input->seek(m_contentChunks[m_documentChunkIndex.get()].offset + 0x12, WPX_SEEK_SET);
+    unsigned short coordinateSystemMark = readU16(input);
+    m_isBanner = coordinateSystemMark == 0x0007;
+    unsigned width = readU32(input);
+    unsigned height = readU32(input);
+    m_collector->setWidthInEmu(width);
+    m_collector->setHeightInEmu(height);
+    return true;
+  }
+  return false;
+}
+
+int libmspub::MSPUBParser97::translateCoordinateIfNecessary(int coordinate) const
+{
+  if (m_isBanner)
+  {
+    return coordinate - 120 * EMUS_IN_INCH;
+  }
+  else
+  {
+    return coordinate - 25 * EMUS_IN_INCH;
+  }
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

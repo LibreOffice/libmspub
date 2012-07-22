@@ -45,6 +45,7 @@ class MSPUBParser2k : public MSPUBParser
   std::vector<unsigned> m_quillColorEntries;
   std::map<unsigned, std::vector<unsigned> > m_chunkChildIndicesById;
 
+protected:
   // helper functions
   bool parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
                          boost::optional<unsigned> pageSeqNum = boost::optional<unsigned>(),
@@ -62,9 +63,10 @@ class MSPUBParser2k : public MSPUBParser
   bool parseGroup(WPXInputStream *input, unsigned seqNum, unsigned page);
   void assignShapeImgIndex(unsigned seqNum);
   void parseShapeFill(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset);
-protected:
-  virtual bool parseContents(WPXInputStream *input);
+  bool parseContents(WPXInputStream *input);
+  virtual bool parseDocument(WPXInputStream *input);
   virtual unsigned getColorIndexByQuillEntry(unsigned entry);
+  virtual int translateCoordinateIfNecessary(int coordinate) const;
   static Color getColorBy2kIndex(unsigned char index);
   static Color getColorBy2kHex(unsigned hex);
   static unsigned translate2kColorReference(unsigned ref2k);

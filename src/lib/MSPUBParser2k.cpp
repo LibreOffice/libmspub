@@ -411,17 +411,13 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   {
     m_contentChunks.back().end = chunkOffset;
   }
-  if (!m_documentChunkIndex.is_initialized())
+
+  if (!parseDocument(input))
   {
     MSPUB_DEBUG_MSG(("No document chunk found.\n"));
     return false;
   }
-  input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, WPX_SEEK_SET);
-  input->seek(0x14, WPX_SEEK_CUR);
-  unsigned width = readU32(input);
-  unsigned height = readU32(input);
-  m_collector->setWidthInEmu(width);
-  m_collector->setHeightInEmu(height);
+
 
   for (unsigned i = 0; i < m_paletteChunkIndices.size(); ++i)
   {
@@ -458,6 +454,21 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   }
 
   return true;
+}
+
+bool libmspub::MSPUBParser2k::parseDocument(WPXInputStream *input)
+{
+  if (m_documentChunkIndex.is_initialized())
+  {
+    input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, WPX_SEEK_SET);
+    input->seek(0x14, WPX_SEEK_CUR);
+    unsigned width = readU32(input);
+    unsigned height = readU32(input);
+    m_collector->setWidthInEmu(width);
+    m_collector->setHeightInEmu(height);
+    return true;
+  }
+  return false;
 }
 
 void libmspub::MSPUBParser2k::parseShapeRotation(WPXInputStream *input, bool isGroup, bool isLine,
@@ -588,11 +599,16 @@ void libmspub::MSPUBParser2k::parseShapeCoordinates(WPXInputStream *input, unsig
     unsigned chunkOffset)
 {
   input->seek(chunkOffset + 6, WPX_SEEK_SET);
-  int xs = readS32(input);
-  int ys = readS32(input);
-  int xe = readS32(input);
-  int ye = readS32(input);
+  int xs = translateCoordinateIfNecessary(readS32(input));
+  int ys = translateCoordinateIfNecessary(readS32(input));
+  int xe = translateCoordinateIfNecessary(readS32(input));
+  int ye = translateCoordinateIfNecessary(readS32(input));
   m_collector->setShapeCoordinatesInEmu(seqNum, xs, ys, xe, ye);
+}
+
+int libmspub::MSPUBParser2k::translateCoordinateIfNecessary(int coordinate) const
+{
+  return coordinate;
 }
 
 void libmspub::MSPUBParser2k::parseShapeFlips(WPXInputStream *input, unsigned flagsOffset, unsigned seqNum,

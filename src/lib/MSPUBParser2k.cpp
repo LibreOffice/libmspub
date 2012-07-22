@@ -548,13 +548,23 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   return true;
 }
 
+unsigned libmspub::MSPUBParser2k::getShapeFillTypeOffset() const
+{
+  return 0x2A;
+}
+
+unsigned libmspub::MSPUBParser2k::getShapeFillColorOffset() const
+{
+  return 0x22;
+}
+
 void libmspub::MSPUBParser2k::parseShapeFill(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset)
 {
-  input->seek(chunkOffset + 0x2A, WPX_SEEK_SET);
+  input->seek(chunkOffset + getShapeFillTypeOffset(), WPX_SEEK_SET);
   unsigned char fillType = readU8(input);
   if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
   {
-    input->seek(chunkOffset + 0x22, WPX_SEEK_SET);
+    input->seek(chunkOffset + getShapeFillColorOffset(), WPX_SEEK_SET);
     unsigned fillColorReference = readU32(input);
     unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
     m_collector->setShapeFill(seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);

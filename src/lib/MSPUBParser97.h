@@ -41,6 +41,8 @@ class MSPUBParser97 : public MSPUBParser2k
   int translateCoordinateIfNecessary(int coordinate) const;
   unsigned getFirstLineOffset() const;
   unsigned getSecondLineOffset() const;
+  unsigned getShapeFillTypeOffset() const;
+  unsigned getShapeFillColorOffset() const;
 public:
   MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector);
   bool parse();

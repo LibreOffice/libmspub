@@ -89,4 +89,14 @@ unsigned libmspub::MSPUBParser97::getSecondLineOffset() const
   return 0x2D;
 }
 
+unsigned libmspub::MSPUBParser97::getShapeFillTypeOffset() const
+{
+  return 0x20;
+}
+
+unsigned libmspub::MSPUBParser97::getShapeFillColorOffset() const
+{
+  return 0x18;
+}
+
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

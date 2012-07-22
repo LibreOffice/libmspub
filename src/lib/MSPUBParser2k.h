@@ -69,6 +69,8 @@ protected:
   virtual int translateCoordinateIfNecessary(int coordinate) const;
   virtual unsigned getFirstLineOffset() const;
   virtual unsigned getSecondLineOffset() const;
+  virtual unsigned getShapeFillTypeOffset() const;
+  virtual unsigned getShapeFillColorOffset() const;
   static Color getColorBy2kIndex(unsigned char index);
   static Color getColorBy2kHex(unsigned hex);
   static unsigned translate2kColorReference(unsigned ref2k);

@@ -58,7 +58,7 @@ MSPUBVersion getVersion(WPXInputStream *input)
       return MSPUB_UNKNOWN_VERSION;
 
     boost::scoped_ptr<WPXInputStream> contentsStream(input->getDocumentOLEStream("Contents"));
-    if (!stream)
+    if (!contentsStream)
       return MSPUB_UNKNOWN_VERSION;
 
     if (0xe8 != libmspub::readU8(contentsStream.get()) || 0xac != libmspub::readU8(contentsStream.get()))
@@ -100,7 +100,6 @@ stream is a Microsoft Publisher Document that libmspub is able to parse
 */
 bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 {
-  WPXInputStream *stream = 0;
   try
   {
     MSPUBVersion version = getVersion(input);
@@ -109,21 +108,17 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 
     if (version == MSPUB_2K2)
     {
-      stream = input->getDocumentOLEStream("Escher/EscherStm");
-      if (!stream)
+      boost::scoped_ptr<WPXInputStream> escherStream(input->getDocumentOLEStream("Escher/EscherStm"));
+      if (!escherStream)
         return false;
-      delete stream;
-      stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
-      if (!stream)
+      boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
+      if (!quillStream)
         return false;
-      delete stream;
     }
     return true;
   }
   catch (...)
   {
-    if (stream)
-      delete stream;
     return false;
   }
 }
@@ -148,25 +143,30 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
     boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
     if (!quillStream)
     {
-      parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser97(input, &collector)));
+      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser97(input, &collector));
+      parser.swap(tmp);
     }
     else
     {
-      parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser2k(input, &collector)));
+      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser2k(input, &collector));
+      parser.swap(tmp);
     }
     break;
   }
   case MSPUB_2K2:
-    parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser(input, &collector)));
+  {
+    boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser(input, &collector));
+    parser.swap(tmp);
     break;
+  }
   default:
     return false;
   }
   if (parser)
   {
-    bool result = parser->parse();
+    return parser->parse();
   }
-  return result;
+  return false;
 }
 
 /**

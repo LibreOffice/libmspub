@@ -38,7 +38,7 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_sh
 
 libmspub::ShapeGroupElement::~ShapeGroupElement()
 {
-  for (unsigned i = 0; i < m_chidren.size(); ++i)
+  for (unsigned i = 0; i < m_children.size(); ++i)
   {
     delete m_children[i];
   }

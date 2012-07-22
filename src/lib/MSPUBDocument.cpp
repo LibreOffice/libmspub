@@ -30,6 +30,7 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <boost/scoped_ptr.hpp>
 #include "MSPUBDocument.h"
 #include "MSPUBSVGGenerator.h"
 #include "MSPUBCollector.h"
@@ -51,29 +52,22 @@ enum MSPUBVersion
 MSPUBVersion getVersion(WPXInputStream *input)
 {
   MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
-  WPXInputStream *stream = 0;
   try
   {
     if (!input->isOLEStream())
       return MSPUB_UNKNOWN_VERSION;
 
-    stream = input->getDocumentOLEStream("Contents");
+    boost::scoped_ptr<WPXInputStream> contentsStream(input->getDocumentOLEStream("Contents"));
     if (!stream)
       return MSPUB_UNKNOWN_VERSION;
 
-    if (0xe8 != libmspub::readU8(stream) || 0xac != libmspub::readU8(stream))
-    {
-      delete stream;
+    if (0xe8 != libmspub::readU8(contentsStream.get()) || 0xac != libmspub::readU8(contentsStream.get()))
       return MSPUB_UNKNOWN_VERSION;
-    }
 
-    unsigned char magicVersionByte = libmspub::readU8(stream);
+    unsigned char magicVersionByte = libmspub::readU8(contentsStream.get());
 
-    if (0x00 != libmspub::readU8(stream))
-    {
-      delete stream;
+    if (0x00 != libmspub::readU8(contentsStream.get()))
       return MSPUB_UNKNOWN_VERSION;
-    }
     switch(magicVersionByte)
     {
     case 0x2C:
@@ -85,13 +79,10 @@ MSPUBVersion getVersion(WPXInputStream *input)
     default:
       break;
     }
-    delete stream;
     return version;
   }
   catch (...)
   {
-    if (stream)
-      delete stream;
     return MSPUB_UNKNOWN_VERSION;
   }
 
@@ -149,33 +140,32 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
 {
   MSPUBCollector collector(painter);
   input->seek(0, WPX_SEEK_SET);
-  MSPUBParser *parser = 0;
+  boost::scoped_ptr<MSPUBParser> parser;
   switch (getVersion(input))
   {
   case MSPUB_2K:
   {
-    parser = new MSPUBParser2k(input, &collector);
-    WPXInputStream *stream = 0;
-    stream = input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
-    if (!stream)
+    boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
+    if (!quillStream)
     {
-      parser = new MSPUBParser97(input, &collector);
+      parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser97(input, &collector)));
     }
     else
     {
-      delete stream;
-      parser = new MSPUBParser2k(input, &collector);
+      parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser2k(input, &collector)));
     }
     break;
   }
   case MSPUB_2K2:
-    parser = new MSPUBParser(input, &collector);
+    parser.swap(boost::scoped_ptr<MSPUBParser>(new MSPUBParser(input, &collector)));
     break;
   default:
     return false;
   }
-  bool result = parser->parse();
-  delete parser;
+  if (parser)
+  {
+    bool result = parser->parse();
+  }
   return result;
 }
 

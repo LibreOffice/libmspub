@@ -798,7 +798,7 @@ bool libmspub::MSPUBCollector::go()
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
   for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
-      i != m_pagesBySeqNum.end(); ++i)
+       i != m_pagesBySeqNum.end(); ++i)
   {
     if (!pageIsMaster(i->first))
     {

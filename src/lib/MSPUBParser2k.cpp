@@ -456,17 +456,34 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   {
     parse2kShapeChunk(m_contentChunks.at(m_shapeChunkIndices[i]), input);
   }
-  
+
   return true;
 }
 
-bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
-    boost::optional<unsigned> pageSeqNum, bool ignoreIfNotTopLevel)
+void libmspub::MSPUBParser2k::parseShapeRotation(WPXInputStream *input, bool isGroup, bool isLine,
+    unsigned seqNum, unsigned chunkOffset)
 {
-  unsigned page = pageSeqNum.is_initialized() ? pageSeqNum.get() : chunk.parentSeqNum;
-  input->seek(chunk.offset, WPX_SEEK_SET);
-  if (ignoreIfNotTopLevel)
+  input->seek(chunkOffset + 4, WPX_SEEK_SET);
+  // shape transforms are NOT compounded with group transforms. They are equal to what they would be
+  // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
+  // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
+  //
+  // Furthermore, line rotations are redundant and need to be treated as zero.
+  unsigned short counterRotationInDegreeTenths = readU16(input);
+  if (!isGroup && !isLine)
   {
+    m_collector->setShapeRotation(seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
+  }
+}
+
+bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
+    boost::optional<unsigned> pageSeqNum, bool topLevelCall)
+{
+  unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);
+  input->seek(chunk.offset, WPX_SEEK_SET);
+  if (topLevelCall)
+  {
+    // ignore non top level shapes
     int i_page = -1;
     for (unsigned j = 0; j < m_pageChunkIndices.size(); ++j)
     {
@@ -493,12 +510,111 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   }
   m_collector->setShapePage(chunk.seqNum, page);
   m_collector->setShapeBorderPosition(chunk.seqNum, INSIDE_SHAPE); // This appears to be the only possibility for MSPUB2k
-  unsigned short typeMarker = readU16(input);
   bool isImage = false;
   bool isRectangle = false;
   bool isGroup = false;
   bool isLine = false;
-  unsigned flagsOffset(0);
+  unsigned flagsOffset(0); // ? why was this changed from boost::optional ?
+  parseShapeType(input, chunk.seqNum, chunk.offset, page, isGroup, isLine, isImage, isRectangle, flagsOffset);
+  m_collector->addShape(chunk.seqNum);
+  parseShapeRotation(input, isGroup, isLine, chunk.seqNum, chunk.offset);
+  parseShapeCoordinates(input, chunk.seqNum, chunk.offset);
+  parseShapeFlips(input, flagsOffset, chunk.seqNum, chunk.offset);
+  if (isGroup)
+  {
+    return parseGroup(input, chunk.seqNum, page);
+  }
+  if (isImage)
+  {
+    assignShapeImgIndex(chunk.seqNum);
+  }
+  else
+  {
+    parseShapeFill(input, chunk.seqNum, chunk.offset);
+  }
+  parseShapeLine(input, isRectangle, chunk.offset, chunk.seqNum);
+  m_collector->setShapeOrder(chunk.seqNum);
+  return true;
+}
+
+void libmspub::MSPUBParser2k::parseShapeFill(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset)
+{
+  input->seek(chunkOffset + 0x2A, WPX_SEEK_SET);
+  unsigned char fillType = readU8(input);
+  if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
+  {
+    input->seek(chunkOffset + 0x22, WPX_SEEK_SET);
+    unsigned fillColorReference = readU32(input);
+    unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
+    m_collector->setShapeFill(seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
+  }
+}
+
+bool libmspub::MSPUBParser2k::parseGroup(WPXInputStream *input, unsigned seqNum, unsigned page)
+{
+  bool retVal = true;
+  m_collector->beginGroup();
+  m_collector->setCurrentGroupSeqNum(seqNum);
+  for (unsigned i = 0; i < m_chunkChildIndicesById[seqNum].size(); ++i)
+  {
+    const ContentChunkReference &childChunk = m_contentChunks.at(m_chunkChildIndicesById[seqNum][i]);
+    if (childChunk.type == SHAPE || childChunk.type == GROUP)
+    {
+      retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);
+    }
+  }
+  m_collector->endGroup();
+  return retVal;
+}
+
+void libmspub::MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
+{
+  int i_dataIndex = -1;
+  for (unsigned j = 0; j < m_imageDataChunkIndices.size(); ++j)
+  {
+    if (m_contentChunks.at(m_imageDataChunkIndices[j]).parentSeqNum == seqNum)
+    {
+      i_dataIndex = j;
+      break;
+    }
+  }
+  if (i_dataIndex >= 0)
+  {
+    m_collector->setShapeImgIndex(seqNum, i_dataIndex + 1);
+  }
+}
+
+void libmspub::MSPUBParser2k::parseShapeCoordinates(WPXInputStream *input, unsigned seqNum,
+    unsigned chunkOffset)
+{
+  input->seek(chunkOffset + 6, WPX_SEEK_SET);
+  int xs = readS32(input);
+  int ys = readS32(input);
+  int xe = readS32(input);
+  int ye = readS32(input);
+  m_collector->setShapeCoordinatesInEmu(seqNum, xs, ys, xe, ye);
+}
+
+void libmspub::MSPUBParser2k::parseShapeFlips(WPXInputStream *input, unsigned flagsOffset, unsigned seqNum,
+    unsigned chunkOffset)
+{
+  if (flagsOffset)
+  {
+    input->seek(chunkOffset + flagsOffset, WPX_SEEK_SET);
+    unsigned char flags = readU8(input);
+    bool flipV = flags & 0x1;
+    bool flipH = flags & (0x2 | 0x10); // FIXME: this is a guess
+    m_collector->setShapeFlip(seqNum, flipV, flipH);
+  }
+}
+
+void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
+    unsigned seqNum, unsigned chunkOffset, unsigned page,
+    bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
+    unsigned &flagsOffset)
+{
+  input->seek(chunkOffset, WPX_SEEK_SET);
+  unsigned short typeMarker = readU16(input);
   switch (typeMarker)
   {
   case 0x000F:
@@ -507,113 +623,49 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   case 0x0004:
     isLine = true;
     flagsOffset = 0x41;
-    m_collector->setShapeType(chunk.seqNum, LINE);
+    m_collector->setShapeType(seqNum, LINE);
     break;
   case 0x0002:
     isImage = true;
-    m_collector->setShapeType(chunk.seqNum, RECTANGLE);
+    m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
     break;
   case 0x0005:
-    m_collector->setShapeType(chunk.seqNum, RECTANGLE);
+    m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
     break;
   case 0x0006:
   {
-    input->seek(chunk.offset + 0x31, WPX_SEEK_SET);
+    input->seek(chunkOffset + 0x31, WPX_SEEK_SET);
     ShapeType shapeType = getShapeType(readU8(input));
     flagsOffset = 0x33;
     if (shapeType != UNKNOWN_SHAPE)
     {
-      m_collector->setShapeType(chunk.seqNum, shapeType);
+      m_collector->setShapeType(seqNum, shapeType);
     }
   }
   break;
   case 0x0007:
-    m_collector->setShapeType(chunk.seqNum, ELLIPSE);
+    m_collector->setShapeType(seqNum, ELLIPSE);
     break;
   case 0x0008:
   {
-    m_collector->setShapeType(chunk.seqNum, RECTANGLE);
+    m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
-    input->seek(chunk.offset + 0x58, WPX_SEEK_SET);
+    input->seek(chunkOffset + 0x58, WPX_SEEK_SET);
     unsigned txtId = readU32(input);
-    m_collector->addTextShape(txtId, chunk.seqNum, page);
+    m_collector->addTextShape(txtId, seqNum, page);
   }
   break;
   default:
     break;
   }
-  m_collector->addShape(chunk.seqNum);
-  input->seek(chunk.offset + 4, WPX_SEEK_SET);
-  unsigned short counterRotationInDegreeTenths = readU16(input);
-  int xs = readS32(input);
-  int ys = readS32(input);
-  int xe = readS32(input);
-  int ye = readS32(input);
-  m_collector->setShapeCoordinatesInEmu(chunk.seqNum, xs, ys, xe, ye);
-  if (flagsOffset)
-  {
-    input->seek(chunk.offset + flagsOffset, WPX_SEEK_SET);
-    unsigned char flags = readU8(input);
-    bool flipV = flags & 0x1;
-    bool flipH = flags & (0x2 | 0x10); // FIXME: this is a guess
-    m_collector->setShapeFlip(chunk.seqNum, flipV, flipH);
-  }
-  // shape transforms are NOT compounded with group transforms. They are equal to what they would be
-  // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
-  // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
-  //
-  // Furthermore, line rotations are redundant and need to be treated as zero.
-  if (!isGroup && !isLine)
-  {
-    m_collector->setShapeRotation(chunk.seqNum, 360. - double(counterRotationInDegreeTenths) / 10);
-  }
-  if (isGroup)
-  {
-    bool retVal = true;
-    m_collector->beginGroup();
-    m_collector->setCurrentGroupSeqNum(chunk.seqNum);
-    for (unsigned i = 0; i < m_chunkChildIndicesById[chunk.seqNum].size(); ++i)
-    {
-      const ContentChunkReference &childChunk = m_contentChunks.at(m_chunkChildIndicesById[chunk.seqNum][i]);
-      if (childChunk.type == SHAPE || childChunk.type == GROUP)
-      {
-        retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);
-      }
-    }
-    m_collector->endGroup();
-    return retVal;
-  }
-  if (isImage)
-  {
-    int i_dataIndex = -1;
-    for (unsigned j = 0; j < m_imageDataChunkIndices.size(); ++j)
-    {
-      if (m_contentChunks.at(m_imageDataChunkIndices[j]).parentSeqNum == chunk.seqNum)
-      {
-        i_dataIndex = j;
-        break;
-      }
-    }
-    if (i_dataIndex >= 0)
-    {
-      m_collector->setShapeImgIndex(chunk.seqNum, i_dataIndex + 1);
-    }
-  }
-  else
-  {
-    input->seek(chunk.offset + 0x2A, WPX_SEEK_SET);
-    unsigned char fillType = readU8(input);
-    if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
-    {
-      input->seek(chunk.offset + 0x22, WPX_SEEK_SET);
-      unsigned fillColorReference = readU32(input);
-      unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
-      m_collector->setShapeFill(chunk.seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
-    }
-  }
-  input->seek(chunk.offset + 0x2C, WPX_SEEK_SET);
+}
+
+void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRectangle, unsigned offset,
+    unsigned seqNum)
+{
+  input->seek(offset + 0x2C, WPX_SEEK_SET);
   unsigned short leftLineWidth = readU8(input);
   bool leftLineExists = leftLineWidth != 0;
   unsigned leftColorReference = readU32(input);
@@ -625,29 +677,27 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
     bool topLineExists = topLineWidth != 0;
     unsigned topColorReference = readU32(input);
     unsigned translatedTopColorReference = translate2kColorReference(topColorReference);
-    m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedTopColorReference),
-                              translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
+    m_collector->addShapeLine(seqNum, Line(ColorReference(translatedTopColorReference),
+                                           translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
     input->seek(1, WPX_SEEK_CUR);
     unsigned char rightLineWidth = readU8(input);
     bool rightLineExists = rightLineWidth != 0;
     unsigned rightColorReference = readU32(input);
     unsigned translatedRightColorReference = translate2kColorReference(rightColorReference);
-    m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedRightColorReference),
-                              translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
+    m_collector->addShapeLine(seqNum, Line(ColorReference(translatedRightColorReference),
+                                           translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
     input->seek(1, WPX_SEEK_CUR);
     unsigned char bottomLineWidth = readU8(input);
     bool bottomLineExists = bottomLineWidth != 0;
     unsigned bottomColorReference = readU32(input);
     unsigned translatedBottomColorReference = translate2kColorReference(bottomColorReference);
-    m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedBottomColorReference),
-                              translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
+    m_collector->addShapeLine(seqNum, Line(ColorReference(translatedBottomColorReference),
+                                           translateLineWidth(bottomLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), bottomLineExists));
   }
-  m_collector->addShapeLine(chunk.seqNum, Line(ColorReference(translatedLeftColorReference),
-                            translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
-  m_collector->setShapeOrder(chunk.seqNum);
-  return true;
+  m_collector->addShapeLine(seqNum, Line(ColorReference(translatedLeftColorReference),
+                                         translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
 }
 
 bool libmspub::MSPUBParser2k::parse()

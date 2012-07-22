@@ -47,8 +47,21 @@ class MSPUBParser2k : public MSPUBParser
 
   // helper functions
   bool parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
-      boost::optional<unsigned> pageSeqNum = boost::optional<unsigned>(),
-      bool ignoreIfNotTopLevel = true);
+                         boost::optional<unsigned> pageSeqNum = boost::optional<unsigned>(),
+                         bool topLevelCall = true);
+  void parseShapeLine(WPXInputStream *input, bool isRectangle, unsigned offset, unsigned seqNum);
+  void parseShapeType(WPXInputStream *input,
+                      unsigned seqNum, unsigned chunkOffset, unsigned page,
+                      bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
+                      unsigned &flagsOffset);
+  void parseShapeRotation(WPXInputStream *input, bool isGroup, bool isLine, unsigned seqNum,
+                          unsigned chunkOffset);
+  void parseShapeFlips(WPXInputStream *input, unsigned flagsOffset, unsigned seqNum,
+                       unsigned chunkOffset);
+  void parseShapeCoordinates(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset);
+  bool parseGroup(WPXInputStream *input, unsigned seqNum, unsigned page);
+  void assignShapeImgIndex(unsigned seqNum);
+  void parseShapeFill(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset);
 protected:
   virtual bool parseContents(WPXInputStream *input);
   virtual unsigned getColorIndexByQuillEntry(unsigned entry);

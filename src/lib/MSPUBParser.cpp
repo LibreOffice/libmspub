@@ -1169,7 +1169,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                     (*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN) &&
                     (!(*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN_OK) || (*ptr_leftFlags & FLAG_LEFT_INSET_PEN_OK)) &&
                     (*ptr_leftFlags & FLAG_LEFT_INSET_PEN))
-                {
+              {
                   m_collector->setShapeBorderPosition(*shapeSeqNum, INSIDE_SHAPE);
                 }
                 else

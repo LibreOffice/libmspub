@@ -162,7 +162,7 @@ private:
   void writePageShapes(unsigned pageSeqNum) const;
   void writePageBackground(unsigned pageSeqNum) const;
   bool pageIsMaster(unsigned pageSeqNum) const;
-  
+
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 

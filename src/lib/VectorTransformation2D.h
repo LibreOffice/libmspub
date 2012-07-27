@@ -52,6 +52,7 @@ public:
   double getRotation() const;
   double getHorizontalScaling() const;
   double getVerticalScaling() const;
+  bool orientationReversing() const;
   friend VectorTransformation2D operator*(const VectorTransformation2D &l, const VectorTransformation2D &r);
   static VectorTransformation2D fromFlips(bool flipH, bool flipV);
   static VectorTransformation2D fromTranslate(double x, double y);

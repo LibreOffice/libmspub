@@ -667,7 +667,7 @@ const TextRectangle CIRCULAR_ARROW_TRS[] =
 
 const int CIRCULAR_ARROW_DEFAULT_ADJUST[] =
 {
-  180, 0, 5550
+  180 << 16, 0, 5550
 };
 
 const CustomShape CS_CIRCULAR_ARROW(
@@ -677,7 +677,7 @@ const CustomShape CS_CIRCULAR_ARROW(
   CIRCULAR_ARROW_DEFAULT_ADJUST, sizeof(CIRCULAR_ARROW_DEFAULT_ADJUST) / sizeof(int),
   CIRCULAR_ARROW_TRS, sizeof(CIRCULAR_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  NULL, 0, 1 | 2);
 
 const Vertex U_TURN_ARROW_VERTICES[] =
 {
@@ -2155,7 +2155,7 @@ const CustomShape CS_ARC(
   ARC_DEFAULT_ADJUST, sizeof(ARC_DEFAULT_ADJUST) / sizeof(int),
   NULL, 0,
   21600, 21600,
-  ARC_GLUE_POINTS, sizeof(ARC_GLUE_POINTS) / sizeof(Vertex), 0x3);
+  ARC_GLUE_POINTS, sizeof(ARC_GLUE_POINTS) / sizeof(Vertex), 2 | 1);
 
 const CustomShape CS_BALLOON(
   BALLOON_VERTICES, sizeof(BALLOON_VERTICES) / sizeof(Vertex),
@@ -5841,6 +5841,51 @@ void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::
   }
 }
 
+void getRayEllipseIntersection(double initX, double initY, double rx, double ry, double cx, double cy, double &xOut, double &yOut)
+{
+  double x = initX - cx;
+  double y = initY - cy;
+  if (x != 0 && y != 0)
+  {
+    xOut = rx * ry / sqrt(ry * ry + rx * rx * (y / x) * (y / x));
+    if (x < 0)
+    {
+      xOut *= -1;
+    }
+    yOut = xOut * y / x;
+  }
+  else if (y != 0)
+  {
+    xOut = 0;
+    if (y > 0)
+    {
+      yOut = ry;
+    }
+    else
+    {
+      yOut = -ry;
+    }
+  }
+  else if (x != 0)
+  {
+    yOut = 0;
+    if (x > 0)
+    {
+      xOut = rx;
+    }
+    else
+    {
+      xOut = -rx;
+    }
+  }
+  else
+  {
+    xOut = yOut = 0;
+  }
+  xOut += cx;
+  yOut += cy;
+}
+
 void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette)
 {
   const CustomShape *shape = getCustomShape(shapeType);
@@ -6017,7 +6062,73 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       case CLOCKWISEARC:
       case ARCTO:
       case ARC:
-        // FIXME : Implement arc command.
+        for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
+        {
+          MSPUB_DEBUG_MSG(("Starting arc command.\n"));
+          for (unsigned k = 0; k < 4; ++k)
+          {
+            MSPUB_DEBUG_MSG(("Calculated vertex x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + k].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + k].m_y)));
+          }
+          bool to = cmd.m_command == CLOCKWISEARCTO || cmd.m_command == ARCTO;
+          bool clockwise = cmd.m_command == CLOCKWISEARCTO || cmd.m_command == CLOCKWISEARC;
+          const Vertex &bound1 = shape->mp_vertices[vertexIndex];
+          const Vertex &bound2 = shape->mp_vertices[vertexIndex + 1];
+          const Vertex &start  = shape->mp_vertices[vertexIndex + 2];
+          const Vertex &end    = shape->mp_vertices[vertexIndex + 3];
+
+          double bound1X = x + scaleX * getSpecialIfNecessary(calculator, bound1.m_x);
+          double bound1Y = y + scaleY * getSpecialIfNecessary(calculator, bound1.m_y);
+          double bound2X = x + scaleX * getSpecialIfNecessary(calculator, bound2.m_x);
+          double bound2Y = y + scaleY * getSpecialIfNecessary(calculator, bound2.m_y);
+          double rx = fabs(bound1X - bound2X) / 2;
+          double ry = fabs(bound1Y - bound2Y) / 2;
+          double cx = (bound1X + bound2X) / 2;
+          double cy = (bound1Y + bound2Y) / 2;
+          double startX = x + scaleX * getSpecialIfNecessary(calculator, start.m_x);
+          double startY = y + scaleY * getSpecialIfNecessary(calculator, start.m_y);
+          double endX = x + scaleX * getSpecialIfNecessary(calculator, end.m_x);
+          double endY = y + scaleY * getSpecialIfNecessary(calculator, end.m_y);
+          MSPUB_DEBUG_MSG(("start before finding intersection, x: %f, y: %f\n", startX, startY));
+          MSPUB_DEBUG_MSG(("end before finding intersection, x: %f, y: %f\n", endX, endY));
+          getRayEllipseIntersection(startX, startY, rx, ry, cx, cy, startX, startY);
+          getRayEllipseIntersection(endX, endY, rx, ry, cx, cy, endX, endY);
+          MSPUB_DEBUG_MSG(("start after finding intersection, x: %f, y: %f\n", startX, startY));
+          MSPUB_DEBUG_MSG(("end after finding intersection, x: %f, y: %f\n", endX, endY));
+          Vector2D start2D(startX, startY);
+          start2D = transform.transformWithOrigin(start2D, center);
+          Vector2D end2D(endX, endY);
+          end2D = transform.transformWithOrigin(end2D, center);
+          bool clockwiseAfterTransform = clockwise ^ transform.orientationReversing();
+          MSPUB_DEBUG_MSG((clockwiseAfterTransform ? "Clockwise\n" : "Counter-clockwise\n"));
+          WPXPropertyList startVertex;
+          startVertex.insert("svg:x", start2D.m_x);
+          startVertex.insert("svg:y", start2D.m_y);
+          startVertex.insert("libwpg:path-action", (to && hasUnclosedElements) ? "L" : "M");
+          vertices.append(startVertex);
+          double startAngle = atan2(cy - startY, startX - cx);
+          double endAngle = atan2(cy -endY, endX - cx);
+          double angleDifference = clockwise ? doubleModulo(startAngle - endAngle, 2 * M_PI)
+                                   : doubleModulo(endAngle - startAngle, 2 * M_PI);
+          // don't worry about corner cases; the closer an arc gets to pi radians, the
+          // less difference there is between the large and small arcs, down to no difference at all
+          // for an exact 180-degree arc.
+          bool largeArc = angleDifference >= M_PI;
+          WPXPropertyList ellipseVertex;
+          ellipseVertex.insert("svg:x", end2D.m_x);
+          ellipseVertex.insert("svg:y", end2D.m_y);
+          // The next two lines won't work if "transform" stretches the shape.
+          // Since currently the only transforms are flips and rotations, this isn't a problem now,
+          // but keep it in mind if we ever change how this code works, since it breaks abstraction.
+          ellipseVertex.insert("svg:rx", rx);
+          ellipseVertex.insert("svg:ry", ry);
+          ellipseVertex.insert("libwpg:large-arc", largeArc ? 1 : 0);
+          ellipseVertex.insert("libwpg:sweep", clockwiseAfterTransform ? 1 : 0);
+          ellipseVertex.insert("libwpg:rotate", -transform.getRotation());
+          ellipseVertex.insert("libwpg:path-action", "A");
+          vertices.append(ellipseVertex);
+          hasUnclosedElements = true;
+        }
+
         // (Check git c52782d680819676ad34ca8404e616a0d7cdf412 for partially working code.)
         break;
 

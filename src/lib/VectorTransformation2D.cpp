@@ -26,6 +26,9 @@
  * instead of those above.
  */
 
+
+//TODO : Adjust handles, glue points
+
 #include "VectorTransformation2D.h"
 #include <math.h>
 
@@ -122,5 +125,11 @@ double libmspub::VectorTransformation2D::getHorizontalScaling() const
 double libmspub::VectorTransformation2D::getVerticalScaling() const
 {
   return m_m12 * m_m12 + m_m22 * m_m22;
+}
+
+bool libmspub::VectorTransformation2D::orientationReversing() const
+{
+  // Is the determinant negative?
+  return m_m11 * m_m22 < m_m12 * m_m21;
 }
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

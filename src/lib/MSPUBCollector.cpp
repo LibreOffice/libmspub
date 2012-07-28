@@ -113,9 +113,19 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
 {
 }
 
+void libmspub::noop(const CustomShape *)
+{
+}
+
 void libmspub::MSPUBCollector::setShapeCoordinatesRotated90(unsigned seqNum)
 {
   m_shapesWithCoordinatesRotated90.insert(seqNum);
+}
+
+void libmspub::MSPUBCollector::setShapeCustomPath(unsigned seqNum,
+    const DynamicCustomShape &shape)
+{
+  m_shapeInfosBySeqNum[seqNum].m_customShape = shape;
 }
 
 void libmspub::MSPUBCollector::beginGroup()
@@ -200,7 +210,7 @@ void endShapeGroup(libwpg::WPGPaintInterface *painter)
 std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) const
 {
   std::vector<int> ret;
-  const CustomShape *ptr_shape = getCustomShape(info.m_type.get_value_or(RECTANGLE));
+  boost::shared_ptr<const CustomShape> ptr_shape = info.getCustomShape();
   if (ptr_shape)
   {
     for (unsigned i = 0; i < ptr_shape->m_numDefaultAdjustValues; ++i)
@@ -308,7 +318,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
-                     std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors);
+                     std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
   }
   const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)
@@ -328,7 +338,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                      boost::bind(
                        &libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
                      ),
-                     m_paletteColors);
+                     m_paletteColors, info.getCustomShape());
   }
   if (hasText)
   {
@@ -416,7 +426,7 @@ double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const Cu
 
 double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const
 {
-  const CustomShape *p_shape = getCustomShape(info.m_type.get_value_or(RECTANGLE));
+  boost::shared_ptr<const CustomShape> p_shape = info.getCustomShape();
   if (! p_shape)
   {
     return 0;
@@ -493,18 +503,6 @@ double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsi
     return 0;
   }
 }
-/*
-void libmspub::GeometricShape::write(libwpg::WPGPaintInterface *painter)
-{
-  // If a shape includes text, and if the font from the PUB file
-  // is not available in LibreOffice (unfortunately we haven't gotten embedded fonts working yet...)
-  // then the bounding box of the text might be different from the size of the shape.
-  // So which size should be used? We should compromise by using the size of the text for rectangular shapes,
-  // and the size of the shape for other shapes. However currently the size of the shape is used in all cases,
-  // causing ugliness in some documents.
-  writeCustomShape(m_type, graphicsProps, painter, x, y, height, width, this, m_closeEverything, m_foldedTransform, m_drawStroke ? m_lines : std::vector<Line>());
-}
-*/
 
 libmspub::MSPUBCollector::~MSPUBCollector()
 {

@@ -34,6 +34,7 @@ namespace libmspub
 enum ShapeType
 {
   UNKNOWN_SHAPE        = -1,
+  NOT_PRIMITIVE        = 0,
   RECTANGLE            = 1,
   ROUND_RECTANGLE      = 2,
   ELLIPSE              = 3,
@@ -105,6 +106,7 @@ enum ShapeType
   VERTICAL_SCROLL      = 97,
   HORIZONTAL_SCROLL    = 98,
   CIRCULAR_ARROW       = 99,
+  CUSTOM              = 100,
   U_TURN_ARROW         = 101,
   CURVED_RIGHT_ARROW   = 102,
   CURVED_LEFT_ARROW    = 103,

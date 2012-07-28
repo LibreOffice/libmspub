@@ -67,6 +67,14 @@
 #define FIELDID_LINE_LEFT_COLOR        0x0540
 #define FIELDID_LINE_LEFT_WIDTH        0x054B
 #define FIELDID_LINE_LEFT_BOOL_PROPS   0x057F
+#define FIELDID_GEO_RIGHT              0x0142
+#define FIELDID_GEO_BOTTOM             0x0143
+#define FIELDID_P_VERTICES             0xC145
+#define FIELDID_P_SEGMENTS             0xC146
+#define FIELDID_P_CONNECTION_SITES     0xC151
+#define FIELDID_P_ADJUST_HANDLES       0xC155
+#define FIELDID_P_GUIDES               0xC156
+#define FIELDID_P_INSCRIBE             0xC157
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

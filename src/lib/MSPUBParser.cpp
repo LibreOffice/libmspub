@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <string.h>
 #include <libwpd-stream/libwpd-stream.h>
+#include <boost/cstdint.hpp>
 #include <zlib.h>
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
@@ -46,6 +47,8 @@
 #include "ShapeFlags.h"
 #include "Fill.h"
 #include "FillType.h"
+
+using boost::int32_t;
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
@@ -477,8 +480,8 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x found\n", subInfo.data));
         unsigned long pos = input->tell();
         input->seek(ref.offset, WPX_SEEK_SET);
-        bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
-        parseShape(input, subInfo.data, pageSeqNum, parseWithoutDimensions, ref.type == GROUP);
+        // bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
+        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -1097,8 +1100,8 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
         input->seek(sp.contentsOffset, WPX_SEEK_SET);
         if (findEscherContainer(input, sp, cFopt, OFFICE_ART_FOPT))
         {
-          std::map<unsigned short, unsigned> foptValues = extractEscherValues(input, cFopt);
-          unsigned *pxId = getIfExists(foptValues, FIELDID_PXID);
+          FOPTValues foptValues = extractFOPTValues(input, cFopt);
+          unsigned *pxId = getIfExists(foptValues.m_scalarValues, FIELDID_PXID);
           if (pxId)
           {
             MSPUB_DEBUG_MSG(("Current Escher shape has pxId %d\n", *pxId));
@@ -1111,14 +1114,14 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
               MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
             }
           }
-          unsigned *ptr_lineColor = getIfExists(foptValues, FIELDID_LINE_COLOR);
-          unsigned *ptr_lineFlags = getIfExists(foptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
+          unsigned *ptr_lineColor = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_COLOR);
+          unsigned *ptr_lineFlags = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_STYLE_BOOL_PROPS);
           bool useLine = lineExistsByFlagPointer(ptr_lineFlags);
           bool skipIfNotBg = false;
-          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues, skipIfNotBg);
+          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg);
           if (ptr_lineColor && useLine)
           {
-            unsigned *ptr_lineWidth = getIfExists(foptValues, FIELDID_LINE_WIDTH);
+            unsigned *ptr_lineWidth = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_WIDTH);
             unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
             m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
           }
@@ -1183,9 +1186,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           {
             m_collector->setShapeFill(*shapeSeqNum, ptr_fill, skipIfNotBg);
           }
-          int *ptr_adjust1 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_1);
-          int *ptr_adjust2 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_2);
-          int *ptr_adjust3 = (int *)getIfExists(foptValues, FIELDID_ADJUST_VALUE_3);
+          int *ptr_adjust1 = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ADJUST_VALUE_1);
+          int *ptr_adjust2 = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ADJUST_VALUE_2);
+          int *ptr_adjust3 = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ADJUST_VALUE_3);
           if (ptr_adjust1)
           {
             m_collector->setAdjustValue(*shapeSeqNum, 0, *ptr_adjust1);
@@ -1198,7 +1201,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           {
             m_collector->setAdjustValue(*shapeSeqNum, 2, *ptr_adjust3);
           }
-          int *ptr_rotation = (int *)getIfExists(foptValues, FIELDID_ROTATION);
+          int *ptr_rotation = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ROTATION);
           if (ptr_rotation)
           {
             double rotation = doubleModulo(toFixedPoint(*ptr_rotation), 360);
@@ -1207,14 +1210,27 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             rotated90 = (rotation >= 45 && rotation < 135) || (rotation >= 225 && rotation < 315);
 
           }
-          unsigned *ptr_left = getIfExists(foptValues, FIELDID_DY_TEXT_LEFT);
-          unsigned *ptr_top = getIfExists(foptValues, FIELDID_DY_TEXT_TOP);
-          unsigned *ptr_right = getIfExists(foptValues, FIELDID_DY_TEXT_RIGHT);
-          unsigned *ptr_bottom = getIfExists(foptValues, FIELDID_DY_TEXT_BOTTOM);
+          unsigned *ptr_left = getIfExists(foptValues.m_scalarValues, FIELDID_DY_TEXT_LEFT);
+          unsigned *ptr_top = getIfExists(foptValues.m_scalarValues, FIELDID_DY_TEXT_TOP);
+          unsigned *ptr_right = getIfExists(foptValues.m_scalarValues, FIELDID_DY_TEXT_RIGHT);
+          unsigned *ptr_bottom = getIfExists(foptValues.m_scalarValues, FIELDID_DY_TEXT_BOTTOM);
           m_collector->setShapeMargins(*shapeSeqNum, ptr_left ? *ptr_left : DEFAULT_MARGIN,
                                        ptr_top ? *ptr_top : DEFAULT_MARGIN,
                                        ptr_right ? *ptr_right : DEFAULT_MARGIN,
                                        ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
+          const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
+          if (vertexData.size() > 0)
+          {
+            unsigned *p_geoRight = getIfExists(foptValues.m_scalarValues,
+                                               FIELDID_GEO_RIGHT);
+            unsigned *p_geoBottom = getIfExists(foptValues.m_scalarValues,
+                                                FIELDID_GEO_BOTTOM);
+            const std::vector<unsigned char> segmentData = foptValues.m_complexValues[FIELDID_P_SEGMENTS];
+            const std::vector<unsigned char> guideData = foptValues.m_complexValues[FIELDID_P_GUIDES];
+            m_collector->setShapeCustomPath(*shapeSeqNum, getDynamicCustomShape(vertexData, segmentData,
+                                            guideData, p_geoRight ? *p_geoRight : 21600,
+                                            p_geoBottom ? *p_geoBottom : 21600));
+          }
         }
         if (foundAnchor)
         {
@@ -1377,6 +1393,107 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
   }
 }
 
+libmspub::DynamicCustomShape libmspub::MSPUBParser::getDynamicCustomShape(
+  const std::vector<unsigned char> &vertexData, const std::vector<unsigned char> &segmentData,
+  const std::vector<unsigned char> &guideData, unsigned geoWidth,
+  unsigned geoHeight)
+{
+  DynamicCustomShape ret(geoWidth, geoHeight);
+  ret.m_vertices = parseVertices(vertexData);
+  ret.m_elements = parseSegments(segmentData);
+  ret.m_calculations = parseGuides(guideData);
+  return ret;
+}
+
+std::vector<unsigned short> libmspub::MSPUBParser::parseSegments(
+  const std::vector<unsigned char> &segmentData)
+{
+  std::vector<unsigned short> ret;
+  if (segmentData.size() < 6)
+  {
+    return ret;
+  }
+  // assume that the entry size is 2.
+  unsigned short numEntries = segmentData[0] | (segmentData[1] << 8);
+  unsigned offset = 6;
+  for (unsigned i = 0; i < numEntries; ++i)
+  {
+    if (offset + 2 > segmentData.size())
+    {
+      break;
+    }
+    ret.push_back(segmentData[offset] | (segmentData[offset + 1] << 8));
+    offset += 2;
+  }
+  return ret;
+}
+
+std::vector<libmspub::Calculation> libmspub::MSPUBParser::parseGuides(
+  const std::vector<unsigned char> &/* guideData */)
+{
+  std::vector<Calculation> ret;
+
+  //FIXME : implement this function.
+
+  return ret;
+}
+
+std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
+  const std::vector<unsigned char> &vertexData)
+{
+  std::vector<libmspub::Vertex> ret;
+  if (vertexData.size() < 6)
+  {
+    return ret;
+  }
+  unsigned short numVertices = vertexData[0] | (vertexData[1] << 8);
+  unsigned short entrySize = vertexData[4] | (vertexData[5] << 8);
+  if (entrySize == 0xFFF0)
+  {
+    entrySize = 4;
+  }
+  if (! (entrySize == 2 || entrySize == 4 || entrySize == 8))
+  {
+    MSPUB_DEBUG_MSG(("Incomprehensible entry size %d in vertex complex data!\n", entrySize));
+    return ret;
+  }
+  unsigned offset = 6;
+  ret.reserve(numVertices);
+  for (unsigned i = 0; i < numVertices; ++i)
+  {
+    if (offset + entrySize > vertexData.size())
+    {
+      break;
+    }
+    int32_t x, y;
+    switch (entrySize)
+    {
+    case 2:
+      x = vertexData[offset];
+      y = vertexData[offset + 1];
+      break;
+    case 4:
+      x = vertexData[offset] | (uint32_t(vertexData[offset + 1]) << 8);
+      y = vertexData[offset + 2] | (uint32_t(vertexData[offset + 3]) << 8);
+      break;
+    case 8:
+      x = vertexData[offset] | (uint32_t(vertexData[offset + 1]) << 8) |
+          (uint32_t(vertexData[offset + 2]) << 16) | (uint32_t(vertexData[offset + 3]) << 24);
+      y = vertexData[offset + 4] | (uint32_t(vertexData[offset + 5]) << 8) |
+          (uint32_t(vertexData[offset + 6]) << 16) | (uint32_t(vertexData[offset + 7]) << 24);
+      break;
+    default: // logically shouldn't be able to get here.
+      x = 0;
+      y = 0;
+      break;
+    }
+    libmspub::Vertex v = {x, y};
+    ret.push_back(v);
+    offset += entrySize;
+  }
+  return ret;
+}
+
 unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)
 {
   switch (type)
@@ -1429,6 +1546,52 @@ bool libmspub::MSPUBParser::findEscherContainer(WPXInputStream *input, const lib
     input->seek(next.contentsOffset + next.contentsLength + getEscherElementTailLength(next.type), WPX_SEEK_SET);
   }
   return false;
+}
+
+libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(WPXInputStream *input, const libmspub::EscherContainerInfo &record)
+{
+  FOPTValues ret;
+  input->seek(record.contentsOffset, WPX_SEEK_SET);
+  unsigned short numValues = record.initial >> 4;
+  std::vector<unsigned short> complexIds;
+  for (unsigned short i = 0; i < numValues; ++i)
+  {
+    if (!stillReading(input, record.contentsOffset + record.contentsLength))
+    {
+      break;
+    }
+    unsigned short id = readU16(input);
+    unsigned value  = readU32(input);
+    ret.m_scalarValues[id] = value;
+    bool complex = id & 0x8000;
+    if (complex)
+    {
+      complexIds.push_back(id);
+    }
+  }
+  for (unsigned i = 0; i < complexIds.size(); ++i)
+  {
+    if (!stillReading(input, record.contentsOffset + record.contentsLength))
+    {
+      break;
+    }
+    unsigned short id = complexIds[i];
+    unsigned length = ret.m_scalarValues[id];
+    if (!length)
+    {
+      continue;
+    }
+    unsigned short numEntries = readU16(input);
+    input->seek(2, WPX_SEEK_CUR);
+    unsigned short entryLength = readU16(input);
+    if (entryLength == 0xFFF0)
+    {
+      entryLength = 4;
+    }
+    input->seek(-6, WPX_SEEK_CUR);
+    readNBytes(input, entryLength * numEntries + 6, ret.m_complexValues[id]);
+  }
+  return ret;
 }
 
 std::map<unsigned short, unsigned> libmspub::MSPUBParser::extractEscherValues(WPXInputStream *input, const libmspub::EscherContainerInfo &record)

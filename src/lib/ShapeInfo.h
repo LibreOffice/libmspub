@@ -31,14 +31,17 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include <vector>
+#include <boost/function.hpp>
 #include "ShapeType.h"
 #include "Coordinate.h"
 #include "Line.h"
 #include "Margins.h"
 #include "MSPUBTypes.h"
 #include "Fill.h"
+#include "PolygonUtils.h"
 namespace libmspub
 {
+void noop(const CustomShape *);
 struct ShapeInfo
 {
   boost::optional<ShapeType> m_type;
@@ -54,11 +57,22 @@ struct ShapeInfo
   boost::optional<Margins> m_margins;
   boost::optional<BorderPosition> m_borderPosition; // Irrelevant except for rectangular shapes
   boost::shared_ptr<const Fill> m_fill;
+  boost::optional<DynamicCustomShape> m_customShape;
   ShapeInfo() : m_type(), m_imgIndex(), m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
-    m_fill()
+    m_fill(), m_customShape()
   {
+  }
+  boost::shared_ptr<const CustomShape> getCustomShape() const
+  {
+    if (m_customShape.is_initialized())
+    {
+      return getFromDynamicCustomShape(m_customShape.get());
+    }
+    return boost::shared_ptr<const CustomShape>(
+             libmspub::getCustomShape(m_type.get_value_or(RECTANGLE)),
+             boost::function<void (const CustomShape *)>(noop));
   }
 };
 }

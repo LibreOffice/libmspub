@@ -5663,6 +5663,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = ELLIPTICALQUADRANTY;
     count = (binary & 0xFF);
     break;
+  case 0xAC:
   case 0x0:
     cmd = LINETO;
     count = (binary & 0xFF);
@@ -5731,7 +5732,7 @@ struct LineInfo
 private:
 };
 
-void drawEmulatedLine(const CustomShape *shape, ShapeType shapeType, const std::vector<Line> &lines,
+void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
                       bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter,
@@ -5886,9 +5887,8 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
   yOut += cy;
 }
 
-void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette)
+void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
 {
-  const CustomShape *shape = getCustomShape(shapeType);
   if (!shape)
   {
     return;
@@ -6264,6 +6264,28 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
 bool libmspub::isShapeTypeRectangle(ShapeType type)
 {
   return type == RECTANGLE || type == TEXT_BOX;
+}
+
+
+boost::shared_ptr<const libmspub::CustomShape> libmspub::getFromDynamicCustomShape(const libmspub::DynamicCustomShape &dcs)
+{
+  return boost::shared_ptr<const CustomShape>(new CustomShape(
+           dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
+           dcs.m_vertices.size(),
+           dcs.m_elements.empty() ? NULL : &dcs.m_elements[0],
+           dcs.m_elements.size(),
+           dcs.m_calculations.empty() ? NULL : &dcs.m_calculations[0],
+           dcs.m_calculations.size(),
+           dcs.m_defaultAdjustValues.empty() ? NULL :
+           &dcs.m_defaultAdjustValues[0],
+           dcs.m_defaultAdjustValues.size(),
+           dcs.m_textRectangles.empty() ? NULL : &dcs.m_textRectangles[0],
+           dcs.m_textRectangles.size(),
+           dcs.m_coordWidth, dcs.m_coordHeight,
+           dcs.m_gluePoints.empty() ? NULL : &dcs.m_gluePoints[0],
+           dcs.m_gluePoints.size(),
+           dcs.m_adjustShiftMask
+         ));
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

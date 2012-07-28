@@ -89,6 +89,8 @@ public:
   void setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom);
   void setShapeBorderPosition(unsigned seqNum, BorderPosition pos);
   void setShapeCoordinatesRotated90(unsigned seqNum);
+  void setShapeCustomPath(unsigned seqNum,
+                          const DynamicCustomShape &shape);
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);
 

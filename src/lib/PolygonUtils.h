@@ -33,7 +33,9 @@
 
 #include <libwpg/libwpg.h>
 #include <boost/function.hpp>
+#include <boost/shared_ptr.hpp>
 
+#include "ShapeType.h"
 #include "VectorTransformation2D.h"
 #include "Coordinate.h"
 #include "Line.h"
@@ -105,9 +107,33 @@ struct CustomShape
   }
 };
 
+struct DynamicCustomShape
+{
+  std::vector<Vertex> m_vertices;
+  std::vector<unsigned short> m_elements;
+  std::vector<Calculation> m_calculations;
+  std::vector<int> m_defaultAdjustValues;
+  std::vector<TextRectangle> m_textRectangles;
+  std::vector<Vertex> m_gluePoints;
+  unsigned m_coordWidth;
+  unsigned m_coordHeight;
+  unsigned char m_adjustShiftMask;
+
+  DynamicCustomShape(unsigned coordWidth, unsigned coordHeight)
+    : m_vertices(), m_elements(),
+      m_calculations(), m_defaultAdjustValues(),
+      m_textRectangles(), m_gluePoints(),
+      m_coordWidth(coordWidth), m_coordHeight(coordHeight),
+      m_adjustShiftMask(0)
+  {
+  }
+};
+
+boost::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs);
+
 const CustomShape *getCustomShape(ShapeType type);
 bool isShapeTypeRectangle(ShapeType type);
-void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette);
+void writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

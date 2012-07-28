@@ -44,6 +44,7 @@
 #include "MSPUBTypes.h"
 #include "Fill.h"
 #include "Coordinate.h"
+#include "PolygonUtils.h"
 
 class WPXInputStream;
 
@@ -72,6 +73,14 @@ public:
   }
 };
 
+struct FOPTValues
+{
+  std::map<unsigned short, unsigned> m_scalarValues;
+  std::map<unsigned short, std::vector<unsigned char> > m_complexValues;
+  FOPTValues() : m_scalarValues(), m_complexValues()
+  {
+  }
+};
 
 class MSPUBParser
 {
@@ -128,8 +137,21 @@ protected:
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, unsigned short type);
   bool findEscherContainerWithTypeInSet(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, std::set<unsigned short> types);
   std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);
+  FOPTValues extractFOPTValues(WPXInputStream *input,
+                               const libmspub::EscherContainerInfo &record);
   std::vector<TextSpanReference> parseCharacterStyles(WPXInputStream *input, const QuillChunkReference &chunk);
   std::vector<TextParagraphReference> parseParagraphStyles(WPXInputStream *input, const QuillChunkReference &chunk);
+  std::vector<Calculation> parseGuides(const std::vector<unsigned char>
+                                       &guideData);
+  std::vector<Vertex> parseVertices(const std::vector<unsigned char>
+                                    &vertexData);
+  std::vector<unsigned short> parseSegments(
+    const std::vector<unsigned char> &segmentData);
+  DynamicCustomShape getDynamicCustomShape(
+    const std::vector<unsigned char> &vertexData,
+    const std::vector<unsigned char> &segmentData,
+    const std::vector<unsigned char> &guideData,
+    unsigned geoWidth, unsigned geoHeight);
   int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);

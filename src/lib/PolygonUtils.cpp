@@ -5889,6 +5889,7 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
 
 void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
 {
+  MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)
   {
     return;
@@ -5960,6 +5961,11 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     }
     unsigned vertexIndex = 0;
     bool hasUnclosedElements = false;
+    boost::optional<Vector2D> lastPoint;
+    // Escher assigns segments into subpaths somewhat differently than SVG does,
+    // so we have to keep track of the following, rather than just adding a 'Z'
+    // directive on path close and expecting everything to work.
+    boost::optional<Vector2D> pathBegin; 
     for (unsigned i = 0; i < shape->m_numElements; ++i)
     {
       ShapeElementCommand cmd = getCommandFromBinary(shape->mp_elements[i]);
@@ -5968,18 +5974,29 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       case ELLIPTICALQUADRANTX:
       case ELLIPTICALQUADRANTY:
       {
+        if (cmd.m_command == ELLIPTICALQUADRANTX)
+        {
+          MSPUB_DEBUG_MSG(("ELLIPTICALQUADRANTX %d\n", cmd.m_count));
+        }
+        else
+        {
+          MSPUB_DEBUG_MSG(("ELLIPTICALQUADRANTY %d\n", cmd.m_count));
+        }
         bool firstDirection = true;
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
           bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
           const Vertex &curr = shape->mp_vertices[vertexIndex];
           Vector2D curr2D(x + scaleX * getSpecialIfNecessary(calculator, curr.m_x), y + scaleY * getSpecialIfNecessary(calculator, curr.m_y));
-          if (vertexIndex)
+          if (lastPoint.is_initialized())
           {
+            if (!pathBegin.is_initialized())
+            {
+              pathBegin = curr2D;
+            }
             hasUnclosedElements = true;
-            const Vertex &prev = shape->mp_vertices[vertexIndex - 1];
-            double prevX = x + scaleX * getSpecialIfNecessary(calculator, prev.m_x);
-            double prevY = y + scaleY * getSpecialIfNecessary(calculator, prev.m_y);
+            double prevX = lastPoint.get().m_x;
+            double prevY = lastPoint.get().m_y;
             double tmpX = curr2D.m_x - prevX;
             double tmpY = curr2D.m_y - prevY;
             if ((tmpX < 0 && tmpY >= 0) || (tmpX >= 0 && tmpY < 0))
@@ -6062,9 +6079,25 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       case CLOCKWISEARC:
       case ARCTO:
       case ARC:
+        switch (cmd.m_command)
+        {
+        case CLOCKWISEARCTO:
+          MSPUB_DEBUG_MSG(("CLOCKWISEARCTO %d\n", cmd.m_count));
+          break;
+        case CLOCKWISEARC:
+          MSPUB_DEBUG_MSG(("CLOCKWISEARC %d\n", cmd.m_count));
+          break;
+        case ARCTO:
+          MSPUB_DEBUG_MSG(("ARCTO %d\n", cmd.m_count));
+          break;
+        case ARC:
+          MSPUB_DEBUG_MSG(("ARC %d\n", cmd.m_count));
+          break;
+        default:
+          break;
+        }
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 3 < shape->m_numVertices); ++j, vertexIndex += 4)
         {
-          MSPUB_DEBUG_MSG(("Starting arc command.\n"));
           for (unsigned k = 0; k < 4; ++k)
           {
             MSPUB_DEBUG_MSG(("Calculated vertex x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + k].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + k].m_y)));
@@ -6088,18 +6121,18 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           double startY = y + scaleY * getSpecialIfNecessary(calculator, start.m_y);
           double endX = x + scaleX * getSpecialIfNecessary(calculator, end.m_x);
           double endY = y + scaleY * getSpecialIfNecessary(calculator, end.m_y);
-          MSPUB_DEBUG_MSG(("start before finding intersection, x: %f, y: %f\n", startX, startY));
-          MSPUB_DEBUG_MSG(("end before finding intersection, x: %f, y: %f\n", endX, endY));
           getRayEllipseIntersection(startX, startY, rx, ry, cx, cy, startX, startY);
           getRayEllipseIntersection(endX, endY, rx, ry, cx, cy, endX, endY);
-          MSPUB_DEBUG_MSG(("start after finding intersection, x: %f, y: %f\n", startX, startY));
-          MSPUB_DEBUG_MSG(("end after finding intersection, x: %f, y: %f\n", endX, endY));
           Vector2D start2D(startX, startY);
+          if (!pathBegin.is_initialized())
+          {
+            pathBegin = start2D;
+          }
           start2D = transform.transformWithOrigin(start2D, center);
           Vector2D end2D(endX, endY);
+          lastPoint = end2D;
           end2D = transform.transformWithOrigin(end2D, center);
           bool clockwiseAfterTransform = clockwise ^ transform.orientationReversing();
-          MSPUB_DEBUG_MSG((clockwiseAfterTransform ? "Clockwise\n" : "Counter-clockwise\n"));
           WPXPropertyList startVertex;
           startVertex.insert("svg:x", start2D.m_x);
           startVertex.insert("svg:y", start2D.m_y);
@@ -6128,11 +6161,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           vertices.append(ellipseVertex);
           hasUnclosedElements = true;
         }
-
-        // (Check git c52782d680819676ad34ca8404e616a0d7cdf412 for partially working code.)
         break;
 
       case ANGLEELLIPSE:
+        MSPUB_DEBUG_MSG(("ANGLEELLIPSE %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           hasUnclosedElements = true;
@@ -6151,6 +6183,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           WPXPropertyList moveVertex;
           Vector2D start(cx + rx * cos(startAngle * M_PI / 180),
                          cy + ry * sin(startAngle * M_PI / 180));
+          if (!pathBegin.is_initialized())
+          {
+            pathBegin = start;
+          }
           start = transform.transformWithOrigin(start, center);
           moveVertex.insert("libwpg:path-action", "M");
           moveVertex.insert("svg:x", start.m_x);
@@ -6169,6 +6205,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           vertices.append(halfVertex);
           Vector2D end(cx + rx * cos(endAngle * M_PI / 180),
                        cy + ry * sin(endAngle * M_PI / 180));
+          lastPoint = end;
           end = transform.transformWithOrigin(end, center);
           vertex.insert("svg:x", end.m_x);
           vertex.insert("svg:y", end.m_y);
@@ -6180,6 +6217,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         break;
       case MOVETO:
+        MSPUB_DEBUG_MSG(("MOVETO %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
           if (hasUnclosedElements && closeEverything)
@@ -6192,6 +6230,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           WPXPropertyList moveVertex;
           Vector2D new_(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
                         y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
+          pathBegin = new_;
+          lastPoint = new_;
           new_ = transform.transformWithOrigin(new_, center);
           moveVertex.insert("svg:x", new_.m_x);
           moveVertex.insert("svg:y", new_.m_y);
@@ -6200,14 +6240,15 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         break;
       case LINETO:
+        MSPUB_DEBUG_MSG(("LINETO %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
           hasUnclosedElements = true;
           WPXPropertyList vertex;
           Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
                           y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
+          lastPoint = vector;
           vector = transform.transformWithOrigin(vector, center);
-
           vertex.insert("svg:x", vector.m_x);
           vertex.insert("svg:y", vector.m_y);
           vertex.insert("libwpg:path-action", "L");
@@ -6215,6 +6256,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         break;
       case CURVETO:
+        MSPUB_DEBUG_MSG(("CURVETO %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           hasUnclosedElements = true;
@@ -6226,6 +6268,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           secondCtrl = transform.transformWithOrigin(secondCtrl, center);
           Vector2D end( x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x),
                         y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y));
+          lastPoint = end;
           end = transform.transformWithOrigin(end, center);
           WPXPropertyList bezier;
           bezier.insert("libwpg:path-action", "C");
@@ -6239,15 +6282,36 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         break;
       case CLOSESUBPATH:
-        // case ENDSUBPATH:
       {
-        WPXPropertyList end;
-        end.insert("libwpg:path-action", "Z");
-        vertices.append(end);
-        hasUnclosedElements = false;
+        MSPUB_DEBUG_MSG(("CLOSESUBPATH\n"));
+        if (!pathBegin.is_initialized())
+        {
+          MSPUB_DEBUG_MSG(("Tried to close a subpath that hadn't yet begun!\n"));
+        }
+        else
+        {
+          WPXPropertyList end;
+          end.insert("libwpg:path-action", "L");
+          Vector2D transformedPathBegin = transform.transformWithOrigin(pathBegin.get(), center);
+          end.insert("svg:x", transformedPathBegin.m_x);
+          end.insert("svg:y", transformedPathBegin.m_y);
+          vertices.append(end);
+          hasUnclosedElements = false;
+        }
       }
-      break;
+        //intentionally no break
+      case ENDSUBPATH:
+        MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
+        pathBegin = boost::optional<Vector2D>();
+        break;
+      case NOFILL:
+        MSPUB_DEBUG_MSG(("NOFILL (ignored)\n"));
+        break;
+      case NOSTROKE:
+        MSPUB_DEBUG_MSG(("NOSTROKE (ignored)\n"));
+        break;
       default:
+        MSPUB_DEBUG_MSG(("Unknown custom shape command %d\n", cmd.m_command));
         break;
       }
     }

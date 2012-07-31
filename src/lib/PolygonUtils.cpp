@@ -42,6 +42,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+// FIXME: Do something better than the following workaround
+#pragma GCC diagnostic ignored "-Wuninitialized"
+
 using namespace libmspub;
 
 const Vertex LINE_VERTICES[] =

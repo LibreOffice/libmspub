@@ -6136,7 +6136,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           WPXPropertyList startVertex;
           startVertex.insert("svg:x", start2D.m_x);
           startVertex.insert("svg:y", start2D.m_y);
-          startVertex.insert("libwpg:path-action", (to && hasUnclosedElements) ? "L" : "M");
+          startVertex.insert("libwpg:path-action", ((to || closeEverything) && hasUnclosedElements) ? "L" : "M");
           vertices.append(startVertex);
           double startAngle = atan2(cy - startY, startX - cx);
           double endAngle = atan2(cy -endY, endX - cx);
@@ -6288,6 +6288,12 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           MSPUB_DEBUG_MSG(("Tried to close a subpath that hadn't yet begun!\n"));
         }
+        else if (closeEverything)
+        {
+          WPXPropertyList end;
+          end.insert("libwpg:path-action", "Z");
+          vertices.append(end);
+        }
         else
         {
           WPXPropertyList end;
@@ -6296,12 +6302,18 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           end.insert("svg:x", transformedPathBegin.m_x);
           end.insert("svg:y", transformedPathBegin.m_y);
           vertices.append(end);
-          hasUnclosedElements = false;
         }
+        hasUnclosedElements = false;
       }
         //intentionally no break
       case ENDSUBPATH:
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
+        if (closeEverything && pathBegin.is_initialized())
+        {
+          WPXPropertyList end;
+          end.insert("libwpg:path-action", "Z");
+          vertices.append(end);
+        }
         pathBegin = boost::optional<Vector2D>();
         break;
       case NOFILL:
@@ -6317,9 +6329,12 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     }
     if (hasUnclosedElements && closeEverything)
     {
-      WPXPropertyList closeVertex;
-      closeVertex.insert("libwpg:path-action", "Z");
-      vertices.append(closeVertex);
+      if (pathBegin.is_initialized())
+      {
+        WPXPropertyList end;
+        end.insert("libwpg:path-action", "Z");
+        vertices.append(end);
+      }
     }
     painter->drawPath(vertices);
   }

@@ -713,7 +713,7 @@ const Vertex CURVED_RIGHT_ARROW_VERTICES[] =
 
 const unsigned short CURVED_RIGHT_ARROW_SEGMENTS[] =
 {
-  0xa408, 0x0003, 0xa508, 0x6000, 0x8000, 0xa404, 0xa304, 0xa504, 0x6000, 0x8000
+  0xa404, 0xA304, 0x0003, 0xa508, 0x6000, 0x8000, 0xa404, 0xa304, 0xa504, 0x6000, 0x8000
 };
 
 const Calculation CURVED_RIGHT_ARROW_CALC[] =
@@ -783,7 +783,7 @@ const Vertex CURVED_DOWN_ARROW_VERTICES[] =
 
 const unsigned short CURVED_DOWN_ARROW_SEGMENTS[] =
 {
-  0xa608, 0x0003, 0xa308, 0x6000, 0x8000, 0xa604, 0xa504, 0xa304, 0x6000, 0x8000
+  0xa604, 0xa504, 0x0003, 0xa308, 0x6000, 0x8000, 0xa604, 0xa504, 0xa304, 0x6000, 0x8000
 };
 
 const Calculation CURVED_DOWN_ARROW_CALC[] =
@@ -6223,6 +6223,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         MSPUB_DEBUG_MSG(("MOVETO %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
+          MSPUB_DEBUG_MSG(("x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y)));
           if (hasUnclosedElements && closeEverything)
           {
             WPXPropertyList closeVertex;
@@ -6246,6 +6247,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         MSPUB_DEBUG_MSG(("LINETO %d\n", cmd.m_count));
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {
+          MSPUB_DEBUG_MSG(("x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y)));
           hasUnclosedElements = true;
           WPXPropertyList vertex;
           Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),

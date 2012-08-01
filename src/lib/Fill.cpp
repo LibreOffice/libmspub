@@ -106,6 +106,7 @@ WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
   WPXString val;
   val.sprintf("%d%%", (int)(m_opacity * 100));
   out->insert("draw:opacity", val);
+  out->insert("svg:fill-rule", "nonzero");
   return WPXPropertyListVector();
 }
 
@@ -122,6 +123,7 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
 {
   WPXPropertyListVector ret;
   out->insert("draw:fill", "gradient");
+  out->insert("svg:fill-rule", "nonzero");
   out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
   for (unsigned i = 0; i < m_stops.size(); ++i)
   {

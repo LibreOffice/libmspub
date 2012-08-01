@@ -61,7 +61,7 @@ private:
   bool m_isTexture;
 public:
   ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture);
-  WPXPropertyListVector getProperties(WPXPropertyList *out) const;
+  virtual WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
   ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false) { }
   ImgFill &operator=(const ImgFill &);

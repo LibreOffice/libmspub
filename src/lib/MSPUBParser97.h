@@ -65,6 +65,8 @@ class MSPUBParser97 : public MSPUBParser2k
   unsigned getSecondLineOffset() const;
   unsigned getShapeFillTypeOffset() const;
   unsigned getShapeFillColorOffset() const;
+  unsigned short getTextMarker() const;
+  unsigned getTextIdOffset() const;
   void parseContentsTextIfNecessary(WPXInputStream *input);
   std::vector<SpanInfo97> getSpansInfo(WPXInputStream *input,
                                        unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,

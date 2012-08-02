@@ -36,6 +36,16 @@ libmspub::MSPUBParser97::MSPUBParser97(WPXInputStream *input, MSPUBCollector *co
   m_collector->setEncoding(WIN_1252);
 }
 
+unsigned short libmspub::MSPUBParser97::getTextMarker() const
+{
+  return 0x0000;
+}
+
+unsigned libmspub::MSPUBParser97::getTextIdOffset() const
+{
+  return 0x46;
+}
+
 bool libmspub::MSPUBParser97::parse()
 {
   WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");

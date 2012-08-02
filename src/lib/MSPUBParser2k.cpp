@@ -382,6 +382,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       m_imageDataChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       m_chunkChildIndicesById[parent].push_back(unsigned(m_contentChunks.size() - 1));
       break;
+    case 0x0000:
     case 0x0004:
     case 0x0005:
     case 0x0006:
@@ -646,26 +647,28 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
 {
   input->seek(chunkOffset, WPX_SEEK_SET);
   unsigned short typeMarker = readU16(input);
-  switch (typeMarker)
+  if (typeMarker == 0x000f)
   {
-  case 0x000F:
     isGroup = true;
-    break;
-  case 0x0004:
+  }
+  else if (typeMarker == 0x0004)
+  {
     isLine = true;
     flagsOffset = 0x41;
     m_collector->setShapeType(seqNum, LINE);
-    break;
-  case 0x0002:
+  }
+  else if (typeMarker == 0x0002)
+  {
     isImage = true;
     m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
-    break;
-  case 0x0005:
+  }
+  else if (typeMarker == 0x0005)
+  {
     m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
-    break;
-  case 0x0006:
+  }
+  else if (typeMarker == 0x0006)
   {
     input->seek(chunkOffset + 0x31, WPX_SEEK_SET);
     ShapeType shapeType = getShapeType(readU8(input));
@@ -675,22 +678,28 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
       m_collector->setShapeType(seqNum, shapeType);
     }
   }
-  break;
-  case 0x0007:
+  else if (typeMarker == 0x0007)
+  {
     m_collector->setShapeType(seqNum, ELLIPSE);
-    break;
-  case 0x0008:
+  }
+  else if (typeMarker == getTextMarker())
   {
     m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
-    input->seek(chunkOffset + 0x58, WPX_SEEK_SET);
-    unsigned txtId = readU32(input);
+    input->seek(chunkOffset + getTextIdOffset(), WPX_SEEK_SET);
+    unsigned txtId = readU16(input);
     m_collector->addTextShape(txtId, seqNum, page);
   }
-  break;
-  default:
-    break;
-  }
+}
+
+unsigned libmspub::MSPUBParser2k::getTextIdOffset() const
+{
+  return 0x58;
+}
+
+unsigned short libmspub::MSPUBParser2k::getTextMarker() const
+{
+  return 0x0008;
 }
 
 unsigned libmspub::MSPUBParser2k::getFirstLineOffset() const

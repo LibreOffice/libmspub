@@ -379,7 +379,7 @@ void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vect
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters,
-    Encoding encoding)
+                                Encoding encoding)
 {
   switch (encoding)
   {

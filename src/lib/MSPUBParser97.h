@@ -41,10 +41,10 @@ class MSPUBParser97 : public MSPUBParser2k
     std::vector<unsigned> m_paragraphEnds;
     std::vector<unsigned> m_shapeEnds;
     TextInfo97(const std::vector<unsigned char> &chars,
-        const std::vector<unsigned> &paragraphEnds,
-        const std::vector<unsigned> &shapeEnds)
+               const std::vector<unsigned> &paragraphEnds,
+               const std::vector<unsigned> &shapeEnds)
       : m_chars(chars), m_paragraphEnds(paragraphEnds),
-      m_shapeEnds(shapeEnds)
+        m_shapeEnds(shapeEnds)
     {
     }
   };
@@ -67,8 +67,8 @@ class MSPUBParser97 : public MSPUBParser2k
   unsigned getShapeFillColorOffset() const;
   void parseContentsTextIfNecessary(WPXInputStream *input);
   std::vector<SpanInfo97> getSpansInfo(WPXInputStream *input,
-      unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,
-      unsigned prop3End);
+                                       unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,
+                                       unsigned prop3End);
   TextInfo97 getTextInfo(WPXInputStream *input, unsigned length);
 public:
   MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector);

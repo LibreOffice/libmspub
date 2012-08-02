@@ -5968,7 +5968,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     // Escher assigns segments into subpaths somewhat differently than SVG does,
     // so we have to keep track of the following, rather than just adding a 'Z'
     // directive on path close and expecting everything to work.
-    boost::optional<Vector2D> pathBegin; 
+    boost::optional<Vector2D> pathBegin;
     for (unsigned i = 0; i < shape->m_numElements; ++i)
     {
       ShapeElementCommand cmd = getCommandFromBinary(shape->mp_elements[i]);
@@ -6310,7 +6310,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         hasUnclosedElements = false;
       }
-        //intentionally no break
+      //intentionally no break
       case ENDSUBPATH:
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
         if (closeEverything && pathBegin.is_initialized())

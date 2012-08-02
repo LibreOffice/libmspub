@@ -374,7 +374,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       {
         WPXString textString;
         appendCharacters(textString, text[i_lines].spans[i_spans].chars,
-            m_encoding.get_value_or(UTF_16));
+                         m_encoding.get_value_or(UTF_16));
         WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.defaultCharStyleIndex);
         m_painter->startTextSpan(charProps);
         m_painter->insertText(textString);
@@ -677,7 +677,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     WPXString str;
     appendCharacters(str, m_fonts[style.fontIndex],
-        m_encoding.get_value_or(UTF_16));
+                     m_encoding.get_value_or(UTF_16));
     ret.insert("style:font-name", str);
   }
   return ret;

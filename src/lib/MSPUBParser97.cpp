@@ -81,7 +81,7 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
   unsigned prop3Index = readU16(input);
   unsigned prop3End = readU16(input);
   std::vector<SpanInfo97> spanInfos = getSpansInfo(input, prop1Index,
-      prop2Index, prop3Index, prop3End);
+                                      prop2Index, prop3Index, prop3End);
   input->seek(textStart, WPX_SEEK_SET);
   TextInfo97 textInfo = getTextInfo(input, textEnd - textStart);
   unsigned iParaEnd = 0, iSpanEnd = 0;
@@ -94,12 +94,12 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
     while (currentParaIndex < shapeEnd)
     {
       unsigned paraEnd = iParaEnd < textInfo.m_paragraphEnds.size() ?
-        std::min<unsigned>(textInfo.m_paragraphEnds[paraEnd], shapeEnd) : shapeEnd;
+                         std::min<unsigned>(textInfo.m_paragraphEnds[paraEnd], shapeEnd) : shapeEnd;
       std::vector<TextSpan> paraSpans;
       while (currentSpanIndex < paraEnd)
       {
         unsigned spanEnd = iSpanEnd < spanInfos.size() ?
-          std::min<unsigned>(spanInfos[iSpanEnd].m_spanEnd, paraEnd) : paraEnd;
+                           std::min<unsigned>(spanInfos[iSpanEnd].m_spanEnd, paraEnd) : paraEnd;
         std::vector<unsigned char> spanChars;
         spanChars.reserve(spanEnd - currentSpanIndex);
         for (unsigned i = currentSpanIndex; i < spanEnd; ++i)
@@ -136,9 +136,9 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
 }
 
 std::vector<libmspub::MSPUBParser97::SpanInfo97> libmspub::MSPUBParser97::getSpansInfo(
-    WPXInputStream *input,
-    unsigned /* prop1Index */, unsigned prop2Index, unsigned prop3Index,
-    unsigned /* prop3End */)
+  WPXInputStream *input,
+  unsigned /* prop1Index */, unsigned prop2Index, unsigned prop3Index,
+  unsigned /* prop3End */)
 {
   std::vector<SpanInfo97> ret;
   for (unsigned i = prop2Index; i < prop3Index; ++i) // only parse prop2 for now

@@ -172,11 +172,10 @@ libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(WPXInpu
   std::vector<unsigned> paragraphEnds;
   std::vector<unsigned> shapeEnds;
   unsigned start = input->tell();
-  unsigned char last;
+  unsigned char last = '\0';
   while (stillReading(input, start + length))
   {
     chars.push_back(readU8(input));
-    last = chars.back();
     if (last == 0xD && chars.back() == 0xA)
     {
       paragraphEnds.push_back(chars.size());
@@ -185,6 +184,7 @@ libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(WPXInpu
     {
       shapeEnds.push_back(chars.size());
     }
+    last = chars.back();
   }
   return TextInfo97(chars, paragraphEnds, shapeEnds);
 }

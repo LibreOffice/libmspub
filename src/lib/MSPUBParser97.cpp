@@ -104,12 +104,12 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
     while (currentParaIndex < shapeEnd)
     {
       unsigned paraEnd = iParaEnd < textInfo.m_paragraphEnds.size() ?
-                         std::min<unsigned>(textInfo.m_paragraphEnds[paraEnd], shapeEnd) : shapeEnd;
+                         std::min<unsigned>(textInfo.m_paragraphEnds[iParaEnd++], shapeEnd) : shapeEnd;
       std::vector<TextSpan> paraSpans;
       while (currentSpanIndex < paraEnd)
       {
         unsigned spanEnd = iSpanEnd < spanInfos.size() ?
-                           std::min<unsigned>(spanInfos[iSpanEnd].m_spanEnd, paraEnd) : paraEnd;
+                           std::min<unsigned>(spanInfos[iSpanEnd++].m_spanEnd, paraEnd) : paraEnd;
         std::vector<unsigned char> spanChars;
         spanChars.reserve(spanEnd - currentSpanIndex);
         for (unsigned i = currentSpanIndex; i < spanEnd; ++i)

@@ -75,6 +75,7 @@ protected:
   static Color getColorBy2kHex(unsigned hex);
   static unsigned translate2kColorReference(unsigned ref2k);
   static PageType getPageTypeBySeqNum(unsigned seqNum);
+  virtual void parseContentsTextIfNecessary(WPXInputStream *input);
 public:
   explicit MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector);
   virtual bool parse();

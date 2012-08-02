@@ -109,8 +109,14 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
+  m_encoding(),
   m_calculationValuesSeen()
 {
+}
+
+void libmspub::MSPUBCollector::setEncoding(Encoding encoding)
+{
+  m_encoding = encoding;
 }
 
 void libmspub::noop(const CustomShape *)
@@ -367,7 +373,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
       {
         WPXString textString;
-        appendCharacters(textString, text[i_lines].spans[i_spans].chars);
+        appendCharacters(textString, text[i_lines].spans[i_spans].chars,
+            m_encoding.get_value_or(UTF_16));
         WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.defaultCharStyleIndex);
         m_painter->startTextSpan(charProps);
         m_painter->insertText(textString);
@@ -669,7 +676,8 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   if (style.fontIndex < m_fonts.size())
   {
     WPXString str;
-    appendCharacters(str, m_fonts[style.fontIndex]);
+    appendCharacters(str, m_fonts[style.fontIndex],
+        m_encoding.get_value_or(UTF_16));
     ret.insert("style:font-name", str);
   }
   return ret;

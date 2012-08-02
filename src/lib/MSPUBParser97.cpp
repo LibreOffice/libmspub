@@ -28,10 +28,12 @@
 
 #include "MSPUBParser97.h"
 #include "MSPUBCollector.h"
+#include "libmspub_utils.h"
 
 libmspub::MSPUBParser97::MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector)
   : MSPUBParser2k(input, collector), m_isBanner(false)
 {
+  m_collector->setEncoding(WIN_1252);
 }
 
 bool libmspub::MSPUBParser97::parse()
@@ -65,6 +67,116 @@ bool libmspub::MSPUBParser97::parseDocument(WPXInputStream *input)
     return true;
   }
   return false;
+}
+
+void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input)
+{
+  input->seek(0x12, WPX_SEEK_SET);
+  input->seek(readU32(input), WPX_SEEK_SET);
+  input->seek(14, WPX_SEEK_CUR);
+  unsigned textStart = readU32(input);
+  unsigned textEnd = readU32(input);
+  unsigned prop1Index = readU16(input);
+  unsigned prop2Index = readU16(input);
+  unsigned prop3Index = readU16(input);
+  unsigned prop3End = readU16(input);
+  std::vector<SpanInfo97> spanInfos = getSpansInfo(input, prop1Index,
+      prop2Index, prop3Index, prop3End);
+  input->seek(textStart, WPX_SEEK_SET);
+  TextInfo97 textInfo = getTextInfo(input, textEnd - textStart);
+  unsigned iParaEnd = 0, iSpanEnd = 0;
+  unsigned currentParaIndex = 0;
+  unsigned currentSpanIndex = 0;
+  for (unsigned iShapeEnd = 0; iShapeEnd < textInfo.m_shapeEnds.size(); ++iShapeEnd)
+  {
+    unsigned shapeEnd = std::min<unsigned>(textInfo.m_shapeEnds[iShapeEnd], textInfo.m_chars.size());
+    std::vector<TextParagraph> shapeParas;
+    while (currentParaIndex < shapeEnd)
+    {
+      unsigned paraEnd = iParaEnd < textInfo.m_paragraphEnds.size() ?
+        std::min<unsigned>(textInfo.m_paragraphEnds[paraEnd], shapeEnd) : shapeEnd;
+      std::vector<TextSpan> paraSpans;
+      while (currentSpanIndex < paraEnd)
+      {
+        unsigned spanEnd = iSpanEnd < spanInfos.size() ?
+          std::min<unsigned>(spanInfos[iSpanEnd].m_spanEnd, paraEnd) : paraEnd;
+        std::vector<unsigned char> spanChars;
+        spanChars.reserve(spanEnd - currentSpanIndex);
+        for (unsigned i = currentSpanIndex; i < spanEnd; ++i)
+        {
+          unsigned char ch = textInfo.m_chars[i];
+          if (ch == 0xB) // Pub97 interprets vertical tab as nonbreaking space.
+          {
+            spanChars.push_back('\n');
+          }
+          else if (ch == 0x0D)
+          {
+            if (i + 1 < spanEnd && textInfo.m_chars[i + 1] == 0x0A)
+            {
+              ++i; // ignore the 0x0D and advance past the 0x0A
+            }
+          }
+          else if (ch == 0x0C)
+          {
+            // ignore the 0x0C
+          }
+          else
+          {
+            spanChars.push_back(ch);
+          }
+        }
+        paraSpans.push_back(TextSpan(spanChars, CharacterStyle()));
+        currentSpanIndex = spanEnd;
+      }
+      shapeParas.push_back(TextParagraph(paraSpans, ParagraphStyle()));
+      currentParaIndex = paraEnd;
+    }
+    m_collector->addTextString(shapeParas, iShapeEnd);
+  }
+}
+
+std::vector<libmspub::MSPUBParser97::SpanInfo97> libmspub::MSPUBParser97::getSpansInfo(
+    WPXInputStream *input,
+    unsigned /* prop1Index */, unsigned prop2Index, unsigned prop3Index,
+    unsigned /* prop3End */)
+{
+  std::vector<SpanInfo97> ret;
+  for (unsigned i = prop2Index; i < prop3Index; ++i) // only parse prop2 for now
+  {
+    unsigned offset = i * 0x200;
+    input->seek(offset + 0x1FF, WPX_SEEK_SET);
+    unsigned numEntries = readU8(input);
+    input->seek(offset, WPX_SEEK_SET);
+    for (unsigned j = 1; j < numEntries; ++j) // Skip the first thing; it is not an end
+    {
+      ret.push_back(SpanInfo97(readU32(input)));
+    }
+  }
+  return ret;
+}
+
+libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(WPXInputStream *input, unsigned length)
+{
+  std::vector<unsigned char> chars;
+  chars.reserve(length);
+  std::vector<unsigned> paragraphEnds;
+  std::vector<unsigned> shapeEnds;
+  unsigned start = input->tell();
+  unsigned char last;
+  while (stillReading(input, start + length))
+  {
+    chars.push_back(readU8(input));
+    last = chars.back();
+    if (last == 0xD && chars.back() == 0xA)
+    {
+      paragraphEnds.push_back(chars.size());
+    }
+    else if (chars.back() == 0xC)
+    {
+      shapeEnds.push_back(chars.size());
+    }
+  }
+  return TextInfo97(chars, paragraphEnds, shapeEnds);
 }
 
 int libmspub::MSPUBParser97::translateCoordinateIfNecessary(int coordinate) const

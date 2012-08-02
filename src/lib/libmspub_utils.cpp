@@ -182,6 +182,69 @@ WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
 namespace
 {
 
+static uint32_t _win1252ToUCS4(unsigned char win1252Character)
+{
+  switch (win1252Character)
+  {
+  case 0x80:
+    return 0x20AC;
+  case 0x82:
+    return 0x201A;
+  case 0x83:
+    return 0x0192;
+  case 0x84:
+    return 0x201E;
+  case 0x85:
+    return 0x2026;
+  case 0x86:
+    return 0x2020;
+  case 0x87:
+    return 0x2021;
+  case 0x88:
+    return 0x02C6;
+  case 0x89:
+    return 0x2030;
+  case 0x8A:
+    return 0x0160;
+  case 0x8B:
+    return 0x2039;
+  case 0x8C:
+    return 0x0152;
+  case 0x8E:
+    return 0x017D;
+  case 0x91:
+    return 0x2018;
+  case 0x92:
+    return 0x2019;
+  case 0x93:
+    return 0x201C;
+  case 0x94:
+    return 0x201D;
+  case 0x95:
+    return 0x2022;
+  case 0x96:
+    return 0x2013;
+  case 0x97:
+    return 0x2014;
+  case 0x98:
+    return 0x02DC;
+  case 0x99:
+    return 0x2122;
+  case 0x9A:
+    return 0x0161;
+  case 0x9B:
+    return 0x203A;
+  case 0x9C:
+    return 0x0153;
+  case 0x9E:
+    return 0x017E;
+  case 0x9F:
+    return 0x0178;
+  default:
+    return win1252Character;
+  }
+}
+
 static void _appendUCS4(WPXString &text, unsigned ucs4Character)
 {
   unsigned char first;
@@ -315,57 +378,71 @@ void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vect
 
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
-void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters)
+void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters,
+    Encoding encoding)
 {
-  for (std::vector<unsigned char>::const_iterator iter = characters.begin();
-       iter != characters.end();)
+  switch (encoding)
   {
-    uint16_t high_surrogate = 0;
-    bool fail = false;
-    uint32_t ucs4Character = 0;
-    while (true)
+  case UTF_16:
+    for (std::vector<unsigned char>::const_iterator iter = characters.begin();
+         iter != characters.end();)
     {
-      if (iter == characters.end())
+      uint16_t high_surrogate = 0;
+      bool fail = false;
+      uint32_t ucs4Character = 0;
+      while (true)
       {
-        fail = true;
-        break;
-      }
-      uint16_t character = *iter++;
-      character |= (uint16_t)(*iter++) << 8;
-      if (character >= 0xdc00 && character < 0xe000) /* low surrogate */
-      {
-        if (high_surrogate)
-        {
-          ucs4Character = SURROGATE_VALUE(high_surrogate, character);
-          high_surrogate = 0;
-          break;
-        }
-        else
+        if (iter == characters.end())
         {
           fail = true;
           break;
         }
-      }
-      else
-      {
-        if (high_surrogate)
+        uint16_t character = *iter++;
+        character |= (uint16_t)(*iter++) << 8;
+        if (character >= 0xdc00 && character < 0xe000) /* low surrogate */
         {
-          fail = true;
-          break;
+          if (high_surrogate)
+          {
+            ucs4Character = SURROGATE_VALUE(high_surrogate, character);
+            high_surrogate = 0;
+            break;
+          }
+          else
+          {
+            fail = true;
+            break;
+          }
         }
-        if (character >= 0xd800 && character < 0xdc00) /* high surrogate */
-          high_surrogate = character;
         else
         {
-          ucs4Character = character;
-          break;
+          if (high_surrogate)
+          {
+            fail = true;
+            break;
+          }
+          if (character >= 0xd800 && character < 0xdc00) /* high surrogate */
+            high_surrogate = character;
+          else
+          {
+            ucs4Character = character;
+            break;
+          }
         }
       }
-    }
-    if (fail)
-      throw libmspub::GenericException();
+      if (fail)
+        throw libmspub::GenericException();
 
-    _appendUCS4(text, ucs4Character);
+      _appendUCS4(text, ucs4Character);
+    }
+    break;
+  case WIN_1252:
+    for (std::vector<unsigned char>::const_iterator iter = characters.begin();
+         iter != characters.end(); ++iter)
+    {
+      uint32_t ucs4 = _win1252ToUCS4(*iter);
+      _appendUCS4(text, ucs4);
+    }
+    break;
   }
 }
 

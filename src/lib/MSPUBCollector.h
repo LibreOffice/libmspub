@@ -110,6 +110,7 @@ public:
   void addDefaultParagraphStyle(const ParagraphStyle &style);
   void addPaletteColor(Color);
   bool setCurrentGroupSeqNum(unsigned seqNum);
+  void setEncoding(Encoding encoding);
 
   bool go();
 
@@ -151,6 +152,7 @@ private:
   std::set<unsigned> m_masterPages;
   std::set<unsigned> m_shapesWithCoordinatesRotated90;
   std::map<unsigned, unsigned> m_masterPagesByPageSeqNum;
+  boost::optional<Encoding> m_encoding;
   mutable std::vector<bool> m_calculationValuesSeen;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;

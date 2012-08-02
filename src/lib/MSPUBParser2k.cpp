@@ -330,8 +330,13 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
   }
 }
 
+void libmspub::MSPUBParser2k::parseContentsTextIfNecessary(WPXInputStream *)
+{
+}
+
 bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
 {
+  parseContentsTextIfNecessary(input);
   input->seek(0x16, WPX_SEEK_SET);
   unsigned trailerOffset = readU32(input);
   input->seek(trailerOffset, WPX_SEEK_SET);

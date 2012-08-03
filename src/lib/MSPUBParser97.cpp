@@ -238,6 +238,11 @@ libmspub::CharacterStyle libmspub::MSPUBParser97::readCharacterStyle(
     textSizeVariationFromDefault =
       length >= 6 ? readS16(input) : readS8(input);
   }
+  if (length >= 16)
+  {
+    input->seek(begin + 0xC, WPX_SEEK_SET);
+    colorIndex = getColorIndexByQuillEntry(readU32(input));
+  }
   double textSizeInPt = 10 +
                         static_cast<double>(textSizeVariationFromDefault) / 2;
   return CharacterStyle(underline, italic, bold, textSizeInPt, colorIndex,

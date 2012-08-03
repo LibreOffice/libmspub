@@ -65,9 +65,14 @@ libmspub::MSPUBParser::~MSPUBParser()
 {
 }
 
-bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags)
+bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
+    unsigned *geomFlags)
 {
-  return flags && !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE));
+  return flags &&
+    !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE)) &&
+    ((!geomFlags) || !((*geomFlags) & FLAG_GEOM_USE_LINE_OK)
+      || ((*geomFlags) & FLAG_GEOM_LINE_OK));
+
 }
 
 unsigned libmspub::MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
@@ -1121,68 +1126,74 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           }
           unsigned *ptr_lineColor = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_COLOR);
           unsigned *ptr_lineFlags = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_STYLE_BOOL_PROPS);
-          bool useLine = lineExistsByFlagPointer(ptr_lineFlags);
+          unsigned *ptr_geomFlags = getIfExists(
+              foptValues.m_scalarValues, FIELDID_GEOM_BOOL_PROPS);
+          bool useLine = lineExistsByFlagPointer(
+              ptr_lineFlags, ptr_geomFlags);
           bool skipIfNotBg = false;
           boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg);
-          if (ptr_lineColor && useLine)
+          if (useLine)
           {
-            unsigned *ptr_lineWidth = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_WIDTH);
-            unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
-            m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
-          }
-          else
-          {
-            input->seek(sp.contentsOffset, WPX_SEEK_SET);
-            if (findEscherContainer(input, sp, cTertiaryFopt, OFFICE_ART_TERTIARY_FOPT))
+            if (ptr_lineColor)
             {
-              std::map<unsigned short, unsigned> tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
-              unsigned *ptr_tertiaryLineFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
-              if (lineExistsByFlagPointer(ptr_tertiaryLineFlags))
+              unsigned *ptr_lineWidth = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_WIDTH);
+              unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
+              m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
+            }
+            else
+            {
+              input->seek(sp.contentsOffset, WPX_SEEK_SET);
+              if (findEscherContainer(input, sp, cTertiaryFopt, OFFICE_ART_TERTIARY_FOPT))
               {
-                unsigned *ptr_topColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_COLOR);
-                unsigned *ptr_topWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_WIDTH);
-                unsigned *ptr_topFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_BOOL_PROPS);
-                unsigned *ptr_rightColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_COLOR);
-                unsigned *ptr_rightWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_WIDTH);
-                unsigned *ptr_rightFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_BOOL_PROPS);
-                unsigned *ptr_bottomColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_COLOR);
-                unsigned *ptr_bottomWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_WIDTH);
-                unsigned *ptr_bottomFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_BOOL_PROPS);
-                unsigned *ptr_leftColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_COLOR);
-                unsigned *ptr_leftWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_WIDTH);
-                unsigned *ptr_leftFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_BOOL_PROPS);
-
-                bool topExists = ptr_topColor && lineExistsByFlagPointer(ptr_topFlags);
-                bool rightExists = ptr_rightColor && lineExistsByFlagPointer(ptr_rightFlags);
-                bool bottomExists = ptr_bottomColor && lineExistsByFlagPointer(ptr_bottomFlags);
-                bool leftExists = ptr_leftColor && lineExistsByFlagPointer(ptr_leftFlags);
-
-                m_collector->addShapeLine(*shapeSeqNum,
-                                          topExists ? Line(ColorReference(*ptr_topColor), ptr_topWidth ? *ptr_topWidth : 9525, true) :
-                                            Line(ColorReference(0), 0, false));
-                m_collector->addShapeLine(*shapeSeqNum,
-                                          rightExists ? Line(ColorReference(*ptr_rightColor), ptr_rightWidth ? *ptr_rightWidth : 9525, true) :
-                                            Line(ColorReference(0), 0, false));
-                m_collector->addShapeLine(*shapeSeqNum,
-                                          bottomExists ? Line(ColorReference(*ptr_bottomColor), ptr_bottomWidth ? *ptr_bottomWidth : 9525, true) :
-                                            Line(ColorReference(0), 0, false));
-                m_collector->addShapeLine(*shapeSeqNum,
-                                          leftExists ? Line(ColorReference(*ptr_leftColor), ptr_leftWidth ? *ptr_leftWidth : 9525, true) :
-                                            Line(ColorReference(0), 0, false));
-
-                // Amazing feat of Microsoft engineering:
-                // The detailed interaction of four flags describes ONE true/false property!
-
-                if (ptr_leftFlags &&
-                    (*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN) &&
-                    (!(*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN_OK) || (*ptr_leftFlags & FLAG_LEFT_INSET_PEN_OK)) &&
-                    (*ptr_leftFlags & FLAG_LEFT_INSET_PEN))
-              {
-                  m_collector->setShapeBorderPosition(*shapeSeqNum, INSIDE_SHAPE);
-                }
-                else
+                std::map<unsigned short, unsigned> tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
+                unsigned *ptr_tertiaryLineFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
+                if (lineExistsByFlagPointer(ptr_tertiaryLineFlags))
                 {
-                  m_collector->setShapeBorderPosition(*shapeSeqNum, HALF_INSIDE_SHAPE);
+                  unsigned *ptr_topColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_COLOR);
+                  unsigned *ptr_topWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_WIDTH);
+                  unsigned *ptr_topFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_TOP_BOOL_PROPS);
+                  unsigned *ptr_rightColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_COLOR);
+                  unsigned *ptr_rightWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_WIDTH);
+                  unsigned *ptr_rightFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_RIGHT_BOOL_PROPS);
+                  unsigned *ptr_bottomColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_COLOR);
+                  unsigned *ptr_bottomWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_WIDTH);
+                  unsigned *ptr_bottomFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_BOTTOM_BOOL_PROPS);
+                  unsigned *ptr_leftColor = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_COLOR);
+                  unsigned *ptr_leftWidth = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_WIDTH);
+                  unsigned *ptr_leftFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_LEFT_BOOL_PROPS);
+
+                  bool topExists = ptr_topColor && lineExistsByFlagPointer(ptr_topFlags);
+                  bool rightExists = ptr_rightColor && lineExistsByFlagPointer(ptr_rightFlags);
+                  bool bottomExists = ptr_bottomColor && lineExistsByFlagPointer(ptr_bottomFlags);
+                  bool leftExists = ptr_leftColor && lineExistsByFlagPointer(ptr_leftFlags);
+
+                  m_collector->addShapeLine(*shapeSeqNum,
+                                            topExists ? Line(ColorReference(*ptr_topColor), ptr_topWidth ? *ptr_topWidth : 9525, true) :
+                                              Line(ColorReference(0), 0, false));
+                  m_collector->addShapeLine(*shapeSeqNum,
+                                            rightExists ? Line(ColorReference(*ptr_rightColor), ptr_rightWidth ? *ptr_rightWidth : 9525, true) :
+                                              Line(ColorReference(0), 0, false));
+                  m_collector->addShapeLine(*shapeSeqNum,
+                                            bottomExists ? Line(ColorReference(*ptr_bottomColor), ptr_bottomWidth ? *ptr_bottomWidth : 9525, true) :
+                                              Line(ColorReference(0), 0, false));
+                  m_collector->addShapeLine(*shapeSeqNum,
+                                            leftExists ? Line(ColorReference(*ptr_leftColor), ptr_leftWidth ? *ptr_leftWidth : 9525, true) :
+                                              Line(ColorReference(0), 0, false));
+
+                  // Amazing feat of Microsoft engineering:
+                  // The detailed interaction of four flags describes ONE true/false property!
+
+                  if (ptr_leftFlags &&
+                      (*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN) &&
+                      (!(*ptr_leftFlags & FLAG_USE_LEFT_INSET_PEN_OK) || (*ptr_leftFlags & FLAG_LEFT_INSET_PEN_OK)) &&
+                      (*ptr_leftFlags & FLAG_LEFT_INSET_PEN))
+                {
+                    m_collector->setShapeBorderPosition(*shapeSeqNum, INSIDE_SHAPE);
+                  }
+                  else
+                  {
+                    m_collector->setShapeBorderPosition(*shapeSeqNum, HALF_INSIDE_SHAPE);
+                  }
                 }
               }
             }

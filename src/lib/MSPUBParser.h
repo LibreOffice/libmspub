@@ -179,7 +179,8 @@ protected:
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
-  static bool lineExistsByFlagPointer(unsigned *);
+  static bool lineExistsByFlagPointer(unsigned * flags,
+      unsigned *geomFlags = NULL);
 };
 
 } // namespace libmspub

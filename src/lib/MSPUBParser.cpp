@@ -54,9 +54,9 @@ libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collec
   : m_input(input), m_collector(collector),
     m_blockInfo(), m_contentChunks(),
     m_pageChunkIndices(), m_shapeChunkIndices(),
-    m_paletteChunkIndices(), m_unknownChunkIndices(),
-    m_documentChunkIndex(), m_lastSeenSeqNum(-1),
-    m_lastAddedImage(0),
+    m_paletteChunkIndices(), m_borderArtChunkIndices(),
+    m_unknownChunkIndices(), m_documentChunkIndex(),
+    m_lastSeenSeqNum(-1), m_lastAddedImage(0),
     m_alternateShapeSeqNums(), m_escherDelayIndices()
 {
 }
@@ -69,9 +69,9 @@ bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
     unsigned *geomFlags)
 {
   return flags &&
-    !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE)) &&
-    ((!geomFlags) || !((*geomFlags) & FLAG_GEOM_USE_LINE_OK)
-      || ((*geomFlags) & FLAG_GEOM_LINE_OK));
+         !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE)) &&
+         ((!geomFlags) || !((*geomFlags) & FLAG_GEOM_USE_LINE_OK)
+          || ((*geomFlags) & FLAG_GEOM_LINE_OK));
 
 }
 
@@ -359,6 +359,17 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           return false;
         }
       }
+      for (unsigned i_ba = 0; i_ba < m_borderArtChunkIndices.size();
+           ++i_ba)
+      {
+        const ContentChunkReference &baChunk =
+          m_contentChunks.at(m_borderArtChunkIndices[i_ba]);
+        input->seek(baChunk.offset, WPX_SEEK_SET);
+        if (!parseBorderArtChunk(input, baChunk))
+        {
+          return false;
+        }
+      }
       input->seek(documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, documentChunk))
       {
@@ -415,6 +426,48 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
   return true; //FIXME: return false for failure
 }
 
+bool libmspub::MSPUBParser::parseBorderArtChunk(
+  WPXInputStream *input, const ContentChunkReference &chunk)
+{
+  while (stillReading(input, chunk.end))
+  {
+    MSPUBBlockInfo info = parseBlock(input, true);
+    if (info.id == BA_ARRAY)
+    {
+      input->seek(info.dataOffset, WPX_SEEK_SET);
+      while (stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo entry = parseBlock(input, false);
+        while (stillReading(input, entry.dataOffset + entry.dataLength))
+        {
+          MSPUBBlockInfo subRecord = parseBlock(input, true);
+          if (subRecord.id == BA_IMAGE_CONTAINER)
+          {
+            input->seek(subRecord.dataOffset, WPX_SEEK_SET);
+            MSPUBBlockInfo subSubRecord = parseBlock(input, false);
+            if (subSubRecord.id == BA_IMAGE_SUB_CONTAINER)
+            {
+              MSPUBBlockInfo imgRecord = parseBlock(input, false);
+              if (imgRecord.id == BA_IMAGE)
+              {
+                WPXBinaryData &img = *(m_collector->addBorderImage(WMF));
+                unsigned long toRead = imgRecord.dataLength;
+                while (toRead > 0 && stillReading(input, (unsigned long)-1))
+                {
+                  unsigned long howManyRead = 0;
+                  const unsigned char *buf = input->read(toRead, howManyRead);
+                  img.append(buf, howManyRead);
+                  toRead -= howManyRead;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
 
 bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk)
 {
@@ -513,6 +566,10 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
     else if (info.id == SHAPE_HEIGHT)
     {
       height = info.data;
+    }
+    else if (info.id == SHAPE_BORDER_IMAGE_ID)
+    {
+      m_collector->setShapeBorderImageId(seqNum, info.data);
     }
     else if (info.id == SHAPE_TEXT_ID)
     {
@@ -1127,9 +1184,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           unsigned *ptr_lineColor = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_COLOR);
           unsigned *ptr_lineFlags = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_STYLE_BOOL_PROPS);
           unsigned *ptr_geomFlags = getIfExists(
-              foptValues.m_scalarValues, FIELDID_GEOM_BOOL_PROPS);
+                                      foptValues.m_scalarValues, FIELDID_GEOM_BOOL_PROPS);
           bool useLine = lineExistsByFlagPointer(
-              ptr_lineFlags, ptr_geomFlags);
+                           ptr_lineFlags, ptr_geomFlags);
           bool skipIfNotBg = false;
           boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg);
           if (useLine)
@@ -1686,6 +1743,13 @@ bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, co
       m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
       m_paletteChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       return true;
+    }
+    else if (type == BORDER_ART)
+    {
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0,
+                                m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_borderArtChunkIndices.push_back(
+        unsigned(m_contentChunks.size() - 1));
     }
     m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
     m_unknownChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));

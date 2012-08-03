@@ -44,6 +44,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   SHAPE_WIDTH = 0xaa,
   SHAPE_HEIGHT = 0xab,
   SHAPE_TEXT_ID = 0x27,
+  SHAPE_BORDER_IMAGE_ID = 0x09,
   BOLD_1_ID = 0x02,
   BOLD_2_ID = 0x37,
   ITALIC_1_ID = 0x03,
@@ -64,7 +65,11 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   PARAGRAPH_LEFT_INDENT = 0xD,
   PARAGRAPH_RIGHT_INDENT = 0xE,
   THIS_MASTER_NAME = 0xE,
-  APPLIED_MASTER_NAME = 0xD
+  APPLIED_MASTER_NAME = 0xD,
+  BA_ARRAY = 0x02,
+  BA_IMAGE_CONTAINER = 0x0A,
+  BA_IMAGE_SUB_CONTAINER = 0x00,
+  BA_IMAGE = 0x01
 };
 } // namespace libmspub
 

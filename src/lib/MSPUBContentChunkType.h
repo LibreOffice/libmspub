@@ -34,12 +34,13 @@ namespace libmspub
 enum MSPUBContentChunkType //Please fill this in and replace magic constants in MSPUBParser accordingly as you discover what a given chunk type means!
 {
   UNKNOWN_CHUNK  = 0,
-  SHAPE    = 0x01,
-  ALTSHAPE = 0x20,
-  DOCUMENT = 0x44,
-  PAGE     = 0x43,
-  PALETTE  = 0x5C,
-  GROUP    = 0x30,
+  SHAPE      = 0x01,
+  ALTSHAPE   = 0x20,
+  DOCUMENT   = 0x44,
+  PAGE       = 0x43,
+  PALETTE    = 0x5C,
+  BORDER_ART = 0x86,
+  GROUP      = 0x30,
   IMAGE_2K, //these don't exist in Pub 2k3 so their value in the enum is not used.
   IMAGE_2K_DATA
 };

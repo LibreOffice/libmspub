@@ -127,6 +127,8 @@ protected:
   bool parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
   bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup);
+  bool parseBorderArtChunk(WPXInputStream *input,
+                           const ContentChunkReference &chunk);
   void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
@@ -165,6 +167,7 @@ protected:
   std::vector<unsigned> m_pageChunkIndices;
   std::vector<unsigned> m_shapeChunkIndices;
   std::vector<unsigned> m_paletteChunkIndices;
+  std::vector<unsigned> m_borderArtChunkIndices;
   std::vector<unsigned> m_unknownChunkIndices;
   boost::optional<unsigned> m_documentChunkIndex;
   int m_lastSeenSeqNum;
@@ -179,8 +182,8 @@ protected:
   static unsigned getEscherElementAdditionalHeaderLength(unsigned short type);
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
-  static bool lineExistsByFlagPointer(unsigned * flags,
-      unsigned *geomFlags = NULL);
+  static bool lineExistsByFlagPointer(unsigned *flags,
+                                      unsigned *geomFlags = NULL);
 };
 
 } // namespace libmspub

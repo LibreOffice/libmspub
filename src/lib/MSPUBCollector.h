@@ -76,10 +76,12 @@ public:
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   void addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
+  WPXBinaryData *addBorderImage(ImgType type);
   bool addShape(unsigned seqNum);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
   void setShapeType(unsigned seqNum, ShapeType type);
+  void setShapeBorderImageId(unsigned seqNum, unsigned borderImageId);
   void setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   void setShapeImgIndex(unsigned seqNum, unsigned index);
   void setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg);
@@ -134,6 +136,7 @@ private:
   std::map<unsigned, std::vector<TextParagraph> > m_textStringsById;
   std::map<unsigned, PageInfo> m_pagesBySeqNum;
   std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
+  std::vector<std::pair<ImgType, WPXBinaryData> > m_borderImages;
   std::vector<ColorReference> m_textColors;
   std::vector<std::vector<unsigned char> > m_fonts;
   std::vector<CharacterStyle> m_defaultCharStyles;

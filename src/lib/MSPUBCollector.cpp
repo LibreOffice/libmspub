@@ -97,7 +97,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false),
   m_numPages(0), m_textStringsById(), m_pagesBySeqNum(),
-  m_images(),
+  m_images(), m_borderImages(),
   m_textColors(), m_fonts(),
   m_defaultCharStyles(), m_defaultParaStyles(), m_shapeTypesBySeqNum(),
   m_possibleImageShapeSeqNums(),
@@ -126,6 +126,11 @@ void libmspub::noop(const CustomShape *)
 void libmspub::MSPUBCollector::setShapeCoordinatesRotated90(unsigned seqNum)
 {
   m_shapesWithCoordinatesRotated90.insert(seqNum);
+}
+
+void libmspub::MSPUBCollector::setShapeBorderImageId(unsigned seqNum, unsigned id)
+{
+  m_shapeInfosBySeqNum[seqNum].m_borderImgIndex = id;
 }
 
 void libmspub::MSPUBCollector::setShapeCustomPath(unsigned seqNum,
@@ -846,6 +851,12 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
   }
   m_images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
   return true;
+}
+
+WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type)
+{
+  m_borderImages.push_back(std::pair<ImgType, WPXBinaryData>(type, WPXBinaryData()));
+  return &m_borderImages.back().second;
 }
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum)

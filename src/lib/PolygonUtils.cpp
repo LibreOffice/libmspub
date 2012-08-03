@@ -5635,6 +5635,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     cmd = NOSTROKE;
     break;
   case 0x20:
+  case 0xAF:
     cmd = CURVETO;
     count = (binary & 0xFF);
     break;

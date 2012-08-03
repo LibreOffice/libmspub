@@ -344,6 +344,16 @@ uint32_t libmspub::readU32(WPXInputStream *input)
   return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
 }
 
+int8_t libmspub::readS8(WPXInputStream *input)
+{
+  return (int8_t)readU8(input);
+}
+
+int16_t libmspub::readS16(WPXInputStream *input)
+{
+  return (int16_t)readU16(input);
+}
+
 int32_t libmspub::readS32(WPXInputStream *input)
 {
   return (int32_t)readU32(input);

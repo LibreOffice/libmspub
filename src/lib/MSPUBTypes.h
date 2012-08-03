@@ -32,6 +32,7 @@
 
 #include <vector>
 #include <string>
+#include <boost/optional.hpp>
 #include "MSPUBBlockType.h"
 #include "MSPUBBlockID.h"
 #include "MSPUBContentChunkType.h"
@@ -100,15 +101,17 @@ struct CharacterStyle
 {
   CharacterStyle() :
     underline(false), italic(false), bold(false),
-    textSizeInPt(12), colorIndex(0), fontIndex(0)
+    textSizeInPt(), colorIndex(-1), fontIndex(0)
   {
   }
-  CharacterStyle(bool u, bool i, bool b, int tSIP = -1, int cI = -1, unsigned fI = 0) :
+  CharacterStyle(bool u, bool i, bool b,
+                 boost::optional<double> tSIP = boost::optional<double>(),
+                 int cI = -1, unsigned fI = 0) :
     underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI) { }
   bool underline;
   bool italic;
   bool bold;
-  int textSizeInPt;
+  boost::optional<double> textSizeInPt;
   int colorIndex;
   unsigned fontIndex;
 };

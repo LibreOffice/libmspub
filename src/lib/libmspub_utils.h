@@ -104,6 +104,8 @@ uint8_t readU8(WPXInputStream *input);
 uint16_t readU16(WPXInputStream *input);
 uint32_t readU32(WPXInputStream *input);
 uint64_t readU64(WPXInputStream *input);
+int8_t readS8(WPXInputStream *input);
+int16_t readS16(WPXInputStream *input);
 int32_t readS32(WPXInputStream *input);
 double readFixedPoint(WPXInputStream *input);
 double toFixedPoint(int fp);

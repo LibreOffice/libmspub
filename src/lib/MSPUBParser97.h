@@ -52,7 +52,9 @@ class MSPUBParser97 : public MSPUBParser2k
   struct SpanInfo97
   {
     unsigned m_spanEnd;
-    SpanInfo97(unsigned spanEnd) : m_spanEnd(spanEnd)
+    CharacterStyle m_style;
+    SpanInfo97(unsigned spanEnd, const CharacterStyle &style)
+      : m_spanEnd(spanEnd), m_style(style)
     {
     }
   };
@@ -67,6 +69,8 @@ class MSPUBParser97 : public MSPUBParser2k
   unsigned getShapeFillColorOffset() const;
   unsigned short getTextMarker() const;
   unsigned getTextIdOffset() const;
+  CharacterStyle readCharacterStyle(WPXInputStream *input,
+                                    unsigned length);
   void parseContentsTextIfNecessary(WPXInputStream *input);
   std::vector<SpanInfo97> getSpansInfo(WPXInputStream *input,
                                        unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,

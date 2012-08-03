@@ -883,7 +883,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
 {
   bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
-  int textSize1 = -1, textSize2 = -1, colorIndex = -1;
+  int textSize1 = -1, /* textSize2 = -1,*/ colorIndex = -1;
   unsigned fontIndex = 0;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
@@ -911,7 +911,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
       textSize1 = info.data;
       break;
     case TEXT_SIZE_2_ID:
-      textSize2 = info.data;
+      // textSize2 = info.data;
       break;
     case BARE_COLOR_INDEX_ID:
       colorIndex = info.data;
@@ -930,8 +930,13 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
     }
   }
   //FIXME: Figure out what textSize2 is used for. Can we find a document where it differs from textSize1 ?
-  textSize2 = textSize1;
-  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, textSize1 == textSize2 && textSize1 >= 0 ? (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH : -1, getColorIndexByQuillEntry(colorIndex), fontIndex);
+  // textSize2 = textSize1;
+  boost::optional<double> dTextSize;
+  if (textSize1 != -1)
+  {
+    dTextSize = (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH;
+  }
+  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex);
 }
 
 unsigned libmspub::MSPUBParser::getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info)

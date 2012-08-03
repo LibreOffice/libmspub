@@ -29,6 +29,7 @@
 #include "MSPUBParser97.h"
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
+#include "MSPUBTypes.h"
 
 libmspub::MSPUBParser97::MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector)
   : MSPUBParser2k(input, collector), m_isBanner(false)
@@ -104,12 +105,25 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
     while (currentParaIndex < shapeEnd)
     {
       unsigned paraEnd = iParaEnd < textInfo.m_paragraphEnds.size() ?
-                         std::min<unsigned>(textInfo.m_paragraphEnds[iParaEnd++], shapeEnd) : shapeEnd;
+                         textInfo.m_paragraphEnds[iParaEnd++] : shapeEnd;
+      if (paraEnd > shapeEnd)
+      {
+        --iParaEnd;
+        paraEnd = shapeEnd;
+      }
       std::vector<TextSpan> paraSpans;
       while (currentSpanIndex < paraEnd)
       {
-        unsigned spanEnd = iSpanEnd < spanInfos.size() ?
-                           std::min<unsigned>(spanInfos[iSpanEnd++].m_spanEnd, paraEnd) : paraEnd;
+        const SpanInfo97 &spanInfo = iSpanEnd < spanInfos.size() ?
+                                     spanInfos[iSpanEnd++] :
+                                     SpanInfo97(paraEnd, CharacterStyle());
+        unsigned spanEnd = spanInfo.m_spanEnd;
+        if (spanEnd > paraEnd)
+        {
+          --iSpanEnd;
+          spanEnd = paraEnd;
+        }
+        const CharacterStyle &spanStyle = spanInfo.m_style;
         std::vector<unsigned char> spanChars;
         spanChars.reserve(spanEnd - currentSpanIndex);
         for (unsigned i = currentSpanIndex; i < spanEnd; ++i)
@@ -135,7 +149,7 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
             spanChars.push_back(ch);
           }
         }
-        paraSpans.push_back(TextSpan(spanChars, CharacterStyle()));
+        paraSpans.push_back(TextSpan(spanChars, spanStyle));
         currentSpanIndex = spanEnd;
       }
       shapeParas.push_back(TextParagraph(paraSpans, ParagraphStyle()));
@@ -147,22 +161,87 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(WPXInputStream *input
 
 std::vector<libmspub::MSPUBParser97::SpanInfo97> libmspub::MSPUBParser97::getSpansInfo(
   WPXInputStream *input,
-  unsigned /* prop1Index */, unsigned prop2Index, unsigned prop3Index,
+  unsigned prop1Index, unsigned prop2Index, unsigned /* prop3Index */,
   unsigned /* prop3End */)
 {
+  std::vector<unsigned> spanEnds;
   std::vector<SpanInfo97> ret;
-  for (unsigned i = prop2Index; i < prop3Index; ++i) // only parse prop2 for now
+  for (unsigned i = prop1Index; i < prop2Index; ++i)
   {
     unsigned offset = i * 0x200;
     input->seek(offset + 0x1FF, WPX_SEEK_SET);
     unsigned numEntries = readU8(input);
     input->seek(offset, WPX_SEEK_SET);
-    for (unsigned j = 1; j < numEntries; ++j) // Skip the first thing; it is not an end
+    // Skip the first thing; it is not an end
+    unsigned start = readU32(input);
+    for (unsigned j = 0; j < numEntries; ++j)
     {
-      ret.push_back(SpanInfo97(readU32(input)));
+      spanEnds.push_back(readU32(input) - start);
+    }
+    std::vector<unsigned char> spanStyleIndices;
+    for (unsigned j = 0; j < spanEnds.size(); ++j)
+    {
+      spanStyleIndices.push_back(readU8(input));
+    }
+    while (stillReading(input, offset + 0x200) && readU8(input) == 0)
+    {
+      ;
+    }
+    input->seek(-1, WPX_SEEK_CUR);
+    std::map<unsigned char, CharacterStyle> stylesByIndex;
+    while (stillReading(input, offset + 0x1FF))
+    {
+      unsigned length = readU8(input);
+      unsigned nextOffset = input->tell() + length;
+      unsigned char index = static_cast<unsigned char>(
+                              (input->tell() - 1 - offset) / 2);
+      stylesByIndex[index] = readCharacterStyle(input, length);
+      input->seek(nextOffset, WPX_SEEK_SET);
+    }
+    for (unsigned j = 0; j < spanEnds.size(); ++j)
+    {
+      ret.push_back(SpanInfo97(spanEnds[j], j < spanStyleIndices.size() ?
+                               stylesByIndex[spanStyleIndices[j]] : CharacterStyle()));
     }
   }
   return ret;
+}
+
+libmspub::CharacterStyle libmspub::MSPUBParser97::readCharacterStyle(
+  WPXInputStream *input, unsigned length)
+{
+  unsigned begin = input->tell();
+  bool underline = false, italic = false, bold = false;
+  int colorIndex = -1;
+  unsigned fontIndex = 0;
+  int textSizeVariationFromDefault = 0;
+
+  if (length >= 1)
+  {
+    unsigned char biFlags = readU8(input);
+    bold = biFlags & 0x1;
+    italic = biFlags & 0x2;
+  }
+  if (length >= 3)
+  {
+    input->seek(begin + 0x2, WPX_SEEK_SET);
+    fontIndex = readU8(input);
+  }
+  if (length >= 9)
+  {
+    input->seek(begin + 0x8, WPX_SEEK_SET);
+    underline = readU8(input) & 0x1;
+  }
+  if (length >= 5)
+  {
+    input->seek(begin + 0x4, WPX_SEEK_SET);
+    textSizeVariationFromDefault =
+      length >= 6 ? readS16(input) : readS8(input);
+  }
+  double textSizeInPt = 10 +
+                        static_cast<double>(textSizeVariationFromDefault) / 2;
+  return CharacterStyle(underline, italic, bold, textSizeInPt, colorIndex,
+                        fontIndex);
 }
 
 libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(WPXInputStream *input, unsigned length)

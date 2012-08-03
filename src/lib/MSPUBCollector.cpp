@@ -653,13 +653,14 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("style:text-underline-type", "single");
   }
-  if (style.textSizeInPt != -1)
+  if (style.textSizeInPt.is_initialized())
   {
-    ret.insert("fo:font-size", style.textSizeInPt);
+    ret.insert("fo:font-size", style.textSizeInPt.get() / POINTS_IN_INCH);
   }
-  else if (defaultCharStyle.textSizeInPt != -1)
+  else if (defaultCharStyle.textSizeInPt.is_initialized())
   {
-    ret.insert("fo:font-size", defaultCharStyle.textSizeInPt);
+    ret.insert("fo:font-size", defaultCharStyle.textSizeInPt.get()
+               / POINTS_IN_INCH);
   }
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < m_textColors.size())
   {

@@ -429,12 +429,13 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
 bool libmspub::MSPUBParser::parseBorderArtChunk(
   WPXInputStream *input, const ContentChunkReference &chunk)
 {
-  while (stillReading(input, chunk.end))
+  unsigned length = readU32(input);
+  while (stillReading(input, chunk.offset + length))
   {
     MSPUBBlockInfo info = parseBlock(input, true);
     if (info.id == BA_ARRAY)
     {
-      input->seek(info.dataOffset, WPX_SEEK_SET);
+      input->seek(info.dataOffset + 4, WPX_SEEK_SET);
       while (stillReading(input, info.dataOffset + info.dataLength))
       {
         MSPUBBlockInfo entry = parseBlock(input, false);
@@ -443,7 +444,7 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
           MSPUBBlockInfo subRecord = parseBlock(input, true);
           if (subRecord.id == BA_IMAGE_CONTAINER)
           {
-            input->seek(subRecord.dataOffset, WPX_SEEK_SET);
+            input->seek(subRecord.dataOffset + 4, WPX_SEEK_SET);
             MSPUBBlockInfo subSubRecord = parseBlock(input, false);
             if (subSubRecord.id == BA_IMAGE_SUB_CONTAINER)
             {

@@ -436,34 +436,54 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
     if (info.id == BA_ARRAY)
     {
       input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+      unsigned i = 0;
       while (stillReading(input, info.dataOffset + info.dataLength))
       {
         MSPUBBlockInfo entry = parseBlock(input, false);
         while (stillReading(input, entry.dataOffset + entry.dataLength))
         {
           MSPUBBlockInfo subRecord = parseBlock(input, true);
-          if (subRecord.id == BA_IMAGE_CONTAINER)
+          if (subRecord.id == BA_IMAGE_ARRAY)
           {
             input->seek(subRecord.dataOffset + 4, WPX_SEEK_SET);
-            MSPUBBlockInfo subSubRecord = parseBlock(input, false);
-            if (subSubRecord.id == BA_IMAGE_SUB_CONTAINER)
+            while (stillReading(input, subRecord.dataOffset + subRecord.dataLength))
             {
-              MSPUBBlockInfo imgRecord = parseBlock(input, false);
-              if (imgRecord.id == BA_IMAGE)
+              MSPUBBlockInfo subSubRecord = parseBlock(input, false);
+              if (subSubRecord.id == BA_IMAGE_CONTAINER)
               {
-                WPXBinaryData &img = *(m_collector->addBorderImage(WMF));
-                unsigned long toRead = imgRecord.dataLength;
-                while (toRead > 0 && stillReading(input, (unsigned long)-1))
+                MSPUBBlockInfo imgRecord = parseBlock(input, false);
+                if (imgRecord.id == BA_IMAGE)
                 {
-                  unsigned long howManyRead = 0;
-                  const unsigned char *buf = input->read(toRead, howManyRead);
-                  img.append(buf, howManyRead);
-                  toRead -= howManyRead;
+                  WPXBinaryData &img = *(m_collector->addBorderImage(
+                        WMF, i, 0x5C + input->tell() - subRecord.dataOffset));
+                  unsigned long toRead = imgRecord.dataLength;
+                  while (toRead > 0 && stillReading(input, (unsigned long)-1))
+                  {
+                    unsigned long howManyRead = 0;
+                    const unsigned char *buf = input->read(toRead, howManyRead);
+                    img.append(buf, howManyRead);
+                    toRead -= howManyRead;
+                  }
                 }
               }
             }
           }
+          else if (subRecord.id == BA_OFFSET_CONTAINER)
+          {
+            input->seek(subRecord.dataOffset + 4, WPX_SEEK_SET);
+            while (stillReading(
+                  input, subRecord.dataOffset + subRecord.dataLength))
+            {
+              MSPUBBlockInfo subSubRecord = parseBlock(input, true);
+              if (subSubRecord.id == BA_OFFSET_ENTRY)
+              {
+                m_collector->setBorderImageOffset(i, subSubRecord.data);
+              }
+            }
+          }
         }
+        ++i;
+        input->seek(entry.dataOffset + entry.dataLength, WPX_SEEK_SET);
       }
     }
   }

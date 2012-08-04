@@ -297,12 +297,22 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     graphicsPropsVector = info.m_fill->getProperties(&graphicsProps);
   }
   bool hasStroke = false;
-  for (unsigned i = 0; i < info.m_lines.size(); ++i)
+  bool hasBorderArt = false;
+  boost::optional<unsigned> maybeBorderImg = info.m_borderImgIndex;
+  if (maybeBorderImg.is_initialized() && !info.m_lines.empty())
   {
-    hasStroke = hasStroke || info.m_lines[i].m_lineExists;
-    if (hasStroke)
+    hasStroke = true;
+    hasBorderArt = true;
+  }
+  else
+  {
+    for (unsigned i = 0; i < info.m_lines.size(); ++i)
     {
-      break;
+      hasStroke = hasStroke || info.m_lines[i].m_lineExists;
+      if (hasStroke)
+      {
+        break;
+      }
     }
   }
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
@@ -316,7 +326,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   }
   graphicsProps.insert("draw:stroke", "none");
   const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
-  BorderPosition borderPosition = info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
+  BorderPosition borderPosition = 
+    hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
   ShapeType type = info.m_type.get_value_or(RECTANGLE);
   if (hasFill)
   {
@@ -325,6 +336,18 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     y = coord.getYIn(m_height);
     height = coord.getHeightIn();
     width = coord.getWidthIn();
+    if (hasBorderArt)
+    {
+      double borderImgWidth =
+        static_cast<double>(info.m_lines[0].m_widthInEmu) / EMUS_IN_INCH;
+      if (height > 2 * borderImgWidth && width >= 2 * borderImgWidth)
+      {
+        x += borderImgWidth;
+        y += borderImgWidth;
+        height -= 2 * borderImgWidth;
+        width -= 2 * borderImgWidth;
+      }
+    }
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
@@ -334,22 +357,225 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)
   {
-    Coordinate strokeCoord = isShapeTypeRectangle(type) ?
-                             getFudgedCoordinates(coord, lines, true, borderPosition) : coord;
-    double x, y, height, width;
-    x = strokeCoord.getXIn(m_width);
-    y = strokeCoord.getYIn(m_height);
-    height = strokeCoord.getHeightIn();
-    width = strokeCoord.getWidthIn();
-    graphicsProps.insert("draw:fill", "none");
-    graphicsProps.insert("draw:stroke", "solid");
-    m_painter->setStyle(graphicsProps, graphicsPropsVector);
-    writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
-                     false, foldedTransform, lines,
-                     boost::bind(
-                       &libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
-                     ),
-                     m_paletteColors, info.getCustomShape());
+    if (hasBorderArt)
+    {
+      double x = coord.getXIn(m_width);
+      double y = coord.getYIn(m_height);
+      double height = coord.getHeightIn();
+      double width = coord.getWidthIn();
+      double borderImgWidth =
+        static_cast<double>(info.m_lines[0].m_widthInEmu) / EMUS_IN_INCH;
+      unsigned numImagesHoriz = static_cast<unsigned>(width / borderImgWidth);
+      unsigned numImagesVert = static_cast<unsigned>(height / borderImgWidth);
+      double borderImgPaddedWidth, borderImgPaddedHeight;
+      if (numImagesHoriz > 2)
+      {
+        borderImgPaddedWidth = (width - 2 * borderImgWidth) / (numImagesHoriz - 2);
+      }
+      else
+      {
+        borderImgPaddedWidth = 0;
+      }
+      if (numImagesVert > 2)
+      {
+        borderImgPaddedHeight = (height - 2 * borderImgWidth) / (numImagesVert - 2);
+      }
+      else
+      {
+        borderImgPaddedHeight = 0;
+      }
+      if (numImagesHoriz >= 2 && numImagesVert >= 2)
+      {
+        const BorderArtInfo &ba = m_borderImages[maybeBorderImg.get()];
+        if (!ba.m_offsets.empty())
+        {
+          WPXPropertyList baProps;
+          baProps.insert("draw:stroke", "none");
+          baProps.insert("draw:fill", "solid");
+          baProps.insert("draw:fill-color", "#ffffff");
+          m_painter->setStyle(baProps, WPXPropertyListVector());
+          WPXPropertyList topRectProps;
+          topRectProps.insert("svg:x", x);
+          topRectProps.insert("svg:y", y);
+          topRectProps.insert("svg:height", borderImgWidth);
+          topRectProps.insert("svg:width", width);
+          m_painter->drawRectangle(topRectProps);
+          WPXPropertyList rightRectProps;
+          rightRectProps.insert("svg:x", x + width - borderImgWidth);
+          rightRectProps.insert("svg:y", y);
+          rightRectProps.insert("svg:height", height);
+          rightRectProps.insert("svg:width", borderImgWidth);
+          m_painter->drawRectangle(rightRectProps);
+          WPXPropertyList botRectProps;
+          botRectProps.insert("svg:x", x);
+          botRectProps.insert("svg:y", y + height - borderImgWidth);
+          botRectProps.insert("svg:height", borderImgWidth);
+          botRectProps.insert("svg:width", width);
+          m_painter->drawRectangle(botRectProps);
+          WPXPropertyList leftRectProps;
+          leftRectProps.insert("svg:x", x);
+          leftRectProps.insert("svg:y", y);
+          leftRectProps.insert("svg:height", height);
+          leftRectProps.insert("svg:width", borderImgWidth);
+          m_painter->drawRectangle(leftRectProps);
+          std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
+          // top left
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              writeImage(x, y, borderImgWidth, borderImgWidth,
+                  bi.m_type, bi.m_imgBlob);
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // top
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
+              {
+                writeImage(x + iTop * borderImgPaddedWidth, y, 
+                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              }
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // top right
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              writeImage(x + width - borderImgWidth, y,
+                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // right
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
+              {
+                writeImage(x + width - borderImgWidth,
+                    y + iRight * borderImgPaddedHeight, 
+                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              }
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // bottom right
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              writeImage(x + width - borderImgWidth,
+                  y + height - borderImgWidth,
+                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // bottom
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
+              {
+                writeImage(
+                    x + width - borderImgWidth - iBot * borderImgPaddedWidth,
+                    y + height - borderImgWidth,
+                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              }
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // bottom left
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              writeImage(x,
+                  y + height - borderImgWidth,
+                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              break;
+            }
+          }
+          if (iOffset + 1 != ba.m_offsets.end())
+          {
+            ++iOffset;
+          }
+          // left
+          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          {
+            if (ba.m_images[iImage].m_offset == *iOffset)
+            {
+              const BorderImgInfo &bi = ba.m_images[iImage];
+              for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
+              {
+                writeImage(x,
+                    y + height - borderImgWidth -
+                      iLeft * borderImgPaddedHeight,
+                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              }
+              break;
+            }
+          }
+        }
+      }
+    }
+    else
+    {
+      Coordinate strokeCoord = isShapeTypeRectangle(type) ?
+                               getFudgedCoordinates(coord, lines, true, borderPosition) : coord;
+      double x, y, height, width;
+      x = strokeCoord.getXIn(m_width);
+      y = strokeCoord.getYIn(m_height);
+      height = strokeCoord.getHeightIn();
+      width = strokeCoord.getWidthIn();
+      graphicsProps.insert("draw:fill", "none");
+      graphicsProps.insert("draw:stroke", "solid");
+      m_painter->setStyle(graphicsProps, graphicsPropsVector);
+      writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
+                       false, foldedTransform, lines,
+                       boost::bind(
+                         &libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
+                       ),
+                       m_paletteColors, info.getCustomShape());
+    }
   }
   if (hasText)
   {
@@ -394,6 +620,18 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     m_painter->endLayer();
   }
   return &no_op;
+}
+
+void libmspub::MSPUBCollector::writeImage(double x, double y,
+    double height, double width, ImgType type, const WPXBinaryData &blob) const
+{
+  WPXPropertyList props;
+  props.insert("svg:x", x);
+  props.insert("svg:y", y);
+  props.insert("svg:width", width);
+  props.insert("svg:height", height);
+  props.insert("libwpg:mime-type", mimeByImgType(type));
+  m_painter->drawGraphicObject(props, blob);
 }
 
 double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const
@@ -853,10 +1091,24 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
   return true;
 }
 
-WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type)
+WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
+    unsigned borderArtIndex, unsigned offset)
 {
-  m_borderImages.push_back(std::pair<ImgType, WPXBinaryData>(type, WPXBinaryData()));
-  return &m_borderImages.back().second;
+  while (borderArtIndex >= m_borderImages.size())
+  {
+    m_borderImages.push_back(BorderArtInfo());
+  }
+  m_borderImages[borderArtIndex].m_images.push_back(BorderImgInfo(type, offset));
+  return &(m_borderImages[borderArtIndex].m_images.back().m_imgBlob);
+}
+
+void libmspub::MSPUBCollector::setBorderImageOffset(unsigned index, unsigned offset)
+{
+  while (index >= m_borderImages.size())
+  {
+    m_borderImages.push_back(BorderArtInfo());
+  }
+  m_borderImages[index].m_offsets.push_back(offset);
 }
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum)

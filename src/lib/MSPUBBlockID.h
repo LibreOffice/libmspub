@@ -67,9 +67,11 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   THIS_MASTER_NAME = 0xE,
   APPLIED_MASTER_NAME = 0xD,
   BA_ARRAY = 0x02,
-  BA_IMAGE_CONTAINER = 0x0A,
-  BA_IMAGE_SUB_CONTAINER = 0x00,
-  BA_IMAGE = 0x01
+  BA_IMAGE_ARRAY = 0x0A,
+  BA_IMAGE_CONTAINER = 0x00,
+  BA_IMAGE = 0x01,
+  BA_OFFSET_CONTAINER = 0x08,
+  BA_OFFSET_ENTRY = 0x00
 };
 } // namespace libmspub
 

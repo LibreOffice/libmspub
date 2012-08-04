@@ -55,6 +55,7 @@
 #include "ColorReference.h"
 #include "PolygonUtils.h"
 #include "ShapeInfo.h"
+#include "BorderArtInfo.h"
 
 namespace libmspub
 {
@@ -76,7 +77,8 @@ public:
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   void addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
-  WPXBinaryData *addBorderImage(ImgType type);
+  void setBorderImageOffset(unsigned index, unsigned offset);
+  WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex, unsigned offset);
   bool addShape(unsigned seqNum);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
@@ -136,7 +138,7 @@ private:
   std::map<unsigned, std::vector<TextParagraph> > m_textStringsById;
   std::map<unsigned, PageInfo> m_pagesBySeqNum;
   std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
-  std::vector<std::pair<ImgType, WPXBinaryData> > m_borderImages;
+  std::vector<BorderArtInfo> m_borderImages;
   std::vector<ColorReference> m_textColors;
   std::vector<std::vector<unsigned char> > m_fonts;
   std::vector<CharacterStyle> m_defaultCharStyles;
@@ -168,6 +170,8 @@ private:
   void writePage(unsigned pageSeqNum) const;
   void writePageShapes(unsigned pageSeqNum) const;
   void writePageBackground(unsigned pageSeqNum) const;
+  void writeImage(double x, double y, double height, double width,
+      ImgType type, const WPXBinaryData &blob) const;
   bool pageIsMaster(unsigned pageSeqNum) const;
 
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;

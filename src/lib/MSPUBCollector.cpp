@@ -35,7 +35,8 @@
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
 #include "Coordinate.h"
-
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props) const
 {
   int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;

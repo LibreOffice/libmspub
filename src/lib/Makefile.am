@@ -55,7 +55,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ShapeInfo.h \
 	Line.h \
 	Margins.h \
-	MSPUBParser97.h
+	MSPUBParser97.h \
+	BorderArtInfo.h
 
 if OS_WIN32
 

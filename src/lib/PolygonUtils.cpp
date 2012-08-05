@@ -44,6 +44,7 @@
 
 // FIXME: Do something better than the following workaround
 #pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
 using namespace libmspub;
 

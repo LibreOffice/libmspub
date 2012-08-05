@@ -38,10 +38,9 @@ namespace libmspub
 struct BorderImgInfo
 {
   ImgType m_type;
-  unsigned m_offset;
   WPXBinaryData m_imgBlob;
-  BorderImgInfo(ImgType type, unsigned offset) :
-    m_type(type), m_offset(offset), m_imgBlob()
+  BorderImgInfo(ImgType type) :
+    m_type(type), m_imgBlob()
   {
   }
 };
@@ -50,7 +49,8 @@ struct BorderArtInfo
 {
   std::vector<BorderImgInfo> m_images;
   std::vector<unsigned> m_offsets;
-  BorderArtInfo() : m_images(), m_offsets()
+  std::vector<unsigned> m_offsetsOrdered;
+  BorderArtInfo() : m_images(), m_offsets(), m_offsetsOrdered()
   {
   }
 };

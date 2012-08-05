@@ -455,7 +455,7 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
                 if (imgRecord.id == BA_IMAGE)
                 {
                   WPXBinaryData &img = *(m_collector->addBorderImage(
-                                           WMF, i, 0x5C + input->tell() - subRecord.dataOffset));
+                                           WMF, i));
                   unsigned long toRead = imgRecord.dataLength;
                   while (toRead > 0 && stillReading(input, (unsigned long)-1))
                   {

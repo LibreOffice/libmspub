@@ -422,32 +422,28 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           m_painter->drawRectangle(leftRectProps);
           std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
           // top left
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          unsigned iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
-            {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              writeImage(x, y, borderImgWidth, borderImgWidth,
-                         bi.m_type, bi.m_imgBlob);
-              break;
-            }
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            writeImage(x, y, borderImgWidth, borderImgWidth,
+                       bi.m_type, bi.m_imgBlob);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
             ++iOffset;
           }
           // top
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
             {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
-              {
-                writeImage(x + iTop * borderImgPaddedWidth, y,
-                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              }
-              break;
+              writeImage(x + iTop * borderImgPaddedWidth, y,
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -455,33 +451,29 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             ++iOffset;
           }
           // top right
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
-            {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              writeImage(x + width - borderImgWidth, y,
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              break;
-            }
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            writeImage(x + width - borderImgWidth, y,
+                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
             ++iOffset;
           }
           // right
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
             {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
-              {
-                writeImage(x + width - borderImgWidth,
-                           y + iRight * borderImgPaddedHeight,
-                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              }
-              break;
+              writeImage(x + width - borderImgWidth,
+                         y + iRight * borderImgPaddedHeight,
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -489,35 +481,31 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             ++iOffset;
           }
           // bottom right
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
-            {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              writeImage(x + width - borderImgWidth,
-                         y + height - borderImgWidth,
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              break;
-            }
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            writeImage(x + width - borderImgWidth,
+                       y + height - borderImgWidth,
+                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
             ++iOffset;
           }
           // bottom
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
             {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
-              {
-                writeImage(
-                  x + width - borderImgWidth - iBot * borderImgPaddedWidth,
-                  y + height - borderImgWidth,
-                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              }
-              break;
+              writeImage(
+                x + width - borderImgWidth - iBot * borderImgPaddedWidth,
+                y + height - borderImgWidth,
+                borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -525,35 +513,31 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             ++iOffset;
           }
           // bottom left
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
-            {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              writeImage(x,
-                         y + height - borderImgWidth,
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              break;
-            }
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            writeImage(x,
+                       y + height - borderImgWidth,
+                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
             ++iOffset;
           }
           // left
-          for (unsigned iImage = 0; iImage < ba.m_images.size(); ++iImage)
+          iOrdOff = find(ba.m_offsetsOrdered.begin(),
+              ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+          if (iOrdOff < ba.m_images.size())
           {
-            if (ba.m_images[iImage].m_offset == *iOffset)
+            const BorderImgInfo &bi = ba.m_images[iOrdOff];
+            for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
             {
-              const BorderImgInfo &bi = ba.m_images[iImage];
-              for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
-              {
-                writeImage(x,
-                           y + height - borderImgWidth -
-                           iLeft * borderImgPaddedHeight,
-                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
-              }
-              break;
+              writeImage(x,
+                         y + height - borderImgWidth -
+                         iLeft * borderImgPaddedHeight,
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
         }
@@ -1094,13 +1078,13 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
 }
 
 WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
-    unsigned borderArtIndex, unsigned offset)
+    unsigned borderArtIndex)
 {
   while (borderArtIndex >= m_borderImages.size())
   {
     m_borderImages.push_back(BorderArtInfo());
   }
-  m_borderImages[borderArtIndex].m_images.push_back(BorderImgInfo(type, offset));
+  m_borderImages[borderArtIndex].m_images.push_back(BorderImgInfo(type));
   return &(m_borderImages[borderArtIndex].m_images.back().m_imgBlob);
 }
 
@@ -1110,7 +1094,23 @@ void libmspub::MSPUBCollector::setBorderImageOffset(unsigned index, unsigned off
   {
     m_borderImages.push_back(BorderArtInfo());
   }
-  m_borderImages[index].m_offsets.push_back(offset);
+  BorderArtInfo &bai = m_borderImages[index];
+  bai.m_offsets.push_back(offset);
+  bool added = false;
+  for (std::vector<unsigned>::iterator i = bai.m_offsetsOrdered.begin();
+      i != bai.m_offsetsOrdered.end(); ++i)
+  {
+    if (*i >= offset)
+    {
+      bai.m_offsetsOrdered.insert(i, offset);
+      added = true;
+      break;
+    }
+  }
+  if (!added)
+  {
+    bai.m_offsetsOrdered.push_back(offset);
+  }
 }
 
 bool libmspub::MSPUBCollector::addShape(unsigned seqNum)

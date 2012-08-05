@@ -78,7 +78,7 @@ public:
   void addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   void setBorderImageOffset(unsigned index, unsigned offset);
-  WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex, unsigned offset);
+  WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex);
   bool addShape(unsigned seqNum);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 

@@ -326,7 +326,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   }
   graphicsProps.insert("draw:stroke", "none");
   const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
-  BorderPosition borderPosition = 
+  BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
   ShapeType type = info.m_type.get_value_or(RECTANGLE);
   if (hasFill)
@@ -426,7 +426,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             {
               const BorderImgInfo &bi = ba.m_images[iImage];
               writeImage(x, y, borderImgWidth, borderImgWidth,
-                  bi.m_type, bi.m_imgBlob);
+                         bi.m_type, bi.m_imgBlob);
               break;
             }
           }
@@ -442,8 +442,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
               const BorderImgInfo &bi = ba.m_images[iImage];
               for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
               {
-                writeImage(x + iTop * borderImgPaddedWidth, y, 
-                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                writeImage(x + iTop * borderImgPaddedWidth, y,
+                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               }
               break;
             }
@@ -459,7 +459,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             {
               const BorderImgInfo &bi = ba.m_images[iImage];
               writeImage(x + width - borderImgWidth, y,
-                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               break;
             }
           }
@@ -476,8 +476,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
               for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
               {
                 writeImage(x + width - borderImgWidth,
-                    y + iRight * borderImgPaddedHeight, 
-                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                           y + iRight * borderImgPaddedHeight,
+                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               }
               break;
             }
@@ -493,8 +493,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             {
               const BorderImgInfo &bi = ba.m_images[iImage];
               writeImage(x + width - borderImgWidth,
-                  y + height - borderImgWidth,
-                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         y + height - borderImgWidth,
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               break;
             }
           }
@@ -511,9 +511,9 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
               for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
               {
                 writeImage(
-                    x + width - borderImgWidth - iBot * borderImgPaddedWidth,
-                    y + height - borderImgWidth,
-                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                  x + width - borderImgWidth - iBot * borderImgPaddedWidth,
+                  y + height - borderImgWidth,
+                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               }
               break;
             }
@@ -529,8 +529,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             {
               const BorderImgInfo &bi = ba.m_images[iImage];
               writeImage(x,
-                  y + height - borderImgWidth,
-                  borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         y + height - borderImgWidth,
+                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               break;
             }
           }
@@ -547,9 +547,9 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
               for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
               {
                 writeImage(x,
-                    y + height - borderImgWidth -
-                      iLeft * borderImgPaddedHeight,
-                    borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                           y + height - borderImgWidth -
+                           iLeft * borderImgPaddedHeight,
+                           borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
               }
               break;
             }

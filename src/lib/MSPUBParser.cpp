@@ -455,7 +455,7 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
                 if (imgRecord.id == BA_IMAGE)
                 {
                   WPXBinaryData &img = *(m_collector->addBorderImage(
-                        WMF, i, 0x5C + input->tell() - subRecord.dataOffset));
+                                           WMF, i, 0x5C + input->tell() - subRecord.dataOffset));
                   unsigned long toRead = imgRecord.dataLength;
                   while (toRead > 0 && stillReading(input, (unsigned long)-1))
                   {
@@ -472,7 +472,7 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
           {
             input->seek(subRecord.dataOffset + 4, WPX_SEEK_SET);
             while (stillReading(
-                  input, subRecord.dataOffset + subRecord.dataLength))
+                     input, subRecord.dataOffset + subRecord.dataLength))
             {
               MSPUBBlockInfo subSubRecord = parseBlock(input, true);
               if (subSubRecord.id == BA_OFFSET_ENTRY)

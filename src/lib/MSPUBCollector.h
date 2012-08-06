@@ -102,6 +102,7 @@ public:
   void beginGroup();
   bool endGroup();
 
+  void setShapeLineBackColor(unsigned seqNum, ColorReference backColor);
   void addShapeLine(unsigned seqNum, Line line);
   void setShapeOrder(unsigned seqNum);
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
@@ -172,7 +173,8 @@ private:
   void writePageShapes(unsigned pageSeqNum) const;
   void writePageBackground(unsigned pageSeqNum) const;
   void writeImage(double x, double y, double height, double width,
-                  ImgType type, const WPXBinaryData &blob) const;
+                  ImgType type, const WPXBinaryData &blob,
+                  boost::optional<Color> oneBitColor) const;
   bool pageIsMaster(unsigned pageSeqNum) const;
 
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;

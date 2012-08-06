@@ -60,11 +60,13 @@ struct ShapeInfo
   boost::shared_ptr<const Fill> m_fill;
   boost::optional<DynamicCustomShape> m_customShape;
   bool m_stretchBorderArt;
+  boost::optional<ColorReference> m_lineBackColor;
   ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
-    m_fill(), m_customShape(), m_stretchBorderArt(false)
+    m_fill(), m_customShape(), m_stretchBorderArt(false),
+    m_lineBackColor()
   {
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const

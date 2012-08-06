@@ -1211,6 +1211,14 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
               MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
             }
           }
+          unsigned *ptr_lineBackColor =
+            getIfExists(foptValues.m_scalarValues, FIELDID_LINE_BACK_COLOR);
+          if (ptr_lineBackColor && 
+              static_cast<int>(*ptr_lineBackColor) != -1)
+          {
+            m_collector->setShapeLineBackColor(
+                *shapeSeqNum, ColorReference(*ptr_lineBackColor));
+          }
           unsigned *ptr_lineColor = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_COLOR);
           unsigned *ptr_lineFlags = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_STYLE_BOOL_PROPS);
           unsigned *ptr_geomFlags = getIfExists(

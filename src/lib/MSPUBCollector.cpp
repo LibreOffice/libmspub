@@ -428,6 +428,11 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           leftRectProps.insert("svg:width", borderImgWidth);
           m_painter->drawRectangle(leftRectProps);
           std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
+          boost::optional<Color> oneBitColor;
+          if (info.m_lineBackColor.is_initialized())
+          {
+            oneBitColor = info.m_lineBackColor.get().getFinalColor(m_paletteColors);
+          }
           // top left
           unsigned iOrdOff = find(ba.m_offsetsOrdered.begin(),
               ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
@@ -435,7 +440,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           {
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             writeImage(x, y, borderImgWidth, borderImgWidth,
-                       bi.m_type, bi.m_imgBlob);
+                       bi.m_type, bi.m_imgBlob, oneBitColor);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
@@ -453,7 +458,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                 x + borderImgWidth + (iTop - 1) * stretchedImgWidth :
                 x + iTop * (borderImgWidth + borderHorizPadding);
               writeImage(imgX, y,
-                         borderImgWidth, stretchedImgWidth, bi.m_type, bi.m_imgBlob);
+                         borderImgWidth, stretchedImgWidth,
+                         bi.m_type, bi.m_imgBlob, oneBitColor);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -467,7 +473,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           {
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             writeImage(x + width - borderImgWidth, y,
-                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                       borderImgWidth, borderImgWidth,
+                       bi.m_type, bi.m_imgBlob, oneBitColor);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
@@ -486,7 +493,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                 y + iRight * (borderImgWidth + borderVertPadding);
               writeImage(x + width - borderImgWidth,
                          imgY,
-                         stretchedImgHeight, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         stretchedImgHeight, borderImgWidth,
+                         bi.m_type, bi.m_imgBlob, oneBitColor);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -501,7 +509,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             writeImage(x + width - borderImgWidth,
                        y + height - borderImgWidth,
-                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                       borderImgWidth, borderImgWidth,
+                       bi.m_type, bi.m_imgBlob, oneBitColor);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
@@ -519,9 +528,9 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                 x + width - borderImgWidth - iBot * stretchedImgWidth :
                 x + width - borderImgWidth - iBot * (borderImgWidth + borderHorizPadding);
               writeImage(
-                imgX,
-                y + height - borderImgWidth,
-                borderImgWidth, stretchedImgWidth, bi.m_type, bi.m_imgBlob);
+                imgX, y + height - borderImgWidth,
+                borderImgWidth, stretchedImgWidth,
+                bi.m_type, bi.m_imgBlob, oneBitColor);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -534,9 +543,9 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           if (iOrdOff < ba.m_images.size())
           {
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            writeImage(x,
-                       y + height - borderImgWidth,
-                       borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+            writeImage(x, y + height - borderImgWidth,
+                       borderImgWidth, borderImgWidth,
+                       bi.m_type, bi.m_imgBlob, oneBitColor);
           }
           if (iOffset + 1 != ba.m_offsets.end())
           {
@@ -554,9 +563,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                 y + height - borderImgWidth - iLeft * stretchedImgHeight :
                 y + height - borderImgWidth -
                   iLeft * (borderImgWidth + borderVertPadding);
-              writeImage(x,
-                         imgY,
-                         stretchedImgHeight, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              writeImage(x, imgY, stretchedImgHeight, borderImgWidth,
+                         bi.m_type, bi.m_imgBlob, oneBitColor);
             }
           }
         }
@@ -627,10 +635,25 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   return &no_op;
 }
 
+void libmspub::MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
+    ColorReference backColor)
+{
+  m_shapeInfosBySeqNum[shapeSeqNum].m_lineBackColor = backColor;
+}
+
 void libmspub::MSPUBCollector::writeImage(double x, double y,
-    double height, double width, ImgType type, const WPXBinaryData &blob) const
+    double height, double width, ImgType type, const WPXBinaryData &blob,
+    boost::optional<Color> oneBitColor) const
 {
   WPXPropertyList props;
+  if (oneBitColor.is_initialized())
+  {
+    Color obc = oneBitColor.get();
+    props.insert("draw:color-mode", "greyscale");
+    props.insert("draw:red", static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
+    props.insert("draw:blue", static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
+    props.insert("draw:green", static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
+  }
   props.insert("svg:x", x);
   props.insert("svg:y", y);
   props.insert("svg:width", width);

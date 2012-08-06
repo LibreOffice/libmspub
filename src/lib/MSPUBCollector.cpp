@@ -327,7 +327,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
   bool hasText = maybeText.is_initialized();
-  bool makeLayer = (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
+  bool makeLayer = hasBorderArt ||
+    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
   {
     m_painter->startLayer(WPXPropertyList());

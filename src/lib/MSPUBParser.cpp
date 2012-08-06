@@ -576,6 +576,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
   unsigned width = 0;
   unsigned height = 0;
   bool isText = false;
+  bool shouldStretchBorderArt = true;
   unsigned textId = 0;
   while (stillReading(input, pos + length))
   {
@@ -592,11 +593,19 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
     {
       m_collector->setShapeBorderImageId(seqNum, info.data);
     }
+    else if (info.id == SHAPE_DONT_STRETCH_BA)
+    {
+      shouldStretchBorderArt = false;
+    }
     else if (info.id == SHAPE_TEXT_ID)
     {
       textId = info.data;
       isText = true;
     }
+  }
+  if (shouldStretchBorderArt)
+  {
+    m_collector->setShapeStretchBorderArt(seqNum);
   }
   if (isGroup || (height > 0 && width > 0) || parseWithoutDimensions)
   {

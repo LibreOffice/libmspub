@@ -38,6 +38,12 @@
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+
+void libmspub::MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
+{
+  m_shapeInfosBySeqNum[seqNum].m_stretchBorderArt = true;
+}
+
 void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props) const
 {
   int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
@@ -361,6 +367,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   {
     if (hasBorderArt)
     {
+      bool stretch = info.m_stretchBorderArt;
       double x = coord.getXIn(m_width);
       double y = coord.getYIn(m_height);
       double height = coord.getHeightIn();
@@ -373,6 +380,19 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       double borderHorizTotalPadding = width - numImagesHoriz * borderImgWidth;
       if (numImagesHoriz >= 2 && numImagesVert >= 2)
       {
+        unsigned numStretchedImagesVert = static_cast<unsigned>(
+            0.5 + (height - 2 * borderImgWidth) / borderImgWidth);
+        unsigned numStretchedImagesHoriz = static_cast<unsigned>(
+            0.5 + (width - 2 * borderImgWidth) / borderImgWidth);
+        double stretchedImgHeight =
+          (height - 2 * borderImgWidth) / numStretchedImagesVert;
+        double stretchedImgWidth =
+          (width - 2 * borderImgWidth) / numStretchedImagesHoriz;
+        if (stretch)
+        {
+          numImagesVert = 2 + numStretchedImagesVert;
+          numImagesHoriz = 2 + numStretchedImagesHoriz;
+        }
         double borderVertPadding = borderVertTotalPadding / (numImagesVert - 1);
         double borderHorizPadding = borderHorizTotalPadding / (numImagesHoriz - 1);
         const BorderArtInfo &ba = m_borderImages[maybeBorderImg.get()];
@@ -429,8 +449,11 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
             {
-              writeImage(x + iTop * (borderImgWidth + borderHorizPadding), y,
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+              double imgX = stretch ?
+                x + borderImgWidth + (iTop - 1) * stretchedImgWidth :
+                x + iTop * (borderImgWidth + borderHorizPadding);
+              writeImage(imgX, y,
+                         borderImgWidth, stretchedImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -458,9 +481,12 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
             {
+              double imgY = stretch ?
+                y + borderImgWidth + (iRight - 1) * stretchedImgHeight :
+                y + iRight * (borderImgWidth + borderVertPadding);
               writeImage(x + width - borderImgWidth,
-                         y + iRight * (borderImgWidth + borderVertPadding),
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         imgY,
+                         stretchedImgHeight, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -489,10 +515,13 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
             {
+              double imgX = stretch ?
+                x + width - borderImgWidth - iBot * stretchedImgWidth :
+                x + width - borderImgWidth - iBot * (borderImgWidth + borderHorizPadding);
               writeImage(
-                x + width - borderImgWidth - iBot * (borderImgWidth + borderHorizPadding),
+                imgX,
                 y + height - borderImgWidth,
-                borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                borderImgWidth, stretchedImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
           if (iOffset + 1 != ba.m_offsets.end())
@@ -521,10 +550,13 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             const BorderImgInfo &bi = ba.m_images[iOrdOff];
             for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
             {
+              double imgY = stretch ?
+                y + height - borderImgWidth - iLeft * stretchedImgHeight :
+                y + height - borderImgWidth -
+                  iLeft * (borderImgWidth + borderVertPadding);
               writeImage(x,
-                         y + height - borderImgWidth -
-                         iLeft * (borderImgWidth + borderVertPadding),
-                         borderImgWidth, borderImgWidth, bi.m_type, bi.m_imgBlob);
+                         imgY,
+                         stretchedImgHeight, borderImgWidth, bi.m_type, bi.m_imgBlob);
             }
           }
         }

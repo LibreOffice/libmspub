@@ -97,6 +97,7 @@ public:
                           const DynamicCustomShape &shape);
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);
+  void setShapeStretchBorderArt(unsigned seqNum);
 
   void beginGroup();
   bool endGroup();

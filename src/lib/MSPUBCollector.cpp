@@ -385,10 +385,12 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             0.5 + (height - 2 * borderImgWidth) / borderImgWidth);
         unsigned numStretchedImagesHoriz = static_cast<unsigned>(
             0.5 + (width - 2 * borderImgWidth) / borderImgWidth);
-        double stretchedImgHeight =
-          (height - 2 * borderImgWidth) / numStretchedImagesVert;
-        double stretchedImgWidth =
-          (width - 2 * borderImgWidth) / numStretchedImagesHoriz;
+        double stretchedImgHeight = stretch ?
+          (height - 2 * borderImgWidth) / numStretchedImagesVert :
+          borderImgWidth;
+        double stretchedImgWidth = stretch ?
+          (width - 2 * borderImgWidth) / numStretchedImagesHoriz :
+          borderImgWidth;
         if (stretch)
         {
           numImagesVert = 2 + numStretchedImagesVert;

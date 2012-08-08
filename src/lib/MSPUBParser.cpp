@@ -47,8 +47,10 @@
 #include "ShapeFlags.h"
 #include "Fill.h"
 #include "FillType.h"
+#include "ListInfo.h"
 
 using boost::int32_t;
+using boost::uint32_t;
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
@@ -933,11 +935,16 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
   int firstLineIndentEmu = 0;
   unsigned leftIndentEmu = 0;
   unsigned rightIndentEmu = 0;
+  bool isList = false;
+  uint32_t bulletChar = '\u0000';
+  NumberingType numberingType = STANDARD_WESTERN;
+  NumberingDelimiter numberingDelimiter = NO_DELIMITER;
+  boost::optional<unsigned> numberIfRestarted;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
   {
-    libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+    MSPUBBlockInfo info = parseBlock(input, true);
     switch(info.id)
     {
     case PARAGRAPH_ALIGNMENT:
@@ -964,12 +971,49 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     case PARAGRAPH_RIGHT_INDENT:
       rightIndentEmu = info.data;
       break;
+    case PARAGRAPH_LIST_INFO:
+    {
+      isList = true;
+      input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+      while (stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo listSubInfo = parseBlock(input, true);
+        switch (listSubInfo.id)
+        {
+        case PARAGRAPH_LIST_NUMBERING_TYPE:
+          numberingType = static_cast<NumberingType>(info.data);
+          break;
+        case PARAGRAPH_LIST_BULLET_CHAR:
+          bulletChar = info.data;
+          break;
+        default:
+          break;
+        }
+      }
+      break;
+    }
+    case PARAGRAPH_LIST_NUMBER_RESTART:
+      numberIfRestarted = info.data;
+      break;
     default:
       break;
     }
   }
+  boost::optional<ListInfo> listInfo;
+  if (isList)
+  {
+    if (bulletChar != '\u0000')
+    {
+      listInfo = ListInfo(bulletChar);
+    }
+    else
+    {
+      listInfo = ListInfo(numberIfRestarted, numberingType,
+          numberingDelimiter);
+    }
+  }
   return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, spaceBeforeEmu, spaceAfterEmu,
-                        firstLineIndentEmu, leftIndentEmu, rightIndentEmu);
+                        firstLineIndentEmu, leftIndentEmu, rightIndentEmu, listInfo);
 }
 
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)

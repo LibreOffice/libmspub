@@ -37,6 +37,7 @@
 #include "MSPUBBlockID.h"
 #include "MSPUBContentChunkType.h"
 #include "MSPUBConstants.h"
+#include "ListInfo.h"
 
 namespace libmspub
 {
@@ -118,7 +119,7 @@ struct CharacterStyle
 
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri) { }
+  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0, boost::optional<ListInfo> lInfo = boost::optional<ListInfo>()) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri), listInfo(lInfo) { }
   Alignment align;
   unsigned defaultCharStyleIndex;
   unsigned lineSpacing;
@@ -127,6 +128,7 @@ struct ParagraphStyle
   int firstLineIndentEmu;
   unsigned leftIndentEmu;
   unsigned rightIndentEmu;
+  boost::optional<ListInfo> listInfo;
 };
 
 struct TextSpan

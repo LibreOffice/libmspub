@@ -25,33 +25,61 @@
  * in which case the provisions of the GPLv2+ or the LGPLv2+ are applicable
  * instead of those above.
  */
-#ifndef __LINE_H__
-#define __LINE_H__
-#include "Dash.h"
+
+#ifndef __DASH_H__
+#define __DASH_H__
+
 #include <boost/optional.hpp>
-#include "ColorReference.h"
+#include <vector>
 
 namespace libmspub
 {
-struct Line
+enum DotStyle
 {
-  ColorReference m_color;
-  unsigned m_widthInEmu;
-  bool m_lineExists;
-  boost::optional<Dash> m_dash;
-  Line(ColorReference color, unsigned widthInEmu, bool lineExists) :
-    m_color(color), m_widthInEmu(widthInEmu), m_lineExists(lineExists),
-    m_dash() { }
-  Line(ColorReference color, unsigned widthInEmu, bool lineExists, Dash dash) :
-    m_color(color), m_widthInEmu(widthInEmu), m_lineExists(lineExists),
-    m_dash(dash) { }
-  bool operator==(const Line &r) const
+  RECT_DOT,
+  ROUND_DOT
+};
+enum MSPUBDashStyle
+{
+  MSPUB_DS_SOLID,
+  DASH_SYS,
+  DOT_SYS,
+  DASH_DOT_SYS,
+  DASH_DOT_DOT_SYS,
+  DOT_GEL,
+  DASH_GEL,
+  LONG_DASH_GEL,
+  DASH_DOT_GEL,
+  LONG_DASH_DOT_GEL,
+  LONG_DASH_DOT_DOT_GEL
+};
+struct Dot
+{
+  boost::optional<double> m_length;
+  unsigned m_count;
+  Dot(unsigned count) : m_length(), m_count(count)
   {
-    return m_color == r.m_color && m_widthInEmu == r.m_widthInEmu &&
-      m_lineExists == r.m_lineExists && m_dash == r.m_dash;
+  }
+  Dot(unsigned count, double length) : m_length(length), m_count(count)
+  {
   }
 };
-}
+struct Dash
+{
+  double m_distance;
+  DotStyle m_dotStyle;
+  std::vector<Dot> m_dots; // empty vector is interpreted as solid line
+  Dash(double distance, DotStyle dotStyle) : m_distance(distance),
+    m_dotStyle(dotStyle), m_dots()
+  {
+  }
+};
+bool operator!=(const Dot &lhs, const Dot &rhs);
+bool operator==(const Dot &lhs, const Dot &rhs);
+bool operator==(const Dash &lhs, const Dash &rhs);
+Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthInEmu,
+    DotStyle dotStyle);
+} // namespace libmspub
 
-#endif
+#endif /* __DASH_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

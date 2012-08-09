@@ -77,6 +77,8 @@
 #define FIELDID_P_ADJUST_HANDLES       0xC155
 #define FIELDID_P_GUIDES               0xC156
 #define FIELDID_P_INSCRIBE             0xC157
+#define FIELDID_LINE_DASHING           0x01CE
+#define FIELDID_LINE_ENDCAP_STYLE      0x01D7
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

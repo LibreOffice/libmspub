@@ -583,7 +583,39 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       height = strokeCoord.getHeightIn();
       width = strokeCoord.getWidthIn();
       graphicsProps.insert("draw:fill", "none");
-      graphicsProps.insert("draw:stroke", "solid");
+      if (info.m_dash.is_initialized() && !info.m_dash.get().m_dots.empty())
+      {
+        const Dash &dash = info.m_dash.get();
+        graphicsProps.insert("draw:stroke", "dash");
+        graphicsProps.insert("draw:distance", dash.m_distance, WPX_INCH);
+        switch (dash.m_dotStyle)
+        {
+        case ROUND_DOT:
+          graphicsProps.insert("svg:stroke-linecap", "round");
+          break;
+        case RECT_DOT:
+          graphicsProps.insert("svg:stroke-linecap", "rect");
+          break;
+        default:
+          break;
+        }
+        for (unsigned i = 0; i < dash.m_dots.size(); ++i)
+        {
+          WPXString dots;
+          dots.sprintf("dots%d", i);
+          WPXString length;
+          graphicsProps.insert(dots.cstr(), static_cast<int>(dash.m_dots[i].m_count));
+          if (dash.m_dots[i].m_length.is_initialized())
+          {
+            length.sprintf("dots%d-length", i);
+            graphicsProps.insert(dots.cstr(), dash.m_dots[i].m_length.get(), WPX_INCH);
+          }
+        }
+      }
+      else
+      {
+        graphicsProps.insert("draw:stroke", "solid");
+      }
       m_painter->setStyle(graphicsProps, graphicsPropsVector);
       writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                        false, foldedTransform, lines,
@@ -839,6 +871,11 @@ void libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
 {
   MSPUB_DEBUG_MSG(("Setting image index of shape with seqnum 0x%x to 0x%x\n", seqNum, index));
   m_shapeInfosBySeqNum[seqNum].m_imgIndex = index;
+}
+
+void libmspub::MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
+{
+  m_shapeInfosBySeqNum[seqNum].m_dash = dash;
 }
 
 void libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)

@@ -39,6 +39,8 @@
 #include "MSPUBTypes.h"
 #include "Fill.h"
 #include "PolygonUtils.h"
+#include "Dash.h"
+
 namespace libmspub
 {
 void noop(const CustomShape *);
@@ -61,12 +63,13 @@ struct ShapeInfo
   boost::optional<DynamicCustomShape> m_customShape;
   bool m_stretchBorderArt;
   boost::optional<ColorReference> m_lineBackColor;
+  boost::optional<Dash> m_dash;
   ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
     m_fill(), m_customShape(), m_stretchBorderArt(false),
-    m_lineBackColor()
+    m_lineBackColor(), m_dash()
   {
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const

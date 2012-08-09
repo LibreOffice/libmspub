@@ -48,6 +48,7 @@
 #include "Fill.h"
 #include "FillType.h"
 #include "ListInfo.h"
+#include "Dash.h"
 
 using boost::int32_t;
 using boost::uint32_t;
@@ -1275,12 +1276,13 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                            ptr_lineFlags, ptr_geomFlags);
           bool skipIfNotBg = false;
           boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg);
+          unsigned lineWidth = 0;
           if (useLine)
           {
             if (ptr_lineColor)
             {
               unsigned *ptr_lineWidth = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_WIDTH);
-              unsigned lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
+              lineWidth = ptr_lineWidth ? *ptr_lineWidth : 9525;
               m_collector->addShapeLine(*shapeSeqNum, Line(ColorReference(*ptr_lineColor), lineWidth, true));
             }
             else
@@ -1309,6 +1311,10 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                   bool rightExists = ptr_rightColor && lineExistsByFlagPointer(ptr_rightFlags);
                   bool bottomExists = ptr_bottomColor && lineExistsByFlagPointer(ptr_bottomFlags);
                   bool leftExists = ptr_leftColor && lineExistsByFlagPointer(ptr_leftFlags);
+                  if (ptr_topWidth)
+                  {
+                    lineWidth = *ptr_topWidth;
+                  }
 
                   m_collector->addShapeLine(*shapeSeqNum,
                                             topExists ? Line(ColorReference(*ptr_topColor), ptr_topWidth ? *ptr_topWidth : 9525, true) :
@@ -1377,6 +1383,26 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                        ptr_top ? *ptr_top : DEFAULT_MARGIN,
                                        ptr_right ? *ptr_right : DEFAULT_MARGIN,
                                        ptr_bottom ? *ptr_bottom : DEFAULT_MARGIN);
+          unsigned *ptr_lineDashing = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_DASHING);
+          unsigned *ptr_lineEndcapStyle = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_ENDCAP_STYLE);
+          DotStyle dotStyle = RECT_DOT;
+          if (ptr_lineEndcapStyle)
+          {
+            switch (*ptr_lineEndcapStyle)
+            {
+            case 0:
+              dotStyle = ROUND_DOT;
+              break;
+            default:
+              break;
+            }
+          }
+          if (ptr_lineDashing)
+          {
+            m_collector->setShapeDash(*shapeSeqNum, getDash(
+                  static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
+                  dotStyle));
+          }
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
           if (vertexData.size() > 0)
           {

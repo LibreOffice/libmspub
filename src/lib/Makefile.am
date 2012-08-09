@@ -30,6 +30,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	ColorReference.cpp \
 	VectorTransformation2D.cpp \
 	MSPUBParser97.cpp \
+	Dash.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -59,7 +60,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	BorderArtInfo.h \
 	NumberingType.h \
 	NumberingDelimiter.h \
-	ListInfo.h
+	ListInfo.h \
+	Dash.h
 
 if OS_WIN32
 

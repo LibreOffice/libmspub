@@ -955,6 +955,17 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
                      m_encoding.get_value_or(UTF_16));
     ret.insert("style:font-name", str);
   }
+  switch (style.superSubType)
+  {
+  case SUPERSCRIPT:
+    ret.insert("style:text-position", "50% 67%");
+    break;
+  case SUBSCRIPT:
+    ret.insert("style:text-position", "-50% 67%");
+    break;
+  default:
+    break;
+  }
   return ret;
 }
 

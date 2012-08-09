@@ -48,6 +48,13 @@ enum BorderPosition
   OUTSIDE_SHAPE
 };
 
+enum SuperSubType
+{
+  NO_SUPER_SUB,
+  SUPERSCRIPT,
+  SUBSCRIPT
+};
+
 enum Alignment
 {
   LEFT = 0,
@@ -102,19 +109,20 @@ struct CharacterStyle
 {
   CharacterStyle() :
     underline(false), italic(false), bold(false),
-    textSizeInPt(), colorIndex(-1), fontIndex(0)
+    textSizeInPt(), colorIndex(-1), fontIndex(0), superSubType(NO_SUPER_SUB)
   {
   }
   CharacterStyle(bool u, bool i, bool b,
                  boost::optional<double> tSIP = boost::optional<double>(),
-                 int cI = -1, unsigned fI = 0) :
-    underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI) { }
+                 int cI = -1, unsigned fI = 0, SuperSubType sst = NO_SUPER_SUB) :
+    underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI), superSubType(sst) { }
   bool underline;
   bool italic;
   bool bold;
   boost::optional<double> textSizeInPt;
   int colorIndex;
   unsigned fontIndex;
+  SuperSubType superSubType;
 };
 
 struct ParagraphStyle

@@ -1021,6 +1021,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
   bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
   int textSize1 = -1, /* textSize2 = -1,*/ colorIndex = -1;
   unsigned fontIndex = 0;
+  SuperSubType sst = NO_SUPER_SUB;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
@@ -1061,6 +1062,9 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
         fontIndex = getFontIndex(input, info);
       }
       break;
+    case SUPER_SUB_TYPE_ID:
+      sst = static_cast<SuperSubType>(info.data);
+      break;
     default:
       break;
     }
@@ -1072,7 +1076,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
   {
     dTextSize = (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH;
   }
-  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex);
+  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex, sst);
 }
 
 unsigned libmspub::MSPUBParser::getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info)

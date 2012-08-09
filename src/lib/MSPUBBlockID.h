@@ -46,6 +46,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   SHAPE_DONT_STRETCH_BA = 0x07,
   SHAPE_TEXT_ID = 0x27,
   SHAPE_BORDER_IMAGE_ID = 0x09,
+  SUPER_SUB_TYPE_ID = 0x0F,
   BOLD_1_ID = 0x02,
   BOLD_2_ID = 0x37,
   ITALIC_1_ID = 0x03,

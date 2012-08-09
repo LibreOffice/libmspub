@@ -56,7 +56,10 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Line.h \
 	Margins.h \
 	MSPUBParser97.h \
-	BorderArtInfo.h
+	BorderArtInfo.h \
+	NumberingType.h \
+	NumberingDelimiter.h \
+	ListInfo.h
 
 if OS_WIN32
 

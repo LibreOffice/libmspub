@@ -48,7 +48,7 @@ struct Line
   bool operator==(const Line &r) const
   {
     return m_color == r.m_color && m_widthInEmu == r.m_widthInEmu &&
-      m_lineExists == r.m_lineExists && m_dash == r.m_dash;
+           m_lineExists == r.m_lineExists && m_dash == r.m_dash;
   }
 };
 }

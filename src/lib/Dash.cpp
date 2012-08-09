@@ -41,8 +41,8 @@ bool libmspub::operator!=(const libmspub::Dot &lhs, const libmspub::Dot &rhs)
 
 bool libmspub::operator==(const libmspub::Dash &lhs, const libmspub::Dash &rhs)
 {
-  if (!(lhs.m_distance == rhs.m_distance && 
-    lhs.m_dotStyle == rhs.m_dotStyle && lhs.m_dots.size() == rhs.m_dots.size()))
+  if (!(lhs.m_distance == rhs.m_distance &&
+        lhs.m_dotStyle == rhs.m_dotStyle && lhs.m_dots.size() == rhs.m_dots.size()))
   {
     return false;
   }
@@ -57,10 +57,10 @@ bool libmspub::operator==(const libmspub::Dash &lhs, const libmspub::Dash &rhs)
 }
 
 libmspub::Dash libmspub::getDash(MSPUBDashStyle style, unsigned shapeLineWidthEmu,
-    DotStyle dotStyle)
+                                 DotStyle dotStyle)
 {
   double shapeLineWidth = static_cast<double>(shapeLineWidthEmu) /
-    EMUS_IN_INCH;
+                          EMUS_IN_INCH;
   switch (style)
   {
   default:

@@ -5931,7 +5931,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       else if (drawStroke)
       {
         Line &first = lines[0];
-        graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
+        if (!first.m_lineExists)
+        {
+          graphicsProps.insert("draw:stroke", "none");
+        }
         graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
         painter->setStyle(graphicsProps, WPXPropertyListVector());
@@ -5960,7 +5963,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     {
       // don't bother with different strokes for things defined by segments
       Line &first = lines[0];
-      graphicsProps.insert("draw:stroke", first.m_lineExists ? "solid": "none");
+      if (!first.m_lineExists)
+      {
+        graphicsProps.insert("draw:stroke", "none");
+      }
       graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
       graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
       painter->setStyle(graphicsProps, WPXPropertyListVector());

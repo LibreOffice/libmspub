@@ -78,7 +78,7 @@ bool operator!=(const Dot &lhs, const Dot &rhs);
 bool operator==(const Dot &lhs, const Dot &rhs);
 bool operator==(const Dash &lhs, const Dash &rhs);
 Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthInEmu,
-    DotStyle dotStyle);
+             DotStyle dotStyle);
 } // namespace libmspub
 
 #endif /* __DASH_H__ */

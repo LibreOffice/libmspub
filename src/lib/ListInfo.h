@@ -47,7 +47,7 @@ enum ListType
 struct ListInfo
 {
   ListType m_listType;
-  
+
   //unordered list stuff
   boost::optional<uint32_t> m_bulletChar;
   ListInfo(uint32_t bulletChar) : m_listType(UNORDERED),
@@ -61,10 +61,10 @@ struct ListInfo
   boost::optional<NumberingType> m_numberingType;
   boost::optional<NumberingDelimiter> m_numberingDelimiter;
   ListInfo(boost::optional<unsigned> numberIfRestarted, NumberingType numberingType,
-      NumberingDelimiter numberingDelimiter)
+           NumberingDelimiter numberingDelimiter)
     : m_listType(ORDERED), m_bulletChar(),
-    m_numberIfRestarted(numberIfRestarted), m_numberingType(numberingType),
-    m_numberingDelimiter(numberingDelimiter)
+      m_numberIfRestarted(numberIfRestarted), m_numberingType(numberingType),
+      m_numberingDelimiter(numberingDelimiter)
   {
   }
 };

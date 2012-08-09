@@ -1010,7 +1010,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     else
     {
       listInfo = ListInfo(numberIfRestarted, numberingType,
-          numberingDelimiter);
+                          numberingDelimiter);
     }
   }
   return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, spaceBeforeEmu, spaceAfterEmu,
@@ -1262,11 +1262,11 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           }
           unsigned *ptr_lineBackColor =
             getIfExists(foptValues.m_scalarValues, FIELDID_LINE_BACK_COLOR);
-          if (ptr_lineBackColor && 
+          if (ptr_lineBackColor &&
               static_cast<int>(*ptr_lineBackColor) != -1)
           {
             m_collector->setShapeLineBackColor(
-                *shapeSeqNum, ColorReference(*ptr_lineBackColor));
+              *shapeSeqNum, ColorReference(*ptr_lineBackColor));
           }
           unsigned *ptr_lineColor = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_COLOR);
           unsigned *ptr_lineFlags = getIfExists(foptValues.m_scalarValues, FIELDID_LINE_STYLE_BOOL_PROPS);
@@ -1400,8 +1400,8 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           if (ptr_lineDashing)
           {
             m_collector->setShapeDash(*shapeSeqNum, getDash(
-                  static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
-                  dotStyle));
+                                        static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
+                                        dotStyle));
           }
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
           if (vertexData.size() > 0)

@@ -117,9 +117,21 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
-  m_encoding(),
+  m_encoding(), m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),
   m_calculationValuesSeen()
 {
+}
+
+void libmspub::MSPUBCollector::setTextStringOffset(
+    unsigned textId, unsigned offset)
+{
+  m_stringOffsetsByTextId[textId] = offset;
+}
+
+void libmspub::MSPUBCollector::setNextTableCellTextEnds(
+    const std::vector<unsigned> &ends)
+{
+  m_tableCellTextEndsVector.push_back(ends);
 }
 
 void libmspub::MSPUBCollector::setEncoding(Encoding encoding)

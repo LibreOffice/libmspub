@@ -40,6 +40,7 @@
 #include "Fill.h"
 #include "PolygonUtils.h"
 #include "Dash.h"
+#include "TableInfo.h"
 
 namespace libmspub
 {
@@ -64,12 +65,15 @@ struct ShapeInfo
   bool m_stretchBorderArt;
   boost::optional<ColorReference> m_lineBackColor;
   boost::optional<Dash> m_dash;
+  boost::optional<TableInfo> m_tableInfo;
+  boost::optional<std::vector<unsigned> > m_tableCellTextEnds;
   ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
     m_fill(), m_customShape(), m_stretchBorderArt(false),
-    m_lineBackColor(), m_dash()
+    m_lineBackColor(), m_dash(), m_tableInfo(),
+    m_tableCellTextEnds()
   {
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const

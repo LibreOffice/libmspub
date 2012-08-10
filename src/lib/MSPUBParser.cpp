@@ -654,6 +654,24 @@ libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(WP
   return ret;
 }
 
+std::vector<unsigned> libmspub::MSPUBParser::parseTableCellDefinitions(
+    WPXInputStream *input, const QuillChunkReference &chunk)
+{
+  std::vector<unsigned> ret;
+  unsigned numElements = readU32(input) + 1;
+  input->seek(chunk.offset + 0xC, WPX_SEEK_SET);
+  for (unsigned i = 0; i < numElements; ++i)
+  {
+    ret.push_back(readU32(input));
+    // compensate for all but the last offset not including the terminating 0x0D00
+    if (i != numElements - 1)
+    {
+      ret.back() += 2;
+    }
+  }
+  return ret;
+}
+
 bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseQuill\n"));
@@ -679,8 +697,10 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
   bool parsedFdpp = false;
   bool parsedStsh = false;
   bool parsedFont = false;
-  std::list<unsigned> textLengths;
-  std::list<unsigned> textIDs;
+  std::vector<unsigned> textLengths;
+  std::vector<unsigned> textIDs;
+  std::vector<unsigned> textOffsets;
+  unsigned textOffsetAccum = 0;
   std::vector<TextSpanReference> spans;
   std::vector<TextParagraphReference> paras;
   unsigned whichStsh = 0;
@@ -697,7 +717,10 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       input->seek(4 + i->offset + readU32(input), WPX_SEEK_SET);
       for (unsigned j = 0; j < numLengths; ++j)
       {
-        textLengths.push_back(readU32(input));
+        unsigned length = readU32(input);
+        textLengths.push_back(length);
+        textOffsets.push_back(textOffsetAccum);
+        textOffsetAccum += length * 2;
       }
       parsedStrs = true;
     }
@@ -746,19 +769,25 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       parseFonts(input, *i);
       parsedFont = true;
     }
+    else if (i->name == "TCD ")
+    {
+      input->seek(i->offset, WPX_SEEK_SET);
+      std::vector<unsigned> ends = parseTableCellDefinitions(input, *i);
+      m_collector->setNextTableCellTextEnds(ends);
+    }
     if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && parsedFont && textChunkReference != chunkReferences.end())
     {
       input->seek(textChunkReference->offset, WPX_SEEK_SET);
       unsigned bytesRead = 0;
       std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
       std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
-      for (std::list<unsigned>::const_iterator iter = textLengths.begin(), id = textIDs.begin(); iter != textLengths.end() && id != textIDs.end(); ++iter, ++id)
+      for (unsigned j = 0; j < textIDs.size() && j < textLengths.size(); ++j)
       {
         MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
         std::vector<TextParagraph> readParas;
         std::vector<TextSpan> readSpans;
         std::vector<unsigned char> text;
-        for (unsigned j = 0; j < *iter; ++j)
+        for (unsigned k = 0; k < textLengths[j]; ++k)
         {
           text.push_back(readU8(input));
           text.push_back(readU8(input));
@@ -801,7 +830,8 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
           readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
           MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
         }
-        m_collector->addTextString(readParas, *id);
+        m_collector->addTextString(readParas, textIDs[j]);
+        m_collector->setTextStringOffset(textIDs[j], textOffsets[j]);
       }
       textChunkReference = chunkReferences.end();
     }

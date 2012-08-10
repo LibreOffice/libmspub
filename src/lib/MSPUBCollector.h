@@ -120,6 +120,9 @@ public:
   bool setCurrentGroupSeqNum(unsigned seqNum);
   void setEncoding(Encoding encoding);
 
+  void setNextTableCellTextEnds(const std::vector<unsigned> &ends);
+  void setTextStringOffset(unsigned textId, unsigned offset);
+
   bool go();
 
   bool hasPage(unsigned seqNum) const;
@@ -162,6 +165,8 @@ private:
   std::set<unsigned> m_shapesWithCoordinatesRotated90;
   std::map<unsigned, unsigned> m_masterPagesByPageSeqNum;
   boost::optional<Encoding> m_encoding;
+  std::vector<std::vector<unsigned> > m_tableCellTextEndsVector;
+  std::map<unsigned, unsigned> m_stringOffsetsByTextId;
   mutable std::vector<bool> m_calculationValuesSeen;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;

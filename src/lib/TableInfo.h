@@ -28,6 +28,9 @@
 
 #ifndef __TABLEINFO_H__
 #define __TABLEINFO_H__
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wuninitialized"
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
 namespace libmspub
 {

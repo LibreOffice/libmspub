@@ -627,8 +627,8 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       unsigned csn = cellsSeqNum.get();
       std::vector<unsigned> rowOffsetsInEmu;
       std::vector<unsigned> columnOffsetsInEmu;
-      unsigned rowFirstOffset;
-      unsigned columnFirstOffset;
+      unsigned rowFirstOffset = 0;
+      unsigned columnFirstOffset = 0;
       input->seek(rcao, WPX_SEEK_SET);
       unsigned arrayLength = readU32(input);
       while(stillReading(input, rcao + arrayLength))

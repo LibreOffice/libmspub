@@ -39,6 +39,12 @@
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
+void libmspub::MSPUBCollector::setShapeTableInfo(unsigned seqNum,
+    const TableInfo &ti)
+{
+  m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
+}
+
 void libmspub::MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
 {
   m_shapeInfosBySeqNum[seqNum].m_stretchBorderArt = true;

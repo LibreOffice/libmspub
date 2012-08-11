@@ -49,6 +49,7 @@
 #include "FillType.h"
 #include "ListInfo.h"
 #include "Dash.h"
+#include "TableInfo.h"
 
 using boost::int32_t;
 using boost::uint32_t;
@@ -56,6 +57,7 @@ using boost::uint32_t;
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
     m_blockInfo(), m_contentChunks(),
+    m_cellsChunkIndices(),
     m_pageChunkIndices(), m_shapeChunkIndices(),
     m_paletteChunkIndices(), m_borderArtChunkIndices(),
     m_unknownChunkIndices(), m_documentChunkIndex(),
@@ -563,7 +565,8 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         unsigned long pos = input->tell();
         input->seek(ref.offset, WPX_SEEK_SET);
         // bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
-        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP);
+        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP,
+            ref.type == TABLE);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -571,7 +574,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup)
+bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup, bool isTable)
 {
   MSPUB_DEBUG_MSG(("parseShape: pageSeqNum 0x%x\n", pageSeqNum));
   unsigned long pos = input->tell();
@@ -581,52 +584,158 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
   bool isText = false;
   bool shouldStretchBorderArt = true;
   unsigned textId = 0;
-  while (stillReading(input, pos + length))
+  if (isTable)
   {
-    libmspub::MSPUBBlockInfo info = parseBlock(input, true);
-    if (info.id == SHAPE_WIDTH)
+    boost::optional<unsigned> cellsSeqNum;
+    boost::optional<unsigned> numRows;
+    boost::optional<unsigned> numCols;
+    boost::optional<unsigned> rowcolArrayOffset;
+    while (stillReading(input, pos + length))
     {
-      width = info.data;
-    }
-    else if (info.id == SHAPE_HEIGHT)
-    {
-      height = info.data;
-    }
-    else if (info.id == SHAPE_BORDER_IMAGE_ID)
-    {
-      m_collector->setShapeBorderImageId(seqNum, info.data);
-    }
-    else if (info.id == SHAPE_DONT_STRETCH_BA)
-    {
-      shouldStretchBorderArt = false;
-    }
-    else if (info.id == SHAPE_TEXT_ID)
-    {
-      textId = info.data;
-      isText = true;
-    }
-  }
-  if (shouldStretchBorderArt)
-  {
-    m_collector->setShapeStretchBorderArt(seqNum);
-  }
-  if (isGroup || (height > 0 && width > 0) || parseWithoutDimensions)
-  {
-    if (! isGroup)
-    {
-      if (isText)
+      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+      if (info.id == TABLE_WIDTH)
       {
-        m_collector->addTextShape(textId, seqNum, pageSeqNum);
+        width = info.data;
       }
-      m_collector->addShape(seqNum);
+      else if (info.id == TABLE_HEIGHT)
+      {
+        height = info.data;
+      }
+      else if (info.id == TABLE_CELLS_SEQNUM)
+      {
+        cellsSeqNum = info.data;
+      }
+      else if (info.id == TABLE_NUM_ROWS)
+      {
+        numRows = info.data;
+      }
+      else if (info.id == TABLE_NUM_COLS)
+      {
+        numCols = info.data;
+      }
+      else if (info.id == TABLE_ROWCOL_ARRAY)
+      {
+        rowcolArrayOffset = info.dataOffset;
+      }
     }
-    m_collector->setShapePage(seqNum, pageSeqNum);
+    if (cellsSeqNum.is_initialized() && numRows.is_initialized() &&
+        numCols.is_initialized() && rowcolArrayOffset.is_initialized())
+    {
+      unsigned nr = numRows.get();
+      unsigned nc = numCols.get();
+      unsigned rcao = rowcolArrayOffset.get();
+      unsigned csn = cellsSeqNum.get();
+      std::vector<unsigned> rowOffsetsInEmu;
+      std::vector<unsigned> columnOffsetsInEmu;
+      unsigned rowFirstOffset;
+      unsigned columnFirstOffset;
+      input->seek(rcao, WPX_SEEK_SET);
+      unsigned arrayLength = readU32(input);
+      while(stillReading(input, rcao + arrayLength))
+      {
+        MSPUBBlockInfo info = parseBlock(input, true);
+        if (info.id == TABLE_ROWCOL_OFFSET)
+        {
+          unsigned rowcolOffset = readU32(input);
+          if (columnOffsetsInEmu.size() < nc)
+          {
+            if (columnOffsetsInEmu.empty())
+            {
+              columnFirstOffset = rowcolOffset;
+            }
+            columnOffsetsInEmu.push_back(rowcolOffset - columnFirstOffset);
+          }
+          else if (rowOffsetsInEmu.size() < nr)
+          {
+            if (rowOffsetsInEmu.empty())
+            {
+              rowFirstOffset = rowcolOffset;
+            }
+            rowOffsetsInEmu.push_back(rowcolOffset - rowFirstOffset);
+          }
+        }
+      }
+      if (rowOffsetsInEmu.size() != nr || columnOffsetsInEmu.size() != nc)
+      {
+        MSPUB_DEBUG_MSG(("ERROR: Wrong number of rows or columns found in table definition.\n"));
+        return false;
+      }
+      boost::optional<unsigned> index;
+      for (unsigned i = 0; i < m_cellsChunkIndices.size(); ++i)
+      {
+        if (m_contentChunks[m_cellsChunkIndices[i]].seqNum == csn)
+        {
+          index = i;
+          break;
+        }
+      }
+      if (!index.is_initialized())
+      {
+        MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %d corresponding to table of seqnum %d.\n",
+              csn, seqNum));
+        return false;
+      }
+      else
+      {
+        // Currently do nothing with the cells chunk.
+      }
+      TableInfo ti(nr, nc);
+      ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
+      ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
+      m_collector->setShapeTableInfo(seqNum, ti);
+      return true;
+    }
+    return false;
   }
   else
   {
-    MSPUB_DEBUG_MSG(("Height and width not both specified, ignoring. (Height: 0x%x, Width: 0x%x)\n", height, width));
+    while (stillReading(input, pos + length))
+    {
+      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+      if (info.id == SHAPE_WIDTH)
+      {
+        width = info.data;
+      }
+      else if (info.id == SHAPE_HEIGHT)
+      {
+        height = info.data;
+      }
+      else if (info.id == SHAPE_BORDER_IMAGE_ID)
+      {
+        m_collector->setShapeBorderImageId(seqNum, info.data);
+      }
+      else if (info.id == SHAPE_DONT_STRETCH_BA)
+      {
+        shouldStretchBorderArt = false;
+      }
+      else if (info.id == SHAPE_TEXT_ID)
+      {
+        textId = info.data;
+        isText = true;
+      }
+    }
+    if (shouldStretchBorderArt)
+    {
+      m_collector->setShapeStretchBorderArt(seqNum);
+    }
+    if (isGroup || (height > 0 && width > 0) || parseWithoutDimensions)
+    {
+      if (! isGroup)
+      {
+        if (isText)
+        {
+          m_collector->addTextShape(textId, seqNum, pageSeqNum);
+        }
+        m_collector->addShape(seqNum);
+      }
+      m_collector->setShapePage(seqNum, pageSeqNum);
+    }
+    else
+    {
+      MSPUB_DEBUG_MSG(("Height and width not both specified, ignoring. (Height: 0x%x, Width: 0x%x)\n", height, width));
+    }
+    return true;
   }
-  return true;
 }
 
 libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(WPXInputStream *input)
@@ -1869,7 +1978,7 @@ bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, co
       m_documentChunkIndex = unsigned(m_contentChunks.size() - 1);
       return true;
     }
-    else if (type == SHAPE || type == ALTSHAPE || type == GROUP)
+    else if (type == SHAPE || type == ALTSHAPE || type == GROUP || type == TABLE)
     {
       MSPUB_DEBUG_MSG(("shape chunk: offset 0x%lx, seqnum 0x%x, parent seqnum: 0x%x\n", offset, m_lastSeenSeqNum, parentSeqNum));
       m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
@@ -1878,6 +1987,12 @@ bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, co
       {
         m_alternateShapeSeqNums.push_back(m_lastSeenSeqNum);
       }
+      return true;
+    }
+    else if (type == CELLS)
+    {
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+      m_cellsChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       return true;
     }
     else if (type == PALETTE)

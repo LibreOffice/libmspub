@@ -126,7 +126,7 @@ protected:
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
-  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup);
+  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup, bool isTable);
   bool parseBorderArtChunk(WPXInputStream *input,
                            const ContentChunkReference &chunk);
   void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
@@ -166,6 +166,7 @@ protected:
   MSPUBCollector *m_collector;
   std::vector<MSPUBBlockInfo> m_blockInfo;
   std::vector<ContentChunkReference> m_contentChunks;
+  std::vector<unsigned> m_cellsChunkIndices;
   std::vector<unsigned> m_pageChunkIndices;
   std::vector<unsigned> m_shapeChunkIndices;
   std::vector<unsigned> m_paletteChunkIndices;

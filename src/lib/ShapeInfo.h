@@ -67,13 +67,16 @@ struct ShapeInfo
   boost::optional<Dash> m_dash;
   boost::optional<TableInfo> m_tableInfo;
   boost::optional<std::vector<unsigned> > m_tableCellTextEnds;
+  boost::optional<unsigned> m_numColumns;
+  unsigned m_columnSpacing;
   ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
     m_fill(), m_customShape(), m_stretchBorderArt(false),
     m_lineBackColor(), m_dash(), m_tableInfo(),
-    m_tableCellTextEnds()
+    m_tableCellTextEnds(), m_numColumns(),
+    m_columnSpacing(0)
   {
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const

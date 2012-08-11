@@ -79,6 +79,8 @@
 #define FIELDID_P_INSCRIBE             0xC157
 #define FIELDID_LINE_DASHING           0x01CE
 #define FIELDID_LINE_ENDCAP_STYLE      0x01D7
+#define FIELDID_NUM_COLUMNS            0x008C
+#define FIELDID_COLUMN_SPACING         0x008D
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

@@ -111,6 +111,8 @@ public:
   void setPageBgShape(unsigned pageSeqNum, unsigned seqNum);
   void setWidthInEmu(unsigned long);
   void setHeightInEmu(unsigned long);
+  void setShapeNumColumns(unsigned seqNum, unsigned numColumns);
+  void setShapeColumnSpacing(unsigned seqNum, unsigned spacing);
 
   void addTextColor(ColorReference c);
   void addFont(std::vector<unsigned char> name);

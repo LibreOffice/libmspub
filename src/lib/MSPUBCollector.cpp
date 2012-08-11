@@ -45,6 +45,18 @@ void libmspub::MSPUBCollector::setShapeTableInfo(unsigned seqNum,
   m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
 }
 
+void libmspub::MSPUBCollector::setShapeNumColumns(unsigned seqNum,
+    unsigned numColumns)
+{
+  m_shapeInfosBySeqNum[seqNum].m_numColumns = numColumns;
+}
+
+void libmspub::MSPUBCollector::setShapeColumnSpacing(unsigned seqNum,
+    unsigned spacing)
+{
+  m_shapeInfosBySeqNum[seqNum].m_columnSpacing = spacing;
+}
+
 void libmspub::MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
 {
   m_shapeInfosBySeqNum[seqNum].m_stretchBorderArt = true;

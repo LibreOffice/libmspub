@@ -1542,6 +1542,19 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                         static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
                                         dotStyle));
           }
+
+          unsigned *ptr_numColumns = getIfExists(foptValues.m_scalarValues,
+              FIELDID_NUM_COLUMNS);
+          if (ptr_numColumns)
+          {
+            m_collector->setShapeNumColumns(*shapeSeqNum, *ptr_numColumns);
+          }
+          unsigned *ptr_columnSpacing = getIfExists(foptValues.m_scalarValues,
+              FIELDID_COLUMN_SPACING);
+          if (ptr_columnSpacing)
+          {
+            m_collector->setShapeColumnSpacing(*shapeSeqNum, *ptr_columnSpacing);
+          }
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
           if (vertexData.size() > 0)
           {

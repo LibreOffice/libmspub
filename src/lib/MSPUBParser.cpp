@@ -50,6 +50,7 @@
 #include "ListInfo.h"
 #include "Dash.h"
 #include "TableInfo.h"
+#include "VerticalAlign.h"
 
 using boost::int32_t;
 using boost::uint32_t;
@@ -712,6 +713,11 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       {
         textId = info.data;
         isText = true;
+      }
+      else if (info.id == SHAPE_VALIGN)
+      {
+        m_collector->setShapeVerticalTextAlign(seqNum,
+            static_cast<VerticalAlign>(info.data));
       }
     }
     if (shouldStretchBorderArt)

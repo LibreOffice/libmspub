@@ -45,6 +45,12 @@ void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
   m_shapeInfosBySeqNum[seqNum].m_beginArrow = arrow;
 }
 
+void libmspub::MSPUBCollector::setShapeVerticalTextAlign(unsigned seqNum,
+    VerticalAlign va)
+{
+  m_shapeInfosBySeqNum[seqNum].m_verticalAlign = va;
+}
+
 void libmspub::MSPUBCollector::setShapeEndArrow(unsigned seqNum,
     const Arrow &arrow)
 {
@@ -686,6 +692,22 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
     props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
     props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
+    if(info.m_verticalAlign.is_initialized())
+    {
+      switch (info.m_verticalAlign.get())
+      {
+      default:
+      case TOP:
+        props.insert("draw:textarea-vertical-align", "top");
+        break;
+      case MIDDLE:
+        props.insert("draw:textarea-vertical-align", "middle");
+        break;
+      case BOTTOM:
+        props.insert("draw:textarea-vertical-align", "bottom");
+        break;
+      }
+    }
     m_painter->startTextObject(props, WPXPropertyListVector());
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {

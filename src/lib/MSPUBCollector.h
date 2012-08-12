@@ -58,6 +58,7 @@
 #include "BorderArtInfo.h"
 #include "Dash.h"
 #include "Arrow.h"
+#include "VerticalAlign.h"
 
 namespace libmspub
 {
@@ -99,6 +100,7 @@ public:
   void setShapeCoordinatesRotated90(unsigned seqNum);
   void setShapeCustomPath(unsigned seqNum,
                           const DynamicCustomShape &shape);
+  void setShapeVerticalTextAlign(unsigned seqNum, VerticalAlign va);
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);
   void setShapeStretchBorderArt(unsigned seqNum);

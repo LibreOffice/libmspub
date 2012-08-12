@@ -566,7 +566,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         unsigned long pos = input->tell();
         input->seek(ref.offset, WPX_SEEK_SET);
         // bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
-        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP,
+        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP || ref.type == LOGO,
                    ref.type == TABLE);
         input->seek(pos, WPX_SEEK_SET);
       }
@@ -2023,7 +2023,7 @@ bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, co
       m_documentChunkIndex = unsigned(m_contentChunks.size() - 1);
       return true;
     }
-    else if (type == SHAPE || type == ALTSHAPE || type == GROUP || type == TABLE)
+    else if (type == SHAPE || type == ALTSHAPE || type == GROUP || type == TABLE || type == LOGO)
     {
       MSPUB_DEBUG_MSG(("shape chunk: offset 0x%lx, seqnum 0x%x, parent seqnum: 0x%x\n", offset, m_lastSeenSeqNum, parentSeqNum));
       m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));

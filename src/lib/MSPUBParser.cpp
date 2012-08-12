@@ -1555,6 +1555,32 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           {
             m_collector->setShapeColumnSpacing(*shapeSeqNum, *ptr_columnSpacing);
           }
+          unsigned *ptr_beginArrowStyle = getIfExists(foptValues.m_scalarValues,
+              FIELDID_BEGIN_ARROW_STYLE);
+          unsigned *ptr_beginArrowWidth = getIfExists(foptValues.m_scalarValues,
+              FIELDID_BEGIN_ARROW_WIDTH);
+          unsigned *ptr_beginArrowHeight = getIfExists(foptValues.m_scalarValues,
+              FIELDID_BEGIN_ARROW_HEIGHT);
+          m_collector->setShapeBeginArrow(*shapeSeqNum, Arrow(
+                ptr_beginArrowStyle ? (ArrowStyle)(*ptr_beginArrowStyle) :
+                  NO_ARROW,
+                ptr_beginArrowWidth ? (ArrowSize)(*ptr_beginArrowWidth) :
+                  MEDIUM,
+                ptr_beginArrowHeight ? (ArrowSize)(*ptr_beginArrowHeight) :
+                  MEDIUM));
+          unsigned *ptr_endArrowStyle = getIfExists(foptValues.m_scalarValues,
+              FIELDID_END_ARROW_STYLE);
+          unsigned *ptr_endArrowWidth = getIfExists(foptValues.m_scalarValues,
+              FIELDID_END_ARROW_WIDTH);
+          unsigned *ptr_endArrowHeight = getIfExists(foptValues.m_scalarValues,
+              FIELDID_END_ARROW_HEIGHT);
+          m_collector->setShapeEndArrow(*shapeSeqNum, Arrow(
+                ptr_endArrowStyle ? (ArrowStyle)(*ptr_endArrowStyle) :
+                  NO_ARROW,
+                ptr_endArrowWidth ? (ArrowSize)(*ptr_endArrowWidth) :
+                  MEDIUM,
+                ptr_endArrowHeight ? (ArrowSize)(*ptr_endArrowHeight) :
+                  MEDIUM));
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
           if (vertexData.size() > 0)
           {

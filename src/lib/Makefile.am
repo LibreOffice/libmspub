@@ -62,7 +62,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	NumberingDelimiter.h \
 	ListInfo.h \
 	Dash.h \
-	TableInfo.h
+	TableInfo.h \
+	Arrow.h
 
 if OS_WIN32
 

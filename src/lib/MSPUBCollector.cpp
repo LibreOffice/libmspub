@@ -39,6 +39,18 @@
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
+void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
+    const Arrow &arrow)
+{
+  m_shapeInfosBySeqNum[seqNum].m_beginArrow = arrow;
+}
+
+void libmspub::MSPUBCollector::setShapeEndArrow(unsigned seqNum,
+    const Arrow &arrow)
+{
+  m_shapeInfosBySeqNum[seqNum].m_endArrow = arrow;
+}
+
 void libmspub::MSPUBCollector::setShapeTableInfo(unsigned seqNum,
     const TableInfo &ti)
 {

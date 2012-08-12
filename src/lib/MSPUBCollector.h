@@ -57,6 +57,7 @@
 #include "ShapeInfo.h"
 #include "BorderArtInfo.h"
 #include "Dash.h"
+#include "Arrow.h"
 
 namespace libmspub
 {
@@ -113,6 +114,8 @@ public:
   void setHeightInEmu(unsigned long);
   void setShapeNumColumns(unsigned seqNum, unsigned numColumns);
   void setShapeColumnSpacing(unsigned seqNum, unsigned spacing);
+  void setShapeBeginArrow(unsigned seqNum, const Arrow &arrow);
+  void setShapeEndArrow(unsigned seqNum, const Arrow &arrow);
 
   void addTextColor(ColorReference c);
   void addFont(std::vector<unsigned char> name);

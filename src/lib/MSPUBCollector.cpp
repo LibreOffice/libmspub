@@ -159,13 +159,13 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
 }
 
 void libmspub::MSPUBCollector::setTextStringOffset(
-    unsigned textId, unsigned offset)
+  unsigned textId, unsigned offset)
 {
   m_stringOffsetsByTextId[textId] = offset;
 }
 
 void libmspub::MSPUBCollector::setNextTableCellTextEnds(
-    const std::vector<unsigned> &ends)
+  const std::vector<unsigned> &ends)
 {
   m_tableCellTextEndsVector.push_back(ends);
 }

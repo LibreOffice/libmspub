@@ -567,7 +567,7 @@ bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBl
         input->seek(ref.offset, WPX_SEEK_SET);
         // bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
         parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP,
-            ref.type == TABLE);
+                   ref.type == TABLE);
         input->seek(pos, WPX_SEEK_SET);
       }
     }
@@ -673,7 +673,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       if (!index.is_initialized())
       {
         MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %d corresponding to table of seqnum %d.\n",
-              csn, seqNum));
+                         csn, seqNum));
         return false;
       }
       else
@@ -717,7 +717,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       else if (info.id == SHAPE_VALIGN)
       {
         m_collector->setShapeVerticalTextAlign(seqNum,
-            static_cast<VerticalAlign>(info.data));
+                                               static_cast<VerticalAlign>(info.data));
       }
     }
     if (shouldStretchBorderArt)
@@ -770,7 +770,7 @@ libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(WP
 }
 
 std::vector<unsigned> libmspub::MSPUBParser::parseTableCellDefinitions(
-    WPXInputStream *input, const QuillChunkReference &chunk)
+  WPXInputStream *input, const QuillChunkReference &chunk)
 {
   std::vector<unsigned> ret;
   unsigned numElements = readU32(input) + 1;
@@ -1550,43 +1550,43 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           }
 
           unsigned *ptr_numColumns = getIfExists(foptValues.m_scalarValues,
-              FIELDID_NUM_COLUMNS);
+                                                 FIELDID_NUM_COLUMNS);
           if (ptr_numColumns)
           {
             m_collector->setShapeNumColumns(*shapeSeqNum, *ptr_numColumns);
           }
           unsigned *ptr_columnSpacing = getIfExists(foptValues.m_scalarValues,
-              FIELDID_COLUMN_SPACING);
+                                        FIELDID_COLUMN_SPACING);
           if (ptr_columnSpacing)
           {
             m_collector->setShapeColumnSpacing(*shapeSeqNum, *ptr_columnSpacing);
           }
           unsigned *ptr_beginArrowStyle = getIfExists(foptValues.m_scalarValues,
-              FIELDID_BEGIN_ARROW_STYLE);
+                                          FIELDID_BEGIN_ARROW_STYLE);
           unsigned *ptr_beginArrowWidth = getIfExists(foptValues.m_scalarValues,
-              FIELDID_BEGIN_ARROW_WIDTH);
+                                          FIELDID_BEGIN_ARROW_WIDTH);
           unsigned *ptr_beginArrowHeight = getIfExists(foptValues.m_scalarValues,
-              FIELDID_BEGIN_ARROW_HEIGHT);
+                                           FIELDID_BEGIN_ARROW_HEIGHT);
           m_collector->setShapeBeginArrow(*shapeSeqNum, Arrow(
-                ptr_beginArrowStyle ? (ArrowStyle)(*ptr_beginArrowStyle) :
-                  NO_ARROW,
-                ptr_beginArrowWidth ? (ArrowSize)(*ptr_beginArrowWidth) :
-                  MEDIUM,
-                ptr_beginArrowHeight ? (ArrowSize)(*ptr_beginArrowHeight) :
-                  MEDIUM));
+                                            ptr_beginArrowStyle ? (ArrowStyle)(*ptr_beginArrowStyle) :
+                                            NO_ARROW,
+                                            ptr_beginArrowWidth ? (ArrowSize)(*ptr_beginArrowWidth) :
+                                            MEDIUM,
+                                            ptr_beginArrowHeight ? (ArrowSize)(*ptr_beginArrowHeight) :
+                                            MEDIUM));
           unsigned *ptr_endArrowStyle = getIfExists(foptValues.m_scalarValues,
-              FIELDID_END_ARROW_STYLE);
+                                        FIELDID_END_ARROW_STYLE);
           unsigned *ptr_endArrowWidth = getIfExists(foptValues.m_scalarValues,
-              FIELDID_END_ARROW_WIDTH);
+                                        FIELDID_END_ARROW_WIDTH);
           unsigned *ptr_endArrowHeight = getIfExists(foptValues.m_scalarValues,
-              FIELDID_END_ARROW_HEIGHT);
+                                         FIELDID_END_ARROW_HEIGHT);
           m_collector->setShapeEndArrow(*shapeSeqNum, Arrow(
-                ptr_endArrowStyle ? (ArrowStyle)(*ptr_endArrowStyle) :
-                  NO_ARROW,
-                ptr_endArrowWidth ? (ArrowSize)(*ptr_endArrowWidth) :
-                  MEDIUM,
-                ptr_endArrowHeight ? (ArrowSize)(*ptr_endArrowHeight) :
-                  MEDIUM));
+                                          ptr_endArrowStyle ? (ArrowStyle)(*ptr_endArrowStyle) :
+                                          NO_ARROW,
+                                          ptr_endArrowWidth ? (ArrowSize)(*ptr_endArrowWidth) :
+                                          MEDIUM,
+                                          ptr_endArrowHeight ? (ArrowSize)(*ptr_endArrowHeight) :
+                                          MEDIUM));
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
           if (vertexData.size() > 0)
           {

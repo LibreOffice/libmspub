@@ -1016,15 +1016,18 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   CharacterStyle _nothing = CharacterStyle(false, false, false);
   const CharacterStyle &defaultCharStyle = defaultCharStyleIndex < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex] : _nothing;
   WPXPropertyList ret;
-  if (style.italic)
+  if (style.italic ^ defaultCharStyle.italic)
   {
-    ret.insert("fo:font-style", "italic");
+    if (style.italic)
+    {
+      ret.insert("fo:font-style", "italic");
+    }
   }
-  if (style.bold)
+  if (style.bold ^ defaultCharStyle.bold)
   {
     ret.insert("fo:font-weight", "bold");
   }
-  if (style.underline)
+  if (style.underline ^ defaultCharStyle.underline)
   {
     ret.insert("style:text-underline-type", "single");
   }

@@ -108,7 +108,7 @@ struct QuillChunkReference
 struct CharacterStyle
 {
   CharacterStyle() :
-    underline(false), italic(false), bold(false),
+    underline(), italic(), bold(),
     textSizeInPt(), colorIndex(-1), fontIndex(0), superSubType(NO_SUPER_SUB)
   {
   }

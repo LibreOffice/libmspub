@@ -626,24 +626,32 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
       while(stillReading(input, rcao + arrayLength))
       {
         MSPUBBlockInfo info = parseBlock(input, true);
-        if (info.id == TABLE_ROWCOL_OFFSET)
+        if (info.id == 0)
         {
-          unsigned rowcolOffset = readU32(input);
-          if (columnOffsetsInEmu.size() < nc)
+          input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+          while (stillReading(input, info.dataOffset + info.dataLength))
           {
-            if (columnOffsetsInEmu.empty())
+            MSPUBBlockInfo subInfo = parseBlock(input, true);
+            if (subInfo.id == TABLE_ROWCOL_OFFSET)
             {
-              columnFirstOffset = rowcolOffset;
+              unsigned rowcolOffset = readU32(input);
+              if (columnOffsetsInEmu.size() < nc)
+              {
+                if (columnOffsetsInEmu.empty())
+                {
+                  columnFirstOffset = rowcolOffset;
+                }
+                columnOffsetsInEmu.push_back(rowcolOffset - columnFirstOffset);
+              }
+              else if (rowOffsetsInEmu.size() < nr)
+              {
+                if (rowOffsetsInEmu.empty())
+                {
+                  rowFirstOffset = rowcolOffset;
+                }
+                rowOffsetsInEmu.push_back(rowcolOffset - rowFirstOffset);
+              }
             }
-            columnOffsetsInEmu.push_back(rowcolOffset - columnFirstOffset);
-          }
-          else if (rowOffsetsInEmu.size() < nr)
-          {
-            if (rowOffsetsInEmu.empty())
-            {
-              rowFirstOffset = rowcolOffset;
-            }
-            rowOffsetsInEmu.push_back(rowcolOffset - rowFirstOffset);
           }
         }
       }

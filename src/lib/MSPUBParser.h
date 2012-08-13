@@ -125,17 +125,17 @@ protected:
   bool parseDocumentChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parsePaletteChunk(WPXInputStream *input, const ContentChunkReference &chunk);
-  bool parseShapes(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
-  bool parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup, bool isTable);
+  bool parsePageShapeList(WPXInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
+  bool parseShape(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseBorderArtChunk(WPXInputStream *input,
                            const ContentChunkReference &chunk);
   void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(WPXInputStream *input, const QuillChunkReference &chunk);
-  void parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord);
+  void parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord);
   void skipBlock(WPXInputStream *input, MSPUBBlockInfo block);
-  void parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord);
+  void parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord);
   bool findEscherContainer(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, unsigned short type);
   bool findEscherContainerWithTypeInSet(WPXInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, std::set<unsigned short> types);
   std::map<unsigned short, unsigned> extractEscherValues(WPXInputStream *input, const EscherContainerInfo &record);

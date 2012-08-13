@@ -78,11 +78,10 @@ public:
   // collector functions
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
-  void addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum);
+  void addTextShape(unsigned stringId, unsigned seqNum);
   bool addImage(unsigned index, ImgType type, WPXBinaryData img);
   void setBorderImageOffset(unsigned index, unsigned offset);
   WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex);
-  bool addShape(unsigned seqNum);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
   void setShapeType(unsigned seqNum, ShapeType type);
@@ -159,7 +158,6 @@ private:
   std::vector<CharacterStyle> m_defaultCharStyles;
   std::vector<ParagraphStyle> m_defaultParaStyles;
   std::map<unsigned, ShapeType> m_shapeTypesBySeqNum;
-  std::vector<unsigned> m_possibleImageShapeSeqNums;
   std::vector<Color> m_paletteColors;
   std::vector<unsigned> m_shapeSeqNumsOrdered;
   std::map<unsigned, unsigned> m_pageSeqNumsByShapeSeqNum;

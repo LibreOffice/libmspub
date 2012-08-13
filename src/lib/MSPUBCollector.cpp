@@ -144,7 +144,6 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_images(), m_borderImages(),
   m_textColors(), m_fonts(),
   m_defaultCharStyles(), m_defaultParaStyles(), m_shapeTypesBySeqNum(),
-  m_possibleImageShapeSeqNums(),
   m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(),
@@ -301,9 +300,9 @@ std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo 
 
 boost::optional<std::vector<libmspub::TextParagraph> > libmspub::MSPUBCollector::getShapeText(const ShapeInfo &info) const
 {
-  if (info.m_textInfo.is_initialized())
+  if (info.m_textId.is_initialized())
   {
-    unsigned stringId = info.m_textInfo.get().first;
+    unsigned stringId = info.m_textId.get();
     const std::vector<TextParagraph> *ptr_str = getIfExists_const(m_textStringsById, stringId);
     if (ptr_str)
     {
@@ -926,9 +925,9 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum, unsigned pageSeqNum)
+void libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum)
 {
-  m_shapeInfosBySeqNum[seqNum].m_textInfo = std::pair<unsigned, unsigned>(stringId, pageSeqNum);
+  m_shapeInfosBySeqNum[seqNum].m_textId = stringId;
 }
 
 void libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
@@ -1271,12 +1270,6 @@ void libmspub::MSPUBCollector::setBorderImageOffset(unsigned index, unsigned off
   {
     bai.m_offsetsOrdered.push_back(offset);
   }
-}
-
-bool libmspub::MSPUBCollector::addShape(unsigned seqNum)
-{
-  m_possibleImageShapeSeqNums.push_back(seqNum);
-  return true;
 }
 
 void libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)

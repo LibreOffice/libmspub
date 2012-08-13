@@ -55,7 +55,7 @@ struct ShapeInfo
   boost::optional<Coordinate> m_coordinates;
   std::vector<Line> m_lines;
   boost::optional<unsigned> m_pageSeqNum;
-  boost::optional<std::pair<unsigned, unsigned> > m_textInfo;
+  boost::optional<unsigned> m_textId;
   std::map<unsigned, int> m_adjustValuesByIndex;
   std::vector<int> m_adjustValues;
   boost::optional<double> m_rotation;
@@ -76,7 +76,7 @@ struct ShapeInfo
   boost::optional<VerticalAlign> m_verticalAlign;
   ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
-    m_textInfo(), m_adjustValuesByIndex(), m_adjustValues(),
+    m_textId(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
     m_fill(), m_customShape(), m_stretchBorderArt(false),
     m_lineBackColor(), m_dash(), m_tableInfo(),

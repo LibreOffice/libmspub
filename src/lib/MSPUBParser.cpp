@@ -376,6 +376,17 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           return false;
         }
       }
+      for (unsigned i_shape = 0; i_shape < m_shapeChunkIndices.size();
+           ++i_shape)
+      {
+        const ContentChunkReference &shapeChunk =
+          m_contentChunks.at(m_shapeChunkIndices[i_shape]);
+        input->seek(shapeChunk.offset, WPX_SEEK_SET);
+        if (!parseShape(input, shapeChunk))
+        {
+          return false;
+        }
+      }
       input->seek(documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, documentChunk))
       {
@@ -514,7 +525,7 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
     }
     else if (info.id == PAGE_SHAPES)
     {
-      parseShapes(input, info, chunk.seqNum);
+      parsePageShapeList(input, info, chunk.seqNum);
     }
     else if (info.id == THIS_MASTER_NAME)
     {
@@ -538,50 +549,30 @@ bool libmspub::MSPUBParser::parsePageChunk(WPXInputStream *input, const ContentC
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShapes(WPXInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
+bool libmspub::MSPUBParser::parsePageShapeList(WPXInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
 {
-  MSPUB_DEBUG_MSG(("parseShapes: page seqnum 0x%x\n", pageSeqNum));
+  MSPUB_DEBUG_MSG(("parsePageShapeList: page seqnum 0x%x\n", pageSeqNum));
   while (stillReading(input, info.dataOffset + info.dataLength))
   {
     libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
     if (subInfo.type == SHAPE_SEQNUM)
     {
-      int index = -1;
-      for (unsigned i = 0; i < m_shapeChunkIndices.size(); ++i)
-      {
-        if (m_contentChunks[m_shapeChunkIndices[i]].seqNum == subInfo.data)
-        {
-          index = m_shapeChunkIndices[i];
-          break;
-        }
-      }
-      if (index == -1)
-      {
-        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x not found!\n", subInfo.data));
-      }
-      else
-      {
-        const ContentChunkReference &ref = m_contentChunks[index];
-        MSPUB_DEBUG_MSG(("Shape of seqnum 0x%x found\n", subInfo.data));
-        unsigned long pos = input->tell();
-        input->seek(ref.offset, WPX_SEEK_SET);
-        // bool parseWithoutDimensions = std::find(m_alternateShapeSeqNums.begin(), m_alternateShapeSeqNums.end(), subInfo.data) != m_alternateShapeSeqNums.end();
-        parseShape(input, subInfo.data, pageSeqNum, true, ref.type == GROUP || ref.type == LOGO,
-                   ref.type == TABLE);
-        input->seek(pos, WPX_SEEK_SET);
-      }
+      m_collector->setShapePage(subInfo.data, pageSeqNum);
     }
   }
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, unsigned pageSeqNum, bool parseWithoutDimensions, bool isGroup, bool isTable)
+bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
+    const ContentChunkReference &chunk)
 {
-  MSPUB_DEBUG_MSG(("parseShape: pageSeqNum 0x%x\n", pageSeqNum));
+  MSPUB_DEBUG_MSG(("parseShape: seqNum 0x%x\n", chunk.seqNum));
   unsigned long pos = input->tell();
   unsigned length = readU32(input);
   unsigned width = 0;
   unsigned height = 0;
+  bool isTable = chunk.type == TABLE;
+  bool isGroup = chunk.type == GROUP || chunk.type == LOGO;
   bool isText = false;
   bool shouldStretchBorderArt = true;
   unsigned textId = 0;
@@ -673,7 +664,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       if (!index.is_initialized())
       {
         MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %d corresponding to table of seqnum %d.\n",
-                         csn, seqNum));
+                         csn, chunk.seqNum));
         return false;
       }
       else
@@ -683,7 +674,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       TableInfo ti(nr, nc);
       ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
       ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
-      m_collector->setShapeTableInfo(seqNum, ti);
+      m_collector->setShapeTableInfo(chunk.seqNum, ti);
       return true;
     }
     return false;
@@ -703,7 +694,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       }
       else if (info.id == SHAPE_BORDER_IMAGE_ID)
       {
-        m_collector->setShapeBorderImageId(seqNum, info.data);
+        m_collector->setShapeBorderImageId(chunk.seqNum, info.data);
       }
       else if (info.id == SHAPE_DONT_STRETCH_BA)
       {
@@ -716,25 +707,24 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input, unsigned seqNum, u
       }
       else if (info.id == SHAPE_VALIGN)
       {
-        m_collector->setShapeVerticalTextAlign(seqNum,
+        m_collector->setShapeVerticalTextAlign(chunk.seqNum,
                                                static_cast<VerticalAlign>(info.data));
       }
     }
     if (shouldStretchBorderArt)
     {
-      m_collector->setShapeStretchBorderArt(seqNum);
+      m_collector->setShapeStretchBorderArt(chunk.seqNum);
     }
+    bool parseWithoutDimensions = true; //FIXME: Should we ever ignore if height and width not given?
     if (isGroup || (height > 0 && width > 0) || parseWithoutDimensions)
     {
       if (! isGroup)
       {
         if (isText)
         {
-          m_collector->addTextShape(textId, seqNum, pageSeqNum);
+          m_collector->addTextShape(textId, chunk.seqNum);
         }
-        m_collector->addShape(seqNum);
       }
-      m_collector->setShapePage(seqNum, pageSeqNum);
     }
     else
     {
@@ -1301,14 +1291,14 @@ bool libmspub::MSPUBParser::parseEscher(WPXInputStream *input)
     while (findEscherContainer(input, dg, spgr, OFFICE_ART_SPGR_CONTAINER))
     {
       Coordinate c1, c2;
-      parseShapeGroup(input, spgr, true, c1, c2);
+      parseShapeGroup(input, spgr, c1, c2);
     }
     input->seek(input->tell() + getEscherElementTailLength(OFFICE_ART_DG_CONTAINER), WPX_SEEK_SET);
   }
   return true;
 }
 
-void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, bool topLevel, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
+void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
 {
   libmspub::EscherContainerInfo shapeOrGroup;
   std::set<unsigned short> types;
@@ -1320,18 +1310,18 @@ void libmspub::MSPUBParser::parseShapeGroup(WPXInputStream *input, const EscherC
     {
     case OFFICE_ART_SPGR_CONTAINER:
       m_collector->beginGroup();
-      parseShapeGroup(input, shapeOrGroup, false, parentCoordinateSystem, parentGroupAbsoluteCoord);
+      parseShapeGroup(input, shapeOrGroup, parentCoordinateSystem, parentGroupAbsoluteCoord);
       m_collector->endGroup();
       break;
     case OFFICE_ART_SP_CONTAINER:
-      parseEscherShape(input, shapeOrGroup, topLevel, parentCoordinateSystem, parentGroupAbsoluteCoord);
+      parseEscherShape(input, shapeOrGroup, parentCoordinateSystem, parentGroupAbsoluteCoord);
       break;
     }
     input->seek(shapeOrGroup.contentsOffset + shapeOrGroup.contentsLength + getEscherElementTailLength(shapeOrGroup.type), WPX_SEEK_SET);
   }
 }
 
-void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, bool topLevel, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
+void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const EscherContainerInfo &sp, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
 {
   Coordinate thisParentCoordinateSystem = parentCoordinateSystem;
   bool definesRelativeCoordinates = false;
@@ -1651,10 +1641,6 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             parentGroupAbsoluteCoord = absolute;
           }
         }
-      }
-      if (!topLevel)
-      {
-        m_collector->addShape(*shapeSeqNum);
       }
     }
   }

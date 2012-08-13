@@ -532,8 +532,7 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   bool isGroup = false;
   bool isLine = false;
   unsigned flagsOffset(0); // ? why was this changed from boost::optional ?
-  parseShapeType(input, chunk.seqNum, chunk.offset, page, isGroup, isLine, isImage, isRectangle, flagsOffset);
-  m_collector->addShape(chunk.seqNum);
+  parseShapeType(input, chunk.seqNum, chunk.offset, isGroup, isLine, isImage, isRectangle, flagsOffset);
   parseShapeRotation(input, isGroup, isLine, chunk.seqNum, chunk.offset);
   parseShapeCoordinates(input, chunk.seqNum, chunk.offset);
   parseShapeFlips(input, flagsOffset, chunk.seqNum, chunk.offset);
@@ -641,7 +640,7 @@ void libmspub::MSPUBParser2k::parseShapeFlips(WPXInputStream *input, unsigned fl
 }
 
 void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
-    unsigned seqNum, unsigned chunkOffset, unsigned page,
+    unsigned seqNum, unsigned chunkOffset,
     bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
     unsigned &flagsOffset)
 {
@@ -688,7 +687,7 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
     isRectangle = true;
     input->seek(chunkOffset + getTextIdOffset(), WPX_SEEK_SET);
     unsigned txtId = readU16(input);
-    m_collector->addTextShape(txtId, seqNum, page);
+    m_collector->addTextShape(txtId, seqNum);
   }
 }
 

@@ -52,7 +52,7 @@ protected:
                          bool topLevelCall = true);
   void parseShapeLine(WPXInputStream *input, bool isRectangle, unsigned offset, unsigned seqNum);
   void parseShapeType(WPXInputStream *input,
-                      unsigned seqNum, unsigned chunkOffset, unsigned page,
+                      unsigned seqNum, unsigned chunkOffset,
                       bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
                       unsigned &flagsOffset);
   void parseShapeRotation(WPXInputStream *input, bool isGroup, bool isLine, unsigned seqNum,

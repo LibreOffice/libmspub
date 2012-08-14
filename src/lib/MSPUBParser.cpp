@@ -2169,6 +2169,10 @@ bool libmspub::MSPUBParser::parsePaletteChunk(WPXInputStream *input, const Conte
         {
           parsePaletteEntry(input, subInfo);
         }
+        else if (subInfo.type == DUMMY)
+        {
+          m_collector->addPaletteColor(Color());
+        }
         skipBlock(input, subInfo);
       }
     }

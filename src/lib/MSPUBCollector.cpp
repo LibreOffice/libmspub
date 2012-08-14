@@ -415,11 +415,11 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       Color obc = info.m_pictureRecolor.get().getFinalColor(m_paletteColors);
       graphicsProps.insert("draw:color-mode", "greyscale");
       graphicsProps.insert("draw:red",
-          static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
       graphicsProps.insert("draw:blue",
-          static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
       graphicsProps.insert("draw:green",
-          static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
     }
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
 

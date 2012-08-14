@@ -564,7 +564,7 @@ bool libmspub::MSPUBParser::parsePageShapeList(WPXInputStream *input, libmspub::
 }
 
 bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
-    const ContentChunkReference &chunk)
+                                       const ContentChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parseShape: seqNum 0x%x\n", chunk.seqNum));
   unsigned long pos = input->tell();
@@ -1413,11 +1413,11 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           const std::map<unsigned short, unsigned> &tertiaryFoptValues =
             maybe_tertiaryFoptValues.get();
           const unsigned *ptr_pictureRecolor = getIfExists_const(tertiaryFoptValues,
-                                         FIELDID_PICTURE_RECOLOR);
+                                               FIELDID_PICTURE_RECOLOR);
           if (ptr_pictureRecolor)
           {
             m_collector->setShapePictureRecolor(*shapeSeqNum,
-                ColorReference(*ptr_pictureRecolor));
+                                                ColorReference(*ptr_pictureRecolor));
           }
         }
         input->seek(sp.contentsOffset, WPX_SEEK_SET);

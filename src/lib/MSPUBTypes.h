@@ -125,12 +125,19 @@ struct CharacterStyle
   SuperSubType superSubType;
 };
 
+enum LineSpacingType
+{
+  LINE_SPACING_SP,
+  LINE_SPACING_PT
+};
+
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, unsigned ls = LINE_SPACING_UNIT, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0, boost::optional<ListInfo> lInfo = boost::optional<ListInfo>()) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri), listInfo(lInfo) { }
+  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, double ls = 1, LineSpacingType lst = LINE_SPACING_SP, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0, boost::optional<ListInfo> lInfo = boost::optional<ListInfo>()) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), lineSpacingType(lst), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri), listInfo(lInfo) { }
   Alignment align;
   unsigned defaultCharStyleIndex;
-  unsigned lineSpacing;
+  double lineSpacing;
+  LineSpacingType lineSpacingType;
   unsigned spaceBeforeEmu;
   unsigned spaceAfterEmu;
   int firstLineIndentEmu;

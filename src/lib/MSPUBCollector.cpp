@@ -1006,10 +1006,18 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     ret.insert("fo:text-align", "left");
     break;
   }
-  unsigned lineSpacing = style.lineSpacing;
-  if (lineSpacing != LINE_SPACING_UNIT)
+  double lineSpacing = style.lineSpacing;
+  LineSpacingType lineSpacingType = style.lineSpacingType;
+  if (!(lineSpacingType == LINE_SPACING_SP && lineSpacing == 1))
   {
-    ret.insert("fo:line-height", (double)lineSpacing/LINE_SPACING_UNIT, WPX_PERCENT);
+    if (lineSpacingType == LINE_SPACING_SP)
+    {
+      ret.insert("fo:line-height", lineSpacing, WPX_PERCENT);
+    }
+    else if (lineSpacingType == LINE_SPACING_PT)
+    {
+      ret.insert("fo:line-height", lineSpacing, WPX_POINT);
+    }
   }
   if (style.spaceAfterEmu != 0)
   {

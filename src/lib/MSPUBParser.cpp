@@ -1072,7 +1072,8 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
 libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream *input)
 {
   Alignment align = (Alignment)-1;
-  unsigned lineSpacing = LINE_SPACING_UNIT;
+  double lineSpacing = 1;
+  LineSpacingType lineSpacingType = LINE_SPACING_SP;
   unsigned defaultCharStyleIndex = 0;
   unsigned spaceBeforeEmu = 0;
   unsigned spaceAfterEmu = 0;
@@ -1098,7 +1099,22 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
       defaultCharStyleIndex = info.data;
       break;
     case PARAGRAPH_LINE_SPACING:
-      lineSpacing = info.data;
+      if (info.data & 1)
+      {
+        // line spacing expressed in points in the UI,
+        // in eighths of an emu in the file format.
+        // (WTF??)
+        lineSpacing = static_cast<double>(info.data - 1) / 8 * 72 / EMUS_IN_INCH;
+        lineSpacingType = LINE_SPACING_PT;
+      }
+      else if (info.data & 2)
+      {
+        // line spacing expressed in SP in the UI,
+        // in what would be EMUs if font size were 96pt in the file format
+        // (WTF??)
+        lineSpacing = static_cast<double>(info.data - 2) / EMUS_IN_INCH * 72 / 96;
+        lineSpacingType = LINE_SPACING_SP;
+      }
       break;
     case PARAGRAPH_SPACE_BEFORE:
       spaceBeforeEmu = info.data;
@@ -1156,7 +1172,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
                           numberingDelimiter);
     }
   }
-  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, spaceBeforeEmu, spaceAfterEmu,
+  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, lineSpacingType, spaceBeforeEmu, spaceAfterEmu,
                         firstLineIndentEmu, leftIndentEmu, rightIndentEmu, listInfo);
 }
 

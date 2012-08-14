@@ -1,0 +1,2 @@
+#!/bin/bash
+astyle -b -k3 -y -n -s2 -r \*.cpp \*.h

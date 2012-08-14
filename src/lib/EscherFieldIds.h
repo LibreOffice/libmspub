@@ -87,6 +87,7 @@
 #define FIELDID_END_ARROW_STYLE        0x01D1
 #define FIELDID_END_ARROW_WIDTH        0x01D4
 #define FIELDID_END_ARROW_HEIGHT       0x01D5
+#define FIELDID_PICTURE_RECOLOR        0x011A
 
 #define FLAG_USE_LINE   (1 << 19)
 #define FLAG_LINE       (1 << 3)

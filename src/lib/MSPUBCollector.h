@@ -85,6 +85,7 @@ public:
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
   void setShapeType(unsigned seqNum, ShapeType type);
+  void setShapePictureRecolor(unsigned seqNum, const ColorReference &recolor);
   void setShapeTableInfo(unsigned seqNum, const TableInfo &ti);
   void setShapeBorderImageId(unsigned seqNum, unsigned borderImageId);
   void setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);

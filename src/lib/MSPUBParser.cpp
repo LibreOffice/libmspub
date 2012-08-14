@@ -1386,6 +1386,24 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
       if ((foundAnchor = findEscherContainerWithTypeInSet(input, sp, cAnchor, anchorTypes)) || isGroupLeader)
       {
         MSPUB_DEBUG_MSG(("Found Escher data for %s of seqnum 0x%x\n", isGroupLeader ? "group" : "shape", *shapeSeqNum));
+        boost::optional<std::map<unsigned short, unsigned> > maybe_tertiaryFoptValues;
+        input->seek(sp.contentsOffset, WPX_SEEK_SET);
+        if (findEscherContainer(input, sp, cTertiaryFopt, OFFICE_ART_TERTIARY_FOPT))
+        {
+          maybe_tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
+        }
+        if (maybe_tertiaryFoptValues.is_initialized())
+        {
+          const std::map<unsigned short, unsigned> &tertiaryFoptValues =
+            maybe_tertiaryFoptValues.get();
+          const unsigned *ptr_pictureRecolor = getIfExists_const(tertiaryFoptValues,
+                                         FIELDID_PICTURE_RECOLOR);
+          if (ptr_pictureRecolor)
+          {
+            m_collector->setShapePictureRecolor(*shapeSeqNum,
+                ColorReference(*ptr_pictureRecolor));
+          }
+        }
         input->seek(sp.contentsOffset, WPX_SEEK_SET);
         if (findEscherContainer(input, sp, cFopt, OFFICE_ART_FOPT))
         {
@@ -1430,10 +1448,10 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             }
             else
             {
-              input->seek(sp.contentsOffset, WPX_SEEK_SET);
-              if (findEscherContainer(input, sp, cTertiaryFopt, OFFICE_ART_TERTIARY_FOPT))
+              if (maybe_tertiaryFoptValues.is_initialized())
               {
-                std::map<unsigned short, unsigned> tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
+                std::map<unsigned short, unsigned> &tertiaryFoptValues =
+                  maybe_tertiaryFoptValues.get();
                 unsigned *ptr_tertiaryLineFlags = getIfExists(tertiaryFoptValues, FIELDID_LINE_STYLE_BOOL_PROPS);
                 if (lineExistsByFlagPointer(ptr_tertiaryLineFlags))
                 {

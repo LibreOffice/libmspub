@@ -39,6 +39,12 @@
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
+void libmspub::MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
+    const ColorReference &recolor)
+{
+  m_shapeInfosBySeqNum[seqNum].m_pictureRecolor = recolor;
+}
+
 void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
     const Arrow &arrow)
 {
@@ -404,11 +410,29 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         width -= 2 * borderImgWidth;
       }
     }
+    if (info.m_pictureRecolor.is_initialized())
+    {
+      Color obc = info.m_pictureRecolor.get().getFinalColor(m_paletteColors);
+      graphicsProps.insert("draw:color-mode", "greyscale");
+      graphicsProps.insert("draw:red",
+          static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
+      graphicsProps.insert("draw:blue",
+          static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
+      graphicsProps.insert("draw:green",
+          static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
+    }
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
                      std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
+    if (info.m_pictureRecolor.is_initialized())
+    {
+      graphicsProps.remove("draw:color-mode");
+      graphicsProps.remove("draw:red");
+      graphicsProps.remove("draw:blue");
+      graphicsProps.remove("draw:green");
+    }
   }
   const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)

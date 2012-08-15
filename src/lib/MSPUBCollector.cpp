@@ -995,7 +995,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   const ParagraphStyle &defaultStyle = defaultParaStyleIndex.is_initialized() && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
   WPXPropertyList ret;
   Alignment align = style.m_align.get_value_or(
-      defaultStyle.m_align.get_value_or(LEFT));
+                      defaultStyle.m_align.get_value_or(LEFT));
   switch (align)
   {
   case RIGHT:
@@ -1013,7 +1013,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     break;
   }
   LineSpacingInfo info = style.m_lineSpacing.get_value_or(
-      defaultStyle.m_lineSpacing.get_value_or(LineSpacingInfo()));
+                           defaultStyle.m_lineSpacing.get_value_or(LineSpacingInfo()));
   LineSpacingType lineSpacingType = info.m_type;
   double lineSpacing = info.m_amount;
   if (!(lineSpacingType == LINE_SPACING_SP && lineSpacing == 1))
@@ -1028,15 +1028,15 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     }
   }
   unsigned spaceAfterEmu = style.m_spaceAfterEmu.get_value_or(
-      defaultStyle.m_spaceAfterEmu.get_value_or(0));
+                             defaultStyle.m_spaceAfterEmu.get_value_or(0));
   unsigned spaceBeforeEmu = style.m_spaceBeforeEmu.get_value_or(
-      defaultStyle.m_spaceBeforeEmu.get_value_or(0));
+                              defaultStyle.m_spaceBeforeEmu.get_value_or(0));
   unsigned firstLineIndentEmu = style.m_firstLineIndentEmu.get_value_or(
-      defaultStyle.m_firstLineIndentEmu.get_value_or(0));
+                                  defaultStyle.m_firstLineIndentEmu.get_value_or(0));
   unsigned leftIndentEmu = style.m_leftIndentEmu.get_value_or(
-      defaultStyle.m_leftIndentEmu.get_value_or(0));
+                             defaultStyle.m_leftIndentEmu.get_value_or(0));
   unsigned rightIndentEmu = style.m_rightIndentEmu.get_value_or(
-      defaultStyle.m_rightIndentEmu.get_value_or(0));
+                              defaultStyle.m_rightIndentEmu.get_value_or(0));
   if (spaceAfterEmu != 0)
   {
     ret.insert("fo:margin-bottom", (double)spaceAfterEmu / EMUS_IN_INCH);

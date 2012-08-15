@@ -1110,8 +1110,8 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
         // line spacing expressed in points in the UI,
         // in eighths of an emu in the file format.
         // (WTF??)
-        ret.m_lineSpacing = LineSpacingInfo(LINE_SPACING_PT, 
-            static_cast<double>(info.data - 1) / 8 * 72 / EMUS_IN_INCH);
+        ret.m_lineSpacing = LineSpacingInfo(LINE_SPACING_PT,
+                                            static_cast<double>(info.data - 1) / 8 * 72 / EMUS_IN_INCH);
       }
       else if (info.data & 2)
       {
@@ -1119,7 +1119,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
         // in what would be EMUs if font size were 96pt in the file format
         // (WTF??)
         ret.m_lineSpacing = LineSpacingInfo(LINE_SPACING_SP,
-            static_cast<double>(info.data - 2) / EMUS_IN_INCH * 72 / 96);
+                                            static_cast<double>(info.data - 2) / EMUS_IN_INCH * 72 / 96);
       }
       break;
     case PARAGRAPH_SPACE_BEFORE:
@@ -1174,7 +1174,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     else
     {
       ret.m_listInfo = ListInfo(numberIfRestarted, numberingType,
-                          numberingDelimiter);
+                                numberingDelimiter);
     }
   }
 

@@ -1264,6 +1264,7 @@ unsigned libmspub::MSPUBParser::getFontIndex(WPXInputStream *input, const MSPUBB
       if (stillReading(input, subInfo.dataOffset + subInfo.dataLength))
       {
         MSPUBBlockInfo subSubInfo = parseBlock(input, true);
+        skipBlock(input, info);
         return subSubInfo.data;
       }
     }

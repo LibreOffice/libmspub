@@ -84,6 +84,8 @@ public:
   WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
+  void setNextPage(unsigned seqNum);
+
   void setShapeType(unsigned seqNum, ShapeType type);
   void setShapePictureRecolor(unsigned seqNum, const ColorReference &recolor);
   void setShapeTableInfo(unsigned seqNum, const TableInfo &ti);
@@ -175,6 +177,7 @@ private:
   std::vector<std::vector<unsigned> > m_tableCellTextEndsVector;
   std::map<unsigned, unsigned> m_stringOffsetsByTextId;
   mutable std::vector<bool> m_calculationValuesSeen;
+  std::vector<unsigned> m_pageSeqNumsOrdered;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   boost::optional<unsigned> getMasterPageSeqNum(unsigned pageSeqNum) const;

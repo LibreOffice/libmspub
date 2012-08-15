@@ -139,6 +139,11 @@ libmspub::Coordinate getFudgedCoordinates(libmspub::Coordinate coord, const std:
   return fudged;
 }
 
+void libmspub::MSPUBCollector::setNextPage(unsigned pageSeqNum)
+{
+  m_pageSeqNumsOrdered.push_back(pageSeqNum);
+}
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -159,7 +164,7 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
   m_encoding(), m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),
-  m_calculationValuesSeen()
+  m_calculationValuesSeen(), m_pageSeqNumsOrdered()
 {
 }
 
@@ -1224,12 +1229,27 @@ bool libmspub::MSPUBCollector::go()
 {
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
-  for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
-       i != m_pagesBySeqNum.end(); ++i)
+  if (m_pageSeqNumsOrdered.empty())
   {
-    if (!pageIsMaster(i->first))
+    for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
+         i != m_pagesBySeqNum.end(); ++i)
     {
-      writePage(i->first);
+      if (!pageIsMaster(i->first))
+      {
+        writePage(i->first);
+      }
+    }
+  }
+  else
+  {
+    for (unsigned i = 0; i < m_pageSeqNumsOrdered.size(); ++i)
+    {
+      std::map<unsigned, PageInfo>::const_iterator iter =
+        m_pagesBySeqNum.find(m_pageSeqNumsOrdered[i]);
+      if (iter != m_pagesBySeqNum.end() && !pageIsMaster(iter->first))
+      {
+        writePage(iter->first);
+      }
     }
   }
   return true;

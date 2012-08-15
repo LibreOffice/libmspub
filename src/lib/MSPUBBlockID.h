@@ -36,6 +36,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   DOCUMENT_SIZE = 0x12,
   DOCUMENT_WIDTH = 0x1,
   DOCUMENT_HEIGHT = 0x2,
+  DOCUMENT_PAGE_LIST = 0x2,
   PAGE_BG_SHAPE = 0xa,
   PAGE_SHAPES = 0x2,
   CHUNK_TYPE = 0x2,

@@ -435,6 +435,18 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
         }
       }
     }
+    else if (info.id == DOCUMENT_PAGE_LIST)
+    {
+      input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+      while (stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo subInfo = parseBlock(input, true);
+        if (subInfo.id == 0)
+        {
+          m_collector->setNextPage(subInfo.data);
+        }
+      }
+    }
     else
     {
       skipBlock(input, info);

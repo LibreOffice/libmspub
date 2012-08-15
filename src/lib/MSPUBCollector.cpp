@@ -1054,10 +1054,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   WPXPropertyList ret;
   if (style.italic ^ defaultCharStyle.italic)
   {
-    if (style.italic)
-    {
-      ret.insert("fo:font-style", "italic");
-    }
+    ret.insert("fo:font-style", "italic");
   }
   if (style.bold ^ defaultCharStyle.bold)
   {

@@ -197,8 +197,8 @@ private:
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 
-  WPXPropertyList getCharStyleProps(const CharacterStyle &, unsigned defaultCharStyleIndex) const;
-  WPXPropertyList getParaStyleProps(const ParagraphStyle &, unsigned defaultParaStyleIndex) const;
+  WPXPropertyList getCharStyleProps(const CharacterStyle &, boost::optional<unsigned> defaultCharStyleIndex) const;
+  WPXPropertyList getParaStyleProps(const ParagraphStyle &, boost::optional<unsigned> defaultParaStyleIndex) const;
   double getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const;
 public:
   static WPXString getColorString(const Color &);

@@ -133,19 +133,36 @@ enum LineSpacingType
   LINE_SPACING_PT
 };
 
+struct LineSpacingInfo
+{
+  LineSpacingType m_type;
+  double m_amount;
+  LineSpacingInfo() : m_type(LINE_SPACING_SP), m_amount(1)
+  {
+  }
+  LineSpacingInfo(LineSpacingType type, double amount) :
+    m_type(type), m_amount(amount)
+  {
+  }
+};
+
 struct ParagraphStyle
 {
-  ParagraphStyle(Alignment a = (Alignment)-1, unsigned dCSI = 0, double ls = 1, LineSpacingType lst = LINE_SPACING_SP, unsigned sb = 0, unsigned sa = 0, int fli = 0, unsigned li = 0, unsigned ri = 0, boost::optional<ListInfo> lInfo = boost::optional<ListInfo>()) : align(a), defaultCharStyleIndex(dCSI), lineSpacing(ls), lineSpacingType(lst), spaceBeforeEmu(sb), spaceAfterEmu(sa), firstLineIndentEmu(fli), leftIndentEmu(li), rightIndentEmu(ri), listInfo(lInfo) { }
-  Alignment align;
-  unsigned defaultCharStyleIndex;
-  double lineSpacing;
-  LineSpacingType lineSpacingType;
-  unsigned spaceBeforeEmu;
-  unsigned spaceAfterEmu;
-  int firstLineIndentEmu;
-  unsigned leftIndentEmu;
-  unsigned rightIndentEmu;
-  boost::optional<ListInfo> listInfo;
+  boost::optional<Alignment> m_align;
+  boost::optional<unsigned> m_defaultCharStyleIndex;
+  boost::optional<LineSpacingInfo> m_lineSpacing;
+  boost::optional<unsigned> m_spaceBeforeEmu;
+  boost::optional<unsigned> m_spaceAfterEmu;
+  boost::optional<int> m_firstLineIndentEmu;
+  boost::optional<unsigned> m_leftIndentEmu;
+  boost::optional<unsigned> m_rightIndentEmu;
+  boost::optional<ListInfo> m_listInfo;
+  ParagraphStyle() :
+    m_align(), m_defaultCharStyleIndex(), m_lineSpacing(), m_spaceBeforeEmu(),
+    m_spaceAfterEmu(), m_firstLineIndentEmu(), m_leftIndentEmu(),
+    m_rightIndentEmu(), m_listInfo()
+  {
+  }
 };
 
 struct TextSpan

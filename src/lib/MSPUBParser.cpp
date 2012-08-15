@@ -1083,20 +1083,14 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
 }
 libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream *input)
 {
-  Alignment align = (Alignment)-1;
-  double lineSpacing = 1;
-  LineSpacingType lineSpacingType = LINE_SPACING_SP;
-  unsigned defaultCharStyleIndex = 0;
-  unsigned spaceBeforeEmu = 0;
-  unsigned spaceAfterEmu = 0;
-  int firstLineIndentEmu = 0;
-  unsigned leftIndentEmu = 0;
-  unsigned rightIndentEmu = 0;
+  ParagraphStyle ret;
+
   bool isList = false;
   uint32_t bulletChar = '\u0000';
   NumberingType numberingType = STANDARD_WESTERN;
   NumberingDelimiter numberingDelimiter = NO_DELIMITER;
   boost::optional<unsigned> numberIfRestarted;
+
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
@@ -1105,10 +1099,10 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     switch(info.id)
     {
     case PARAGRAPH_ALIGNMENT:
-      align = (Alignment)(info.data & 0xFF); // Is this correct?
+      ret.m_align = (Alignment)(info.data & 0xFF); // Is this correct?
       break;
     case PARAGRAPH_DEFAULT_CHAR_STYLE:
-      defaultCharStyleIndex = info.data;
+      ret.m_defaultCharStyleIndex = info.data;
       break;
     case PARAGRAPH_LINE_SPACING:
       if (info.data & 1)
@@ -1116,32 +1110,32 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
         // line spacing expressed in points in the UI,
         // in eighths of an emu in the file format.
         // (WTF??)
-        lineSpacing = static_cast<double>(info.data - 1) / 8 * 72 / EMUS_IN_INCH;
-        lineSpacingType = LINE_SPACING_PT;
+        ret.m_lineSpacing = LineSpacingInfo(LINE_SPACING_PT, 
+            static_cast<double>(info.data - 1) / 8 * 72 / EMUS_IN_INCH);
       }
       else if (info.data & 2)
       {
         // line spacing expressed in SP in the UI,
         // in what would be EMUs if font size were 96pt in the file format
         // (WTF??)
-        lineSpacing = static_cast<double>(info.data - 2) / EMUS_IN_INCH * 72 / 96;
-        lineSpacingType = LINE_SPACING_SP;
+        ret.m_lineSpacing = LineSpacingInfo(LINE_SPACING_SP,
+            static_cast<double>(info.data - 2) / EMUS_IN_INCH * 72 / 96);
       }
       break;
     case PARAGRAPH_SPACE_BEFORE:
-      spaceBeforeEmu = info.data;
+      ret.m_spaceBeforeEmu = info.data;
       break;
     case PARAGRAPH_SPACE_AFTER:
-      spaceAfterEmu = info.data;
+      ret.m_spaceAfterEmu = info.data;
       break;
     case PARAGRAPH_FIRST_LINE_INDENT:
-      firstLineIndentEmu = (int)info.data;
+      ret.m_firstLineIndentEmu = (int)info.data;
       break;
     case PARAGRAPH_LEFT_INDENT:
-      leftIndentEmu = info.data;
+      ret.m_leftIndentEmu = info.data;
       break;
     case PARAGRAPH_RIGHT_INDENT:
-      rightIndentEmu = info.data;
+      ret.m_rightIndentEmu = info.data;
       break;
     case PARAGRAPH_LIST_INFO:
     {
@@ -1171,21 +1165,20 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
       break;
     }
   }
-  boost::optional<ListInfo> listInfo;
   if (isList)
   {
     if (bulletChar != '\u0000')
     {
-      listInfo = ListInfo(bulletChar);
+      ret.m_listInfo = ListInfo(bulletChar);
     }
     else
     {
-      listInfo = ListInfo(numberIfRestarted, numberingType,
+      ret.m_listInfo = ListInfo(numberIfRestarted, numberingType,
                           numberingDelimiter);
     }
   }
-  return ParagraphStyle(align, defaultCharStyleIndex, lineSpacing, lineSpacingType, spaceBeforeEmu, spaceAfterEmu,
-                        firstLineIndentEmu, leftIndentEmu, rightIndentEmu, listInfo);
+
+  return ret;
 }
 
 libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input)

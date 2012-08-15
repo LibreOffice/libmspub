@@ -739,14 +739,14 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     m_painter->startTextObject(props, WPXPropertyListVector());
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {
-      WPXPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.defaultCharStyleIndex);
+      WPXPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
       m_painter->startTextLine(paraProps);
       for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
       {
         WPXString textString;
         appendCharacters(textString, text[i_lines].spans[i_spans].chars,
                          m_encoding.get_value_or(UTF_16));
-        WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.defaultCharStyleIndex);
+        WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
         m_painter->startTextSpan(charProps);
         m_painter->insertText(textString);
         m_painter->endTextSpan();
@@ -989,12 +989,13 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
   m_fonts.push_back(name);
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, unsigned defaultParaStyleIndex) const
+WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
-  const ParagraphStyle &defaultParaStyle = defaultParaStyleIndex < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex] : _nothing;
+  const ParagraphStyle &defaultStyle = defaultParaStyleIndex.is_initialized() && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
   WPXPropertyList ret;
-  Alignment align = style.align >= 0 ? style.align : defaultParaStyle.align;
+  Alignment align = style.m_align.get_value_or(
+      defaultStyle.m_align.get_value_or(LEFT));
   switch (align)
   {
   case RIGHT:
@@ -1011,8 +1012,10 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
     ret.insert("fo:text-align", "left");
     break;
   }
-  double lineSpacing = style.lineSpacing;
-  LineSpacingType lineSpacingType = style.lineSpacingType;
+  LineSpacingInfo info = style.m_lineSpacing.get_value_or(
+      defaultStyle.m_lineSpacing.get_value_or(LineSpacingInfo()));
+  LineSpacingType lineSpacingType = info.m_type;
+  double lineSpacing = info.m_amount;
   if (!(lineSpacingType == LINE_SPACING_SP && lineSpacing == 1))
   {
     if (lineSpacingType == LINE_SPACING_SP)
@@ -1024,33 +1027,43 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
       ret.insert("fo:line-height", lineSpacing, WPX_POINT);
     }
   }
-  if (style.spaceAfterEmu != 0)
+  unsigned spaceAfterEmu = style.m_spaceAfterEmu.get_value_or(
+      defaultStyle.m_spaceAfterEmu.get_value_or(0));
+  unsigned spaceBeforeEmu = style.m_spaceBeforeEmu.get_value_or(
+      defaultStyle.m_spaceBeforeEmu.get_value_or(0));
+  unsigned firstLineIndentEmu = style.m_firstLineIndentEmu.get_value_or(
+      defaultStyle.m_firstLineIndentEmu.get_value_or(0));
+  unsigned leftIndentEmu = style.m_leftIndentEmu.get_value_or(
+      defaultStyle.m_leftIndentEmu.get_value_or(0));
+  unsigned rightIndentEmu = style.m_rightIndentEmu.get_value_or(
+      defaultStyle.m_rightIndentEmu.get_value_or(0));
+  if (spaceAfterEmu != 0)
   {
-    ret.insert("fo:margin-bottom", (double)style.spaceAfterEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-bottom", (double)spaceAfterEmu / EMUS_IN_INCH);
   }
-  if (style.spaceBeforeEmu != 0)
+  if (spaceBeforeEmu != 0)
   {
-    ret.insert("fo:margin-top", (double)style.spaceBeforeEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-top", (double)spaceBeforeEmu / EMUS_IN_INCH);
   }
-  if (style.firstLineIndentEmu != 0)
+  if (firstLineIndentEmu != 0)
   {
-    ret.insert("fo:text-indent", (double)style.firstLineIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:text-indent", (double)firstLineIndentEmu / EMUS_IN_INCH);
   }
-  if (style.leftIndentEmu != 0)
+  if (leftIndentEmu != 0)
   {
-    ret.insert("fo:margin-left", (double)style.leftIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-left", (double)leftIndentEmu / EMUS_IN_INCH);
   }
-  if (style.rightIndentEmu != 0)
+  if (rightIndentEmu != 0)
   {
-    ret.insert("fo:margin-right", (double)style.rightIndentEmu / EMUS_IN_INCH);
+    ret.insert("fo:margin-right", (double)rightIndentEmu / EMUS_IN_INCH);
   }
   return ret;
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, unsigned defaultCharStyleIndex) const
+WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
-  const CharacterStyle &defaultCharStyle = defaultCharStyleIndex < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex] : _nothing;
+  const CharacterStyle &defaultCharStyle = defaultCharStyleIndex.is_initialized() && defaultCharStyleIndex.get() < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex.get()] : _nothing;
   WPXPropertyList ret;
   if (style.italic ^ defaultCharStyle.italic)
   {

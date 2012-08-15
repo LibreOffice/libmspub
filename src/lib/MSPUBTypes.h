@@ -109,19 +109,21 @@ struct CharacterStyle
 {
   CharacterStyle() :
     underline(), italic(), bold(),
-    textSizeInPt(), colorIndex(-1), fontIndex(0), superSubType(NO_SUPER_SUB)
+    textSizeInPt(), colorIndex(-1), fontIndex(), superSubType(NO_SUPER_SUB)
   {
   }
   CharacterStyle(bool u, bool i, bool b,
                  boost::optional<double> tSIP = boost::optional<double>(),
-                 int cI = -1, unsigned fI = 0, SuperSubType sst = NO_SUPER_SUB) :
+                 int cI = -1,
+                 boost::optional<unsigned> fI = boost::optional<unsigned>(),
+                 SuperSubType sst = NO_SUPER_SUB) :
     underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI), superSubType(sst) { }
   bool underline;
   bool italic;
   bool bold;
   boost::optional<double> textSizeInPt;
   int colorIndex;
-  unsigned fontIndex;
+  boost::optional<unsigned> fontIndex;
   SuperSubType superSubType;
 };
 

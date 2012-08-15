@@ -1085,10 +1085,26 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("fo:color", getColorString(Color(0, 0, 0)));  // default color is black
   }
-  if (style.fontIndex < m_fonts.size())
+  if (style.fontIndex.is_initialized() &&
+      style.fontIndex.get() < m_fonts.size())
   {
     WPXString str;
-    appendCharacters(str, m_fonts[style.fontIndex],
+    appendCharacters(str, m_fonts[style.fontIndex.get()],
+                     m_encoding.get_value_or(UTF_16));
+    ret.insert("style:font-name", str);
+  }
+  else if (defaultCharStyle.fontIndex.is_initialized() &&
+           defaultCharStyle.fontIndex.get() < m_fonts.size())
+  {
+    WPXString str;
+    appendCharacters(str, m_fonts[defaultCharStyle.fontIndex.get()],
+                     m_encoding.get_value_or(UTF_16));
+    ret.insert("style:font-name", str);
+  }
+  else if (!m_fonts.empty())
+  {
+    WPXString str;
+    appendCharacters(str, m_fonts[0],
                      m_encoding.get_value_or(UTF_16));
     ret.insert("style:font-name", str);
   }

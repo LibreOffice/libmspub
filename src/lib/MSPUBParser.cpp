@@ -997,7 +997,7 @@ void libmspub::MSPUBParser::parseDefaultStyle(WPXInputStream *input, const Quill
     if (i % 2 == 0)
     {
       //FIXME: Does STSH2 hold information for associating style indices in FDPP to indices in STSH1 ?
-      m_collector->addDefaultCharacterStyle(getCharacterStyle(input, true));
+      m_collector->addDefaultCharacterStyle(getCharacterStyle(input));
     }
     else
     {
@@ -1188,11 +1188,11 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
                         firstLineIndentEmu, leftIndentEmu, rightIndentEmu, listInfo);
 }
 
-libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input, bool inStsh)
+libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream *input)
 {
   bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
   int textSize1 = -1, /* textSize2 = -1,*/ colorIndex = -1;
-  unsigned fontIndex = 0;
+  boost::optional<unsigned> fontIndex;
   SuperSubType sst = NO_SUPER_SUB;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
@@ -1229,10 +1229,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(WPXInputStream
       colorIndex = getColorIndex(input, info);
       break;
     case FONT_INDEX_CONTAINER_ID:
-      if (! inStsh)
-      {
-        fontIndex = getFontIndex(input, info);
-      }
+      fontIndex = getFontIndex(input, info);
       break;
     case SUPER_SUB_TYPE_ID:
       sst = static_cast<SuperSubType>(info.data);

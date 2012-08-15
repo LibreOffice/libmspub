@@ -158,7 +158,7 @@ protected:
     unsigned geoWidth, unsigned geoHeight);
   int getColorIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
-  CharacterStyle getCharacterStyle(WPXInputStream *input, bool inStsh = false);
+  CharacterStyle getCharacterStyle(WPXInputStream *input);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
   boost::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg);
 

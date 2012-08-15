@@ -900,51 +900,35 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       std::vector<unsigned> ends = parseTableCellDefinitions(input, *i);
       m_collector->setNextTableCellTextEnds(ends);
     }
-    if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && parsedFont && textChunkReference != chunkReferences.end())
+  }
+  if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && parsedFont && textChunkReference != chunkReferences.end())
+  {
+    input->seek(textChunkReference->offset, WPX_SEEK_SET);
+    unsigned bytesRead = 0;
+    std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
+    std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
+    for (unsigned j = 0; j < textIDs.size() && j < textLengths.size(); ++j)
     {
-      input->seek(textChunkReference->offset, WPX_SEEK_SET);
-      unsigned bytesRead = 0;
-      std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
-      std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
-      for (unsigned j = 0; j < textIDs.size() && j < textLengths.size(); ++j)
+      MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
+      std::vector<TextParagraph> readParas;
+      std::vector<TextSpan> readSpans;
+      std::vector<unsigned char> text;
+      for (unsigned k = 0; k < textLengths[j]; ++k)
       {
-        MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
-        std::vector<TextParagraph> readParas;
-        std::vector<TextSpan> readSpans;
-        std::vector<unsigned char> text;
-        for (unsigned k = 0; k < textLengths[j]; ++k)
+        text.push_back(readU8(input));
+        text.push_back(readU8(input));
+        bytesRead += 2;
+        if (bytesRead >= currentTextSpan->last - textChunkReference->offset)
         {
-          text.push_back(readU8(input));
-          text.push_back(readU8(input));
-          bytesRead += 2;
-          if (bytesRead >= currentTextSpan->last - textChunkReference->offset)
+          if (!text.empty())
           {
-            if (!text.empty())
-            {
-              readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
-              MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
-            }
-            ++currentTextSpan;
-            text.clear();
+            readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+            MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
           }
-          if (bytesRead >= currentTextPara->last - textChunkReference->offset)
-          {
-            if (!text.empty())
-            {
-              readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
-              MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
-            }
-            text.clear();
-            if (!readSpans.empty())
-            {
-              readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
-              MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
-            }
-            ++currentTextPara;
-            readSpans.clear();
-          }
+          ++currentTextSpan;
+          text.clear();
         }
-        if (!readSpans.empty())
+        if (bytesRead >= currentTextPara->last - textChunkReference->offset)
         {
           if (!text.empty())
           {
@@ -952,14 +936,30 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
             MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
           }
           text.clear();
-          readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
-          MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
+          if (!readSpans.empty())
+          {
+            readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
+            MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
+          }
+          ++currentTextPara;
+          readSpans.clear();
         }
-        m_collector->addTextString(readParas, textIDs[j]);
-        m_collector->setTextStringOffset(textIDs[j], textOffsets[j]);
       }
-      textChunkReference = chunkReferences.end();
+      if (!readSpans.empty())
+      {
+        if (!text.empty())
+        {
+          readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
+          MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));
+        }
+        text.clear();
+        readParas.push_back(TextParagraph(readSpans, currentTextPara->paraStyle));
+        MSPUB_DEBUG_MSG(("Saw paragraph %d in the current text block.\n", (unsigned)readParas.size()));
+      }
+      m_collector->addTextString(readParas, textIDs[j]);
+      m_collector->setTextStringOffset(textIDs[j], textOffsets[j]);
     }
+    textChunkReference = chunkReferences.end();
   }
   return true;
 }

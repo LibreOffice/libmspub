@@ -33,15 +33,15 @@
 
 namespace libmspub
 {
-  struct EmbeddedFontInfo
+struct EmbeddedFontInfo
+{
+  WPXString m_name;
+  WPXBinaryData m_blob;
+  EmbeddedFontInfo(const WPXString &name) :
+    m_name(name), m_blob()
   {
-    WPXString m_name;
-    WPXBinaryData m_blob;
-    EmbeddedFontInfo(const WPXString &name) :
-      m_name(name), m_blob()
-    {
-    }
-  };
+  }
+};
 } // namespace libmspub
 
 #endif /* __EMBEDDEDFONTINFO_H__ */

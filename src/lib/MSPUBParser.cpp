@@ -477,33 +477,42 @@ bool libmspub::MSPUBParser::parseFontChunk(
     if (info.id == FONT_CONTAINER_ARRAY)
     {
       input->seek(info.dataOffset + 4, WPX_SEEK_SET);
-      boost::optional<WPXString> name;
-      boost::optional<unsigned> eotOffset;
       while (stillReading(input, info.dataOffset + info.dataLength))
       {
         MSPUBBlockInfo subInfo = parseBlock(input, true);
-        if (subInfo.id == EMBEDDED_FONT_NAME)
+        if (subInfo.id == 0)
         {
-          name = WPXString();
-          appendCharacters(name.get(), subInfo.stringData, UTF_16);
-        }
-        else if (subInfo.id == EMBEDDED_EOT)
-        {
-          eotOffset = subInfo.dataOffset;
-        }
-      }
-      if (name.is_initialized() && eotOffset.is_initialized())
-      {
-        input->seek(eotOffset.get(), WPX_SEEK_SET);
-        MSPUBBlockInfo eotRecord = parseBlock(input, true);
-        WPXBinaryData &data = m_collector->addEOTFont(name.get());
-        unsigned long toRead = eotRecord.dataLength;
-        while (toRead > 0 && stillReading(input, (unsigned long)-1))
-        {
-          unsigned long howManyRead = 0;
-          const unsigned char *buf = input->read(toRead, howManyRead);
-          data.append(buf, howManyRead);
-          toRead -= howManyRead;
+          boost::optional<WPXString> name;
+          boost::optional<unsigned> eotOffset;
+          input->seek(subInfo.dataOffset + 4, WPX_SEEK_SET);
+          while (stillReading(input, subInfo.dataOffset + subInfo.dataLength))
+          {
+            MSPUBBlockInfo subSubInfo = parseBlock(input, true);
+            if (subSubInfo.id == EMBEDDED_FONT_NAME)
+            {
+              name = WPXString();
+              appendCharacters(name.get(), subSubInfo.stringData, UTF_16);
+            }
+            else if (subSubInfo.id == EMBEDDED_EOT)
+            {
+              eotOffset = subSubInfo.dataOffset;
+            }
+          }
+          if (name.is_initialized() && eotOffset.is_initialized())
+          {
+            input->seek(eotOffset.get(), WPX_SEEK_SET);
+            MSPUBBlockInfo eotRecord = parseBlock(input, true);
+            WPXBinaryData &data = m_collector->addEOTFont(name.get());
+            unsigned long toRead = eotRecord.dataLength;
+            while (toRead > 0 && stillReading(input, (unsigned long)-1))
+            {
+              unsigned long howManyRead = 0;
+              const unsigned char *buf = input->read(toRead, howManyRead);
+              data.append(buf, howManyRead);
+              toRead -= howManyRead;
+            }
+            input->seek(subInfo.dataOffset + subInfo.dataLength, WPX_SEEK_SET);
+          }
         }
       }
     }
@@ -2214,6 +2223,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(WPXInputStream *input
       break;
     case 8:
     case 16:
+    case 24:
       //FIXME: Not doing anything with this data for now.
       skipBlock(input, info);
     default:

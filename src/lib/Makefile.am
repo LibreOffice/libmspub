@@ -64,7 +64,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	Dash.h \
 	TableInfo.h \
 	Arrow.h \
-	VerticalAlign.h
+	VerticalAlign.h \
+	EmbeddedFontInfo.h
 
 if OS_WIN32
 

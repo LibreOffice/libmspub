@@ -26,29 +26,23 @@
  * instead of those above.
  */
 
-#ifndef __MSPUBCHUNKTYPE_H__
-#define __MSPUBCHUNKTYPE_H__
+#ifndef __EMBEDDEDFONTINFO_H__
+#define __EMBEDDEDFONTINFO_H__
+
+#include <libwpd/libwpd.h>
 
 namespace libmspub
 {
-enum MSPUBContentChunkType //Please fill this in and replace magic constants in MSPUBParser accordingly as you discover what a given chunk type means!
-{
-  UNKNOWN_CHUNK  = 0,
-  SHAPE      = 0x01,
-  ALTSHAPE   = 0x20,
-  DOCUMENT   = 0x44,
-  PAGE       = 0x43,
-  PALETTE    = 0x5C,
-  BORDER_ART = 0x46,
-  GROUP      = 0x30,
-  LOGO       = 0x31,
-  TABLE      = 0x10,
-  CELLS      = 0x63,
-  FONT       = 0x6C,
-  IMAGE_2K, //these don't exist in Pub 2k3 so their value in the enum is not used.
-  IMAGE_2K_DATA
-};
+  struct EmbeddedFontInfo
+  {
+    WPXString m_name;
+    WPXBinaryData m_blob;
+    EmbeddedFontInfo(const WPXString &name) :
+      m_name(name), m_blob()
+    {
+    }
+  };
 } // namespace libmspub
 
-#endif /* __MSPUBCHUNKTYPE_H__ */
+#endif /* __EMBEDDEDFONTINFO_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

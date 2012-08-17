@@ -59,6 +59,7 @@
 #include "Dash.h"
 #include "Arrow.h"
 #include "VerticalAlign.h"
+#include "EmbeddedFontInfo.h"
 
 namespace libmspub
 {
@@ -106,6 +107,10 @@ public:
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);
   void setShapeStretchBorderArt(unsigned seqNum);
+
+  // Microsoft "Embedded OpenType" ... need to figure out how to convert
+  // this to a sane format and how to get LibreOffice to understand embedded fonts.
+  WPXBinaryData &addEOTFont(const WPXString &name);
 
   void beginGroup();
   bool endGroup();
@@ -169,6 +174,7 @@ private:
   ShapeGroupElement *m_currentShapeGroup;
   boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
   std::map<unsigned, ShapeGroupElement *> m_groupsBySeqNum;
+  std::list<EmbeddedFontInfo> m_embeddedFonts;
   std::map<unsigned, ShapeInfo> m_shapeInfosBySeqNum;
   std::set<unsigned> m_masterPages;
   std::set<unsigned> m_shapesWithCoordinatesRotated90;

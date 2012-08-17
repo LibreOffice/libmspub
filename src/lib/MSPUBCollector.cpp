@@ -39,6 +39,12 @@
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
+WPXBinaryData &libmspub::MSPUBCollector::addEOTFont(const WPXString &name)
+{
+  m_embeddedFonts.push_back(EmbeddedFontInfo(name));
+  return m_embeddedFonts.back().m_blob;
+}
+
 void libmspub::MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
     const ColorReference &recolor)
 {
@@ -159,8 +165,8 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_pageSeqNumsByShapeSeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(),
   m_currentShapeGroup(NULL), m_topLevelShapes(),
-  m_groupsBySeqNum(), m_shapeInfosBySeqNum(),
-  m_masterPages(),
+  m_groupsBySeqNum(), m_embeddedFonts(),
+  m_shapeInfosBySeqNum(), m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
   m_encoding(), m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),

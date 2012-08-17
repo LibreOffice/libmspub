@@ -129,6 +129,8 @@ protected:
   bool parseShape(WPXInputStream *input, const ContentChunkReference &chunk);
   bool parseBorderArtChunk(WPXInputStream *input,
                            const ContentChunkReference &chunk);
+  bool parseFontChunk(WPXInputStream *input,
+                      const ContentChunkReference &chunk);
   void parsePaletteEntry(WPXInputStream *input, MSPUBBlockInfo block);
   void parseColors(WPXInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(WPXInputStream *input, const QuillChunkReference &chunk);
@@ -171,6 +173,7 @@ protected:
   std::vector<unsigned> m_shapeChunkIndices;
   std::vector<unsigned> m_paletteChunkIndices;
   std::vector<unsigned> m_borderArtChunkIndices;
+  std::vector<unsigned> m_fontChunkIndices;
   std::vector<unsigned> m_unknownChunkIndices;
   boost::optional<unsigned> m_documentChunkIndex;
   int m_lastSeenSeqNum;

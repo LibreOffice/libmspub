@@ -61,6 +61,7 @@ libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collec
     m_cellsChunkIndices(),
     m_pageChunkIndices(), m_shapeChunkIndices(),
     m_paletteChunkIndices(), m_borderArtChunkIndices(),
+    m_fontChunkIndices(),
     m_unknownChunkIndices(), m_documentChunkIndex(),
     m_lastSeenSeqNum(-1), m_lastAddedImage(0),
     m_alternateShapeSeqNums(), m_escherDelayIndices()
@@ -387,6 +388,17 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           return false;
         }
       }
+      for (unsigned i_font = 0; i_font < m_fontChunkIndices.size();
+           ++i_font)
+      {
+        const ContentChunkReference &fontChunk =
+          m_contentChunks.at(m_fontChunkIndices[i_font]);
+        input->seek(fontChunk.offset, WPX_SEEK_SET);
+        if (!parseFontChunk(input, fontChunk))
+        {
+          return false;
+        }
+      }
       input->seek(documentChunk.offset, WPX_SEEK_SET);
       if (!parseDocumentChunk(input, documentChunk))
       {
@@ -453,6 +465,50 @@ bool libmspub::MSPUBParser::parseDocumentChunk(WPXInputStream *input, const Cont
     }
   }
   return true; //FIXME: return false for failure
+}
+
+bool libmspub::MSPUBParser::parseFontChunk(
+  WPXInputStream *input, const ContentChunkReference &chunk)
+{
+  unsigned length = readU32(input);
+  while (stillReading(input, chunk.offset + length))
+  {
+    MSPUBBlockInfo info = parseBlock(input, true);
+    if (info.id == FONT_CONTAINER_ARRAY)
+    {
+      input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+      boost::optional<WPXString> name;
+      boost::optional<unsigned> eotOffset;
+      while (stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo subInfo = parseBlock(input, true);
+        if (subInfo.id == EMBEDDED_FONT_NAME)
+        {
+          name = WPXString();
+          appendCharacters(name.get(), subInfo.stringData, UTF_16);
+        }
+        else if (subInfo.id == EMBEDDED_EOT)
+        {
+          eotOffset = subInfo.dataOffset;
+        }
+      }
+      if (name.is_initialized() && eotOffset.is_initialized())
+      {
+        input->seek(eotOffset.get(), WPX_SEEK_SET);
+        MSPUBBlockInfo eotRecord = parseBlock(input, true);
+        WPXBinaryData &data = m_collector->addEOTFont(name.get());
+        unsigned long toRead = eotRecord.dataLength;
+        while (toRead > 0 && stillReading(input, (unsigned long)-1))
+        {
+          unsigned long howManyRead = 0;
+          const unsigned char *buf = input->read(toRead, howManyRead);
+          data.append(buf, howManyRead);
+          toRead -= howManyRead;
+        }
+      }
+    }
+  }
+  return true;
 }
 
 bool libmspub::MSPUBParser::parseBorderArtChunk(
@@ -2083,6 +2139,15 @@ bool libmspub::MSPUBParser::parseContentChunkReference(WPXInputStream *input, co
                                 m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
       m_borderArtChunkIndices.push_back(
         unsigned(m_contentChunks.size() - 1));
+      return true;
+    }
+    else if (type == FONT)
+    {
+      m_contentChunks.push_back(ContentChunkReference(type, offset, 0,
+                                m_lastSeenSeqNum,
+                                seenParentSeqNum ? parentSeqNum : 0));
+      m_fontChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
+      return true;
     }
     m_contentChunks.push_back(ContentChunkReference(type, offset, 0, m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
     m_unknownChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));

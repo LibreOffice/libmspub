@@ -90,7 +90,11 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   TABLE_ROWCOL_OFFSET = 0x01,
   FONT_CONTAINER_ARRAY = 0x02,
   EMBEDDED_EOT = 0x0C,
-  EMBEDDED_FONT_NAME = 0x04
+  EMBEDDED_FONT_NAME = 0x04,
+  PARAGRAPH_TABS = 0x32,
+  TAB_ARRAY = 0x28,
+  TAB_ENTRY = 0x0,
+  TAB_AMOUNT = 0x0
 };
 } // namespace libmspub
 

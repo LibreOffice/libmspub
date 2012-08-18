@@ -1202,6 +1202,30 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     case PARAGRAPH_RIGHT_INDENT:
       ret.m_rightIndentEmu = info.data;
       break;
+    case PARAGRAPH_TABS:
+      input->seek(info.dataOffset + 4, WPX_SEEK_SET);
+      while(stillReading(input, info.dataOffset + info.dataLength))
+      {
+        MSPUBBlockInfo tabArrayInfo = parseBlock(input, true);
+        if (tabArrayInfo.id == TAB_ARRAY)
+        {
+          input->seek(tabArrayInfo.dataOffset + 4, WPX_SEEK_SET);
+          while (stillReading(input, tabArrayInfo.dataOffset + tabArrayInfo.dataLength))
+          {
+            MSPUBBlockInfo tabEntryInfo = parseBlock(input, true);
+            if (tabEntryInfo.type == GENERAL_CONTAINER)
+            {
+              input->seek(tabEntryInfo.dataOffset + 4, WPX_SEEK_SET);
+              MSPUBBlockInfo tabInfo = parseBlock(input, true);
+              if (tabInfo.id == TAB_AMOUNT)
+              {
+                ret.m_tabStopsInEmu.push_back(tabInfo.data);
+              }
+            }
+          }
+        }
+      }
+      break;
     case PARAGRAPH_LIST_INFO:
     {
       isList = true;

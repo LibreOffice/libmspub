@@ -31,6 +31,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	VectorTransformation2D.cpp \
 	MSPUBParser97.cpp \
 	Dash.cpp \
+	Shadow.cpp \
 	EscherContainerType.h \
 	EscherFieldIds.h \
 	FillType.h \
@@ -65,7 +66,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	TableInfo.h \
 	Arrow.h \
 	VerticalAlign.h \
-	EmbeddedFontInfo.h
+	EmbeddedFontInfo.h \
+	Shadow.h
 
 if OS_WIN32
 

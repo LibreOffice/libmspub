@@ -191,6 +191,11 @@ void libmspub::MSPUBCollector::setEncoding(Encoding encoding)
   m_encoding = encoding;
 }
 
+void libmspub::MSPUBCollector::setShapeShadow(unsigned seqNum, const Shadow &shadow)
+{
+  m_shapeInfosBySeqNum[seqNum].m_shadow = shadow;
+}
+
 void libmspub::noop(const CustomShape *)
 {
 }
@@ -432,6 +437,26 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       graphicsProps.insert("draw:green",
                            static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
     }
+    bool shadowPropsInserted = false;
+    if (info.m_shadow.is_initialized())
+    {
+      const Shadow &s = info.m_shadow.get();
+      if (!needsEmulation(s))
+      {
+        shadowPropsInserted = true;
+        graphicsProps.insert("draw:shadow", "visible");
+        graphicsProps.insert("draw:shadow-offset-x",
+            static_cast<double>(s.m_offsetXInEmu) / EMUS_IN_INCH);
+        graphicsProps.insert("draw:shadow-offset-y",
+            static_cast<double>(s.m_offsetYInEmu) / EMUS_IN_INCH);
+        graphicsProps.insert("draw:shadow-color",
+            getColorString(s.m_color.getFinalColor(m_paletteColors)));
+        graphicsProps.insert("draw:shadow-opacity",
+            s.m_opacity, WPX_PERCENT);
+      }
+      // TODO: Emulate shadows that don't conform
+      // to LibreOffice's range of possible shadows.
+    }
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
@@ -443,6 +468,14 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       graphicsProps.remove("draw:red");
       graphicsProps.remove("draw:blue");
       graphicsProps.remove("draw:green");
+    }
+    if (shadowPropsInserted)
+    {
+      graphicsProps.remove("draw:shadow");
+      graphicsProps.remove("draw:shadow-offset-x");
+      graphicsProps.remove("draw:shadow-offset-y");
+      graphicsProps.remove("draw:shadow-color");
+      graphicsProps.remove("draw:shadow-opacity");
     }
   }
   const std::vector<Line> &lines = info.m_lines;

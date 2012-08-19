@@ -60,6 +60,7 @@
 #include "Arrow.h"
 #include "VerticalAlign.h"
 #include "EmbeddedFontInfo.h"
+#include "Shadow.h"
 
 namespace libmspub
 {
@@ -107,6 +108,7 @@ public:
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);
   void setShapeStretchBorderArt(unsigned seqNum);
+  void setShapeShadow(unsigned seqNum, const Shadow &shadow);
 
   // Microsoft "Embedded OpenType" ... need to figure out how to convert
   // this to a sane format and how to get LibreOffice to understand embedded fonts.

@@ -5672,6 +5672,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
     count = (binary & 0xFF);
     break;
   case 0xAC:
+  case 0xAE:
   case 0x0:
     cmd = LINETO;
     count = (binary & 0xFF);

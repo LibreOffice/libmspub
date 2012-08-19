@@ -446,13 +446,13 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         shadowPropsInserted = true;
         graphicsProps.insert("draw:shadow", "visible");
         graphicsProps.insert("draw:shadow-offset-x",
-            static_cast<double>(s.m_offsetXInEmu) / EMUS_IN_INCH);
+                             static_cast<double>(s.m_offsetXInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("draw:shadow-offset-y",
-            static_cast<double>(s.m_offsetYInEmu) / EMUS_IN_INCH);
+                             static_cast<double>(s.m_offsetYInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("draw:shadow-color",
-            getColorString(s.m_color.getFinalColor(m_paletteColors)));
+                             getColorString(s.m_color.getFinalColor(m_paletteColors)));
         graphicsProps.insert("draw:shadow-opacity",
-            s.m_opacity, WPX_PERCENT);
+                             s.m_opacity, WPX_PERCENT);
       }
       // TODO: Emulate shadows that don't conform
       // to LibreOffice's range of possible shadows.

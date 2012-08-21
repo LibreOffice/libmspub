@@ -34,14 +34,17 @@ INCPRE+=-I$(SOLARVER)$/$(INPATH)$/inc$/external/zlib
 
 SLOFILES= \
     $(SLO)$/ColorReference.obj \
+	$(SLO)$/Dash.obj \
     $(SLO)$/Fill.obj \
     $(SLO)$/MSPUBCollector.obj \
     $(SLO)$/MSPUBDocument.obj \
     $(SLO)$/MSPUBParser2k.obj \
+	$(SLO)$/MSPUBParser97.obj \
     $(SLO)$/MSPUBParser.obj \
     $(SLO)$/MSPUBStringVector.obj \
     $(SLO)$/MSPUBSVGGenerator.obj \
     $(SLO)$/PolygonUtils.obj \
+	$(SLO)$/Shadow.obj \
     $(SLO)$/ShapeGroupElement.obj \
     $(SLO)$/VectorTransformation2D.obj \
     $(SLO)$/libmspub_utils.obj

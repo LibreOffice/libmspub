@@ -1151,7 +1151,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
   ParagraphStyle ret;
 
   bool isList = false;
-  uint32_t bulletChar = '\u0000';
+  uint32_t bulletChar = 0;
   NumberingType numberingType = STANDARD_WESTERN;
   NumberingDelimiter numberingDelimiter = NO_DELIMITER;
   boost::optional<unsigned> numberIfRestarted;
@@ -1256,7 +1256,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
   }
   if (isList)
   {
-    if (bulletChar != '\u0000')
+    if (bulletChar)
     {
       ret.m_listInfo = ListInfo(bulletChar);
     }

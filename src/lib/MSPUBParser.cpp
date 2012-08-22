@@ -52,7 +52,9 @@
 #include "TableInfo.h"
 #include "VerticalAlign.h"
 
+#if !defined(_MSC_VER) && !defined(BOOST_CSTDINT_HPP)
 using boost::int32_t;
+#endif
 using boost::uint32_t;
 
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
@@ -342,7 +344,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
             if (m_contentChunks.size() > 1)
             {
               m_contentChunks[m_contentChunks.size() - 2].end
-                = m_contentChunks.back().offset;
+              = m_contentChunks.back().offset;
             }
           }
         }

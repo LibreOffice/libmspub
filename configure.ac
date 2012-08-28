@@ -228,8 +228,6 @@ build/win32/Makefile
 docs/Makefile
 docs/doxygen/Makefile
 libmspub-0.0.pc
-libmspub.spec
-libmspub-zip
 ])
 AC_OUTPUT
 

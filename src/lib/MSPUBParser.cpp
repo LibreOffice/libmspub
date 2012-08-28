@@ -52,11 +52,6 @@
 #include "TableInfo.h"
 #include "VerticalAlign.h"
 
-#if !defined(_MSC_VER) && !defined(BOOST_CSTDINT_HPP)
-using boost::int32_t;
-#endif
-using boost::uint32_t;
-
 libmspub::MSPUBParser::MSPUBParser(WPXInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
     m_blockInfo(), m_contentChunks(),
@@ -1153,7 +1148,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
   ParagraphStyle ret;
 
   bool isList = false;
-  uint32_t bulletChar = 0;
+  unsigned bulletChar = 0;
   NumberingType numberingType = STANDARD_WESTERN;
   NumberingDelimiter numberingDelimiter = NO_DELIMITER;
   boost::optional<unsigned> numberIfRestarted;
@@ -1988,7 +1983,7 @@ std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
     {
       break;
     }
-    int32_t x, y;
+    int x, y;
     switch (entrySize)
     {
     case 2:
@@ -1996,14 +1991,14 @@ std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
       y = vertexData[offset + 1];
       break;
     case 4:
-      x = vertexData[offset] | (uint32_t(vertexData[offset + 1]) << 8);
-      y = vertexData[offset + 2] | (uint32_t(vertexData[offset + 3]) << 8);
+      x = vertexData[offset] | (unsigned(vertexData[offset + 1]) << 8);
+      y = vertexData[offset + 2] | (unsigned(vertexData[offset + 3]) << 8);
       break;
     case 8:
-      x = vertexData[offset] | (uint32_t(vertexData[offset + 1]) << 8) |
-          (uint32_t(vertexData[offset + 2]) << 16) | (uint32_t(vertexData[offset + 3]) << 24);
-      y = vertexData[offset + 4] | (uint32_t(vertexData[offset + 5]) << 8) |
-          (uint32_t(vertexData[offset + 6]) << 16) | (uint32_t(vertexData[offset + 7]) << 24);
+      x = vertexData[offset] | (unsigned(vertexData[offset + 1]) << 8) |
+          (unsigned(vertexData[offset + 2]) << 16) | (unsigned(vertexData[offset + 3]) << 24);
+      y = vertexData[offset + 4] | (unsigned(vertexData[offset + 5]) << 8) |
+          (unsigned(vertexData[offset + 6]) << 16) | (unsigned(vertexData[offset + 7]) << 24);
       break;
     default: // logically shouldn't be able to get here.
       x = 0;

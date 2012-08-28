@@ -35,8 +35,6 @@
 #include "NumberingType.h"
 #include "NumberingDelimiter.h"
 
-using boost::uint32_t;
-
 namespace libmspub
 {
 enum ListType
@@ -49,8 +47,8 @@ struct ListInfo
   ListType m_listType;
 
   //unordered list stuff
-  boost::optional<uint32_t> m_bulletChar;
-  ListInfo(uint32_t bulletChar) : m_listType(UNORDERED),
+  boost::optional<unsigned> m_bulletChar;
+  ListInfo(unsigned bulletChar) : m_listType(UNORDERED),
     m_bulletChar(bulletChar), m_numberIfRestarted(),
     m_numberingType(), m_numberingDelimiter()
   {

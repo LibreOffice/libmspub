@@ -345,7 +345,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
         }
         else(skipBlock(input, m_blockInfo.back()));
       }
-      if (m_contentChunks.size() > 0)
+      if (!m_contentChunks.empty())
       {
         m_contentChunks.back().end = trailerPart.dataOffset + trailerPart.dataLength;
       }
@@ -647,9 +647,6 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
   unsigned height = 0;
   bool isTable = chunk.type == TABLE;
   bool isGroup = chunk.type == GROUP || chunk.type == LOGO;
-  bool isText = false;
-  bool shouldStretchBorderArt = true;
-  unsigned textId = 0;
   if (isTable)
   {
     boost::optional<unsigned> cellsSeqNum;
@@ -763,6 +760,9 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
   }
   else
   {
+    bool isText = false;
+    bool shouldStretchBorderArt = true;
+    unsigned textId = 0;
     while (stillReading(input, pos + length))
     {
       libmspub::MSPUBBlockInfo info = parseBlock(input, true);
@@ -1487,9 +1487,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
       anchorTypes.insert(OFFICE_ART_CLIENT_ANCHOR);
       anchorTypes.insert(OFFICE_ART_CHILD_ANCHOR);
       bool foundAnchor;
-      bool rotated90 = false;
       if ((foundAnchor = findEscherContainerWithTypeInSet(input, sp, cAnchor, anchorTypes)) || isGroupLeader)
       {
+        bool rotated90 = false;
         MSPUB_DEBUG_MSG(("Found Escher data for %s of seqnum 0x%x\n", isGroupLeader ? "group" : "shape", *shapeSeqNum));
         boost::optional<std::map<unsigned short, unsigned> > maybe_tertiaryFoptValues;
         input->seek(sp.contentsOffset, WPX_SEEK_SET);
@@ -1741,7 +1741,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           }
 
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];
-          if (vertexData.size() > 0)
+          if (!vertexData.empty())
           {
             unsigned *p_geoRight = getIfExists(foptValues.m_scalarValues,
                                                FIELDID_GEO_RIGHT);

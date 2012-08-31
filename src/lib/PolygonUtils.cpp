@@ -5989,6 +5989,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       case ELLIPTICALQUADRANTX:
       case ELLIPTICALQUADRANTY:
       {
+#ifdef DEBUG
         if (cmd.m_command == ELLIPTICALQUADRANTX)
         {
           MSPUB_DEBUG_MSG(("ELLIPTICALQUADRANTX %d\n", cmd.m_count));
@@ -5997,6 +5998,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           MSPUB_DEBUG_MSG(("ELLIPTICALQUADRANTY %d\n", cmd.m_count));
         }
+#endif
         bool firstDirection = true;
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex < shape->m_numVertices); ++j, ++vertexIndex)
         {

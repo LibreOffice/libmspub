@@ -742,7 +742,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
       }
       if (!index.is_initialized())
       {
-        MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %d corresponding to table of seqnum %d.\n",
+        MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %u corresponding to table of seqnum %d.\n",
                          csn, chunk.seqNum));
         return false;
       }
@@ -1972,7 +1972,7 @@ std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
   }
   if (! (entrySize == 2 || entrySize == 4 || entrySize == 8))
   {
-    MSPUB_DEBUG_MSG(("Incomprehensible entry size %d in vertex complex data!\n", entrySize));
+    MSPUB_DEBUG_MSG(("Incomprehensible entry size %u in vertex complex data!\n", entrySize));
     return ret;
   }
   unsigned offset = 6;

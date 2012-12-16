@@ -168,14 +168,14 @@ struct ParagraphStyle
 
 struct TextSpan
 {
-  TextSpan(std::vector<unsigned char> c, CharacterStyle s) : chars(c), style(s) { }
+  TextSpan(const std::vector<unsigned char>& c, const CharacterStyle& s) : chars(c), style(s) { }
   std::vector<unsigned char> chars;
   CharacterStyle style;
 };
 
 struct TextParagraph
 {
-  TextParagraph(std::vector<TextSpan> sp, ParagraphStyle st) : spans(sp), style(st) { }
+  TextParagraph(const std::vector<TextSpan>& sp, const ParagraphStyle& st) : spans(sp), style(st) { }
   std::vector<TextSpan> spans;
   ParagraphStyle style;
 };

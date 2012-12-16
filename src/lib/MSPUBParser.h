@@ -93,7 +93,7 @@ protected:
 
   struct TextSpanReference
   {
-    TextSpanReference(unsigned short f, unsigned short l, CharacterStyle cs) : first(f), last(l), charStyle(cs) { }
+    TextSpanReference(unsigned short f, unsigned short l, const CharacterStyle& cs) : first(f), last(l), charStyle(cs) { }
     unsigned short first;
     unsigned short last;
     CharacterStyle charStyle;
@@ -101,7 +101,7 @@ protected:
 
   struct TextParagraphReference
   {
-    TextParagraphReference(unsigned short f, unsigned short l, ParagraphStyle ps) : first(f), last(l), paraStyle(ps) { }
+    TextParagraphReference(unsigned short f, unsigned short l, const ParagraphStyle& ps) : first(f), last(l), paraStyle(ps) { }
     unsigned short first;
     unsigned short last;
     ParagraphStyle paraStyle;

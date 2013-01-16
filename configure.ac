@@ -55,17 +55,31 @@ PKG_CHECK_MODULES([ZLIB],[zlib],[],[
 AC_SUBST(ZLIB_CFLAGS)
 AC_SUBST(ZLIB_LIBS)
 
-
 # ===========================
 # Find required boost headers
 # ===========================
-
 AC_CHECK_HEADER(
 	boost/ptr_container/ptr_map.hpp,
 	[],
 	[AC_MSG_ERROR(boost/ptr_container/ptr_map.hpp not found. install boost)],
 	[]
 )
+
+# ========
+# Find icu
+# ========
+AC_PATH_PROG([ICU_CONFIG],[icu-config])
+AC_MSG_CHECKING([ICU installation])
+if ${ICU_CONFIG} --cflags >/dev/null 2>&1; then
+	ICU_CFLAGS=`${ICU_CONFIG} --cppflags-searchpath`
+	ICU_LIBS=`${ICU_CONFIG} --ldflags`
+	AC_MSG_RESULT([found])
+else
+	AC_MSG_ERROR([libicu config program icu-config not found])
+fi
+AC_SUBST(ICU_CFLAGS)
+AC_SUBST(ICU_LIBS)
+
 
 # =================================
 # Libtool/Version Makefile settings

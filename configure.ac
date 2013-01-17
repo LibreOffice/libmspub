@@ -15,7 +15,7 @@ m4_define([libmspub_version],[libmspub_version_major.libmspub_version_minor.libm
 # =============
 AC_INIT([libmspub],[libmspub_version])
 AC_CONFIG_MACRO_DIR([m4])
-AM_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADER([config.h])
 AM_INIT_AUTOMAKE([1.11 foreign dist-xz dist-bzip2])
 AM_SILENT_RULES([yes])
 AC_LANG([C++])

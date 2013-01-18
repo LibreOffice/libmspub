@@ -13,7 +13,7 @@
  * License.
  *
  * Major Contributor(s):
- * Copyright (C) 2012 Brennan Vincent <brennanv@email.arizona.edu>
+ * Copyright (C) 2012-2013 Brennan Vincent <brennanv@email.arizona.edu>
  * Copyright (C) 2012 Fridrich Strba <fridrich.strba@bluewin.ch>
  *
  *
@@ -29,12 +29,16 @@
  */
 
 #include <math.h>
+
+#include <unicode/ucsdet.h>
+
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
 #include "Coordinate.h"
+
 #pragma GCC diagnostic ignored "-Wpragmas"
 #pragma GCC diagnostic ignored "-Wuninitialized"
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
@@ -169,8 +173,10 @@ libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
   m_shapeInfosBySeqNum(), m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
-  m_encoding(), m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),
-  m_calculationValuesSeen(), m_pageSeqNumsOrdered()
+  m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),
+  m_calculationValuesSeen(), m_pageSeqNumsOrdered(),
+  m_encodingHeuristic(false), m_allText(),
+  m_calculatedEncoding()
 {
 }
 
@@ -186,9 +192,9 @@ void libmspub::MSPUBCollector::setNextTableCellTextEnds(
   m_tableCellTextEndsVector.push_back(ends);
 }
 
-void libmspub::MSPUBCollector::setEncoding(Encoding encoding)
+void libmspub::MSPUBCollector::useEncodingHeuristic()
 {
-  m_encoding = encoding;
+  m_encodingHeuristic = true;
 }
 
 void libmspub::MSPUBCollector::setShapeShadow(unsigned seqNum, const Shadow &shadow)
@@ -784,7 +790,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       {
         WPXString textString;
         appendCharacters(textString, text[i_lines].spans[i_spans].chars,
-                         m_encoding.get_value_or(UTF_16));
+                         getCalculatedEncoding());
         WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
         m_painter->startTextSpan(charProps);
         m_painter->insertText(textString);
@@ -799,6 +805,68 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     m_painter->endLayer();
   }
   return &no_op;
+}
+
+const char *libmspub::MSPUBCollector::getCalculatedEncoding() const
+{
+  if (m_calculatedEncoding.is_initialized())
+  {
+    return m_calculatedEncoding.get();
+  }
+  // modern versions are somewhat sane and use Unicode
+  if (! m_encodingHeuristic)
+  {
+    m_calculatedEncoding = "UTF-16LE";
+    return m_calculatedEncoding.get();
+  }
+  // for older versions of PUB, see if we can get ICU to tell us the encoding.
+  UErrorCode status = U_ZERO_ERROR;
+  UCharsetDetector *ucd = NULL;
+  const UCharsetMatch **matches = NULL;
+  const UCharsetMatch *ucm = NULL;
+  ucd = ucsdet_open(&status);
+  int matchesFound = -1;
+  const char *name = NULL;
+  const char *windowsName = NULL;
+  if (m_allText.empty())
+  {
+    goto csd_fail;
+  }
+  if (U_FAILURE(status))
+  {
+    goto csd_fail;
+  }
+  // don't worry, the below call doesn't require a null-terminated string.
+  ucsdet_setText(ucd, (const char *)(&m_allText[0]), m_allText.size(), &status);
+  if (U_FAILURE(status))
+  {
+    goto csd_fail;
+  }
+  matches = ucsdet_detectAll(ucd, &matchesFound, &status);
+  if (U_FAILURE(status))
+  {
+    goto csd_fail;
+  }
+  //find best fit that is an actual Windows encoding
+  for (int i = 0; i < matchesFound; ++i)
+  {
+    ucm = matches[i];
+    name = ucsdet_getName(ucm, &status);
+    if (U_FAILURE(status))
+    {
+      goto csd_fail;
+    }
+    windowsName = windowsCharsetNameByOriginalCharset(name);
+    if (windowsName)
+    {
+      m_calculatedEncoding = windowsName;
+      ucsdet_close(ucd);
+      return windowsName;
+    }
+  }
+csd_fail:
+  ucsdet_close(ucd);
+  return "windows-1252"; // Pretty likely to give garbage text, but it's the best we can do.
 }
 
 void libmspub::MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
@@ -1142,7 +1210,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     WPXString str;
     appendCharacters(str, m_fonts[style.fontIndex.get()],
-                     m_encoding.get_value_or(UTF_16));
+                     getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
   else if (defaultCharStyle.fontIndex.is_initialized() &&
@@ -1150,14 +1218,14 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     WPXString str;
     appendCharacters(str, m_fonts[defaultCharStyle.fontIndex.get()],
-                     m_encoding.get_value_or(UTF_16));
+                     getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
   else if (!m_fonts.empty())
   {
     WPXString str;
     appendCharacters(str, m_fonts[0],
-                     m_encoding.get_value_or(UTF_16));
+                     getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
   switch (style.superSubType)
@@ -1325,7 +1393,24 @@ bool libmspub::MSPUBCollector::addTextString(const std::vector<TextParagraph> &s
 {
   MSPUB_DEBUG_MSG(("addTextString, id: 0x%x\n", id));
   m_textStringsById[id] = str;
+  if (m_encodingHeuristic)
+  {
+    ponderStringEncoding(str);
+  }
   return true; //FIXME: Warn if the string already existed in the map.
+}
+
+void libmspub::MSPUBCollector::ponderStringEncoding(
+  const std::vector<TextParagraph> &str)
+{
+  for (unsigned i = 0; i < str.size(); ++i)
+  {
+    for (unsigned j = 0; j < str[i].spans.size(); ++j)
+    {
+      const std::vector<unsigned char> &chars = str[i].spans[j].chars;
+      m_allText.insert(m_allText.end(), chars.begin(), chars.end());
+    }
+  }
 }
 
 void libmspub::MSPUBCollector::setWidthInEmu(unsigned long widthInEmu)

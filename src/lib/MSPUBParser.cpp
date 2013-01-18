@@ -488,7 +488,7 @@ bool libmspub::MSPUBParser::parseFontChunk(
             if (subSubInfo.id == EMBEDDED_FONT_NAME)
             {
               name = WPXString();
-              appendCharacters(name.get(), subSubInfo.stringData, UTF_16);
+              appendCharacters(name.get(), subSubInfo.stringData, "UTF-16");
             }
             else if (subSubInfo.id == EMBEDDED_EOT)
             {

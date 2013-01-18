@@ -92,12 +92,8 @@ typedef unsigned __int64 uint64_t;
 
 namespace libmspub
 {
-enum Encoding
-{
-  UTF_16,
-  WIN_1252
-};
 const char *mimeByImgType(ImgType type);
+const char *windowsCharsetNameByOriginalCharset(const char *name);
 
 uint16_t readU16(const unsigned char *input, unsigned offset);
 uint32_t readU32(const unsigned char *input, unsigned offset);
@@ -113,7 +109,7 @@ double readFixedPoint(WPXInputStream *input);
 double toFixedPoint(int fp);
 void readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out);
 
-void appendCharacters(WPXString &text, std::vector<unsigned char> characters, Encoding encoding);
+void appendCharacters(WPXString &text, std::vector<unsigned char> characters, const char *encoding);
 
 bool stillReading(WPXInputStream *input, unsigned long until);
 

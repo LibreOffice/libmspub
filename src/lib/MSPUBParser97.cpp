@@ -34,7 +34,7 @@
 libmspub::MSPUBParser97::MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector)
   : MSPUBParser2k(input, collector), m_isBanner(false)
 {
-  m_collector->setEncoding(WIN_1252);
+  m_collector->useEncodingHeuristic();
 }
 
 unsigned short libmspub::MSPUBParser97::getTextMarker() const

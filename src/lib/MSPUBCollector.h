@@ -13,7 +13,7 @@
  * License.
  *
  * Major Contributor(s):
- * Copyright (C) 2012 Brennan Vincent <brennanv@email.arizona.edu>
+ * Copyright (C) 2012-2013 Brennan Vincent <brennanv@email.arizona.edu>
  * Copyright (C) 2012 Fridrich Strba <fridrich.strba@bluewin.ch>
  *
  * All Rights Reserved.
@@ -135,7 +135,8 @@ public:
   void addDefaultParagraphStyle(const ParagraphStyle &style);
   void addPaletteColor(Color);
   bool setCurrentGroupSeqNum(unsigned seqNum);
-  void setEncoding(Encoding encoding);
+
+  void useEncodingHeuristic();
 
   void setNextTableCellTextEnds(const std::vector<unsigned> &ends);
   void setTextStringOffset(unsigned textId, unsigned offset);
@@ -181,11 +182,13 @@ private:
   std::set<unsigned> m_masterPages;
   std::set<unsigned> m_shapesWithCoordinatesRotated90;
   std::map<unsigned, unsigned> m_masterPagesByPageSeqNum;
-  boost::optional<Encoding> m_encoding;
   std::vector<std::vector<unsigned> > m_tableCellTextEndsVector;
   std::map<unsigned, unsigned> m_stringOffsetsByTextId;
   mutable std::vector<bool> m_calculationValuesSeen;
   std::vector<unsigned> m_pageSeqNumsOrdered;
+  bool m_encodingHeuristic;
+  std::vector<unsigned char> m_allText;
+  mutable boost::optional<const char *> m_calculatedEncoding;
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   boost::optional<unsigned> getMasterPageSeqNum(unsigned pageSeqNum) const;
@@ -208,6 +211,8 @@ private:
   WPXPropertyList getCharStyleProps(const CharacterStyle &, boost::optional<unsigned> defaultCharStyleIndex) const;
   WPXPropertyList getParaStyleProps(const ParagraphStyle &, boost::optional<unsigned> defaultParaStyleIndex) const;
   double getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const;
+  void ponderStringEncoding(const std::vector<TextParagraph> &str);
+  const char *getCalculatedEncoding() const;
 public:
   static WPXString getColorString(const Color &);
 };

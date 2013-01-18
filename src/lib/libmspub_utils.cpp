@@ -13,7 +13,7 @@
  * License.
  *
  * Major Contributor(s):
- * Copyright (C) 2012 Brennan Vincent <brennanv@email.arizona.edu>
+ * Copyright (C) 2012-2013 Brennan Vincent <brennanv@email.arizona.edu>
  * Copyright (C) 2011 Fridrich Strba <fridrich.strba@bluewin.ch>
  * Copyright (C) 2011 Eilidh McAdam <tibbylickle@gmail.com>
  *

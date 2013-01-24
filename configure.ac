@@ -68,15 +68,17 @@ AC_CHECK_HEADER(
 # ========
 # Find icu
 # ========
-AC_PATH_PROG([ICU_CONFIG],[icu-config])
-AC_MSG_CHECKING([ICU installation])
-if ${ICU_CONFIG} --cflags >/dev/null 2>&1; then
-	ICU_CFLAGS=`${ICU_CONFIG} --cppflags-searchpath`
-	ICU_LIBS=`${ICU_CONFIG} --ldflags`
-	AC_MSG_RESULT([found])
-else
-	AC_MSG_ERROR([libicu config program icu-config not found])
-fi
+PKG_CHECK_MODULES([ICU],[icu-i18n],[],[
+	AC_PATH_PROG([ICU_CONFIG],[icu-config])
+	AC_MSG_CHECKING([ICU installation])
+	if ${ICU_CONFIG} --cflags >/dev/null 2>&1; then
+		ICU_CFLAGS=`${ICU_CONFIG} --cppflags-searchpath`
+		ICU_LIBS=`${ICU_CONFIG} --ldflags`
+		AC_MSG_RESULT([found])
+	else
+		AC_MSG_ERROR([libicu config program icu-config not found])
+	fi]
+)
 AC_SUBST(ICU_CFLAGS)
 AC_SUBST(ICU_LIBS)
 

@@ -10,6 +10,64 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\lib\Arrow.h" />
+    <ClInclude Include="..\..\src\lib\BorderArtInfo.h" />
+    <ClInclude Include="..\..\src\lib\ColorReference.h" />
+    <ClInclude Include="..\..\src\lib\Coordinate.h" />
+    <ClInclude Include="..\..\src\lib\Dash.h" />
+    <ClInclude Include="..\..\src\lib\EmbeddedFontInfo.h" />
+    <ClInclude Include="..\..\src\lib\EscherContainerType.h" />
+    <ClInclude Include="..\..\src\lib\EscherFieldIds.h" />
+    <ClInclude Include="..\..\src\lib\Fill.h" />
+    <ClInclude Include="..\..\src\lib\FillType.h" />
+    <ClInclude Include="..\..\src\lib\libmspub.h" />
+    <ClInclude Include="..\..\src\lib\libmspub_utils.h" />
+    <ClInclude Include="..\..\src\lib\Line.h" />
+    <ClInclude Include="..\..\src\lib\ListInfo.h" />
+    <ClInclude Include="..\..\src\lib\Margins.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBBlockID.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBBlockType.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBCollector.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBConstants.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBContentChunkType.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBDocument.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBParser.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBParser2k.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBParser97.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBStringVector.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBSVGGenerator.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBTypes.h" />
+    <ClInclude Include="..\..\src\lib\NumberingDelimiter.h" />
+    <ClInclude Include="..\..\src\lib\NumberingType.h" />
+    <ClInclude Include="..\..\src\lib\PolygonUtils.h" />
+    <ClInclude Include="..\..\src\lib\Shadow.h" />
+    <ClInclude Include="..\..\src\lib\ShapeFlags.h" />
+    <ClInclude Include="..\..\src\lib\ShapeGroupElement.h" />
+    <ClInclude Include="..\..\src\lib\ShapeInfo.h" />
+    <ClInclude Include="..\..\src\lib\Shapes.h" />
+    <ClInclude Include="..\..\src\lib\ShapeType.h" />
+    <ClInclude Include="..\..\src\lib\TableInfo.h" />
+    <ClInclude Include="..\..\src\lib\VectorTransformation2D.h" />
+    <ClInclude Include="..\..\src\lib\VerticalAlign.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\src\lib\ColorReference.cpp" />
+    <ClCompile Include="..\..\src\lib\Dash.cpp" />
+    <ClCompile Include="..\..\src\lib\Fill.cpp" />
+    <ClCompile Include="..\..\src\lib\libmspub_utils.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBCollector.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBDocument.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBParser.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBParser2k.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBParser97.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBStringVector.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBSVGGenerator.cpp" />
+    <ClCompile Include="..\..\src\lib\PolygonUtils.cpp" />
+    <ClCompile Include="..\..\src\lib\Shadow.cpp" />
+    <ClCompile Include="..\..\src\lib\ShapeGroupElement.cpp" />
+    <ClCompile Include="..\..\src\lib\VectorTransformation2D.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{775F637A-97DE-4701-A690-E0F1B14A80D9}</ProjectGuid>
     <RootNamespace>libmspub</RootNamespace>
@@ -101,133 +159,6 @@
       <OutputFile>.\Debug/libmspub.bsc</OutputFile>
     </Bscmake>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\src\lib\ColorReference.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\Dash.cpp" />
-    <ClCompile Include="..\..\src\lib\Fill.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\libmspub_utils.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBCollector.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBDocument.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBParser.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBParser2k.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBParser97.cpp" />
-    <ClCompile Include="..\..\src\lib\MSPUBStringVector.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\MSPUBSVGGenerator.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\PolygonUtils.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\Shadow.cpp" />
-    <ClCompile Include="..\..\src\lib\ShapeGroup.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\ShapeGroupElement.cpp" />
-    <ClCompile Include="..\..\src\lib\ShapeGroupPainter.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="..\..\src\lib\VectorTransformation2D.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\src\lib\Arrow.h" />
-    <ClInclude Include="..\..\src\lib\BorderArtInfo.h" />
-    <ClInclude Include="..\..\src\lib\ColorReference.h" />
-    <ClInclude Include="..\..\src\lib\Coordinate.h" />
-    <ClInclude Include="..\..\src\lib\Dash.h" />
-    <ClInclude Include="..\..\src\lib\EmbeddedFontInfo.h" />
-    <ClInclude Include="..\..\src\lib\EscherContainerType.h" />
-    <ClInclude Include="..\..\src\lib\EscherFieldIds.h" />
-    <ClInclude Include="..\..\src\lib\Fill.h" />
-    <ClInclude Include="..\..\src\lib\FillType.h" />
-    <ClInclude Include="..\..\src\lib\libmspub.h" />
-    <ClInclude Include="..\..\src\lib\libmspub_utils.h" />
-    <ClInclude Include="..\..\src\lib\Line.h" />
-    <ClInclude Include="..\..\src\lib\ListInfo.h" />
-    <ClInclude Include="..\..\src\lib\Margins.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBBlockID.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBBlockType.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBCollector.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBConstants.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBContentChunkType.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBDocument.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBParser.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBParser2k.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBParser97.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBStringVector.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBSVGGenerator.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBTypes.h" />
-    <ClInclude Include="..\..\src\lib\NumberingDelimiter.h" />
-    <ClInclude Include="..\..\src\lib\NumberingType.h" />
-    <ClInclude Include="..\..\src\lib\PolygonUtils.h" />
-    <ClInclude Include="..\..\src\lib\Shadow.h" />
-    <ClInclude Include="..\..\src\lib\ShapeFlags.h" />
-    <ClInclude Include="..\..\src\lib\ShapeGroup.h" />
-    <ClInclude Include="..\..\src\lib\ShapeGroupElement.h" />
-    <ClInclude Include="..\..\src\lib\ShapeGroupPainter.h" />
-    <ClInclude Include="..\..\src\lib\ShapeInfo.h" />
-    <ClInclude Include="..\..\src\lib\Shapes.h" />
-    <ClInclude Include="..\..\src\lib\ShapeType.h" />
-    <ClInclude Include="..\..\src\lib\TableInfo.h" />
-    <ClInclude Include="..\..\src\lib\VectorTransformation2D.h" />
-    <ClInclude Include="..\..\src\lib\VerticalAlign.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

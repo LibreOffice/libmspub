@@ -139,15 +139,7 @@ SOURCE=..\..\src\lib\Shadow.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\ShapeGroup.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\lib\ShapeGroupElement.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\lib\ShapeGroupPainter.cpp
 # End Source File
 # Begin Source File
 
@@ -287,15 +279,7 @@ SOURCE=..\..\src\lib\ShapeFlags.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\ShapeGroup.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\lib\ShapeGroupElement.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\lib\ShapeGroupPainter.h
 # End Source File
 # Begin Source File
 

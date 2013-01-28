@@ -37,11 +37,18 @@ PKG_PROG_PKG_CONFIG([0.20])
 # ====================
 # Find additional apps
 # ====================
-PKG_CHECK_MODULES([LIBMSPUB],[
+PKG_CHECK_MODULES([WPD],[
 	libwpd-0.9
 	libwpd-stream-0.9
+])
+AC_SUBST(WPD_CFLAGS)
+AC_SUBST(WPD_LIBS)
+
+PKG_CHECK_MODULES([WPG],[
 	libwpg-0.2
 ])
+AC_SUBST(WPG_CFLAGS)
+AC_SUBST(WPG_LIBS)
 
 # =========
 # Find zlib

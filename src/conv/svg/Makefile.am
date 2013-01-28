@@ -1,14 +1,14 @@
 bin_PROGRAMS = pub2xhtml
 
-AM_CXXFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib $(LIBMSPUB_CXXFLAGS) $(DEBUG_CXXFLAGS)
+AM_CXXFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib  $(WPG_CFLAGS) $(WPD_CFLAGS) $(DEBUG_CXXFLAGS)
 
 pub2xhtml_DEPENDENCIES = @PUB2XHTML_WIN32_RESOURCE@
 
 if STATIC_TOOLS
-pub2xhtml_LDADD = ../../lib/@MSPUB_OBJDIR@/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.a $(LIBMSPUB_LIBS) @PUB2XHTML_WIN32_RESOURCE@
+pub2xhtml_LDADD = ../../lib/@MSPUB_OBJDIR@/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.a $(WPD_LIBS) @PUB2XHTML_WIN32_RESOURCE@
 pub2xhtml_LDFLAGS = -all-static 
 else
-pub2xhtml_LDADD = ../../lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la $(LIBMSPUB_LIBS) @PUB2XHTML_WIN32_RESOURCE@ 
+pub2xhtml_LDADD = ../../lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la $(WPD_LIBS) @PUB2XHTML_WIN32_RESOURCE@ 
 endif
 
 pub2xhtml_SOURCES = \

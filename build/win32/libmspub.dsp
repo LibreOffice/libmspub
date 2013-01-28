@@ -91,6 +91,10 @@ SOURCE=..\..\src\lib\ColorReference.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\Dash.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\Fill.cpp
 # End Source File
 # Begin Source File
@@ -115,6 +119,10 @@ SOURCE=..\..\src\lib\MSPUBParser2k.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\MSPUBParser97.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\MSPUBStringVector.cpp
 # End Source File
 # Begin Source File
@@ -127,7 +135,15 @@ SOURCE=..\..\src\lib\PolygonUtils.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\Shadow.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\ShapeGroup.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeGroupElement.cpp
 # End Source File
 # Begin Source File
 
@@ -143,11 +159,27 @@ SOURCE=..\..\src\lib\VectorTransformation2D.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\src\lib\Arrow.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\BorderArtInfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\ColorReference.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\src\lib\Coordinate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Dash.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\EmbeddedFontInfo.h
 # End Source File
 # Begin Source File
 
@@ -172,6 +204,18 @@ SOURCE=..\..\src\lib\libmspub.h
 # Begin Source File
 
 SOURCE=..\..\src\lib\libmspub_utils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Line.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ListInfo.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Margins.h
 # End Source File
 # Begin Source File
 
@@ -207,6 +251,10 @@ SOURCE=..\..\src\lib\MSPUBParser2k.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\MSPUBParser97.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\MSPUBStringVector.h
 # End Source File
 # Begin Source File
@@ -219,7 +267,19 @@ SOURCE=..\..\src\lib\MSPUBTypes.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\NumberingDelimiter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\NumberingType.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\PolygonUtils.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\Shadow.h
 # End Source File
 # Begin Source File
 
@@ -231,7 +291,15 @@ SOURCE=..\..\src\lib\ShapeGroup.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\ShapeGroupElement.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\ShapeGroupPainter.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\ShapeInfo.h
 # End Source File
 # Begin Source File
 
@@ -243,7 +311,15 @@ SOURCE=..\..\src\lib\ShapeType.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\TableInfo.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\VectorTransformation2D.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\VerticalAlign.h
 # End Source File
 # End Group
 # End Target

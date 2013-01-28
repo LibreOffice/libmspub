@@ -338,8 +338,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
           {
             if (m_contentChunks.size() > 1)
             {
-              m_contentChunks[m_contentChunks.size() - 2].end
-                = m_contentChunks.back().offset;
+              m_contentChunks[m_contentChunks.size() - 2].end = m_contentChunks.back().offset;
             }
           }
         }

@@ -79,8 +79,7 @@ endif
 
 
 EXTRA_DIST = \
-	libmspub.rc.in \
-	makefile.mk
+	libmspub.rc.in
 
 # These may be in the builddir too
 BUILD_EXTRA_DIST = \

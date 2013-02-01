@@ -42,6 +42,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   CHUNK_TYPE = 0x2,
   CHUNK_OFFSET = 0x4,
   CHUNK_PARENT_SEQNUM = 0x5,
+  SHAPE_CROP = 0xb7,
   SHAPE_WIDTH = 0xaa,
   SHAPE_HEIGHT = 0xab,
   SHAPE_DONT_STRETCH_BA = 0x07,

@@ -89,6 +89,7 @@ public:
   void setNextPage(unsigned seqNum);
 
   void setShapeType(unsigned seqNum, ShapeType type);
+  void setShapeCropType(unsigned seqNum, ShapeType cropType);
   void setShapePictureRecolor(unsigned seqNum, const ColorReference &recolor);
   void setShapeTableInfo(unsigned seqNum, const TableInfo &ti);
   void setShapeBorderImageId(unsigned seqNum, unsigned borderImageId);

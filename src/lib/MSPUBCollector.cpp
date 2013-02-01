@@ -412,7 +412,16 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
   BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
-  ShapeType type = info.m_type.get_value_or(RECTANGLE);
+  ShapeType type;
+  if (info.m_cropType.is_initialized())
+  {
+    type = info.m_cropType.get();
+  }
+  else
+  {
+    type = info.m_type.get_value_or(RECTANGLE);
+  }
+  
   if (hasFill)
   {
     double x, y, height, width;
@@ -1493,6 +1502,11 @@ void libmspub::MSPUBCollector::designateMasterPage(unsigned seqNum)
 void libmspub::MSPUBCollector::setMasterPage(unsigned seqNum, unsigned masterPageSeqNum)
 {
   m_masterPagesByPageSeqNum[seqNum] = masterPageSeqNum;
+}
+
+void libmspub::MSPUBCollector::setShapeCropType(unsigned seqNum, ShapeType cropType)
+{
+  m_shapeInfosBySeqNum[seqNum].m_cropType = cropType;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

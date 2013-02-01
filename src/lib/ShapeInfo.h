@@ -52,6 +52,7 @@ void noop(const CustomShape *);
 struct ShapeInfo
 {
   boost::optional<ShapeType> m_type;
+  boost::optional<ShapeType> m_cropType;
   boost::optional<unsigned> m_imgIndex;
   boost::optional<unsigned> m_borderImgIndex;
   boost::optional<Coordinate> m_coordinates;
@@ -78,7 +79,7 @@ struct ShapeInfo
   boost::optional<VerticalAlign> m_verticalAlign;
   boost::optional<ColorReference> m_pictureRecolor;
   boost::optional<Shadow> m_shadow;
-  ShapeInfo() : m_type(), m_imgIndex(), m_borderImgIndex(),
+  ShapeInfo() : m_type(), m_cropType(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textId(), m_adjustValuesByIndex(), m_adjustValues(),
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
@@ -94,6 +95,12 @@ struct ShapeInfo
     if (m_customShape.is_initialized())
     {
       return getFromDynamicCustomShape(m_customShape.get());
+    }
+    if (m_cropType.is_initialized())
+    {
+      return boost::shared_ptr<const CustomShape>(
+               libmspub::getCustomShape(m_cropType.get()),
+               boost::function<void (const CustomShape *)>(noop));
     }
     return boost::shared_ptr<const CustomShape>(
              libmspub::getCustomShape(m_type.get_value_or(RECTANGLE)),

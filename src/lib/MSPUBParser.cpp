@@ -791,6 +791,11 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
         m_collector->setShapeVerticalTextAlign(chunk.seqNum,
                                                static_cast<VerticalAlign>(info.data));
       }
+      else if (info.id == SHAPE_CROP)
+      {
+        m_collector->setShapeCropType(chunk.seqNum,
+                                      static_cast<ShapeType>(info.data));
+      }
     }
     if (shouldStretchBorderArt)
     {

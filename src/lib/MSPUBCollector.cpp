@@ -350,7 +350,11 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
       unsigned index = ptr_info->m_imgIndex.get();
       if (index - 1 < m_images.size())
       {
-        ptr_info->m_fill = boost::shared_ptr<const Fill>(new ImgFill(index, this, false));
+        //if earlier we have set the fill explicitly to nonexistent, don't overwrite that now.
+        if (! (ptr_info->m_fill && !ptr_info->m_fill->fillExists()))
+        {
+          ptr_info->m_fill = boost::shared_ptr<const Fill>(new ImgFill(index, this, false));
+        }
       }
     }
     elt.setShapeInfo(*ptr_info);

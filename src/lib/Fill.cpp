@@ -32,6 +32,25 @@
 
 using namespace libmspub;
 
+NonexistentFill::NonexistentFill(const MSPUBCollector *owner) : Fill(owner)
+{
+}
+
+bool NonexistentFill::fillExists() const
+{
+  return false;
+}
+
+WPXPropertyListVector NonexistentFill::getProperties(WPXPropertyList *) const
+{
+  return WPXPropertyListVector();
+}
+
+bool Fill::fillExists() const
+{
+  return true;
+}
+
 Fill::Fill(const MSPUBCollector *owner) : m_owner(owner)
 {
 }

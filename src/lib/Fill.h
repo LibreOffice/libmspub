@@ -47,10 +47,19 @@ protected:
 public:
   Fill(const MSPUBCollector *owner);
   virtual WPXPropertyListVector getProperties(WPXPropertyList *out) const = 0;
+  virtual bool fillExists() const;
   virtual ~Fill() { }
 private:
   Fill(const Fill &) : m_owner(NULL) { }
   Fill &operator=(const Fill &);
+};
+
+class NonexistentFill : public Fill
+{
+public:
+  NonexistentFill(const MSPUBCollector *owner);
+  WPXPropertyListVector getProperties(WPXPropertyList *out) const;
+  bool fillExists() const;
 };
 
 class ImgFill : public Fill

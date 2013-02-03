@@ -1816,15 +1816,6 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
 boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
     bool &skipIfNotBg)
 {
-  const unsigned *ptr_fillStyleBoolProps = getIfExists_const(foptProperties, FIELDID_FILL_STYLE_BOOL_PROPS);
-  // 0x10 is "fillShape" and 0x100000 is "useFillShape"... don't ask me to explain why MS needs two fields for one property
-  // in any case, if 0x100000 tells us we are allowed to use 0x10 and 0x10 is not set,
-  // the fill is just transparent
-  if (ptr_fillStyleBoolProps && *ptr_fillStyleBoolProps & 0x100000 && !(*ptr_fillStyleBoolProps & 0x10))
-  {
-    MSPUB_DEBUG_MSG(("Not filling shape!\n"));
-    return boost::shared_ptr<Fill>(new NonexistentFill(m_collector));
-  }
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
   switch (fillType)

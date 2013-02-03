@@ -1179,7 +1179,11 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
 WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
-  const CharacterStyle &defaultCharStyle = defaultCharStyleIndex.is_initialized() && defaultCharStyleIndex.get() < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex.get()] : _nothing;
+  if (!defaultCharStyleIndex.is_initialized())
+  {
+    defaultCharStyleIndex = 0;
+  }
+  const CharacterStyle &defaultCharStyle = defaultCharStyleIndex.get() < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex.get()] : _nothing;
   WPXPropertyList ret;
   if (style.italic ^ defaultCharStyle.italic)
   {

@@ -1832,6 +1832,9 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     }
     return boost::shared_ptr<Fill>();
   }
+  case GRADIENTCENTER:
+  case GRADIENTSHAPE:
+  case GRADIENTNORMAL:
   case GRADIENT: //FIXME: The handling of multi-color gradients here is quite bad.
   {
     int angle;
@@ -1863,7 +1866,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
       break;
     }
 
-    boost::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle));
+    boost::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle, (int)fillType));
     if (fillFocus ==  0)
     {
       ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
@@ -1891,10 +1894,18 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
   case TEXTURE:
   case BITMAP:
   {
+	// in the case the shape is rotated we must rotate the image too
+    int rotation = 0;
+    const int *ptr_rotation = (const int *)getIfExists_const(foptProperties, FIELDID_ROTATION);
+    if (ptr_rotation)
+    {
+       rotation = (int)doubleModulo(toFixedPoint(*ptr_rotation), 360);
+       MSPUB_DEBUG_MSG(("Rotation value %d\n", rotation));
+    }
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
-      return boost::shared_ptr<Fill>(new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE));
+      return boost::shared_ptr<Fill>(new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE, rotation));
     }
     return boost::shared_ptr<Fill>();
   }

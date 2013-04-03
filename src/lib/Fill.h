@@ -59,11 +59,13 @@ protected:
   unsigned m_imgIndex;
 private:
   bool m_isTexture;
+protected:
+  int m_rotation;
 public:
-  ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture);
+  ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture, int rotation);
   virtual WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false) { }
+  ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false), m_rotation(0) { }
   ImgFill &operator=(const ImgFill &);
 };
 
@@ -75,7 +77,7 @@ public:
   PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  PatternFill(const PatternFill &) : ImgFill(0, NULL, true), m_fg(0x08000000), m_bg(0x08000000) { }
+  PatternFill(const PatternFill &) : ImgFill(0, NULL, true, 0), m_fg(0x08000000), m_bg(0x08000000) { }
   PatternFill &operator=(const ImgFill &);
 };
 
@@ -102,12 +104,13 @@ class GradientFill : public Fill
   };
   std::vector<StopInfo> m_stops;
   double m_angle;
+  int m_type;
 public:
-  GradientFill(const MSPUBCollector *owner, double angle = 0);
+  GradientFill(const MSPUBCollector *owner, double angle = 0, int type = 7);
   void addColor(ColorReference c, unsigned offsetPercent, double opacity);
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0) { }
+  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0), m_type(7) { }
   GradientFill &operator=(const GradientFill &);
 };
 }

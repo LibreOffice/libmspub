@@ -36,7 +36,7 @@ Fill::Fill(const MSPUBCollector *owner) : m_owner(owner)
 {
 }
 
-ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture) : Fill(owner), m_imgIndex(imgIndex), m_isTexture(isTexture)
+ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture, int rot) : Fill(owner), m_imgIndex(imgIndex), m_isTexture(isTexture), m_rotation(rot)
 {
 }
 
@@ -53,11 +53,17 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
     {
       out->insert("style:repeat", "stretch");
     }
+    if (m_rotation != 0)
+	{
+	  WPXString sValue;
+	  sValue.sprintf("%d", m_rotation);
+	  out->insert("libwpg:rotate", sValue);
+	}
   }
   return WPXPropertyListVector();
 }
 
-PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner, true), m_fg(fg), m_bg(bg)
+PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner, true, 0), m_fg(fg), m_bg(bg)
 {
 }
 
@@ -110,7 +116,7 @@ WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
-GradientFill::GradientFill(const MSPUBCollector *owner, double angle) : Fill(owner), m_stops(), m_angle(angle)
+GradientFill::GradientFill(const MSPUBCollector *owner, double angle, int type) : Fill(owner), m_stops(), m_angle(angle), m_type(type)
 {
 }
 
@@ -125,6 +131,22 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
   out->insert("draw:fill", "gradient");
   out->insert("svg:fill-rule", "nonzero");
   out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
+  switch (m_type)
+  {
+	  case 4:
+	  case 7:
+		  out->insert("libmspub:shade", "normal");
+		  break;
+	  case 5:
+		  out->insert("libmspub:shade", "center");
+		  break;
+	  case 6:
+		  out->insert("libmspub:shade", "shape");
+		  break;
+	  default:
+		  out->insert("libmspub:shade", "normal");
+		  break;
+  }
   for (unsigned i = 0; i < m_stops.size(); ++i)
   {
     Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->m_paletteColors);

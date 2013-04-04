@@ -1894,13 +1894,13 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
   case TEXTURE:
   case BITMAP:
   {
-	// in the case the shape is rotated we must rotate the image too
+    // in the case the shape is rotated we must rotate the image too
     int rotation = 0;
     const int *ptr_rotation = (const int *)getIfExists_const(foptProperties, FIELDID_ROTATION);
     if (ptr_rotation)
     {
-       rotation = (int)doubleModulo(toFixedPoint(*ptr_rotation), 360);
-       MSPUB_DEBUG_MSG(("Rotation value %d\n", rotation));
+      rotation = (int)doubleModulo(toFixedPoint(*ptr_rotation), 360);
+      MSPUB_DEBUG_MSG(("Rotation value %d\n", rotation));
     }
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)

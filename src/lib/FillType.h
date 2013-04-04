@@ -34,10 +34,10 @@ namespace libmspub
 enum FillType
 {
   SOLID,
-  GRADIENT = 0x07,       // msofillShadeScale Similar to msofillShade, but the fillAngle
-                         // is additionally scaled by the aspect ratio of
-                         // the shape. If shape is square, it is the
-                         // same as msofillShade
+  GRADIENT = 0x07, // msofillShadeScale Similar to msofillShade, but the fillAngle
+                   // is additionally scaled by the aspect ratio of
+                   // the shape. If shape is square, it is the
+                   // same as msofillShade
   GRADIENTCENTER = 0x06, // msofillShadeShape  Shade from shape outline to end point
   GRADIENTSHAPE = 0x05,  // msofillShadeCenter Shade from bounding rectangle to end point
   GRADIENTNORMAL = 0x04, // msofillShade       Shade from start to end points

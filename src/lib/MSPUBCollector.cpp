@@ -348,9 +348,9 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
     if (ptr_info->m_imgIndex.is_initialized())
     {
       unsigned index = ptr_info->m_imgIndex.get();
-	  int rot = 0;
-	  if (ptr_info->m_innerRotation.is_initialized())
-		  rot = ptr_info->m_innerRotation.get();
+      int rot = 0;
+      if (ptr_info->m_innerRotation.is_initialized())
+        rot = ptr_info->m_innerRotation.get();
       if (index - 1 < m_images.size())
       {
         ptr_info->m_fill = boost::shared_ptr<const Fill>(new ImgFill(index, this, false, rot));
@@ -424,7 +424,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   {
     type = info.m_type.get_value_or(RECTANGLE);
   }
-  
+
   if (hasFill)
   {
     double x, y, height, width;

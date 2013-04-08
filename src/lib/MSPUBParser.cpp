@@ -189,6 +189,8 @@ libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
     return PNG;
   case OFFICE_ART_BLIP_JPEG:
     return JPEG;
+  case OFFICE_ART_BLIP_JPEGCMYK:
+    return JPEGCMYK;
   case OFFICE_ART_BLIP_WMF:
     return WMF;
   case OFFICE_ART_BLIP_DIB:
@@ -226,8 +228,16 @@ int libmspub::MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
     oneUid = recInstance == 0x46A || recInstance == 0x6E2;
     offset = 0x11;
     break;
+  case JPEGCMYK:
+    oneUid = recInstance == 0x46B || recInstance == 0x6E3;
+    offset = 33;
+    break;
   case DIB:
     oneUid = recInstance == 0x7A8;
+    offset = 0x11;
+    break;
+  case TIFF:
+    oneUid = recInstance == 0x6E4;
     offset = 0x11;
     break;
   default:
@@ -1545,7 +1555,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           bool useLine = lineExistsByFlagPointer(
                            ptr_lineFlags, ptr_geomFlags);
           bool skipIfNotBg = false;
-          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg);
+          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg, foptValues.m_complexValues);
           unsigned lineWidth = 0;
           if (useLine)
           {
@@ -1814,7 +1824,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
 }
 
 boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
-    bool &skipIfNotBg)
+    bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
@@ -1835,7 +1845,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
   case GRADIENTCENTER:
   case GRADIENTSHAPE:
   case GRADIENTNORMAL:
-  case GRADIENT: //FIXME: The handling of multi-color gradients here is quite bad.
+  case GRADIENT:
   {
     int angle;
     const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);
@@ -1865,29 +1875,86 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     default:
       break;
     }
+    double fillLeftVal = 0.0;
+    const unsigned *ptr_fillLeft = getIfExists_const(foptProperties, FIELDID_FILL_TO_LEFT);
+    if (ptr_fillLeft)
+      fillLeftVal = toFixedPoint(*ptr_fillLeft);
+    double fillTopVal = 0.0;
+    const unsigned *ptr_fillTop = getIfExists_const(foptProperties, FIELDID_FILL_TO_TOP);
+    if (ptr_fillTop)
+      fillTopVal = toFixedPoint(*ptr_fillTop);
+    double fillRightVal = 0.0;
+    const unsigned *ptr_fillRight = getIfExists_const(foptProperties, FIELDID_FILL_TO_RIGHT);
+    if (ptr_fillRight)
+      fillRightVal = toFixedPoint(*ptr_fillRight);
+    double fillBottomVal = 0.0;
+    const unsigned *ptr_fillBottom = getIfExists_const(foptProperties, FIELDID_FILL_TO_BOTTOM);
+    if (ptr_fillBottom)
+      fillBottomVal = toFixedPoint(*ptr_fillBottom);
 
     boost::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle, (int)fillType));
-    if (fillFocus ==  0)
+    ret->setFillCenter(fillLeftVal, fillTopVal, fillRightVal, fillBottomVal);
+
+    const unsigned *ptr_fillGrad = getIfExists_const(foptProperties, FIELDID_FILL_SHADE_COMPLEX);
+    if (ptr_fillGrad)
     {
-      ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
-      ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      const std::vector<unsigned char> gradientData = foptValues[FIELDID_FILL_SHADE_COMPLEX];
+      if (gradientData.size() > 6)
+      {
+        unsigned short numEntries = gradientData[0] | (gradientData[1] << 8);
+        unsigned offs = 6;
+        for (unsigned i = 0; i < numEntries; ++i)
+        {
+          unsigned color = gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24);
+          offs += 4;
+          int posi = (int)(toFixedPoint(gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24)) * 100);
+          offs += 4;
+          ColorReference sColor(color, color);
+          if (fillFocus ==  0)
+            ret->addColor(sColor, posi, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+          else if (fillFocus == 100)
+            ret->addColorReverse(sColor, 100 - posi, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+          else if (fillFocus > 0)
+            ret->addColor(sColor, posi / 2, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+          else if (fillFocus < 0)
+            ret->addColorReverse(sColor, (100 - posi) / 2, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+        }
+        if ((fillFocus < 0) || ((fillFocus > 0) && (fillFocus < 100)))
+          ret->completeComplexFill();
+      }
     }
-    else if (fillFocus == 100)
+    else
     {
-      ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
-      ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
-    }
-    else if (fillFocus > 0)
-    {
-      ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
-      ret->addColor(secondColor, fillFocus, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
-      ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
-    }
-    else if (fillFocus < 0)
-    {
-      ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
-      ret->addColor(firstColor, 100 + fillFocus, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
-      ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      if (fillFocus ==  0)
+      {
+        ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+        ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      }
+      else if (fillFocus == 100)
+      {
+        ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+        ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+      }
+      else if (fillFocus > 0)
+      {
+        ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+        ret->addColor(firstColor, fillFocus, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+        ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+
+//        ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+//        ret->addColor(secondColor, fillFocus, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+//        ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+      }
+      else if (fillFocus < 0)
+      {
+        ret->addColor(firstColor, 0, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+        ret->addColor(secondColor, 100 + fillFocus, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+        ret->addColor(firstColor, 100, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+
+//        ret->addColor(secondColor, 0, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+//        ret->addColor(firstColor, 100 + fillFocus, ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1);
+//        ret->addColor(secondColor, 100, ptr_fillBackOpacity ? (double)(*ptr_fillBackOpacity) / 0xFFFF : 1);
+      }
     }
     return ret;
   }
@@ -1898,10 +1965,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     int rotation = 0;
     const int *ptr_rotation = (const int *)getIfExists_const(foptProperties, FIELDID_ROTATION);
     if (ptr_rotation)
-    {
       rotation = (int)doubleModulo(toFixedPoint(*ptr_rotation), 360);
-      MSPUB_DEBUG_MSG(("Rotation value %d\n", rotation));
-    }
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
@@ -1915,7 +1979,8 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     const unsigned *ptr_fillColor = getIfExists_const(foptProperties, FIELDID_FILL_COLOR);
     const unsigned *ptr_fillBackColor = getIfExists_const(foptProperties, FIELDID_FILL_BACK_COLOR);
     ColorReference fill = ptr_fillColor ? ColorReference(*ptr_fillColor) : ColorReference(0x00FFFFFF);
-    ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x08000000);
+//    ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x08000000);
+    ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x00FFFFFF);
     if (ptr_bgPxId && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1 ] >= 0)
     {
       return boost::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));

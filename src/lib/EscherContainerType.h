@@ -38,11 +38,12 @@
 #define OFFICE_ART_CLIENT_ANCHOR      0xF010
 #define OFFICE_ART_BLIP_PNG           0xF01E
 #define OFFICE_ART_BLIP_JPEG          0xF01D
+#define OFFICE_ART_BLIP_JPEGCMYK      0xF02A
 #define OFFICE_ART_BLIP_DIB           0xF01F
 #define OFFICE_ART_BLIP_EMF           0xF01A
 #define OFFICE_ART_BLIP_WMF           0xF01B
 #define OFFICE_ART_BLIP_PICT          0xF01C
-#define OFFICE_ART_BLIP_TIFF          0xF020
+#define OFFICE_ART_BLIP_TIFF          0xF029
 #define OFFICE_ART_FOPT               0xF00B
 #define OFFICE_ART_TERTIARY_FOPT      0xF122
 #define OFFICE_ART_FSP                0xF00A

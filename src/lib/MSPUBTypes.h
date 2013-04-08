@@ -203,7 +203,8 @@ enum ImgType
   EMF,
   TIFF,
   DIB,
-  PICT
+  PICT,
+  JPEGCMYK
 };
 
 } // namespace libmspub

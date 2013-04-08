@@ -82,13 +82,13 @@ WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
     if (type == DIB && data->size() >= 0x36 + 8)
     {
       fixedImg.append(data->getDataBuffer(), 0x36);
-      fixedImg.append(bgColor.b);
-      fixedImg.append(bgColor.g);
-      fixedImg.append(bgColor.r);
-      fixedImg.append('\0');
       fixedImg.append(fgColor.b);
       fixedImg.append(fgColor.g);
       fixedImg.append(fgColor.r);
+      fixedImg.append('\0');
+      fixedImg.append(bgColor.b);
+      fixedImg.append(bgColor.g);
+      fixedImg.append(bgColor.r);
       fixedImg.append('\0');
       fixedImg.append(data->getDataBuffer() + 0x36 + 8, data->size() - 0x36 - 8);
       data = &fixedImg;
@@ -116,13 +116,36 @@ WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
   return WPXPropertyListVector();
 }
 
-GradientFill::GradientFill(const MSPUBCollector *owner, double angle, int type) : Fill(owner), m_stops(), m_angle(angle), m_type(type)
+GradientFill::GradientFill(const MSPUBCollector *owner, double angle, int type) : Fill(owner), m_stops(), m_angle(angle), m_type(type), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0)
 {
+}
+
+void GradientFill::setFillCenter(double left, double top, double right, double bottom)
+{
+  m_fillLeftVal = left;
+  m_fillTopVal = top;
+  m_fillRightVal = right;
+  m_fillBottomVal = bottom;
 }
 
 void GradientFill::addColor(ColorReference c, unsigned offsetPercent, double opacity)
 {
   m_stops.push_back(StopInfo(c, offsetPercent, opacity));
+}
+
+void GradientFill::addColorReverse(ColorReference c, unsigned offsetPercent, double opacity)
+{
+  m_stops.insert(m_stops.begin(), StopInfo(c, offsetPercent, opacity));
+}
+
+void GradientFill::completeComplexFill()
+{
+  unsigned stops = m_stops.size();
+  for (unsigned i = stops; i > 0; i--)
+  {
+    if (m_stops[i-1].m_offsetPercent != 50)
+      m_stops.push_back(StopInfo(m_stops[i-1].m_colorReference, 50 - m_stops[i-1].m_offsetPercent + 50, m_stops[i-1].m_opacity));
+  }
 }
 
 WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
@@ -139,6 +162,14 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
     break;
   case 5:
     out->insert("libmspub:shade", "center");
+    if ((m_fillLeftVal > 0.5) && (m_fillTopVal > 0.5) && (m_fillRightVal > 0.5) && (m_fillBottomVal > 0.5))
+      out->insert("libmspub:shade-ref-point", "bottom-right");
+    else if ((m_fillLeftVal < 0.5) && (m_fillTopVal < 0.5) && (m_fillRightVal < 0.5) && (m_fillBottomVal < 0.5))
+      out->insert("libmspub:shade-ref-point", "top-left");
+    else if ((m_fillLeftVal > 0.5) && (m_fillTopVal < 0.5) && (m_fillRightVal > 0.5) && (m_fillBottomVal < 0.5))
+      out->insert("libmspub:shade-ref-point", "top-right");
+    else if ((m_fillLeftVal < 0.5) && (m_fillTopVal > 0.5) && (m_fillRightVal < 0.5) && (m_fillBottomVal > 0.5))
+      out->insert("libmspub:shade-ref-point", "bottom-left");
     break;
   case 6:
     out->insert("libmspub:shade", "shape");

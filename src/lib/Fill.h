@@ -105,12 +105,19 @@ class GradientFill : public Fill
   std::vector<StopInfo> m_stops;
   double m_angle;
   int m_type;
+  double m_fillLeftVal;
+  double m_fillTopVal;
+  double m_fillRightVal;
+  double m_fillBottomVal;
 public:
   GradientFill(const MSPUBCollector *owner, double angle = 0, int type = 7);
+  void setFillCenter(double left, double top, double right, double bottom);
   void addColor(ColorReference c, unsigned offsetPercent, double opacity);
+  void addColorReverse(ColorReference c, unsigned offsetPercent, double opacity);
+  void completeComplexFill();
   WPXPropertyListVector getProperties(WPXPropertyList *out) const;
 private:
-  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0), m_type(7) { }
+  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0), m_type(7), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0) { }
   GradientFill &operator=(const GradientFill &);
 };
 }

@@ -5379,7 +5379,7 @@ const CustomShape *libmspub::getCustomShape(ShapeType type)
   case HEART:
     return &CS_HEART;
   case PICTURE_FRAME:
-    return NULL; //FIXME
+    return &CS_RECTANGLE; // treat it as RECTANGLE for now
   case QUAD_ARROW:
     return &CS_QUAD_ARROW;
   case BEVEL:

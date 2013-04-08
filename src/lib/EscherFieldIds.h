@@ -47,6 +47,11 @@
 #define FIELDID_FILL_TYPE              0x0180
 #define FIELDID_FILL_ANGLE             0x018B
 #define FIELDID_FILL_FOCUS             0x018C
+#define FIELDID_FILL_TO_LEFT           0x018D
+#define FIELDID_FILL_TO_TOP            0x018E
+#define FIELDID_FILL_TO_RIGHT          0x018F
+#define FIELDID_FILL_TO_BOTTOM         0x0190
+#define FIELDID_FILL_SHADE_COMPLEX     0xC197
 #define FIELDID_FIELD_STYLE_BOOL_PROPS 0x01BF
 #define FIELDID_ADJUST_VALUE_1         0x0147
 #define FIELDID_ADJUST_VALUE_2         0x0148

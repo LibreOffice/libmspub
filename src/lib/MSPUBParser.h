@@ -162,7 +162,7 @@ protected:
   unsigned getFontIndex(WPXInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(WPXInputStream *input);
   ParagraphStyle getParagraphStyle(WPXInputStream *input);
-  boost::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg);
+  boost::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptVal);
 
   WPXInputStream *m_input;
   MSPUBCollector *m_collector;

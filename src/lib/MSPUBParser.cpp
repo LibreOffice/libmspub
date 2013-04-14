@@ -1767,6 +1767,13 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                             guideData, p_geoRight ? *p_geoRight : 21600,
                                             p_geoBottom ? *p_geoBottom : 21600));
           }
+          const std::vector<unsigned char> wrapVertexData = foptValues.m_complexValues[FIELDID_P_WRAPPOLYGONVERTICES];
+          if (!wrapVertexData.empty())
+          {
+            std::vector<libmspub::Vertex> ret = parseVertices(wrapVertexData);
+			m_collector->setShapeClipPath(*shapeSeqNum, ret);
+            MSPUB_DEBUG_MSG(("Current Escher shape has wrap Path\n"));
+		  }
         }
         if (foundAnchor)
         {
@@ -2161,6 +2168,7 @@ libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(WPXInputStream *in
     unsigned short id = readU16(input);
     unsigned value  = readU32(input);
     ret.m_scalarValues[id] = value;
+    MSPUB_DEBUG_MSG(("EscherFopt ID %u  Value %u\n", id, value));
     bool complex = id & 0x8000;
     if (complex)
     {

@@ -105,6 +105,7 @@ public:
   void setShapeCoordinatesRotated90(unsigned seqNum);
   void setShapeCustomPath(unsigned seqNum,
                           const DynamicCustomShape &shape);
+  void setShapeClipPath(unsigned seqNum, const std::vector<libmspub::Vertex> &clip);
   void setShapeVerticalTextAlign(unsigned seqNum, VerticalAlign va);
   void designateMasterPage(unsigned seqNum);
   void setMasterPage(unsigned pageSeqNum, unsigned masterSeqNum);

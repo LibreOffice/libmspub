@@ -5896,6 +5896,31 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
   yOut += cy;
 }
 
+WPXPropertyList libmspub::calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
+{
+  WPXPropertyList vertices;
+  Vector2D center(x + width / 2, y + height / 2);
+  double scaleX = width / shape->m_coordWidth;
+  double scaleY = height / shape->m_coordHeight;
+  WPXString clipString;
+  Vector2D vector(x + scaleX * verts[0].m_x, y + scaleY * verts[0].m_y);
+  vector = transform.transformWithOrigin(vector, center);
+  WPXString sValue;
+  sValue.sprintf("M %f %f", (double)vector.m_x, (double)vector.m_y);
+  clipString.append(sValue);
+  for (unsigned i = 1; i < verts.size(); ++i)
+  {
+    Vector2D vector2(x + scaleX * verts[i].m_x, y + scaleY * verts[i].m_y);
+    vector2 = transform.transformWithOrigin(vector2, center);
+    WPXString sValue2;
+    sValue2.sprintf(" L %f %f", (double)vector2.m_x, (double)vector2.m_y);
+    clipString.append(sValue2);
+  }
+  clipString.append(" Z");
+  vertices.insert("svg:clip-path", clipString);
+  return vertices;
+}
+
 void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));

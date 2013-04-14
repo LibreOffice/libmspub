@@ -80,6 +80,7 @@ struct ShapeInfo
   boost::optional<ColorReference> m_pictureRecolor;
   boost::optional<Shadow> m_shadow;
   boost::optional<int> m_innerRotation;
+  std::vector<libmspub::Vertex> m_clipPath;
   ShapeInfo() : m_type(), m_cropType(), m_imgIndex(), m_borderImgIndex(),
     m_coordinates(), m_lines(), m_pageSeqNum(),
     m_textId(), m_adjustValuesByIndex(), m_adjustValues(),
@@ -88,7 +89,7 @@ struct ShapeInfo
     m_lineBackColor(), m_dash(), m_tableInfo(),
     m_tableCellTextEnds(), m_numColumns(),
     m_columnSpacing(0), m_beginArrow(), m_endArrow(),
-    m_verticalAlign(), m_pictureRecolor(), m_shadow(), m_innerRotation()
+    m_verticalAlign(), m_pictureRecolor(), m_shadow(), m_innerRotation(), m_clipPath()
   {
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const

@@ -222,6 +222,11 @@ void libmspub::MSPUBCollector::setShapeCustomPath(unsigned seqNum,
   m_shapeInfosBySeqNum[seqNum].m_customShape = shape;
 }
 
+void libmspub::MSPUBCollector::setShapeClipPath(unsigned seqNum, const std::vector<libmspub::Vertex> &clip)
+{
+  m_shapeInfosBySeqNum[seqNum].m_clipPath = clip;
+}
+
 void libmspub::MSPUBCollector::beginGroup()
 {
   ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup);
@@ -409,7 +414,18 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
   {
-    m_painter->startLayer(WPXPropertyList());
+    if (info.m_clipPath.size() > 0)
+    {
+      const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+      double x, y, height, width;
+      x = coord.getXIn(m_width);
+      y = coord.getYIn(m_height);
+      height = coord.getHeightIn();
+      width = coord.getWidthIn();
+      m_painter->startLayer(calcClipPath(info.m_clipPath, x, y, height, width, foldedTransform, info.getCustomShape()));
+    }
+    else
+      m_painter->startLayer(WPXPropertyList());
   }
   graphicsProps.insert("draw:stroke", "none");
   const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());

@@ -1679,7 +1679,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           }
           if (ptr_lineDashing)
           {
-            m_collector->setShapeDash(*shapeSeqNum, getDash(
+            m_collector->setShapeDash(*shapeSeqNum, *ptr_lineDashing, getDash(
                                         static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
                                         dotStyle));
           }
@@ -1771,9 +1771,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           if (!wrapVertexData.empty())
           {
             std::vector<libmspub::Vertex> ret = parseVertices(wrapVertexData);
-			m_collector->setShapeClipPath(*shapeSeqNum, ret);
+            m_collector->setShapeClipPath(*shapeSeqNum, ret);
             MSPUB_DEBUG_MSG(("Current Escher shape has wrap Path\n"));
-		  }
+          }
         }
         if (foundAnchor)
         {

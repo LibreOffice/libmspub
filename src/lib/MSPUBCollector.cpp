@@ -760,6 +760,12 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             graphicsProps.insert(length.cstr(), dash.m_dots[i].m_length.get(), WPX_INCH);
           }
         }
+        if (info.m_dashStyle.is_initialized())
+        {
+          WPXString dst;
+          dst.sprintf("%d", info.m_dashStyle.get());
+          graphicsProps.insert("libmspub:dashstyle", dst);
+        }
       }
       else
       {
@@ -1101,9 +1107,10 @@ void libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
   m_shapeInfosBySeqNum[seqNum].m_imgIndex = index;
 }
 
-void libmspub::MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
+void libmspub::MSPUBCollector::setShapeDash(unsigned seqNum, unsigned dashStyle, const Dash &dash)
 {
   m_shapeInfosBySeqNum[seqNum].m_dash = dash;
+  m_shapeInfosBySeqNum[seqNum].m_dashStyle = dashStyle;
 }
 
 void libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)

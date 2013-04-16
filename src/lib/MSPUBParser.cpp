@@ -1992,6 +1992,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
       return boost::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));
     }
   }
+  case BACKGROUND:
   default:
     return boost::shared_ptr<Fill>();
   }

@@ -33,17 +33,19 @@ namespace libmspub
 {
 enum FillType
 {
-  SOLID,
+  SOLID = 0x00,
+  PATTERN = 0x01,
+  TEXTURE = 0x02,
+  BITMAP = 0x03,
+  SHADE = 0x04, // msofillShade       Shade from start to end points
+  SHADE_CENTER = 0x05,  // msofillShadeCenter Shade from bounding rectangle to end point
+  SHADE_SHAPE = 0x06, // msofillShadeShape  Shade from shape outline to end point
   SHADE_SCALE = 0x07, // msofillShadeScale Similar to msofillShade, but the fillAngle
   // is additionally scaled by the aspect ratio of
   // the shape. If shape is square, it is the
   // same as msofillShade
-  SHADE_SHAPE = 0x06, // msofillShadeShape  Shade from shape outline to end point
-  SHADE_CENTER = 0x05,  // msofillShadeCenter Shade from bounding rectangle to end point
-  SHADE = 0x04, // msofillShade       Shade from start to end points
-  BITMAP = 0x03,
-  TEXTURE = 0x02,
-  PATTERN = 0x01
+  SHADE_TITLE = 0x08,
+  BACKGROUND = 0x09
 };
 } // libmspub
 #endif /* __FILLTYPE_H__ */

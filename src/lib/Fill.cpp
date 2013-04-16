@@ -27,6 +27,7 @@
  */
 
 #include "Fill.h"
+#include "FillType.h"
 #include "libmspub_utils.h"
 #include "MSPUBCollector.h"
 
@@ -156,11 +157,7 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
   out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
   switch (m_type)
   {
-  case 4:
-  case 7:
-    out->insert("libmspub:shade", "normal");
-    break;
-  case 5:
+  case SHADE_CENTER:
     out->insert("libmspub:shade", "center");
     if ((m_fillLeftVal > 0.5) && (m_fillTopVal > 0.5) && (m_fillRightVal > 0.5) && (m_fillBottomVal > 0.5))
       out->insert("libmspub:shade-ref-point", "bottom-right");
@@ -171,9 +168,11 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
     else if ((m_fillLeftVal < 0.5) && (m_fillTopVal > 0.5) && (m_fillRightVal < 0.5) && (m_fillBottomVal > 0.5))
       out->insert("libmspub:shade-ref-point", "bottom-left");
     break;
-  case 6:
+  case SHADE_SHAPE:
     out->insert("libmspub:shade", "shape");
     break;
+  case SHADE:
+  case SHADE_SCALE:
   default:
     out->insert("libmspub:shade", "normal");
     break;

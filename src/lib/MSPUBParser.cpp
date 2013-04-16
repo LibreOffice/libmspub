@@ -1848,10 +1848,10 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
     }
     return boost::shared_ptr<Fill>();
   }
-  case GRADIENTCENTER:
-  case GRADIENTSHAPE:
-  case GRADIENTNORMAL:
-  case GRADIENT:
+  case SHADE_SHAPE:
+  case SHADE_CENTER:
+  case SHADE:
+  case SHADE_SCALE:
   {
     int angle;
     const int *ptr_angle = (const int *)getIfExists_const(foptProperties, FIELDID_FILL_ANGLE);

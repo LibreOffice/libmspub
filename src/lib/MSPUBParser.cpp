@@ -358,7 +358,7 @@ bool libmspub::MSPUBParser::parseContents(WPXInputStream *input)
       {
         m_contentChunks.back().end = trailerPart.dataOffset + trailerPart.dataLength;
       }
-      if (!m_documentChunkIndex.is_initialized())
+      if (!m_documentChunkIndex)
       {
         return false;
       }
@@ -504,7 +504,7 @@ bool libmspub::MSPUBParser::parseFontChunk(
               eotOffset = subSubInfo.dataOffset;
             }
           }
-          if (name.is_initialized() && eotOffset.is_initialized())
+          if (!!name && !!eotOffset)
           {
             input->seek(eotOffset.get(), WPX_SEEK_SET);
             MSPUBBlockInfo eotRecord = parseBlock(input, true);
@@ -690,8 +690,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
         rowcolArrayOffset = info.dataOffset;
       }
     }
-    if (cellsSeqNum.is_initialized() && numRows.is_initialized() &&
-        numCols.is_initialized() && rowcolArrayOffset.is_initialized())
+    if (!!cellsSeqNum && !!numRows && !!numCols && !!rowcolArrayOffset)
     {
       unsigned nr = numRows.get();
       unsigned nc = numCols.get();
@@ -749,7 +748,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
           break;
         }
       }
-      if (!index.is_initialized())
+      if (!index)
       {
         MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %u corresponding to table of seqnum %d.\n",
                          csn, chunk.seqNum));
@@ -1511,7 +1510,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
         {
           maybe_tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
         }
-        if (maybe_tertiaryFoptValues.is_initialized())
+        if (!!maybe_tertiaryFoptValues)
         {
           const std::map<unsigned short, unsigned> &tertiaryFoptValues =
             maybe_tertiaryFoptValues.get();
@@ -1567,7 +1566,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             }
             else
             {
-              if (maybe_tertiaryFoptValues.is_initialized())
+              if (!!maybe_tertiaryFoptValues)
               {
                 std::map<unsigned short, unsigned> &tertiaryFoptValues =
                   maybe_tertiaryFoptValues.get();
@@ -1771,9 +1770,9 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           if (!wrapVertexData.empty())
           {
             std::vector<libmspub::Vertex> ret = parseVertices(wrapVertexData);
-			m_collector->setShapeClipPath(*shapeSeqNum, ret);
+            m_collector->setShapeClipPath(*shapeSeqNum, ret);
             MSPUB_DEBUG_MSG(("Current Escher shape has wrap Path\n"));
-		  }
+          }
         }
         if (foundAnchor)
         {

@@ -464,7 +464,7 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
 
 bool libmspub::MSPUBParser2k::parseDocument(WPXInputStream *input)
 {
-  if (m_documentChunkIndex.is_initialized())
+  if (!!m_documentChunkIndex)
   {
     input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, WPX_SEEK_SET);
     input->seek(0x14, WPX_SEEK_CUR);

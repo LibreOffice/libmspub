@@ -66,7 +66,7 @@ bool libmspub::MSPUBParser97::parse()
 
 bool libmspub::MSPUBParser97::parseDocument(WPXInputStream *input)
 {
-  if (m_documentChunkIndex.is_initialized())
+  if (!!m_documentChunkIndex)
   {
     input->seek(m_contentChunks[m_documentChunkIndex.get()].offset + 0x12, WPX_SEEK_SET);
     unsigned short coordinateSystemMark = readU16(input);

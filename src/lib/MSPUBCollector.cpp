@@ -333,7 +333,7 @@ std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo 
 
 boost::optional<std::vector<libmspub::TextParagraph> > libmspub::MSPUBCollector::getShapeText(const ShapeInfo &info) const
 {
-  if (info.m_textId.is_initialized())
+  if (!!info.m_textId)
   {
     unsigned stringId = info.m_textId.get();
     const std::vector<TextParagraph> *ptr_str = getIfExists_const(m_textStringsById, stringId);
@@ -350,11 +350,11 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
   ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, elt.getSeqNum());
   if (ptr_info)
   {
-    if (ptr_info->m_imgIndex.is_initialized())
+    if (!!ptr_info->m_imgIndex)
     {
       unsigned index = ptr_info->m_imgIndex.get();
       int rot = 0;
-      if (ptr_info->m_innerRotation.is_initialized())
+      if (!!ptr_info->m_innerRotation)
         rot = ptr_info->m_innerRotation.get();
       if (index - 1 < m_images.size())
       {
@@ -390,7 +390,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   bool hasStroke = false;
   bool hasBorderArt = false;
   boost::optional<unsigned> maybeBorderImg = info.m_borderImgIndex;
-  if (maybeBorderImg.is_initialized() && !info.m_lines.empty())
+  if (!!maybeBorderImg && !info.m_lines.empty())
   {
     hasStroke = true;
     hasBorderArt = true;
@@ -409,7 +409,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
-  bool hasText = maybeText.is_initialized();
+  bool hasText = !!maybeText;
   bool makeLayer = hasBorderArt ||
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
@@ -432,7 +432,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
   ShapeType type;
-  if (info.m_cropType.is_initialized())
+  if (!!info.m_cropType)
   {
     type = info.m_cropType.get();
   }
@@ -460,7 +460,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         width -= 2 * borderImgWidth;
       }
     }
-    if (info.m_pictureRecolor.is_initialized())
+    if (!!info.m_pictureRecolor)
     {
       Color obc = info.m_pictureRecolor.get().getFinalColor(m_paletteColors);
       graphicsProps.insert("draw:color-mode", "greyscale");
@@ -472,7 +472,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                            static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
     }
     bool shadowPropsInserted = false;
-    if (info.m_shadow.is_initialized())
+    if (!!info.m_shadow)
     {
       const Shadow &s = info.m_shadow.get();
       if (!needsEmulation(s))
@@ -496,7 +496,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
                      std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
-    if (info.m_pictureRecolor.is_initialized())
+    if (!!info.m_pictureRecolor)
     {
       graphicsProps.remove("draw:color-mode");
       graphicsProps.remove("draw:red");
@@ -581,7 +581,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           m_painter->drawRectangle(leftRectProps);
           std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
           boost::optional<Color> oneBitColor;
-          if (info.m_lineBackColor.is_initialized())
+          if (!!info.m_lineBackColor)
           {
             oneBitColor = info.m_lineBackColor.get().getFinalColor(m_paletteColors);
           }
@@ -732,7 +732,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       height = strokeCoord.getHeightIn();
       width = strokeCoord.getWidthIn();
       graphicsProps.insert("draw:fill", "none");
-      if (info.m_dash.is_initialized() && !info.m_dash.get().m_dots.empty())
+      if (!!info.m_dash && !info.m_dash.get().m_dots.empty())
       {
         const Dash &dash = info.m_dash.get();
         graphicsProps.insert("draw:stroke", "dash");
@@ -753,7 +753,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           WPXString dots;
           dots.sprintf("draw:dots%d", i + 1);
           graphicsProps.insert(dots.cstr(), static_cast<int>(dash.m_dots[i].m_count));
-          if (dash.m_dots[i].m_length.is_initialized())
+          if (!!dash.m_dots[i].m_length)
           {
             WPXString length;
             length.sprintf("draw:dots%d-length", i + 1);
@@ -793,7 +793,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
     props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
     props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
-    if(info.m_verticalAlign.is_initialized())
+    if(!!info.m_verticalAlign)
     {
       switch (info.m_verticalAlign.get())
       {
@@ -837,7 +837,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
 
 const char *libmspub::MSPUBCollector::getCalculatedEncoding() const
 {
-  if (m_calculatedEncoding.is_initialized())
+  if (!!m_calculatedEncoding)
   {
     return m_calculatedEncoding.get();
   }
@@ -908,7 +908,7 @@ void libmspub::MSPUBCollector::writeImage(double x, double y,
     boost::optional<Color> oneBitColor) const
 {
   WPXPropertyList props;
-  if (oneBitColor.is_initialized())
+  if (!!oneBitColor)
   {
     Color obc = oneBitColor.get();
     props.insert("draw:color-mode", "greyscale");
@@ -1128,7 +1128,7 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
 WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
-  const ParagraphStyle &defaultStyle = defaultParaStyleIndex.is_initialized() && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
+  const ParagraphStyle &defaultStyle = !!defaultParaStyleIndex && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
   WPXPropertyList ret;
   Alignment align = style.m_align.get_value_or(
                       defaultStyle.m_align.get_value_or(LEFT));
@@ -1199,7 +1199,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
 WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
-  if (!defaultCharStyleIndex.is_initialized())
+  if (!defaultCharStyleIndex)
   {
     defaultCharStyleIndex = 0;
   }
@@ -1217,11 +1217,11 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("style:text-underline-type", "single");
   }
-  if (style.textSizeInPt.is_initialized())
+  if (!!style.textSizeInPt)
   {
     ret.insert("fo:font-size", style.textSizeInPt.get() / POINTS_IN_INCH);
   }
-  else if (defaultCharStyle.textSizeInPt.is_initialized())
+  else if (!!defaultCharStyle.textSizeInPt)
   {
     ret.insert("fo:font-size", defaultCharStyle.textSizeInPt.get()
                / POINTS_IN_INCH);
@@ -1238,7 +1238,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   {
     ret.insert("fo:color", getColorString(Color(0, 0, 0)));  // default color is black
   }
-  if (style.fontIndex.is_initialized() &&
+  if (!!style.fontIndex &&
       style.fontIndex.get() < m_fonts.size())
   {
     WPXString str;
@@ -1246,7 +1246,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
                      getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
-  else if (defaultCharStyle.fontIndex.is_initialized() &&
+  else if (!!defaultCharStyle.fontIndex &&
            defaultCharStyle.fontIndex.get() < m_fonts.size())
   {
     WPXString str;
@@ -1336,7 +1336,7 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
   {
     m_painter->startGraphics(pageProps);
     boost::optional<unsigned> masterSeqNum = getMasterPageSeqNum(pageSeqNum);
-    bool hasMaster = masterSeqNum.is_initialized();
+    bool hasMaster = !!masterSeqNum;
     if (hasMaster)
     {
       writePageBackground(masterSeqNum.get());

@@ -94,11 +94,11 @@ struct ShapeInfo
   }
   boost::shared_ptr<const CustomShape> getCustomShape() const
   {
-    if (m_customShape.is_initialized())
+    if (!!m_customShape)
     {
       return getFromDynamicCustomShape(m_customShape.get());
     }
-    if (m_cropType.is_initialized())
+    if (!!m_cropType)
     {
       return boost::shared_ptr<const CustomShape>(
                libmspub::getCustomShape(m_cropType.get()),

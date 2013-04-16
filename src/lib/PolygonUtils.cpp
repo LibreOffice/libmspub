@@ -6030,9 +6030,9 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
           const Vertex &curr = shape->mp_vertices[vertexIndex];
           Vector2D curr2D(x + scaleX * getSpecialIfNecessary(calculator, curr.m_x), y + scaleY * getSpecialIfNecessary(calculator, curr.m_y));
-          if (lastPoint.is_initialized())
+          if (!!lastPoint)
           {
-            if (!pathBegin.is_initialized())
+            if (!pathBegin)
             {
               pathBegin = curr2D;
             }
@@ -6166,7 +6166,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           getRayEllipseIntersection(startX, startY, rx, ry, cx, cy, startX, startY);
           getRayEllipseIntersection(endX, endY, rx, ry, cx, cy, endX, endY);
           Vector2D start2D(startX, startY);
-          if (!pathBegin.is_initialized())
+          if (!pathBegin)
           {
             pathBegin = start2D;
           }
@@ -6225,7 +6225,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           WPXPropertyList moveVertex;
           Vector2D start(cx + rx * cos(startAngle * M_PI / 180),
                          cy + ry * sin(startAngle * M_PI / 180));
-          if (!pathBegin.is_initialized())
+          if (!pathBegin)
           {
             pathBegin = start;
           }
@@ -6328,7 +6328,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       case CLOSESUBPATH:
       {
         MSPUB_DEBUG_MSG(("CLOSESUBPATH\n"));
-        if (!pathBegin.is_initialized())
+        if (!pathBegin)
         {
           MSPUB_DEBUG_MSG(("Tried to close a subpath that hadn't yet begun!\n"));
         }
@@ -6352,7 +6352,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       //intentionally no break
       case ENDSUBPATH:
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
-        if (closeEverything && pathBegin.is_initialized())
+        if (closeEverything && !!pathBegin)
         {
           WPXPropertyList end;
           end.insert("libwpg:path-action", "Z");
@@ -6373,7 +6373,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     }
     if (hasUnclosedElements && closeEverything)
     {
-      if (pathBegin.is_initialized())
+      if (!!pathBegin)
       {
         WPXPropertyList end;
         end.insert("libwpg:path-action", "Z");

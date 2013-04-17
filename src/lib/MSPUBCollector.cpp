@@ -743,7 +743,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           graphicsProps.insert("svg:stroke-linecap", "round");
           break;
         case RECT_DOT:
-          graphicsProps.insert("svg:stroke-linecap", "rect");
+          graphicsProps.insert("svg:stroke-linecap", "butt");
           break;
         default:
           break;

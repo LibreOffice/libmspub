@@ -546,9 +546,10 @@ void libmspub::MSPUBSVGGenerator::writeStyle(bool /* isClosed */)
 {
   m_outputSink << "style=\"";
 
+  double width = 1.0 / 72.0;
   if (m_style["svg:stroke-width"])
   {
-    double width = m_style["svg:stroke-width"]->getDouble();
+    width = m_style["svg:stroke-width"]->getDouble();
     if (width == 0.0 && m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() != "none")
       width = 0.2 / 72.0; // reasonable hairline
     m_outputSink << "stroke-width: " << doubleToString(72*width) << "; ";
@@ -562,29 +563,39 @@ void libmspub::MSPUBSVGGenerator::writeStyle(bool /* isClosed */)
   }
 
   if (m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() == "solid")
-    m_outputSink << "stroke-dasharray:  solid; ";
-  else if (m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() == "dash")
+    m_outputSink << "stroke-dasharray:  none; ";
+  if (m_style["draw:stroke"] && m_style["draw:stroke"]->getStr() == "dash")
   {
-    int dots1 = m_style["draw:dots1"]->getInt();
-    int dots2 = m_style["draw:dots2"]->getInt();
-    double dots1len = m_style["draw:dots1-length"]->getDouble();
-    double dots2len = m_style["draw:dots2-length"]->getDouble();
-    double gap = m_style["draw:distance"]->getDouble();
+    int dots1 = 0;
+    if (m_style["draw:dots1"])
+      dots1 = m_style["draw:dots1"]->getInt();
+    int dots2 = 0;
+    if (m_style["draw:dots2"])
+      dots2 = m_style["draw:dots2"]->getInt();
+    double dots1len = width * 72.0;
+    double dots2len = width * 72.0;
+    double gap = width * 72.0;
+    if (m_style["draw:dots1-length"])
+      dots1len = m_style["draw:dots1-length"]->getDouble() * 72.0;
+    if (m_style["draw:dots2-length"])
+      dots2len = m_style["draw:dots2-length"]->getDouble() * 72.0;
+    if (m_style["draw:distance"])
+      gap = m_style["draw:distance"]->getDouble() * 72.0;
     m_outputSink << "stroke-dasharray: ";
     for (int i = 0; i < dots1; i++)
     {
       if (i)
         m_outputSink << ", ";
-      m_outputSink << (int)dots1len;
+      m_outputSink << dots1len;
       m_outputSink << ", ";
-      m_outputSink << (int)gap;
+      m_outputSink << gap;
     }
     for (int j = 0; j < dots2; j++)
     {
       m_outputSink << ", ";
-      m_outputSink << (int)dots2len;
+      m_outputSink << dots2len;
       m_outputSink << ", ";
-      m_outputSink << (int)gap;
+      m_outputSink << gap;
     }
     m_outputSink << "; ";
   }

@@ -1167,8 +1167,8 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
                              defaultStyle.m_spaceAfterEmu.get_value_or(0));
   unsigned spaceBeforeEmu = style.m_spaceBeforeEmu.get_value_or(
                               defaultStyle.m_spaceBeforeEmu.get_value_or(0));
-  unsigned firstLineIndentEmu = style.m_firstLineIndentEmu.get_value_or(
-                                  defaultStyle.m_firstLineIndentEmu.get_value_or(0));
+  int firstLineIndentEmu = style.m_firstLineIndentEmu.get_value_or(
+                             defaultStyle.m_firstLineIndentEmu.get_value_or(0));
   unsigned leftIndentEmu = style.m_leftIndentEmu.get_value_or(
                              defaultStyle.m_leftIndentEmu.get_value_or(0));
   unsigned rightIndentEmu = style.m_rightIndentEmu.get_value_or(

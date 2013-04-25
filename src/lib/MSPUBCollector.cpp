@@ -1193,6 +1193,12 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   {
     ret.insert("fo:margin-right", (double)rightIndentEmu / EMUS_IN_INCH);
   }
+  unsigned dropCapLines = style.m_dropCapLines.get_value_or(
+                            defaultStyle.m_dropCapLines.get_value_or(0));
+  if (dropCapLines != 0)
+  {
+    ret.insert("style:drop-cap", (int)dropCapLines);
+  }
   return ret;
 }
 

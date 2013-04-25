@@ -1260,6 +1260,9 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     case PARAGRAPH_LIST_NUMBER_RESTART:
       numberIfRestarted = info.data;
       break;
+    case PARAGRAPH_DROP_CAP_LINES:
+      ret.m_dropCapLines = info.data;
+      break;
     default:
       break;
     }

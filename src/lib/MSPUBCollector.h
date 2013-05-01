@@ -37,7 +37,6 @@
 #include <string>
 #include <algorithm>
 
-#include <boost/ptr_container/ptr_map.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

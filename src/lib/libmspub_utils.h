@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include <boost/ptr_container/ptr_map.hpp>
 #include <libwpd/libwpd.h>
 #include <libwpd-stream/libwpd-stream.h>
 

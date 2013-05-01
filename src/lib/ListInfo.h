@@ -30,7 +30,6 @@
 #define __LISTINFO_H__
 
 #include <boost/optional.hpp>
-#include <boost/cstdint.hpp>
 
 #include "NumberingType.h"
 #include "NumberingDelimiter.h"

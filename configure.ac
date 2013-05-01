@@ -66,10 +66,15 @@ AC_SUBST(ZLIB_LIBS)
 # ===========================
 # Find required boost headers
 # ===========================
-AC_CHECK_HEADER(
-	boost/ptr_container/ptr_map.hpp,
+AC_CHECK_HEADERS(
+	boost/bind.hpp \
+	boost/function.hpp \
+	boost/optional.hpp \
+	boost/ptr_container/ptr_vector.hpp \
+	boost/scoped_ptr.hpp \
+	boost/shared_ptr.hpp,
 	[],
-	[AC_MSG_ERROR(boost/ptr_container/ptr_map.hpp not found. install boost)],
+	[AC_MSG_ERROR(Required boost headers not found. Install boost)],
 	[]
 )
 

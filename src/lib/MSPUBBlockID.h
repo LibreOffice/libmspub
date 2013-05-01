@@ -69,6 +69,8 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   PARAGRAPH_LEFT_INDENT = 0xD,
   PARAGRAPH_RIGHT_INDENT = 0xE,
   PARAGRAPH_DROP_CAP_LINES = 0x8,
+  PARAGRAPH_DROP_CAP_UP = 0x2C,
+  PARAGRAPH_DROP_CAP_LETTERS = 0x2D,
   THIS_MASTER_NAME = 0xE,
   APPLIED_MASTER_NAME = 0xD,
   BA_ARRAY = 0x02,

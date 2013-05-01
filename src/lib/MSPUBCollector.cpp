@@ -809,6 +809,18 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         break;
       }
     }
+    if (info.m_numColumns)
+    {
+      unsigned ncols = info.m_numColumns.get_value_or(0);
+      if (ncols > 0)
+        props.insert("fo:column-count", (int)ncols);
+    }
+    if (info.m_columnSpacing)
+    {
+      unsigned ngap = info.m_columnSpacing;
+      if (ngap > 0)
+        props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
+    }
     m_painter->startTextObject(props, WPXPropertyListVector());
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {
@@ -1198,6 +1210,12 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   if (dropCapLines != 0)
   {
     ret.insert("style:drop-cap", (int)dropCapLines);
+  }
+  unsigned dropCapLetters = style.m_dropCapLetters.get_value_or(
+                              defaultStyle.m_dropCapLetters.get_value_or(0));
+  if (dropCapLetters != 0)
+  {
+    ret.insert("style:length", (int)dropCapLetters);
   }
   return ret;
 }

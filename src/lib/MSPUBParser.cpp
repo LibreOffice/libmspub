@@ -1263,6 +1263,9 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(WPXInputStream
     case PARAGRAPH_DROP_CAP_LINES:
       ret.m_dropCapLines = info.data;
       break;
+    case PARAGRAPH_DROP_CAP_LETTERS:
+      ret.m_dropCapLetters = info.data;
+      break;
     default:
       break;
     }
@@ -1686,17 +1689,19 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                         dotStyle));
           }
 
-          unsigned *ptr_numColumns = getIfExists(foptValues.m_scalarValues,
-                                                 FIELDID_NUM_COLUMNS);
-          if (ptr_numColumns)
+          if (!!maybe_tertiaryFoptValues)
           {
-            m_collector->setShapeNumColumns(*shapeSeqNum, *ptr_numColumns);
-          }
-          unsigned *ptr_columnSpacing = getIfExists(foptValues.m_scalarValues,
-                                        FIELDID_COLUMN_SPACING);
-          if (ptr_columnSpacing)
-          {
-            m_collector->setShapeColumnSpacing(*shapeSeqNum, *ptr_columnSpacing);
+            std::map<unsigned short, unsigned> &tertiaryFoptValues = maybe_tertiaryFoptValues.get();
+            unsigned *ptr_numColumns = getIfExists(tertiaryFoptValues, FIELDID_NUM_COLUMNS);
+            if (ptr_numColumns)
+            {
+              m_collector->setShapeNumColumns(*shapeSeqNum, *ptr_numColumns);
+            }
+            unsigned *ptr_columnSpacing = getIfExists(tertiaryFoptValues, FIELDID_COLUMN_SPACING);
+            if (ptr_columnSpacing)
+            {
+              m_collector->setShapeColumnSpacing(*shapeSeqNum, *ptr_columnSpacing);
+            }
           }
           unsigned *ptr_beginArrowStyle = getIfExists(foptValues.m_scalarValues,
                                           FIELDID_BEGIN_ARROW_STYLE);
@@ -1774,7 +1779,6 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           {
             std::vector<libmspub::Vertex> ret = parseVertices(wrapVertexData);
             m_collector->setShapeClipPath(*shapeSeqNum, ret);
-            MSPUB_DEBUG_MSG(("Current Escher shape has wrap Path\n"));
           }
         }
         if (foundAnchor)
@@ -2171,7 +2175,6 @@ libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(WPXInputStream *in
     unsigned short id = readU16(input);
     unsigned value  = readU32(input);
     ret.m_scalarValues[id] = value;
-    MSPUB_DEBUG_MSG(("EscherFopt ID %u  Value %u\n", id, value));
     bool complex = id & 0x8000;
     if (complex)
     {

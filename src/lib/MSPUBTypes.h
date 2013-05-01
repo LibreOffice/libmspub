@@ -159,10 +159,11 @@ struct ParagraphStyle
   boost::optional<ListInfo> m_listInfo;
   std::vector<unsigned> m_tabStopsInEmu;
   boost::optional<unsigned> m_dropCapLines;
+  boost::optional<unsigned> m_dropCapLetters;
   ParagraphStyle() :
     m_align(), m_defaultCharStyleIndex(), m_lineSpacing(), m_spaceBeforeEmu(),
     m_spaceAfterEmu(), m_firstLineIndentEmu(), m_leftIndentEmu(),
-    m_rightIndentEmu(), m_listInfo(), m_tabStopsInEmu(), m_dropCapLines()
+    m_rightIndentEmu(), m_listInfo(), m_tabStopsInEmu(), m_dropCapLines(), m_dropCapLetters()
   {
   }
 };

@@ -2200,7 +2200,7 @@ libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(WPXInputStream *in
       entryLength = 4;
     }
     input->seek(-6, WPX_SEEK_CUR);
-    readNBytes(input, entryLength * numEntries + 6, ret.m_complexValues[id]);
+    readNBytes(input, static_cast<unsigned long>(entryLength) * numEntries + 6, ret.m_complexValues[id]);
   }
   return ret;
 }

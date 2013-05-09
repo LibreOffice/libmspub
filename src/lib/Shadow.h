@@ -47,16 +47,20 @@ struct Shadow
   ShadowType m_type;
   int m_offsetXInEmu;
   int m_offsetYInEmu;
+  int m_SecondOffsetXInEmu;
+  int m_SecondOffsetYInEmu;
   double m_originXInEmu;
   double m_originYInEmu;
   double m_opacity;
   ColorReference m_color;
-  Shadow(ShadowType type, int offsetXInEmu, int offsetYInEmu,
+  ColorReference m_highColor;
+  Shadow(ShadowType type, int offsetXInEmu, int offsetYInEmu, int secondOffsetXInEmu, int secondOffsetYInEmu,
          double originXInEmu, double originYInEmu, double opacity,
-         ColorReference color)
+         ColorReference color, ColorReference colorH)
     : m_type(type), m_offsetXInEmu(offsetXInEmu), m_offsetYInEmu(offsetYInEmu),
+      m_SecondOffsetXInEmu(secondOffsetXInEmu), m_SecondOffsetYInEmu(secondOffsetYInEmu),
       m_originXInEmu(originXInEmu), m_originYInEmu(originYInEmu),
-      m_opacity(opacity), m_color(color)
+      m_opacity(opacity), m_color(color), m_highColor(colorH)
   {
   }
 };

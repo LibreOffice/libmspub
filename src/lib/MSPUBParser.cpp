@@ -1744,35 +1744,36 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
                                           ptr_endArrowHeight ? (ArrowSize)(*ptr_endArrowHeight) :
                                           MEDIUM));
 
-          unsigned *ptr_shadowType = getIfExists(foptValues.m_scalarValues,
-                                                 FIELDID_SHADOW_TYPE);
-          if (ptr_shadowType)
+          unsigned *shadowBoolProps = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_BOOL_PROPS);
+          if (shadowBoolProps)
           {
-            ShadowType shadowType = static_cast<ShadowType>(*ptr_shadowType);
-            unsigned *shadowColor = getIfExists(foptValues.m_scalarValues,
-                                                FIELDID_SHADOW_COLOR);
-            unsigned *shadowOpacity = getIfExists(foptValues.m_scalarValues,
-                                                  FIELDID_SHADOW_OPACITY);
-            unsigned *shadowOffsetX = getIfExists(foptValues.m_scalarValues,
-                                                  FIELDID_SHADOW_OFFSET_X);
-            unsigned *shadowOffsetY = getIfExists(foptValues.m_scalarValues,
-                                                  FIELDID_SHADOW_OFFSET_Y);
-            unsigned *shadowOriginX = getIfExists(foptValues.m_scalarValues,
-                                                  FIELDID_SHADOW_ORIGIN_X);
-            unsigned *shadowOriginY = getIfExists(foptValues.m_scalarValues,
-                                                  FIELDID_SHADOW_ORIGIN_Y);
-            /* unsigned *shadowBoolProps = getIfExists(foptValues.m_scalarValues,
-                                        FIELDID_SHADOW_BOOL_PROPS); */
-            m_collector->setShapeShadow(*shapeSeqNum, Shadow(shadowType,
-                                        shadowOffsetX ? static_cast<int>(*shadowOffsetX) : 0x6338,
-                                        shadowOffsetY ? static_cast<int>(*shadowOffsetY) : 0x6338,
-                                        shadowOriginX ? toFixedPoint(static_cast<int>(*shadowOriginX)) : 0,
-                                        shadowOriginY ? toFixedPoint(static_cast<int>(*shadowOriginY)) : 0,
-                                        toFixedPoint(shadowOpacity ? static_cast<int>(*shadowOpacity)
-                                            : 0x10000),
-                                        ColorReference(shadowColor ? *shadowColor : 0)));
+            unsigned shadowProps = *shadowBoolProps;
+            if ((shadowProps & FLAG_USE_FSHADOW) && (shadowProps & FLAG_USE_SHADOW))
+            {
+              unsigned *ptr_shadowType = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_TYPE);
+              ShadowType shadowType = static_cast<ShadowType>(ptr_shadowType ? *ptr_shadowType : 0);
+              unsigned *shadowColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_COLOR);
+              unsigned *shadowHColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_HIGHLIGHT);
+              unsigned *shadowOpacity = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_OPACITY);
+              unsigned *shadowOffsetX = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_OFFSET_X);
+              unsigned *shadowOffsetY = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_OFFSET_Y);
+              unsigned *shadowOffsetX2 = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_SECOND_OFFSET_X);
+              unsigned *shadowOffsetY2 = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_SECOND_OFFSET_Y);
+              unsigned *shadowOriginX = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_ORIGIN_X);
+              unsigned *shadowOriginY = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_ORIGIN_Y);
+              m_collector->setShapeShadow(*shapeSeqNum, Shadow(shadowType,
+                                          shadowOffsetX ? static_cast<int>(*shadowOffsetX) : 0x6338,
+                                          shadowOffsetY ? static_cast<int>(*shadowOffsetY) : 0x6338,
+                                          shadowOffsetX2 ? static_cast<int>(*shadowOffsetX2) : 0,
+                                          shadowOffsetY2 ? static_cast<int>(*shadowOffsetY2) : 0,
+                                          shadowOriginX ? toFixedPoint(static_cast<int>(*shadowOriginX)) : 0,
+                                          shadowOriginY ? toFixedPoint(static_cast<int>(*shadowOriginY)) : 0,
+                                          toFixedPoint(shadowOpacity ? static_cast<int>(*shadowOpacity) : 0x10000),
+                                          ColorReference(shadowColor ? *shadowColor : 0x00808080),
+                                          ColorReference(shadowHColor ? *shadowHColor : 0x00CBCBCB)
+                                                              ));
 
-
+            }
           }
 
           const std::vector<unsigned char> vertexData = foptValues.m_complexValues[FIELDID_P_VERTICES];

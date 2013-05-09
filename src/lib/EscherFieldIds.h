@@ -98,9 +98,12 @@
 #define FIELDID_PICTURE_RECOLOR        0x011A
 #define FIELDID_SHADOW_TYPE            0x0200
 #define FIELDID_SHADOW_COLOR           0x0201
+#define FIELDID_SHADOW_HIGHLIGHT       0x0202
 #define FIELDID_SHADOW_OPACITY         0x0204
 #define FIELDID_SHADOW_OFFSET_X        0x0205
 #define FIELDID_SHADOW_OFFSET_Y        0x0206
+#define FIELDID_SHADOW_SECOND_OFFSET_X 0x0207
+#define FIELDID_SHADOW_SECOND_OFFSET_Y 0x0208
 #define FIELDID_SHADOW_ORIGIN_X        0x0210
 #define FIELDID_SHADOW_ORIGIN_Y        0x0211
 #define FIELDID_SHADOW_BOOL_PROPS      0x023F
@@ -113,6 +116,8 @@
 #define FLAG_LEFT_INSET_PEN_OK (1 << 5)
 #define FLAG_GEOM_USE_LINE_OK (1 << 12)
 #define FLAG_GEOM_LINE_OK (1 << 28)
+#define FLAG_USE_FSHADOW   (1 << 17)
+#define FLAG_USE_SHADOW   (1 << 1)
 
 #endif /* __ESCHERFIELDIDS_H__ */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

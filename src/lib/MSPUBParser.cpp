@@ -1543,6 +1543,16 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
             {
               MSPUB_DEBUG_MSG(("Couldn't find corresponding escherDelay index\n"));
             }
+            unsigned *ptr_pictureBrightness = getIfExists(foptValues.m_scalarValues, FIELDID_PICTURE_BRIGHTNESS);
+            if (ptr_pictureBrightness)
+            {
+              m_collector->setShapePictureBrightness(*shapeSeqNum, (int)(*ptr_pictureBrightness));
+            }
+            unsigned *ptr_pictureContrast = getIfExists(foptValues.m_scalarValues, FIELDID_PICTURE_CONTRAST);
+            if (ptr_pictureContrast)
+            {
+              m_collector->setShapePictureContrast(*shapeSeqNum, (int)(*ptr_pictureContrast));
+            }
           }
           unsigned *ptr_lineBackColor =
             getIfExists(foptValues.m_scalarValues, FIELDID_LINE_BACK_COLOR);

@@ -55,6 +55,18 @@ void libmspub::MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
   m_shapeInfosBySeqNum[seqNum].m_pictureRecolor = recolor;
 }
 
+void libmspub::MSPUBCollector::setShapePictureBrightness(unsigned seqNum,
+    int brightness)
+{
+  m_shapeInfosBySeqNum[seqNum].m_pictureBrightness = brightness;
+}
+
+void libmspub::MSPUBCollector::setShapePictureContrast(unsigned seqNum,
+    int contrast)
+{
+  m_shapeInfosBySeqNum[seqNum].m_pictureContrast = contrast;
+}
+
 void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
     const Arrow &arrow)
 {
@@ -471,6 +483,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       graphicsProps.insert("draw:green",
                            static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
     }
+    if (!!info.m_pictureBrightness)
+      graphicsProps.insert("draw:luminance", static_cast<double>(info.m_pictureBrightness.get() + 32768.0) / 65536.0, WPX_PERCENT);
     bool shadowPropsInserted = false;
     if (!!info.m_shadow)
     {
@@ -503,6 +517,8 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       graphicsProps.remove("draw:blue");
       graphicsProps.remove("draw:green");
     }
+    if (!!info.m_pictureBrightness)
+      graphicsProps.remove("draw:luminance");
     if (shadowPropsInserted)
     {
       graphicsProps.remove("draw:shadow");

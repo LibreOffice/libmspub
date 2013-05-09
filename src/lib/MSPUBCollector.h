@@ -90,6 +90,8 @@ public:
   void setShapeType(unsigned seqNum, ShapeType type);
   void setShapeCropType(unsigned seqNum, ShapeType cropType);
   void setShapePictureRecolor(unsigned seqNum, const ColorReference &recolor);
+  void setShapePictureBrightness(unsigned seqNum, int brightness);
+  void setShapePictureContrast(unsigned seqNum, int contrast);
   void setShapeTableInfo(unsigned seqNum, const TableInfo &ti);
   void setShapeBorderImageId(unsigned seqNum, unsigned borderImageId);
   void setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);

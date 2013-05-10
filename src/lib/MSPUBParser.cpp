@@ -39,6 +39,7 @@
 #include "MSPUBBlockType.h"
 #include "MSPUBContentChunkType.h"
 #include "MSPUBConstants.h"
+#include "MSPUBInternalStream.h"
 #include "EscherContainerType.h"
 #include "EscherFieldIds.h"
 #include "libmspub_utils.h"
@@ -270,7 +271,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
       {
         // Reconstruct BMP header
         // cf. http://en.wikipedia.org/wiki/BMP_file_format , accessed 2012-5-31
-        WPXStringStream buf(img.getDataBuffer(), img.size());
+        MSPUBInternalStream buf(img.getDataBuffer(), img.size());
         if (img.size() < 0x2E + 4)
         {
           ++m_lastAddedImage;

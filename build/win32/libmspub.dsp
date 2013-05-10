@@ -111,6 +111,10 @@ SOURCE=..\..\src\lib\MSPUBDocument.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\src\lib\MSPUBInternalStream.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\MSPUBParser.cpp
 # End Source File
 # Begin Source File
@@ -232,6 +236,10 @@ SOURCE=..\..\src\lib\MSPUBContentChunkType.h
 # Begin Source File
 
 SOURCE=..\..\src\lib\MSPUBDocument.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\src\lib\MSPUBInteernalStream.h
 # End Source File
 # Begin Source File
 

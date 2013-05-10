@@ -32,6 +32,7 @@
     <ClInclude Include="..\..\src\lib\MSPUBConstants.h" />
     <ClInclude Include="..\..\src\lib\MSPUBContentChunkType.h" />
     <ClInclude Include="..\..\src\lib\MSPUBDocument.h" />
+    <ClInclude Include="..\..\src\lib\MSPUBInternalStream.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser2k.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser97.h" />
@@ -58,6 +59,7 @@
     <ClCompile Include="..\..\src\lib\libmspub_utils.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBCollector.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBDocument.cpp" />
+    <ClCompile Include="..\..\src\lib\MSPUBInternalStream.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBParser.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBParser2k.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBParser97.cpp" />

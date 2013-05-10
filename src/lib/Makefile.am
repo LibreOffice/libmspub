@@ -18,6 +18,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_DEPENDENCIES = @LIBMSPUB
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LDFLAGS = $(version_info) -export-dynamic -no-undefined
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBCollector.cpp \
+	MSPUBInternalStream.cpp \
 	MSPUBDocument.cpp \
 	MSPUBParser.cpp \
 	MSPUBParser2k.cpp \
@@ -40,6 +41,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBCollector.h \
 	MSPUBConstants.h \
 	MSPUBContentChunkType.h \
+	MSPUBInternalStream.h \
 	MSPUBParser.h \
 	MSPUBParser2k.h \
 	MSPUBSVGGenerator.h \

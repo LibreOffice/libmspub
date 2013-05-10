@@ -239,7 +239,7 @@ SOURCE=..\..\src\lib\MSPUBDocument.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\MSPUBInteernalStream.h
+SOURCE=..\..\src\lib\MSPUBInternalStream.h
 # End Source File
 # Begin Source File
 

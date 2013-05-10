@@ -270,7 +270,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
       {
         // Reconstruct BMP header
         // cf. http://en.wikipedia.org/wiki/BMP_file_format , accessed 2012-5-31
-        const unsigned char *buf = img.getDataBuffer();
+        WPXStringStream buf(img.getDataBuffer(), img.size());
         if (img.size() < 0x2E + 4)
         {
           ++m_lastAddedImage;
@@ -278,8 +278,10 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
           input->seek(info.contentsOffset + info.contentsLength, WPX_SEEK_SET);
           continue;
         }
-        unsigned short bitsPerPixel = readU16(buf, 0x0E);
-        unsigned numPaletteColors = readU32(buf, 0x20);
+        buf.seek(0x0E, WPX_SEEK_SET);
+        unsigned short bitsPerPixel = readU16(&buf);
+        buf.seek(0x20, WPX_SEEK_SET);
+        unsigned numPaletteColors = readU32(&buf);
         if (numPaletteColors == 0 && bitsPerPixel <= 8)
         {
           numPaletteColors = 1;

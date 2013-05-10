@@ -94,9 +94,6 @@ namespace libmspub
 const char *mimeByImgType(ImgType type);
 const char *windowsCharsetNameByOriginalCharset(const char *name);
 
-uint16_t readU16(const unsigned char *input, unsigned offset);
-uint32_t readU32(const unsigned char *input, unsigned offset);
-
 uint8_t readU8(WPXInputStream *input);
 uint16_t readU16(WPXInputStream *input);
 uint32_t readU32(WPXInputStream *input);

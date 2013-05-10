@@ -31,10 +31,10 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "libmspub.h"
 #include <libwpd-stream/libwpd-stream.h>
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
+#include <libmspub/libmspub.h>
 
 class RawPainter : public libwpg::WPGPaintInterface
 {

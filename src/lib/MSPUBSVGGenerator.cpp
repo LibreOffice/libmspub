@@ -28,7 +28,6 @@
  */
 
 #include "MSPUBSVGGenerator.h"
-#include "libmspub.h"
 #include <locale.h>
 #include <sstream>
 #include <string>

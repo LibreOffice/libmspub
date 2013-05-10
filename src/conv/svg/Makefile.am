@@ -1,6 +1,6 @@
 bin_PROGRAMS = pub2xhtml
 
-AM_CXXFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib  $(WPG_CFLAGS) $(WPD_CFLAGS) $(DEBUG_CXXFLAGS)
+AM_CXXFLAGS = -I$(top_srcdir)/inc  $(WPG_CFLAGS) $(WPD_CFLAGS) $(DEBUG_CXXFLAGS)
 
 pub2xhtml_DEPENDENCIES = @PUB2XHTML_WIN32_RESOURCE@
 

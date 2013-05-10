@@ -151,6 +151,18 @@ SOURCE=..\..\src\lib\VectorTransformation2D.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\inc\libmspub\libmspub.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\inc\libmspub\MSPUBDocument.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\inc\libmspub\MSPUBStringVector.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\src\lib\Arrow.h
 # End Source File
 # Begin Source File
@@ -191,10 +203,6 @@ SOURCE=..\..\src\lib\FillType.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\libmspub.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\lib\libmspub_utils.h
 # End Source File
 # Begin Source File
@@ -231,10 +239,6 @@ SOURCE=..\..\src\lib\MSPUBContentChunkType.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\MSPUBDocument.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\lib\MSPUBParser.h
 # End Source File
 # Begin Source File
@@ -244,10 +248,6 @@ SOURCE=..\..\src\lib\MSPUBParser2k.h
 # Begin Source File
 
 SOURCE=..\..\src\lib\MSPUBParser97.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\src\lib\MSPUBStringVector.h
 # End Source File
 # Begin Source File
 

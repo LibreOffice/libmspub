@@ -28,7 +28,7 @@
  */
 
 #include <vector>
-#include "MSPUBStringVector.h"
+#include <libmspub/libmspub.h>
 
 namespace libmspub
 {

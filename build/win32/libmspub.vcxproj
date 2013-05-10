@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\libmspub\libmspub.h" />
+    <ClInclude Include="..\..\inc\libmspub\MSPUBDocument.h" />
+    <ClInclude Include="..\..\inc\libmspub\MSPUBStringVector.h" />
     <ClInclude Include="..\..\src\lib\Arrow.h" />
     <ClInclude Include="..\..\src\lib\BorderArtInfo.h" />
     <ClInclude Include="..\..\src\lib\ColorReference.h" />
@@ -21,7 +24,6 @@
     <ClInclude Include="..\..\src\lib\EscherFieldIds.h" />
     <ClInclude Include="..\..\src\lib\Fill.h" />
     <ClInclude Include="..\..\src\lib\FillType.h" />
-    <ClInclude Include="..\..\src\lib\libmspub.h" />
     <ClInclude Include="..\..\src\lib\libmspub_utils.h" />
     <ClInclude Include="..\..\src\lib\Line.h" />
     <ClInclude Include="..\..\src\lib\ListInfo.h" />
@@ -31,11 +33,9 @@
     <ClInclude Include="..\..\src\lib\MSPUBCollector.h" />
     <ClInclude Include="..\..\src\lib\MSPUBConstants.h" />
     <ClInclude Include="..\..\src\lib\MSPUBContentChunkType.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBDocument.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser2k.h" />
     <ClInclude Include="..\..\src\lib\MSPUBParser97.h" />
-    <ClInclude Include="..\..\src\lib\MSPUBStringVector.h" />
     <ClInclude Include="..\..\src\lib\MSPUBSVGGenerator.h" />
     <ClInclude Include="..\..\src\lib\MSPUBTypes.h" />
     <ClInclude Include="..\..\src\lib\NumberingDelimiter.h" />
@@ -102,7 +102,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>$(LIBWPD_INCLUDE_DIR);$(LIBWPG_INCLUDE_DIR);$(ZLIB_INCLUDE_DIR);$(BOOST_INCLUDE_DIR);$(ICU_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;$(LIBWPD_INCLUDE_DIR);$(LIBWPG_INCLUDE_DIR);$(ZLIB_INCLUDE_DIR);$(BOOST_INCLUDE_DIR);$(ICU_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>NDEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -132,7 +132,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(LIBWPD_INCLUDE_DIR);$(LIBWPG_INCLUDE_DIR);$(ZLIB_INCLUDE_DIR);$(BOOST_INCLUDE_DIR);$(ICU_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\inc;$(LIBWPD_INCLUDE_DIR);$(LIBWPG_INCLUDE_DIR);$(ZLIB_INCLUDE_DIR);$(BOOST_INCLUDE_DIR);$(ICU_INCLUDE_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;DEBUG;WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>

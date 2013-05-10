@@ -31,7 +31,8 @@
 #include <string>
 #include <string.h>
 #include <boost/scoped_ptr.hpp>
-#include "MSPUBDocument.h"
+#include <libmspub/libmspub.h>
+
 #include "MSPUBSVGGenerator.h"
 #include "MSPUBCollector.h"
 #include "MSPUBParser.h"

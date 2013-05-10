@@ -33,9 +33,9 @@
 #include <fstream>
 #include <stdio.h>
 #include <string.h>
-#include "libmspub.h"
 #include <libwpd-stream/libwpd-stream.h>
 #include <libwpd/libwpd.h>
+#include <libmspub/libmspub.h>
 
 namespace
 {

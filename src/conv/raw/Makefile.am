@@ -1,6 +1,6 @@
 bin_PROGRAMS = pub2raw
 
-AM_CXXFLAGS = -I$(top_srcdir)/src/lib -I$(top_builddir)/src/lib $(WPG_CFLAGS) $(WPD_CFLAGS) $(DEBUG_CXXFLAGS)
+AM_CXXFLAGS = -I$(top_srcdir)/inc $(WPG_CFLAGS) $(WPD_CFLAGS) $(DEBUG_CXXFLAGS)
 
 pub2raw_DEPENDENCIES = @PUB2RAW_WIN32_RESOURCE@
 

@@ -35,7 +35,7 @@
 #include <sstream>
 #include <libwpd/libwpd.h>
 #include <libwpg/libwpg.h>
-#include "MSPUBStringVector.h"
+#include <libmspub/libmspub.h>
 
 namespace libmspub
 {

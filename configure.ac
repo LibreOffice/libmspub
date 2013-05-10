@@ -286,11 +286,13 @@ src/conv/svg/Makefile
 src/conv/svg/pub2xhtml.rc
 src/lib/Makefile
 src/lib/libmspub.rc
+inc/Makefile
+inc/libmspub/Makefile
 build/Makefile
 build/win32/Makefile
 docs/Makefile
 docs/doxygen/Makefile
-libmspub-0.0.pc
+libmspub-$MSPUB_MAJOR_VERSION.$MSPUB_MINOR_VERSION.pc:libmspub.pc.in
 ])
 AC_OUTPUT
 

@@ -197,10 +197,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\MSPUBInternalStream.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\lib\MSPUBParser.cpp"
 				>
 			</File>
@@ -323,10 +319,6 @@
 			</File>
 			<File
 				RelativePath="..\..\src\lib\MSPUBDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\src\lib\MSPUBInternalStream.h"
 				>
 			</File>
 			<File

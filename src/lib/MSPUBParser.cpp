@@ -946,14 +946,14 @@ bool libmspub::MSPUBParser::parseQuill(WPXInputStream *input)
       input->seek(i->offset, WPX_SEEK_SET);
       std::vector<TextSpanReference> thisBlockSpans = parseCharacterStyles(input, *i);
       spans.insert(spans.end(), thisBlockSpans.begin(), thisBlockSpans.end());
-      parsedFdpc = true;
+      parsedFdpc |= !thisBlockSpans.empty();
     }
     else if (i->name == "FDPP")
     {
       input->seek(i->offset, WPX_SEEK_SET);
       std::vector<TextParagraphReference> thisBlockParas = parseParagraphStyles(input, *i);
       paras.insert(paras.end(), thisBlockParas.begin(), thisBlockParas.end());
-      parsedFdpp = true;
+      parsedFdpp |= !thisBlockParas.empty();
     }
     else if (i->name == "STSH")
     {

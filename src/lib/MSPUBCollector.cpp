@@ -563,176 +563,179 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         }
         double borderVertPadding = borderVertTotalPadding / (numImagesVert - 1);
         double borderHorizPadding = borderHorizTotalPadding / (numImagesHoriz - 1);
-        const BorderArtInfo &ba = m_borderImages[maybeBorderImg.get()];
-        if (!ba.m_offsets.empty())
+        if (maybeBorderImg.get() < m_borderImages.size())
         {
-          WPXPropertyList baProps;
-          baProps.insert("draw:stroke", "none");
-          baProps.insert("draw:fill", "solid");
-          baProps.insert("draw:fill-color", "#ffffff");
-          m_painter->setStyle(baProps, WPXPropertyListVector());
-          WPXPropertyList topRectProps;
-          topRectProps.insert("svg:x", x);
-          topRectProps.insert("svg:y", y);
-          topRectProps.insert("svg:height", borderImgWidth);
-          topRectProps.insert("svg:width", width);
-          m_painter->drawRectangle(topRectProps);
-          WPXPropertyList rightRectProps;
-          rightRectProps.insert("svg:x", x + width - borderImgWidth);
-          rightRectProps.insert("svg:y", y);
-          rightRectProps.insert("svg:height", height);
-          rightRectProps.insert("svg:width", borderImgWidth);
-          m_painter->drawRectangle(rightRectProps);
-          WPXPropertyList botRectProps;
-          botRectProps.insert("svg:x", x);
-          botRectProps.insert("svg:y", y + height - borderImgWidth);
-          botRectProps.insert("svg:height", borderImgWidth);
-          botRectProps.insert("svg:width", width);
-          m_painter->drawRectangle(botRectProps);
-          WPXPropertyList leftRectProps;
-          leftRectProps.insert("svg:x", x);
-          leftRectProps.insert("svg:y", y);
-          leftRectProps.insert("svg:height", height);
-          leftRectProps.insert("svg:width", borderImgWidth);
-          m_painter->drawRectangle(leftRectProps);
-          std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
-          boost::optional<Color> oneBitColor;
-          if (!!info.m_lineBackColor)
+          const BorderArtInfo &ba = m_borderImages[maybeBorderImg.get()];
+          if (!ba.m_offsets.empty())
           {
-            oneBitColor = info.m_lineBackColor.get().getFinalColor(m_paletteColors);
-          }
-          // top left
-          unsigned iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                                  ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            writeImage(x, y, borderImgWidth, borderImgWidth,
-                       bi.m_type, bi.m_imgBlob, oneBitColor);
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // top
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
+            WPXPropertyList baProps;
+            baProps.insert("draw:stroke", "none");
+            baProps.insert("draw:fill", "solid");
+            baProps.insert("draw:fill-color", "#ffffff");
+            m_painter->setStyle(baProps, WPXPropertyListVector());
+            WPXPropertyList topRectProps;
+            topRectProps.insert("svg:x", x);
+            topRectProps.insert("svg:y", y);
+            topRectProps.insert("svg:height", borderImgWidth);
+            topRectProps.insert("svg:width", width);
+            m_painter->drawRectangle(topRectProps);
+            WPXPropertyList rightRectProps;
+            rightRectProps.insert("svg:x", x + width - borderImgWidth);
+            rightRectProps.insert("svg:y", y);
+            rightRectProps.insert("svg:height", height);
+            rightRectProps.insert("svg:width", borderImgWidth);
+            m_painter->drawRectangle(rightRectProps);
+            WPXPropertyList botRectProps;
+            botRectProps.insert("svg:x", x);
+            botRectProps.insert("svg:y", y + height - borderImgWidth);
+            botRectProps.insert("svg:height", borderImgWidth);
+            botRectProps.insert("svg:width", width);
+            m_painter->drawRectangle(botRectProps);
+            WPXPropertyList leftRectProps;
+            leftRectProps.insert("svg:x", x);
+            leftRectProps.insert("svg:y", y);
+            leftRectProps.insert("svg:height", height);
+            leftRectProps.insert("svg:width", borderImgWidth);
+            m_painter->drawRectangle(leftRectProps);
+            std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
+            boost::optional<Color> oneBitColor;
+            if (!!info.m_lineBackColor)
             {
-              double imgX = stretch ?
-                            x + borderImgWidth + (iTop - 1) * stretchedImgWidth :
-                            x + iTop * (borderImgWidth + borderHorizPadding);
-              writeImage(imgX, y,
-                         borderImgWidth, stretchedImgWidth,
-                         bi.m_type, bi.m_imgBlob, oneBitColor);
+              oneBitColor = info.m_lineBackColor.get().getFinalColor(m_paletteColors);
             }
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // top right
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            writeImage(x + width - borderImgWidth, y,
-                       borderImgWidth, borderImgWidth,
-                       bi.m_type, bi.m_imgBlob, oneBitColor);
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // right
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
+            // top left
+            unsigned iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                                    ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
             {
-              double imgY = stretch ?
-                            y + borderImgWidth + (iRight - 1) * stretchedImgHeight :
-                            y + iRight * (borderImgWidth + borderVertPadding);
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              writeImage(x, y, borderImgWidth, borderImgWidth,
+                        bi.m_type, bi.m_imgBlob, oneBitColor);
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // top
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              for (unsigned iTop = 1; iTop < numImagesHoriz - 1; ++iTop)
+              {
+                double imgX = stretch ?
+                              x + borderImgWidth + (iTop - 1) * stretchedImgWidth :
+                              x + iTop * (borderImgWidth + borderHorizPadding);
+                writeImage(imgX, y,
+                          borderImgWidth, stretchedImgWidth,
+                          bi.m_type, bi.m_imgBlob, oneBitColor);
+              }
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // top right
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              writeImage(x + width - borderImgWidth, y,
+                        borderImgWidth, borderImgWidth,
+                        bi.m_type, bi.m_imgBlob, oneBitColor);
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // right
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              for (unsigned iRight = 1; iRight < numImagesVert - 1; ++iRight)
+              {
+                double imgY = stretch ?
+                              y + borderImgWidth + (iRight - 1) * stretchedImgHeight :
+                              y + iRight * (borderImgWidth + borderVertPadding);
+                writeImage(x + width - borderImgWidth,
+                          imgY,
+                          stretchedImgHeight, borderImgWidth,
+                          bi.m_type, bi.m_imgBlob, oneBitColor);
+              }
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // bottom right
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
               writeImage(x + width - borderImgWidth,
-                         imgY,
-                         stretchedImgHeight, borderImgWidth,
-                         bi.m_type, bi.m_imgBlob, oneBitColor);
+                        y + height - borderImgWidth,
+                        borderImgWidth, borderImgWidth,
+                        bi.m_type, bi.m_imgBlob, oneBitColor);
             }
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // bottom right
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            writeImage(x + width - borderImgWidth,
-                       y + height - borderImgWidth,
-                       borderImgWidth, borderImgWidth,
-                       bi.m_type, bi.m_imgBlob, oneBitColor);
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // bottom
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
+            if (iOffset + 1 != ba.m_offsets.end())
             {
-              double imgX = stretch ?
-                            x + width - borderImgWidth - iBot * stretchedImgWidth :
-                            x + width - borderImgWidth - iBot * (borderImgWidth + borderHorizPadding);
-              writeImage(
-                imgX, y + height - borderImgWidth,
-                borderImgWidth, stretchedImgWidth,
-                bi.m_type, bi.m_imgBlob, oneBitColor);
+              ++iOffset;
             }
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // bottom left
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            writeImage(x, y + height - borderImgWidth,
-                       borderImgWidth, borderImgWidth,
-                       bi.m_type, bi.m_imgBlob, oneBitColor);
-          }
-          if (iOffset + 1 != ba.m_offsets.end())
-          {
-            ++iOffset;
-          }
-          // left
-          iOrdOff = find(ba.m_offsetsOrdered.begin(),
-                         ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
-          if (iOrdOff < ba.m_images.size())
-          {
-            const BorderImgInfo &bi = ba.m_images[iOrdOff];
-            for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
+            // bottom
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
             {
-              double imgY = stretch ?
-                            y + height - borderImgWidth - iLeft * stretchedImgHeight :
-                            y + height - borderImgWidth -
-                            iLeft * (borderImgWidth + borderVertPadding);
-              writeImage(x, imgY, stretchedImgHeight, borderImgWidth,
-                         bi.m_type, bi.m_imgBlob, oneBitColor);
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              for (unsigned iBot = 1; iBot < numImagesHoriz - 1; ++iBot)
+              {
+                double imgX = stretch ?
+                              x + width - borderImgWidth - iBot * stretchedImgWidth :
+                              x + width - borderImgWidth - iBot * (borderImgWidth + borderHorizPadding);
+                writeImage(
+                  imgX, y + height - borderImgWidth,
+                  borderImgWidth, stretchedImgWidth,
+                  bi.m_type, bi.m_imgBlob, oneBitColor);
+              }
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // bottom left
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              writeImage(x, y + height - borderImgWidth,
+                        borderImgWidth, borderImgWidth,
+                        bi.m_type, bi.m_imgBlob, oneBitColor);
+            }
+            if (iOffset + 1 != ba.m_offsets.end())
+            {
+              ++iOffset;
+            }
+            // left
+            iOrdOff = find(ba.m_offsetsOrdered.begin(),
+                          ba.m_offsetsOrdered.end(), *iOffset) - ba.m_offsetsOrdered.begin();
+            if (iOrdOff < ba.m_images.size())
+            {
+              const BorderImgInfo &bi = ba.m_images[iOrdOff];
+              for (unsigned iLeft = 1; iLeft < numImagesVert - 1; ++iLeft)
+              {
+                double imgY = stretch ?
+                              y + height - borderImgWidth - iLeft * stretchedImgHeight :
+                              y + height - borderImgWidth -
+                              iLeft * (borderImgWidth + borderVertPadding);
+                writeImage(x, imgY, stretchedImgHeight, borderImgWidth,
+                          bi.m_type, bi.m_imgBlob, oneBitColor);
+              }
             }
           }
         }

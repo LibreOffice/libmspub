@@ -1502,13 +1502,20 @@ void libmspub::MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
 
 bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryData img)
 {
-  MSPUB_DEBUG_MSG(("Image at index %d and of type 0x%x added.\n", index, type));
   while (m_images.size() < index)
   {
     m_images.push_back(std::pair<ImgType, WPXBinaryData>(UNKNOWN, WPXBinaryData()));
   }
-  m_images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
-  return true;
+  if (index > 0)
+  {
+    MSPUB_DEBUG_MSG(("Image at index %d and of type 0x%x added.\n", index, type));
+    m_images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
+  }
+  else
+  {
+    MSPUB_DEBUG_MSG(("0 is not a valid index for image, ignoring.\n"));
+  }
+  return index > 0;
 }
 
 WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,

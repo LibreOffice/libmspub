@@ -44,7 +44,7 @@ ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture,
 WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
 {
   out->insert("draw:fill", "bitmap");
-  if (m_imgIndex <= m_owner->m_images.size())
+  if (m_imgIndex > 0 && m_imgIndex <= m_owner->m_images.size())
   {
     const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
     out->insert("libwpg:mime-type", mimeByImgType(img.first));
@@ -73,7 +73,7 @@ WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
   Color fgColor = m_fg.getFinalColor(m_owner->m_paletteColors);
   Color bgColor = m_bg.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "bitmap");
-  if (m_imgIndex <= m_owner->m_images.size())
+  if (m_imgIndex > 0 && m_imgIndex <= m_owner->m_images.size())
   {
     const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
     const ImgType &type = img.first;

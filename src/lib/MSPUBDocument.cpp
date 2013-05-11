@@ -134,40 +134,47 @@ WPGPaintInterface class implementation when needed. This is often commonly calle
 */
 bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInterface *painter)
 {
-  MSPUBCollector collector(painter);
-  input->seek(0, WPX_SEEK_SET);
-  boost::scoped_ptr<MSPUBParser> parser;
-  switch (getVersion(input))
+  try
   {
-  case MSPUB_2K:
-  {
-    boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
-    if (!quillStream)
+    MSPUBCollector collector(painter);
+    input->seek(0, WPX_SEEK_SET);
+    boost::scoped_ptr<MSPUBParser> parser;
+    switch (getVersion(input))
     {
-      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser97(input, &collector));
-      parser.swap(tmp);
-    }
-    else
+    case MSPUB_2K:
     {
-      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser2k(input, &collector));
-      parser.swap(tmp);
+      boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
+      if (!quillStream)
+      {
+        boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser97(input, &collector));
+        parser.swap(tmp);
+      }
+      else
+      {
+        boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser2k(input, &collector));
+        parser.swap(tmp);
+      }
+      break;
     }
-    break;
-  }
-  case MSPUB_2K2:
-  {
-    boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser(input, &collector));
-    parser.swap(tmp);
-    break;
-  }
-  default:
+    case MSPUB_2K2:
+    {
+      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser(input, &collector));
+      parser.swap(tmp);
+      break;
+    }
+    default:
+      return false;
+    }
+    if (parser)
+    {
+      return parser->parse();
+    }
     return false;
   }
-  if (parser)
+  catch (...)
   {
-    return parser->parse();
+    return false;
   }
-  return false;
 }
 
 /**

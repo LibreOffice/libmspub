@@ -1537,7 +1537,7 @@ void libmspub::MSPUBParser::parseEscherShape(WPXInputStream *input, const Escher
           if (pxId)
           {
             MSPUB_DEBUG_MSG(("Current Escher shape has pxId %d\n", *pxId));
-            if (*pxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*pxId - 1] >= 0)
+            if (*pxId > 0 && *pxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*pxId - 1] >= 0)
             {
               m_collector->setShapeImgIndex(*shapeSeqNum, m_escherDelayIndices[*pxId - 1]);
             }

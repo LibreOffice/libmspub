@@ -1048,9 +1048,12 @@ void libmspub::MSPUBParser::parseFonts(WPXInputStream *input, const QuillChunkRe
   for (unsigned i = 0; i < numElements; ++i)
   {
     unsigned short nameLength = readU16(input);
-    std::vector<unsigned char> name;
-    readNBytes(input, nameLength * 2, name);
-    m_collector->addFont(name);
+    if (nameLength > 0)
+    {
+      std::vector<unsigned char> name;
+      readNBytes(input, nameLength * 2, name);
+      m_collector->addFont(name);
+    }
     readU32(input);
   }
 }

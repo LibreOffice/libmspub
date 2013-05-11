@@ -334,6 +334,12 @@ uint64_t libmspub::readU64(WPXInputStream *input)
 
 void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out)
 {
+  if (length == 0)
+  {
+    MSPUB_DEBUG_MSG(("Attempt to read 0 bytes!"));
+    return;
+  }
+
   unsigned long numBytesRead = 0;
   const unsigned char *tmpBuffer = input->read(length, numBytesRead);
   if (numBytesRead != length)

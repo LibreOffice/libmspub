@@ -358,6 +358,12 @@ void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vect
 void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters,
                                 const char *encoding)
 {
+  if (characters.empty())
+  {
+    MSPUB_DEBUG_MSG(("Attempt to append 0 characters!"));
+    return;
+  }
+
   UErrorCode status = U_ZERO_ERROR;
   UConverter *conv = NULL;
   conv = ucnv_open(encoding, &status);

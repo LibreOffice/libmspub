@@ -250,11 +250,12 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
   while (stillReading (input, (unsigned long)-1))
   {
     EscherContainerInfo info = parseEscherContainer(input);
-    if (imgTypeByBlipType(info.type) != UNKNOWN)
+    const ImgType imgType = imgTypeByBlipType(info.type);
+    if (imgType != UNKNOWN)
     {
       WPXBinaryData img;
       unsigned long toRead = info.contentsLength;
-      input->seek(input->tell() + getStartOffset(imgTypeByBlipType(info.type), info.initial), WPX_SEEK_SET);
+      input->seek(input->tell() + getStartOffset(imgType, info.initial), WPX_SEEK_SET);
       while (toRead > 0 && stillReading(input, (unsigned long)-1))
       {
         unsigned long howManyRead = 0;
@@ -262,11 +263,11 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
         img.append(buf, howManyRead);
         toRead -= howManyRead;
       }
-      if (imgTypeByBlipType(info.type) == WMF || imgTypeByBlipType(info.type) == EMF)
+      if (imgType == WMF || imgType == EMF)
       {
         img = inflateData(img);
       }
-      else if (imgTypeByBlipType(info.type) == DIB)
+      else if (imgType == DIB)
       {
         // Reconstruct BMP header
         // cf. http://en.wikipedia.org/wiki/BMP_file_format , accessed 2012-5-31
@@ -312,7 +313,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(WPXInputStream *input)
         tmpImg.append(img);
         img = tmpImg;
       }
-      m_collector->addImage(++m_lastAddedImage, imgTypeByBlipType(info.type), img);
+      m_collector->addImage(++m_lastAddedImage, imgType, img);
     }
     else
     {

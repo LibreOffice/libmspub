@@ -145,21 +145,14 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
     {
       boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
       if (!quillStream)
-      {
-        boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser97(input, &collector));
-        parser.swap(tmp);
-      }
+        parser.reset(new MSPUBParser97(input, &collector));
       else
-      {
-        boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser2k(input, &collector));
-        parser.swap(tmp);
-      }
+        parser.reset(new MSPUBParser2k(input, &collector));
       break;
     }
     case MSPUB_2K2:
     {
-      boost::scoped_ptr<MSPUBParser> tmp(new MSPUBParser(input, &collector));
-      parser.swap(tmp);
+      parser.reset(new MSPUBParser(input, &collector));
       break;
     }
     default:

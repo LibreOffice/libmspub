@@ -39,10 +39,6 @@
 #include "PolygonUtils.h"
 #include "Coordinate.h"
 
-#pragma GCC diagnostic ignored "-Wpragmas"
-#pragma GCC diagnostic ignored "-Wuninitialized"
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-
 WPXBinaryData &libmspub::MSPUBCollector::addEOTFont(const WPXString &name)
 {
   m_embeddedFonts.push_back(EmbeddedFontInfo(name));

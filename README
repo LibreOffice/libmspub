@@ -2,10 +2,9 @@ libmspub is a library and a set of tools for reading and converting MS
 Publisher files.
 
 libmspub requires boost, icu, libwpd, libwpg and zlib to build. Most up
-to date code is available from Git repository at libreoffice.org or the
-mirror at freedesktop.org and is currently recommended instead of
-regular releases. Please visit
-http://cgit.freedesktop.org/libreoffice/libmspub/. See
+to date code is available from Git repository at libreoffice.org
+(https://gerrit.libreoffice.org/gitweb?p=libmspub.git) or the mirror at
+freedesktop.org (http://cgit.freedesktop.org/libreoffice/libmspub/). See
 http://www.freedesktop.org/wiki/Software/libmspub for more information.
 
 For convenience of use in third-party projects the library is available under

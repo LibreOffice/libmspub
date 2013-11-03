@@ -1503,7 +1503,7 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
   }
   if (index > 0)
   {
-    MSPUB_DEBUG_MSG(("Image at index %d and of type 0x%x added.\n", index, type));
+    MSPUB_DEBUG_MSG(("Image at index %u and of type 0x%x added.\n", index, type));
     m_images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
   }
   else

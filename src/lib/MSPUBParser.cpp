@@ -752,7 +752,7 @@ bool libmspub::MSPUBParser::parseShape(WPXInputStream *input,
       }
       if (!index)
       {
-        MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %u corresponding to table of seqnum %d.\n",
+        MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %u corresponding to table of seqnum %u.\n",
                          csn, chunk.seqNum));
         return false;
       }

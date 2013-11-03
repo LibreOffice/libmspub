@@ -52,7 +52,6 @@ enum MSPUBVersion
 
 MSPUBVersion getVersion(WPXInputStream *input)
 {
-  MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
   try
   {
     if (!input->isOLEStream())
@@ -69,6 +68,8 @@ MSPUBVersion getVersion(WPXInputStream *input)
 
     if (0x00 != libmspub::readU8(contentsStream.get()))
       return MSPUB_UNKNOWN_VERSION;
+
+    MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
     switch(magicVersionByte)
     {
     case 0x2C:

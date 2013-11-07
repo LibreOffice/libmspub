@@ -37,7 +37,7 @@ class MSPUBStringVectorImpl
 public:
   MSPUBStringVectorImpl() : m_strings() {}
   ~MSPUBStringVectorImpl() {}
-  std::vector<WPXString> m_strings;
+  std::vector<librevenge::RVNGString> m_strings;
 };
 
 } // namespace libmspub
@@ -78,12 +78,12 @@ bool libmspub::MSPUBStringVector::empty() const
   return m_pImpl->m_strings.empty();
 }
 
-const WPXString &libmspub::MSPUBStringVector::operator[](unsigned idx) const
+const librevenge::RVNGString &libmspub::MSPUBStringVector::operator[](unsigned idx) const
 {
   return m_pImpl->m_strings[idx];
 }
 
-void libmspub::MSPUBStringVector::append(const WPXString &str)
+void libmspub::MSPUBStringVector::append(const librevenge::RVNGString &str)
 {
   m_pImpl->m_strings.push_back(str);
 }

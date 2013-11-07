@@ -41,8 +41,8 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 
-#include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
+#include <librevenge/librevenge.h>
+#include <librevenge/librevenge.h>
 
 #include "MSPUBTypes.h"
 #include "libmspub_utils.h"
@@ -73,16 +73,16 @@ class MSPUBCollector
 public:
   typedef std::list<ContentChunkReference>::const_iterator ccr_iterator_t;
 
-  MSPUBCollector(::libwpg::WPGPaintInterface *painter);
+  MSPUBCollector(::librevenge::RVNGDrawingInterface *painter);
   virtual ~MSPUBCollector();
 
   // collector functions
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   void addTextShape(unsigned stringId, unsigned seqNum);
-  bool addImage(unsigned index, ImgType type, WPXBinaryData img);
+  bool addImage(unsigned index, ImgType type, librevenge::RVNGBinaryData img);
   void setBorderImageOffset(unsigned index, unsigned offset);
-  WPXBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex);
+  librevenge::RVNGBinaryData *addBorderImage(ImgType type, unsigned borderArtIndex);
   void setShapePage(unsigned seqNum, unsigned pageSeqNum);
 
   void setNextPage(unsigned seqNum);
@@ -115,7 +115,7 @@ public:
 
   // Microsoft "Embedded OpenType" ... need to figure out how to convert
   // this to a sane format and how to get LibreOffice to understand embedded fonts.
-  WPXBinaryData &addEOTFont(const WPXString &name);
+  librevenge::RVNGBinaryData &addEOTFont(const librevenge::RVNGString &name);
 
   void beginGroup();
   bool endGroup();
@@ -158,14 +158,14 @@ private:
   MSPUBCollector(const MSPUBCollector &);
   MSPUBCollector &operator=(const MSPUBCollector &);
 
-  libwpg::WPGPaintInterface *m_painter;
+  librevenge::RVNGDrawingInterface *m_painter;
   std::list<ContentChunkReference> m_contentChunkReferences;
   double m_width, m_height;
   bool m_widthSet, m_heightSet;
   unsigned short m_numPages;
   std::map<unsigned, std::vector<TextParagraph> > m_textStringsById;
   std::map<unsigned, PageInfo> m_pagesBySeqNum;
-  std::vector<std::pair<ImgType, WPXBinaryData> > m_images;
+  std::vector<std::pair<ImgType, librevenge::RVNGBinaryData> > m_images;
   std::vector<BorderArtInfo> m_borderImages;
   std::vector<ColorReference> m_textColors;
   std::vector<std::vector<unsigned char> > m_fonts;
@@ -195,7 +195,7 @@ private:
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   boost::optional<unsigned> getMasterPageSeqNum(unsigned pageSeqNum) const;
-  void setRectCoordProps(Coordinate, WPXPropertyList *) const;
+  void setRectCoordProps(Coordinate, librevenge::RVNGPropertyList *) const;
   boost::optional<std::vector<libmspub::TextParagraph> > getShapeText(const ShapeInfo &info) const;
   void setupShapeStructures(ShapeGroupElement &elt);
   void addBlackToPaletteIfNecessary();
@@ -204,20 +204,20 @@ private:
   void writePageShapes(unsigned pageSeqNum) const;
   void writePageBackground(unsigned pageSeqNum) const;
   void writeImage(double x, double y, double height, double width,
-                  ImgType type, const WPXBinaryData &blob,
+                  ImgType type, const librevenge::RVNGBinaryData &blob,
                   boost::optional<Color> oneBitColor) const;
   bool pageIsMaster(unsigned pageSeqNum) const;
 
   boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 
-  WPXPropertyList getCharStyleProps(const CharacterStyle &, boost::optional<unsigned> defaultCharStyleIndex) const;
-  WPXPropertyList getParaStyleProps(const ParagraphStyle &, boost::optional<unsigned> defaultParaStyleIndex) const;
+  librevenge::RVNGPropertyList getCharStyleProps(const CharacterStyle &, boost::optional<unsigned> defaultCharStyleIndex) const;
+  librevenge::RVNGPropertyList getParaStyleProps(const ParagraphStyle &, boost::optional<unsigned> defaultParaStyleIndex) const;
   double getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const;
   void ponderStringEncoding(const std::vector<TextParagraph> &str);
   const char *getCalculatedEncoding() const;
 public:
-  static WPXString getColorString(const Color &);
+  static librevenge::RVNGString getColorString(const Color &);
 };
 } // namespace libmspub
 

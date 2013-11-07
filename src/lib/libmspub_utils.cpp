@@ -139,7 +139,7 @@ double libmspub::toFixedPoint(int fp)
   return integralPart + fractionalPart / 65536.;
 }
 
-double libmspub::readFixedPoint(WPXInputStream *input)
+double libmspub::readFixedPoint(librevenge::RVNGInputStream *input)
 {
   return toFixedPoint(readS32(input));
 }
@@ -174,9 +174,9 @@ unsigned libmspub::correctModulo(int x, unsigned n) // returns the canonical rep
   return x % n;
 }
 
-WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
+librevenge::RVNGBinaryData libmspub::inflateData(librevenge::RVNGBinaryData deflated)
 {
-  WPXBinaryData inflated;
+  librevenge::RVNGBinaryData inflated;
   unsigned char out[ZLIB_CHUNK];
   const unsigned char *data = deflated.getDataBuffer();
   z_stream strm;
@@ -188,7 +188,7 @@ WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
   strm.next_in = Z_NULL;
   if (inflateInit2(&strm,-MAX_WBITS) != Z_OK)
   {
-    return WPXBinaryData();
+    return librevenge::RVNGBinaryData();
   }
   int have;
   unsigned left = deflated.size();
@@ -204,7 +204,7 @@ WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
       if (ret == Z_STREAM_ERROR || ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
       {
         inflateEnd(&strm);
-        return WPXBinaryData();
+        return librevenge::RVNGBinaryData();
       }
       have = ZLIB_CHUNK - strm.avail_out;
       inflated.append(out, have);
@@ -221,7 +221,7 @@ WPXBinaryData libmspub::inflateData(WPXBinaryData deflated)
 namespace
 {
 
-static void _appendUCS4(WPXString &text, unsigned ucs4Character)
+static void _appendUCS4(librevenge::RVNGString &text, unsigned ucs4Character)
 {
   unsigned char first;
   int len;
@@ -273,9 +273,9 @@ static void _appendUCS4(WPXString &text, unsigned ucs4Character)
 
 #define MSPUB_NUM_ELEMENTS(array) sizeof(array)/sizeof(array[0])
 
-uint8_t libmspub::readU8(WPXInputStream *input)
+uint8_t libmspub::readU8(librevenge::RVNGInputStream *input)
 {
-  if (!input || input->atEOS())
+  if (!input || input->isEnd())
   {
     MSPUB_DEBUG_MSG(("Something bad happened here!Tell: %ld\n", input->tell()));
     throw EndOfStreamException();
@@ -288,14 +288,14 @@ uint8_t libmspub::readU8(WPXInputStream *input)
   throw EndOfStreamException();
 }
 
-uint16_t libmspub::readU16(WPXInputStream *input)
+uint16_t libmspub::readU16(librevenge::RVNGInputStream *input)
 {
   uint16_t p0 = (uint16_t)readU8(input);
   uint16_t p1 = (uint16_t)readU8(input);
   return (uint16_t)(p0|(p1<<8));
 }
 
-uint32_t libmspub::readU32(WPXInputStream *input)
+uint32_t libmspub::readU32(librevenge::RVNGInputStream *input)
 {
   uint32_t p0 = (uint32_t)readU8(input);
   uint32_t p1 = (uint32_t)readU8(input);
@@ -304,22 +304,22 @@ uint32_t libmspub::readU32(WPXInputStream *input)
   return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
 }
 
-int8_t libmspub::readS8(WPXInputStream *input)
+int8_t libmspub::readS8(librevenge::RVNGInputStream *input)
 {
   return (int8_t)readU8(input);
 }
 
-int16_t libmspub::readS16(WPXInputStream *input)
+int16_t libmspub::readS16(librevenge::RVNGInputStream *input)
 {
   return (int16_t)readU16(input);
 }
 
-int32_t libmspub::readS32(WPXInputStream *input)
+int32_t libmspub::readS32(librevenge::RVNGInputStream *input)
 {
   return (int32_t)readU32(input);
 }
 
-uint64_t libmspub::readU64(WPXInputStream *input)
+uint64_t libmspub::readU64(librevenge::RVNGInputStream *input)
 {
   uint64_t p0 = (uint64_t)readU8(input);
   uint64_t p1 = (uint64_t)readU8(input);
@@ -332,7 +332,7 @@ uint64_t libmspub::readU64(WPXInputStream *input)
   return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
 }
 
-void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out)
+void libmspub::readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::vector<unsigned char> &out)
 {
   if (length == 0)
   {
@@ -355,7 +355,7 @@ void libmspub::readNBytes(WPXInputStream *input, unsigned long length, std::vect
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 
-void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char> characters,
+void libmspub::appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> characters,
                                 const char *encoding)
 {
   if (characters.empty())
@@ -388,9 +388,9 @@ void libmspub::appendCharacters(WPXString &text, const std::vector<unsigned char
   }
 }
 
-bool libmspub::stillReading(WPXInputStream *input, unsigned long until)
+bool libmspub::stillReading(librevenge::RVNGInputStream *input, unsigned long until)
 {
-  if (input->atEOS())
+  if (input->isEnd())
     return false;
   if (input->tell() < 0)
     return false;

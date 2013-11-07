@@ -61,7 +61,7 @@ class MSPUBParser97 : public MSPUBParser2k
 
   bool m_isBanner;
 
-  bool parseDocument(WPXInputStream *input);
+  bool parseDocument(librevenge::RVNGInputStream *input);
   int translateCoordinateIfNecessary(int coordinate) const;
   unsigned getFirstLineOffset() const;
   unsigned getSecondLineOffset() const;
@@ -69,15 +69,15 @@ class MSPUBParser97 : public MSPUBParser2k
   unsigned getShapeFillColorOffset() const;
   unsigned short getTextMarker() const;
   unsigned getTextIdOffset() const;
-  CharacterStyle readCharacterStyle(WPXInputStream *input,
+  CharacterStyle readCharacterStyle(librevenge::RVNGInputStream *input,
                                     unsigned length);
-  void parseContentsTextIfNecessary(WPXInputStream *input);
-  std::vector<SpanInfo97> getSpansInfo(WPXInputStream *input,
+  void parseContentsTextIfNecessary(librevenge::RVNGInputStream *input);
+  std::vector<SpanInfo97> getSpansInfo(librevenge::RVNGInputStream *input,
                                        unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,
                                        unsigned prop3End);
-  TextInfo97 getTextInfo(WPXInputStream *input, unsigned length);
+  TextInfo97 getTextInfo(librevenge::RVNGInputStream *input, unsigned length);
 public:
-  MSPUBParser97(WPXInputStream *input, MSPUBCollector *collector);
+  MSPUBParser97(librevenge::RVNGInputStream *input, MSPUBCollector *collector);
   bool parse();
 };
 }

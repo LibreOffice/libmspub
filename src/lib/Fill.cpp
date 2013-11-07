@@ -41,13 +41,13 @@ ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture,
 {
 }
 
-WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
+librevenge::RVNGPropertyListVector ImgFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   out->insert("draw:fill", "bitmap");
   if (m_imgIndex > 0 && m_imgIndex <= m_owner->m_images.size())
   {
-    const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
-    out->insert("libwpg:mime-type", mimeByImgType(img.first));
+    const std::pair<ImgType, librevenge::RVNGBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
+    out->insert("librevenge:mime-type", mimeByImgType(img.first));
     out->insert("draw:fill-image", img.second.getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
     if (! m_isTexture)
@@ -56,30 +56,30 @@ WPXPropertyListVector ImgFill::getProperties(WPXPropertyList *out) const
     }
     if (m_rotation != 0)
     {
-      WPXString sValue;
+      librevenge::RVNGString sValue;
       sValue.sprintf("%d", m_rotation);
-      out->insert("libwpg:rotate", sValue);
+      out->insert("librevenge:rotate", sValue);
     }
   }
-  return WPXPropertyListVector();
+  return librevenge::RVNGPropertyListVector();
 }
 
 PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner, true, 0), m_fg(fg), m_bg(bg)
 {
 }
 
-WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
+librevenge::RVNGPropertyListVector PatternFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   Color fgColor = m_fg.getFinalColor(m_owner->m_paletteColors);
   Color bgColor = m_bg.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "bitmap");
   if (m_imgIndex > 0 && m_imgIndex <= m_owner->m_images.size())
   {
-    const std::pair<ImgType, WPXBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
+    const std::pair<ImgType, librevenge::RVNGBinaryData> &img = m_owner->m_images[m_imgIndex - 1];
     const ImgType &type = img.first;
-    const WPXBinaryData *data = &img.second;
+    const librevenge::RVNGBinaryData *data = &img.second;
     // fix broken MSPUB DIB by putting in correct fg and bg colors
-    WPXBinaryData fixedImg;
+    librevenge::RVNGBinaryData fixedImg;
     if (type == DIB && data->size() >= 0x36 + 8)
     {
       fixedImg.append(data->getDataBuffer(), 0x36);
@@ -94,27 +94,27 @@ WPXPropertyListVector PatternFill::getProperties(WPXPropertyList *out) const
       fixedImg.append(data->getDataBuffer() + 0x36 + 8, data->size() - 0x36 - 8);
       data = &fixedImg;
     }
-    out->insert("libwpg:mime-type", mimeByImgType(type));
+    out->insert("librevenge:mime-type", mimeByImgType(type));
     out->insert("draw:fill-image", data->getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
   }
-  return WPXPropertyListVector();
+  return librevenge::RVNGPropertyListVector();
 }
 
 SolidFill::SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
 {
 }
 
-WPXPropertyListVector SolidFill::getProperties(WPXPropertyList *out) const
+librevenge::RVNGPropertyListVector SolidFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   Color fillColor = m_color.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "solid");
   out->insert("draw:fill-color", MSPUBCollector::getColorString(fillColor));
-  WPXString val;
+  librevenge::RVNGString val;
   val.sprintf("%d%%", (int)(m_opacity * 100));
   out->insert("draw:opacity", val);
   out->insert("svg:fill-rule", "nonzero");
-  return WPXPropertyListVector();
+  return librevenge::RVNGPropertyListVector();
 }
 
 GradientFill::GradientFill(const MSPUBCollector *owner, double angle, int type) : Fill(owner), m_stops(), m_angle(angle), m_type(type), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0)
@@ -149,9 +149,9 @@ void GradientFill::completeComplexFill()
   }
 }
 
-WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
+librevenge::RVNGPropertyListVector GradientFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
-  WPXPropertyListVector ret;
+  librevenge::RVNGPropertyListVector ret;
   out->insert("draw:fill", "gradient");
   out->insert("svg:fill-rule", "nonzero");
   out->insert("draw:angle", -m_angle); // draw:angle is clockwise in odf format
@@ -180,8 +180,8 @@ WPXPropertyListVector GradientFill::getProperties(WPXPropertyList *out) const
   for (unsigned i = 0; i < m_stops.size(); ++i)
   {
     Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->m_paletteColors);
-    WPXPropertyList stopProps;
-    WPXString sValue;
+    librevenge::RVNGPropertyList stopProps;
+    librevenge::RVNGString sValue;
     sValue.sprintf("%d%%", m_stops[i].m_offsetPercent);
     stopProps.insert("svg:offset", sValue);
     stopProps.insert("svg:stop-color", MSPUBCollector::getColorString(c));

@@ -6,8 +6,8 @@ AC_PREREQ([2.65])
 # Version informations
 # ====================
 m4_define([libmspub_version_major],[0])
-m4_define([libmspub_version_minor],[0])
-m4_define([libmspub_version_micro],[6])
+m4_define([libmspub_version_minor],[1])
+m4_define([libmspub_version_micro],[0])
 m4_define([libmspub_version],[libmspub_version_major.libmspub_version_minor.libmspub_version_micro])
 
 # =============
@@ -35,21 +35,36 @@ AC_CANONICAL_HOST
 
 PKG_PROG_PKG_CONFIG([0.20])
 
-# ====================
-# Find additional apps
-# ====================
-PKG_CHECK_MODULES([WPD],[
-	libwpd-0.9
-	libwpd-stream-0.9
+# ===============
+# Find librevenge
+# ===============
+PKG_CHECK_MODULES([REVENGE],[
+	librevenge-0.0
 ])
-AC_SUBST(WPD_CFLAGS)
-AC_SUBST(WPD_LIBS)
+AC_SUBST([REVENGE_CFLAGS])
+AC_SUBST([REVENGE_LIBS])
 
-PKG_CHECK_MODULES([WPG],[
-	libwpg-0.2
+# =====
+# Tools
+# =====
+AC_ARG_ENABLE([tools],
+	[AS_HELP_STRING([--disable-tools], [Build conversion tools])],
+	[enable_tools="$enableval"],
+	[enable_tools=yes]
+)
+AS_IF([test "x$enable_tools" = "xyes"], [
+	PKG_CHECK_MODULES([REVENGE_STREAM],[
+		librevenge-stream-0.0
+	])
+	PKG_CHECK_MODULES([REVENGE_GENERATORS],[
+		librevenge-generators-0.0
+	])
 ])
-AC_SUBST(WPG_CFLAGS)
-AC_SUBST(WPG_LIBS)
+AC_SUBST([REVENGE_STREAM_CFLAGS])
+AC_SUBST([REVENGE_STREAM_LIBS])
+AC_SUBST([REVENGE_GENERATORS_CFLAGS])
+AC_SUBST([REVENGE_GENERATORS_LIBS])
+AM_CONDITIONAL(BUILD_TOOLS, [test "x$enable_tools" = "xyes"])
 
 # =========
 # Find zlib
@@ -151,9 +166,9 @@ AM_CONDITIONAL([PLATFORM_WIN32], [test "x$platform_win32" = "xyes"])
 # Check for cflags
 # ================
 AC_ARG_ENABLE([werror],
-	[AS_HELP_STRING([--disable-werror], [Treat all warnings as errors, usefull for development])],
+	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, usefull for development])],
 	[enable_werror="$enableval"],
-	[enable_werror=yes]
+	[enable_werror=no]
 )
 AS_IF([test x"$enable_werror" != "xno"], [
 	CFLAGS="$CFLAGS -Werror"
@@ -239,21 +254,6 @@ AS_IF([test "x$enable_debug" = "xyes"], [
 LIBMSPUB_CXXFLAGS="$LIBMSPUB_CFLAGS"
 AC_SUBST(LIBMSPUB_CXXFLAGS)
 AC_SUBST(DEBUG_CXXFLAGS)
-
-# ============
-# Static tools
-# ============
-AC_ARG_ENABLE([static-tools],
-	[AS_HELP_STRING([--enable-static-tools], [Link tools (binaries) statically])],
-	[enable_static_tools="$enableval"],
-	[enable_static_tools=no]
-)
-AS_IF([test "x$enable_static_tools" = "xyes"], [
-	enable_static="yes"
-], [
-	AC_DISABLE_STATIC
-])
-AM_CONDITIONAL(STATIC_TOOLS, [test "x$enable_static_tools" = "xyes"])
 
 # =============
 # Documentation

@@ -30,8 +30,6 @@
 #define __LIBMSPUB_H__
 
 #include "MSPUBDocument.h"
-#include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
 
 #endif
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

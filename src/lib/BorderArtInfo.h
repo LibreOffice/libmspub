@@ -30,7 +30,7 @@
 #define __BORDERARTINFO_H__
 
 #include <vector>
-#include <libwpd/libwpd.h>
+#include <librevenge/librevenge.h>
 #include "MSPUBTypes.h"
 
 namespace libmspub
@@ -38,7 +38,7 @@ namespace libmspub
 struct BorderImgInfo
 {
   ImgType m_type;
-  WPXBinaryData m_imgBlob;
+  librevenge::RVNGBinaryData m_imgBlob;
   BorderImgInfo(ImgType type) :
     m_type(type), m_imgBlob()
   {

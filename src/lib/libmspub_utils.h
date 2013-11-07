@@ -33,8 +33,8 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
-#include <libwpd/libwpd.h>
-#include <libwpd-stream/libwpd-stream.h>
+#include <librevenge/librevenge.h>
+#include <librevenge-stream/librevenge-stream.h>
 
 #include "MSPUBTypes.h"
 
@@ -94,20 +94,20 @@ namespace libmspub
 const char *mimeByImgType(ImgType type);
 const char *windowsCharsetNameByOriginalCharset(const char *name);
 
-uint8_t readU8(WPXInputStream *input);
-uint16_t readU16(WPXInputStream *input);
-uint32_t readU32(WPXInputStream *input);
-uint64_t readU64(WPXInputStream *input);
-int8_t readS8(WPXInputStream *input);
-int16_t readS16(WPXInputStream *input);
-int32_t readS32(WPXInputStream *input);
-double readFixedPoint(WPXInputStream *input);
+uint8_t readU8(librevenge::RVNGInputStream *input);
+uint16_t readU16(librevenge::RVNGInputStream *input);
+uint32_t readU32(librevenge::RVNGInputStream *input);
+uint64_t readU64(librevenge::RVNGInputStream *input);
+int8_t readS8(librevenge::RVNGInputStream *input);
+int16_t readS16(librevenge::RVNGInputStream *input);
+int32_t readS32(librevenge::RVNGInputStream *input);
+double readFixedPoint(librevenge::RVNGInputStream *input);
 double toFixedPoint(int fp);
-void readNBytes(WPXInputStream *input, unsigned long length, std::vector<unsigned char> &out);
+void readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::vector<unsigned char> &out);
 
-void appendCharacters(WPXString &text, std::vector<unsigned char> characters, const char *encoding);
+void appendCharacters(librevenge::RVNGString &text, std::vector<unsigned char> characters, const char *encoding);
 
-bool stillReading(WPXInputStream *input, unsigned long until);
+bool stillReading(librevenge::RVNGInputStream *input, unsigned long until);
 
 void rotateCounter(double &x, double &y, double centerX, double centerY, short rotation);
 void flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal);
@@ -141,7 +141,7 @@ class GenericException
 {
 };
 
-WPXBinaryData inflateData(WPXBinaryData);
+librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData);
 
 } // namespace libmspub
 

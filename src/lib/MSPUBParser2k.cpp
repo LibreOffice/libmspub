@@ -31,7 +31,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <libwpd-stream/libwpd-stream.h>
+#include <librevenge-stream/librevenge-stream.h>
 
 #include "MSPUBParser2k.h"
 #include "ColorReference.h"
@@ -39,7 +39,7 @@
 #include "libmspub_utils.h"
 #include "MSPUBCollector.h"
 
-libmspub::MSPUBParser2k::MSPUBParser2k(WPXInputStream *input, MSPUBCollector *collector)
+libmspub::MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : MSPUBParser(input, collector),
     m_imageDataChunkIndices(),
     m_quillColorEntries(),
@@ -330,21 +330,21 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
   }
 }
 
-void libmspub::MSPUBParser2k::parseContentsTextIfNecessary(WPXInputStream *)
+void libmspub::MSPUBParser2k::parseContentsTextIfNecessary(librevenge::RVNGInputStream *)
 {
 }
 
-bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
+bool libmspub::MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
 {
   parseContentsTextIfNecessary(input);
-  input->seek(0x16, WPX_SEEK_SET);
+  input->seek(0x16, librevenge::RVNG_SEEK_SET);
   unsigned trailerOffset = readU32(input);
-  input->seek(trailerOffset, WPX_SEEK_SET);
+  input->seek(trailerOffset, librevenge::RVNG_SEEK_SET);
   unsigned numBlocks = readU16(input);
   unsigned chunkOffset = 0;
   for (unsigned i = 0; i < numBlocks; ++i)
   {
-    input->seek(input->tell() + 2, WPX_SEEK_SET);
+    input->seek(input->tell() + 2, librevenge::RVNG_SEEK_SET);
     unsigned short id = readU16(input);
     unsigned short parent = readU16(input);
     chunkOffset = readU32(input);
@@ -353,9 +353,9 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
       m_contentChunks.back().end = chunkOffset;
     }
     unsigned offset = input->tell();
-    input->seek(chunkOffset, WPX_SEEK_SET);
+    input->seek(chunkOffset, librevenge::RVNG_SEEK_SET);
     unsigned short typeMarker = readU16(input);
-    input->seek(offset, WPX_SEEK_SET);
+    input->seek(offset, librevenge::RVNG_SEEK_SET);
     switch (typeMarker)
     {
     case 0x0014:
@@ -428,8 +428,8 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   for (unsigned i = 0; i < m_paletteChunkIndices.size(); ++i)
   {
     const ContentChunkReference &chunk = m_contentChunks.at(m_paletteChunkIndices[i]);
-    input->seek(chunk.offset, WPX_SEEK_SET);
-    input->seek(0xA0, WPX_SEEK_CUR);
+    input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
+    input->seek(0xA0, librevenge::RVNG_SEEK_CUR);
     for (unsigned j = 0; j < 8; ++j)
     {
       unsigned hex = readU32(input);
@@ -441,9 +441,9 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   for (unsigned i = 0; i < m_imageDataChunkIndices.size(); ++i)
   {
     const ContentChunkReference &chunk = m_contentChunks.at(m_imageDataChunkIndices[i]);
-    input->seek(chunk.offset + 4, WPX_SEEK_SET);
+    input->seek(chunk.offset + 4, librevenge::RVNG_SEEK_SET);
     unsigned toRead = readU32(input);
-    WPXBinaryData img;
+    librevenge::RVNGBinaryData img;
     while (toRead > 0 && stillReading(input, (unsigned long)-1))
     {
       unsigned long howManyRead = 0;
@@ -462,12 +462,12 @@ bool libmspub::MSPUBParser2k::parseContents(WPXInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser2k::parseDocument(WPXInputStream *input)
+bool libmspub::MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
 {
   if (!!m_documentChunkIndex)
   {
-    input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, WPX_SEEK_SET);
-    input->seek(0x14, WPX_SEEK_CUR);
+    input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, librevenge::RVNG_SEEK_SET);
+    input->seek(0x14, librevenge::RVNG_SEEK_CUR);
     unsigned width = readU32(input);
     unsigned height = readU32(input);
     m_collector->setWidthInEmu(width);
@@ -477,10 +477,10 @@ bool libmspub::MSPUBParser2k::parseDocument(WPXInputStream *input)
   return false;
 }
 
-void libmspub::MSPUBParser2k::parseShapeRotation(WPXInputStream *input, bool isGroup, bool isLine,
+void libmspub::MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *input, bool isGroup, bool isLine,
     unsigned seqNum, unsigned chunkOffset)
 {
-  input->seek(chunkOffset + 4, WPX_SEEK_SET);
+  input->seek(chunkOffset + 4, librevenge::RVNG_SEEK_SET);
   // shape transforms are NOT compounded with group transforms. They are equal to what they would be
   // if the shape were not part of a group at all. This is different from how MSPUBCollector handles rotations;
   // we work around the issue by simply not setting the rotation of any group, thereby letting it default to zero.
@@ -493,11 +493,11 @@ void libmspub::MSPUBParser2k::parseShapeRotation(WPXInputStream *input, bool isG
   }
 }
 
-bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, WPXInputStream *input,
+bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librevenge::RVNGInputStream *input,
     boost::optional<unsigned> pageSeqNum, bool topLevelCall)
 {
   unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);
-  input->seek(chunk.offset, WPX_SEEK_SET);
+  input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
   if (topLevelCall)
   {
     // ignore non top level shapes
@@ -563,20 +563,20 @@ unsigned libmspub::MSPUBParser2k::getShapeFillColorOffset() const
   return 0x22;
 }
 
-void libmspub::MSPUBParser2k::parseShapeFill(WPXInputStream *input, unsigned seqNum, unsigned chunkOffset)
+void libmspub::MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned chunkOffset)
 {
-  input->seek(chunkOffset + getShapeFillTypeOffset(), WPX_SEEK_SET);
+  input->seek(chunkOffset + getShapeFillTypeOffset(), librevenge::RVNG_SEEK_SET);
   unsigned char fillType = readU8(input);
   if (fillType == 2) // other types are gradients and patterns which are not implemented yet. 0 is no fill.
   {
-    input->seek(chunkOffset + getShapeFillColorOffset(), WPX_SEEK_SET);
+    input->seek(chunkOffset + getShapeFillColorOffset(), librevenge::RVNG_SEEK_SET);
     unsigned fillColorReference = readU32(input);
     unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
     m_collector->setShapeFill(seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
   }
 }
 
-bool libmspub::MSPUBParser2k::parseGroup(WPXInputStream *input, unsigned seqNum, unsigned page)
+bool libmspub::MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned page)
 {
   bool retVal = true;
   m_collector->beginGroup();
@@ -610,10 +610,10 @@ void libmspub::MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
   }
 }
 
-void libmspub::MSPUBParser2k::parseShapeCoordinates(WPXInputStream *input, unsigned seqNum,
+void libmspub::MSPUBParser2k::parseShapeCoordinates(librevenge::RVNGInputStream *input, unsigned seqNum,
     unsigned chunkOffset)
 {
-  input->seek(chunkOffset + 6, WPX_SEEK_SET);
+  input->seek(chunkOffset + 6, librevenge::RVNG_SEEK_SET);
   int xs = translateCoordinateIfNecessary(readS32(input));
   int ys = translateCoordinateIfNecessary(readS32(input));
   int xe = translateCoordinateIfNecessary(readS32(input));
@@ -626,12 +626,12 @@ int libmspub::MSPUBParser2k::translateCoordinateIfNecessary(int coordinate) cons
   return coordinate;
 }
 
-void libmspub::MSPUBParser2k::parseShapeFlips(WPXInputStream *input, unsigned flagsOffset, unsigned seqNum,
+void libmspub::MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input, unsigned flagsOffset, unsigned seqNum,
     unsigned chunkOffset)
 {
   if (flagsOffset)
   {
-    input->seek(chunkOffset + flagsOffset, WPX_SEEK_SET);
+    input->seek(chunkOffset + flagsOffset, librevenge::RVNG_SEEK_SET);
     unsigned char flags = readU8(input);
     bool flipV = flags & 0x1;
     bool flipH = flags & (0x2 | 0x10); // FIXME: this is a guess
@@ -639,12 +639,12 @@ void libmspub::MSPUBParser2k::parseShapeFlips(WPXInputStream *input, unsigned fl
   }
 }
 
-void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
+void libmspub::MSPUBParser2k::parseShapeType(librevenge::RVNGInputStream *input,
     unsigned seqNum, unsigned chunkOffset,
     bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
     unsigned &flagsOffset)
 {
-  input->seek(chunkOffset, WPX_SEEK_SET);
+  input->seek(chunkOffset, librevenge::RVNG_SEEK_SET);
   unsigned short typeMarker = readU16(input);
   if (typeMarker == 0x000f)
   {
@@ -669,7 +669,7 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
   }
   else if (typeMarker == 0x0006)
   {
-    input->seek(chunkOffset + 0x31, WPX_SEEK_SET);
+    input->seek(chunkOffset + 0x31, librevenge::RVNG_SEEK_SET);
     ShapeType shapeType = getShapeType(readU8(input));
     flagsOffset = 0x33;
     if (shapeType != UNKNOWN_SHAPE)
@@ -685,7 +685,7 @@ void libmspub::MSPUBParser2k::parseShapeType(WPXInputStream *input,
   {
     m_collector->setShapeType(seqNum, RECTANGLE);
     isRectangle = true;
-    input->seek(chunkOffset + getTextIdOffset(), WPX_SEEK_SET);
+    input->seek(chunkOffset + getTextIdOffset(), librevenge::RVNG_SEEK_SET);
     unsigned txtId = readU16(input);
     m_collector->addTextShape(txtId, seqNum);
   }
@@ -711,17 +711,17 @@ unsigned libmspub::MSPUBParser2k::getSecondLineOffset() const
   return 0x35;
 }
 
-void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRectangle, unsigned offset,
+void libmspub::MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input, bool isRectangle, unsigned offset,
     unsigned seqNum)
 {
-  input->seek(offset + getFirstLineOffset(), WPX_SEEK_SET);
+  input->seek(offset + getFirstLineOffset(), librevenge::RVNG_SEEK_SET);
   unsigned short leftLineWidth = readU8(input);
   bool leftLineExists = leftLineWidth != 0;
   unsigned leftColorReference = readU32(input);
   unsigned translatedLeftColorReference = translate2kColorReference(leftColorReference);
   if (isRectangle)
   {
-    input->seek(offset + getSecondLineOffset(), WPX_SEEK_SET);
+    input->seek(offset + getSecondLineOffset(), librevenge::RVNG_SEEK_SET);
     unsigned char topLineWidth = readU8(input);
     bool topLineExists = topLineWidth != 0;
     unsigned topColorReference = readU32(input);
@@ -729,7 +729,7 @@ void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRecta
     m_collector->addShapeLine(seqNum, Line(ColorReference(translatedTopColorReference),
                                            translateLineWidth(topLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), topLineExists));
 
-    input->seek(1, WPX_SEEK_CUR);
+    input->seek(1, librevenge::RVNG_SEEK_CUR);
     unsigned char rightLineWidth = readU8(input);
     bool rightLineExists = rightLineWidth != 0;
     unsigned rightColorReference = readU32(input);
@@ -737,7 +737,7 @@ void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRecta
     m_collector->addShapeLine(seqNum, Line(ColorReference(translatedRightColorReference),
                                            translateLineWidth(rightLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), rightLineExists));
 
-    input->seek(1, WPX_SEEK_CUR);
+    input->seek(1, librevenge::RVNG_SEEK_CUR);
     unsigned char bottomLineWidth = readU8(input);
     bool bottomLineExists = bottomLineWidth != 0;
     unsigned bottomColorReference = readU32(input);
@@ -751,7 +751,7 @@ void libmspub::MSPUBParser2k::parseShapeLine(WPXInputStream *input, bool isRecta
 
 bool libmspub::MSPUBParser2k::parse()
 {
-  WPXInputStream *contents = m_input->getDocumentOLEStream("Contents");
+  librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
@@ -763,7 +763,7 @@ bool libmspub::MSPUBParser2k::parse()
     delete contents;
     return false;
   }
-  WPXInputStream *quill = m_input->getDocumentOLEStream("Quill/QuillSub/CONTENTS");
+  librevenge::RVNGInputStream *quill = m_input->getSubStreamByName("Quill/QuillSub/CONTENTS");
   if (!quill)
   {
     MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));

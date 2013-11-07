@@ -33,7 +33,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <libmspub/libmspub.h>
 
-#include "MSPUBSVGGenerator.h"
 #include "MSPUBCollector.h"
 #include "MSPUBParser.h"
 #include "MSPUBParser2k.h"
@@ -50,14 +49,14 @@ enum MSPUBVersion
   MSPUB_2K2
 };
 
-MSPUBVersion getVersion(WPXInputStream *input)
+MSPUBVersion getVersion(librevenge::RVNGInputStream *input)
 {
   try
   {
-    if (!input->isOLEStream())
+    if (!input->isStructured())
       return MSPUB_UNKNOWN_VERSION;
 
-    boost::scoped_ptr<WPXInputStream> contentsStream(input->getDocumentOLEStream("Contents"));
+    boost::scoped_ptr<librevenge::RVNGInputStream> contentsStream(input->getSubStreamByName("Contents"));
     if (!contentsStream)
       return MSPUB_UNKNOWN_VERSION;
 
@@ -100,7 +99,7 @@ Analyzes the content of an input stream to see if it can be parsed
 \return A value that indicates whether the content from the input
 stream is a Microsoft Publisher Document that libmspub is able to parse
 */
-bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
+bool libmspub::MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
 {
   try
   {
@@ -110,10 +109,10 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 
     if (version == MSPUB_2K2)
     {
-      boost::scoped_ptr<WPXInputStream> escherStream(input->getDocumentOLEStream("Escher/EscherStm"));
+      boost::scoped_ptr<librevenge::RVNGInputStream> escherStream(input->getSubStreamByName("Escher/EscherStm"));
       if (!escherStream)
         return false;
-      boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
+      boost::scoped_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
       if (!quillStream)
         return false;
     }
@@ -127,24 +126,24 @@ bool libmspub::MSPUBDocument::isSupported(WPXInputStream *input)
 
 /**
 Parses the input stream content. It will make callbacks to the functions provided by a
-WPGPaintInterface class implementation when needed. This is often commonly called the
+RVNGDrawingInterface class implementation when needed. This is often commonly called the
 'main parsing routine'.
 \param input The input stream
 \param painter A MSPUBPainterInterface implementation
 \return A value that indicates whether the parsing was successful
 */
-bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInterface *painter)
+bool libmspub::MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
 {
   try
   {
     MSPUBCollector collector(painter);
-    input->seek(0, WPX_SEEK_SET);
+    input->seek(0, librevenge::RVNG_SEEK_SET);
     boost::scoped_ptr<MSPUBParser> parser;
     switch (getVersion(input))
     {
     case MSPUB_2K:
     {
-      boost::scoped_ptr<WPXInputStream> quillStream(input->getDocumentOLEStream("Quill/QuillSub/CONTENTS"));
+      boost::scoped_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
       if (!quillStream)
         parser.reset(new MSPUBParser97(input, &collector));
       else
@@ -169,20 +168,6 @@ bool libmspub::MSPUBDocument::parse(::WPXInputStream *input, libwpg::WPGPaintInt
   {
     return false;
   }
-}
-
-/**
-Parses the input stream content and generates a valid Scalable Vector Graphics
-Provided as a convenience function for applications that support SVG internally.
-\param input The input stream
-\param output The output string whose content is the resulting SVG
-\return A value that indicates whether the SVG generation was successful.
-*/
-bool libmspub::MSPUBDocument::generateSVG(::WPXInputStream *input, libmspub::MSPUBStringVector &output)
-{
-  libmspub::MSPUBSVGGenerator generator(output);
-  bool result = libmspub::MSPUBDocument::parse(input, &generator);
-  return result;
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -29,15 +29,15 @@
 #ifndef __EMBEDDEDFONTINFO_H__
 #define __EMBEDDEDFONTINFO_H__
 
-#include <libwpd/libwpd.h>
+#include <librevenge/librevenge.h>
 
 namespace libmspub
 {
 struct EmbeddedFontInfo
 {
-  WPXString m_name;
-  WPXBinaryData m_blob;
-  EmbeddedFontInfo(const WPXString &name) :
+  librevenge::RVNGString m_name;
+  librevenge::RVNGBinaryData m_blob;
+  EmbeddedFontInfo(const librevenge::RVNGString &name) :
     m_name(name), m_blob()
   {
   }

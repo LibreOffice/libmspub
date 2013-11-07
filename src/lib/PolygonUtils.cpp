@@ -29,7 +29,7 @@
 #include <stddef.h> // for NULL
 #include <math.h>
 
-#include <libwpg/libwpg.h>
+#include <librevenge/librevenge.h>
 
 #include "ShapeType.h"
 #include "PolygonUtils.h"
@@ -5717,20 +5717,20 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
 
 struct LineInfo
 {
-  WPXPropertyListVector m_vertices;
+  librevenge::RVNGPropertyListVector m_vertices;
   double m_width;
-  WPXString m_color;
+  librevenge::RVNGString m_color;
   bool m_lineExists;
-  LineInfo(WPXPropertyListVector vertices, Line current, std::vector<Color> palette) : m_vertices(vertices),
+  LineInfo(librevenge::RVNGPropertyListVector vertices, Line current, std::vector<Color> palette) : m_vertices(vertices),
     m_width((double)(current.m_widthInEmu) / EMUS_IN_INCH),
     m_color(libmspub::MSPUBCollector::getColorString(current.m_color.getFinalColor(palette))),
     m_lineExists(current.m_lineExists) { }
-  void output(libwpg::WPGPaintInterface *painter, WPXPropertyList &graphicsProps)
+  void output(librevenge::RVNGDrawingInterface *painter, librevenge::RVNGPropertyList &graphicsProps)
   {
     graphicsProps.insert("draw:stroke", m_lineExists ? "solid" : "none");
     graphicsProps.insert("svg:stroke-width", m_width);
     graphicsProps.insert("svg:stroke-color", m_color);
-    painter->setStyle(graphicsProps, WPXPropertyListVector());
+    painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
     painter->drawPolyline(m_vertices);
   }
 private:
@@ -5739,7 +5739,7 @@ private:
 void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
-                      bool drawStroke, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter,
+                      bool drawStroke, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter,
                       boost::function<double (unsigned index)> calculator,
                       const std::vector<Color> &palette)
 {
@@ -5750,11 +5750,11 @@ void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shap
   Vector2D old(0, 0);
   for (unsigned i = 0; i < shape->m_numVertices; ++i)
   {
-    WPXPropertyListVector vertices;
-    WPXPropertyList vertex;
+    librevenge::RVNGPropertyListVector vertices;
+    librevenge::RVNGPropertyList vertex;
     if (i > 0)
     {
-      WPXPropertyList vertexStart;
+      librevenge::RVNGPropertyList vertexStart;
       double lineWidth = (double)(lines[i_line].m_widthInEmu) / EMUS_IN_INCH;
       switch (i - 1) // fudge the lines inward by half their width so they are fully inside the shape and hence proper borders
       {
@@ -5891,23 +5891,23 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
   yOut += cy;
 }
 
-WPXPropertyList libmspub::calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
+librevenge::RVNGPropertyList libmspub::calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
 {
-  WPXPropertyList vertices;
+  librevenge::RVNGPropertyList vertices;
   Vector2D center(x + width / 2, y + height / 2);
   double scaleX = width / shape->m_coordWidth;
   double scaleY = height / shape->m_coordHeight;
-  WPXString clipString;
+  librevenge::RVNGString clipString;
   Vector2D vector(x + scaleX * verts[0].m_x, y + scaleY * verts[0].m_y);
   vector = transform.transformWithOrigin(vector, center);
-  WPXString sValue;
+  librevenge::RVNGString sValue;
   sValue.sprintf("M %f %f", (double)vector.m_x, (double)vector.m_y);
   clipString.append(sValue);
   for (unsigned i = 1; i < verts.size(); ++i)
   {
     Vector2D vector2(x + scaleX * verts[i].m_x, y + scaleY * verts[i].m_y);
     vector2 = transform.transformWithOrigin(vector2, center);
-    WPXString sValue2;
+    librevenge::RVNGString sValue2;
     sValue2.sprintf(" L %f %f", (double)vector2.m_x, (double)vector2.m_y);
     clipString.append(sValue2);
   }
@@ -5916,7 +5916,7 @@ WPXPropertyList libmspub::calcClipPath(const std::vector<libmspub::Vertex> &vert
   return vertices;
 }
 
-void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsProps, libwpg::WPGPaintInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
+void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)
@@ -5960,15 +5960,15 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
-        painter->setStyle(graphicsProps, WPXPropertyListVector());
+        painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
       }
     }
     if (shouldDrawShape)
     {
-      WPXPropertyListVector vertices;
+      librevenge::RVNGPropertyListVector vertices;
       for (unsigned i = 0; i < shape->m_numVertices; ++i)
       {
-        WPXPropertyList vertex;
+        librevenge::RVNGPropertyList vertex;
         Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_x),
                         y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[i].m_y));
         vector = transform.transformWithOrigin(vector, center);
@@ -5981,7 +5981,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
   }
   else
   {
-    WPXPropertyListVector vertices;
+    librevenge::RVNGPropertyListVector vertices;
     if (drawStroke)
     {
       // don't bother with different strokes for things defined by segments
@@ -5992,7 +5992,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
       }
       graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
       graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
-      painter->setStyle(graphicsProps, WPXPropertyListVector());
+      painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
     }
     unsigned vertexIndex = 0;
     bool hasUnclosedElements = false;
@@ -6077,8 +6077,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
             vec1 = transform.transformWithOrigin(vec1, center);
             vec2 = transform.transformWithOrigin(vec2, center);
             curr2D = transform.transformWithOrigin(curr2D, center);
-            WPXPropertyList bezier;
-            bezier.insert("libwpg:path-action", "C");
+            librevenge::RVNGPropertyList bezier;
+            bezier.insert("librevenge:path-action", "C");
             bezier.insert("svg:x1", vec1.m_x);
             bezier.insert("svg:x2", vec2.m_x);
             bezier.insert("svg:y1", vec1.m_y);
@@ -6092,11 +6092,11 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
             //something is broken, just move
             if (vertexIndex < shape->m_numVertices)
             {
-              WPXPropertyList moveVertex;
+              librevenge::RVNGPropertyList moveVertex;
               if (hasUnclosedElements && closeEverything)
               {
-                WPXPropertyList closeVertex;
-                closeVertex.insert("libwpg:path-action", "Z");
+                librevenge::RVNGPropertyList closeVertex;
+                closeVertex.insert("librevenge:path-action", "Z");
                 vertices.append(closeVertex);
               }
               hasUnclosedElements = false;
@@ -6104,7 +6104,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
               new_ = transform.transformWithOrigin(new_, center);
               moveVertex.insert("svg:x", new_.m_x);
               moveVertex.insert("svg:y", new_.m_y);
-              moveVertex.insert("libwpg:path-action", "M");
+              moveVertex.insert("librevenge:path-action", "M");
               vertices.append(moveVertex);
               ++vertexIndex;
             }
@@ -6170,10 +6170,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           lastPoint = end2D;
           end2D = transform.transformWithOrigin(end2D, center);
           bool clockwiseAfterTransform = clockwise ^ transform.orientationReversing();
-          WPXPropertyList startVertex;
+          librevenge::RVNGPropertyList startVertex;
           startVertex.insert("svg:x", start2D.m_x);
           startVertex.insert("svg:y", start2D.m_y);
-          startVertex.insert("libwpg:path-action", ((to || closeEverything) && hasUnclosedElements) ? "L" : "M");
+          startVertex.insert("librevenge:path-action", ((to || closeEverything) && hasUnclosedElements) ? "L" : "M");
           vertices.append(startVertex);
           double startAngle = atan2(cy - startY, startX - cx);
           double endAngle = atan2(cy -endY, endX - cx);
@@ -6183,7 +6183,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           // less difference there is between the large and small arcs, down to no difference at all
           // for an exact 180-degree arc.
           bool largeArc = angleDifference >= M_PI;
-          WPXPropertyList ellipseVertex;
+          librevenge::RVNGPropertyList ellipseVertex;
           ellipseVertex.insert("svg:x", end2D.m_x);
           ellipseVertex.insert("svg:y", end2D.m_y);
           // The next two lines won't work if "transform" stretches the shape.
@@ -6191,10 +6191,10 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           // but keep it in mind if we ever change how this code works, since it breaks abstraction.
           ellipseVertex.insert("svg:rx", rx);
           ellipseVertex.insert("svg:ry", ry);
-          ellipseVertex.insert("libwpg:large-arc", largeArc ? 1 : 0);
-          ellipseVertex.insert("libwpg:sweep", clockwiseAfterTransform ? 1 : 0);
-          ellipseVertex.insert("libwpg:rotate", -transform.getRotation());
-          ellipseVertex.insert("libwpg:path-action", "A");
+          ellipseVertex.insert("librevenge:large-arc", largeArc ? 1 : 0);
+          ellipseVertex.insert("librevenge:sweep", clockwiseAfterTransform ? 1 : 0);
+          ellipseVertex.insert("librevenge:rotate", -transform.getRotation());
+          ellipseVertex.insert("librevenge:path-action", "A");
           vertices.append(ellipseVertex);
           hasUnclosedElements = true;
         }
@@ -6205,7 +6205,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         for (unsigned j = 0; (j < cmd.m_count) && (vertexIndex + 2 < shape->m_numVertices); ++j, vertexIndex += 3)
         {
           hasUnclosedElements = true;
-          WPXPropertyList vertex;
+          librevenge::RVNGPropertyList vertex;
           double startAngle = getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x);
           double endAngle = getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y);
           double cx = x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x);
@@ -6217,7 +6217,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           // or the eccentric anomaly, or something else?
           //
           // assuming eccentric anomaly for now
-          WPXPropertyList moveVertex;
+          librevenge::RVNGPropertyList moveVertex;
           Vector2D start(cx + rx * cos(startAngle * M_PI / 180),
                          cy + ry * sin(startAngle * M_PI / 180));
           if (!pathBegin)
@@ -6225,20 +6225,20 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
             pathBegin = start;
           }
           start = transform.transformWithOrigin(start, center);
-          moveVertex.insert("libwpg:path-action", "M");
+          moveVertex.insert("librevenge:path-action", "M");
           moveVertex.insert("svg:x", start.m_x);
           moveVertex.insert("svg:y", start.m_y);
           vertices.append(moveVertex);
           Vector2D half(cx + rx * cos(endAngle * M_PI / 360),
                         cy + ry * sin(endAngle * M_PI / 360));
           half = transform.transformWithOrigin(half, center);
-          WPXPropertyList halfVertex;
-          halfVertex.insert("libwpg:path-action", "A");
+          librevenge::RVNGPropertyList halfVertex;
+          halfVertex.insert("librevenge:path-action", "A");
           halfVertex.insert("svg:x", half.m_x);
           halfVertex.insert("svg:y", half.m_y);
           halfVertex.insert("svg:rx", rx * transform.getHorizontalScaling());
           halfVertex.insert("svg:ry", ry * transform.getVerticalScaling());
-          halfVertex.insert("libwpg:rotate", transform.getRotation() * 180 / M_PI);
+          halfVertex.insert("librevenge:rotate", transform.getRotation() * 180 / M_PI);
           vertices.append(halfVertex);
           Vector2D end(cx + rx * cos(endAngle * M_PI / 180),
                        cy + ry * sin(endAngle * M_PI / 180));
@@ -6248,8 +6248,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           vertex.insert("svg:y", end.m_y);
           vertex.insert("svg:rx", rx);
           vertex.insert("svg:ry", ry);
-          vertex.insert("libwpg:rotate", transform.getRotation() * 180 / M_PI);
-          vertex.insert("libwpg:path-action", "A");
+          vertex.insert("librevenge:rotate", transform.getRotation() * 180 / M_PI);
+          vertex.insert("librevenge:path-action", "A");
           vertices.append(vertex);
         }
         break;
@@ -6260,12 +6260,12 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           MSPUB_DEBUG_MSG(("x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y)));
           if (hasUnclosedElements && closeEverything)
           {
-            WPXPropertyList closeVertex;
-            closeVertex.insert("libwpg:path-action", "Z");
+            librevenge::RVNGPropertyList closeVertex;
+            closeVertex.insert("librevenge:path-action", "Z");
             vertices.append(closeVertex);
           }
           hasUnclosedElements = false;
-          WPXPropertyList moveVertex;
+          librevenge::RVNGPropertyList moveVertex;
           Vector2D new_(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
                         y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
           pathBegin = new_;
@@ -6273,7 +6273,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
           new_ = transform.transformWithOrigin(new_, center);
           moveVertex.insert("svg:x", new_.m_x);
           moveVertex.insert("svg:y", new_.m_y);
-          moveVertex.insert("libwpg:path-action", "M");
+          moveVertex.insert("librevenge:path-action", "M");
           vertices.append(moveVertex);
         }
         break;
@@ -6283,14 +6283,14 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         {
           MSPUB_DEBUG_MSG(("x: %f, y: %f\n", getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x), getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y)));
           hasUnclosedElements = true;
-          WPXPropertyList vertex;
+          librevenge::RVNGPropertyList vertex;
           Vector2D vector(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_x),
                           y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex].m_y));
           lastPoint = vector;
           vector = transform.transformWithOrigin(vector, center);
           vertex.insert("svg:x", vector.m_x);
           vertex.insert("svg:y", vector.m_y);
-          vertex.insert("libwpg:path-action", "L");
+          vertex.insert("librevenge:path-action", "L");
           vertices.append(vertex);
         }
         break;
@@ -6309,8 +6309,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
                         y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y));
           lastPoint = end;
           end = transform.transformWithOrigin(end, center);
-          WPXPropertyList bezier;
-          bezier.insert("libwpg:path-action", "C");
+          librevenge::RVNGPropertyList bezier;
+          bezier.insert("librevenge:path-action", "C");
           bezier.insert("svg:x1", firstCtrl.m_x);
           bezier.insert("svg:x2", secondCtrl.m_x);
           bezier.insert("svg:y1", firstCtrl.m_y);
@@ -6329,14 +6329,14 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         }
         else if (closeEverything)
         {
-          WPXPropertyList end;
-          end.insert("libwpg:path-action", "Z");
+          librevenge::RVNGPropertyList end;
+          end.insert("librevenge:path-action", "Z");
           vertices.append(end);
         }
         else
         {
-          WPXPropertyList end;
-          end.insert("libwpg:path-action", "L");
+          librevenge::RVNGPropertyList end;
+          end.insert("librevenge:path-action", "L");
           Vector2D transformedPathBegin = transform.transformWithOrigin(pathBegin.get(), center);
           end.insert("svg:x", transformedPathBegin.m_x);
           end.insert("svg:y", transformedPathBegin.m_y);
@@ -6349,8 +6349,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
         if (closeEverything && !!pathBegin)
         {
-          WPXPropertyList end;
-          end.insert("libwpg:path-action", "Z");
+          librevenge::RVNGPropertyList end;
+          end.insert("librevenge:path-action", "Z");
           vertices.append(end);
         }
         pathBegin = boost::optional<Vector2D>();
@@ -6370,8 +6370,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, WPXPropertyList &graphicsPr
     {
       if (!!pathBegin)
       {
-        WPXPropertyList end;
-        end.insert("libwpg:path-action", "Z");
+        librevenge::RVNGPropertyList end;
+        end.insert("librevenge:path-action", "Z");
         vertices.append(end);
       }
     }

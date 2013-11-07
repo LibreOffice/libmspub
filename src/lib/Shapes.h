@@ -43,18 +43,18 @@ struct CustomShape;
 struct Shape
 {
   Shape(MSPUBCollector *o) : props(), graphicsProps(), owner(o) { }
-  virtual void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
+  virtual void output(librevenge::RVNGDrawingInterface *painter, Coordinate coord);
   virtual ~Shape()
   {
   }
-  WPXPropertyList props;
-  WPXPropertyList graphicsProps;
+  librevenge::RVNGPropertyList props;
+  librevenge::RVNGPropertyList graphicsProps;
 protected:
   virtual void setCoordProps(Coordinate coord);
-  virtual void write(libwpg::WPGPaintInterface *painter) = 0;
+  virtual void write(librevenge::RVNGDrawingInterface *painter) = 0;
   MSPUBCollector *owner;
 
-  virtual WPXPropertyListVector updateGraphicsProps();
+  virtual librevenge::RVNGPropertyListVector updateGraphicsProps();
 
   Shape();
 private:
@@ -67,7 +67,7 @@ struct FillableShape : public Shape
   Fill *m_fill;
   void setFill(Fill *fill);
 protected:
-  virtual WPXPropertyListVector updateGraphicsProps();
+  virtual librevenge::RVNGPropertyListVector updateGraphicsProps();
 private:
   FillableShape(const FillableShape &);
   FillableShape &operator=(const FillableShape &);
@@ -80,7 +80,7 @@ struct GeometricShape : public FillableShape
   void setText(std::vector<TextParagraph> str);
   double getCalculationValue(unsigned index, bool recursiveEntry = false) const;
   double getSpecialValue(const CustomShape &shape, int arg) const;
-  void writeText(libwpg::WPGPaintInterface *painter);
+  void writeText(librevenge::RVNGDrawingInterface *painter);
   void setTransformation(VectorTransformation2D transform);
 
   std::vector<TextParagraph> m_str;
@@ -110,12 +110,12 @@ struct GeometricShape : public FillableShape
       m_borderPosition(HALF_INSIDE_SHAPE),
       m_coordinatesRotated90(false), m_foldedTransform(VectorTransformation2D()) { }
   std::vector<Color> getPaletteColors() const;
-  void output(libwpg::WPGPaintInterface *painter, Coordinate coord);
+  void output(librevenge::RVNGDrawingInterface *painter, Coordinate coord);
 protected:
   virtual bool hasFill();
   void setCoordProps(Coordinate coord);
-  virtual void write(libwpg::WPGPaintInterface *painter);
-  WPXPropertyListVector updateGraphicsProps();
+  virtual void write(librevenge::RVNGDrawingInterface *painter);
+  librevenge::RVNGPropertyListVector updateGraphicsProps();
   GeometricShape();
 private:
   GeometricShape(const GeometricShape &);

@@ -30,11 +30,7 @@
 #ifndef __MSPUBDOCUMENT_H__
 #define __MSPUBDOCUMENT_H__
 
-#include <libwpd/libwpd.h>
-#include <libwpg/libwpg.h>
-#include "MSPUBStringVector.h"
-
-class WPXInputStream;
+#include <librevenge/librevenge.h>
 
 namespace libmspub
 {
@@ -42,11 +38,9 @@ class MSPUBDocument
 {
 public:
 
-  static bool isSupported(WPXInputStream *input);
+  static bool isSupported(librevenge::RVNGInputStream *input);
 
-  static bool parse(WPXInputStream *input, libwpg::WPGPaintInterface *painter);
-
-  static bool generateSVG(::WPXInputStream *input, MSPUBStringVector &output);
+  static bool parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter);
 };
 
 } // namespace libmspub

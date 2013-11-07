@@ -8,12 +8,11 @@ lib_LTLIBRARIES = libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_includedir = $(includedir)/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@/libmspub
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_include_HEADERS = \
 	$(top_srcdir)/inc/libmspub/libmspub.h \
-	$(top_srcdir)/inc/libmspub/MSPUBDocument.h \
-	$(top_srcdir)/inc/libmspub/MSPUBStringVector.h
+	$(top_srcdir)/inc/libmspub/MSPUBDocument.h
 
-AM_CXXFLAGS = -I$(top_srcdir)/inc $(WPD_CFLAGS) $(WPG_CFLAGS) $(ZLIB_CFLAGS) $(ICU_CFLAGS) $(DEBUG_CXXFLAGS)
+AM_CXXFLAGS = -I$(top_srcdir)/inc $(REVENGE_CFLAGS) $(ZLIB_CFLAGS) $(ICU_CFLAGS) $(DEBUG_CXXFLAGS)
 
-libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LIBADD  = $(WPD_LIBS) $(ZLIB_LIBS) $(ICU_LIBS) @LIBMSPUB_WIN32_RESOURCE@
+libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LIBADD  = $(REVENGE_LIBS) $(ZLIB_LIBS) $(ICU_LIBS) @LIBMSPUB_WIN32_RESOURCE@
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_DEPENDENCIES = @LIBMSPUB_WIN32_RESOURCE@
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_LDFLAGS = $(version_info) -export-dynamic -no-undefined
 libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
@@ -21,8 +20,6 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBDocument.cpp \
 	MSPUBParser.cpp \
 	MSPUBParser2k.cpp \
-	MSPUBStringVector.cpp \
-	MSPUBSVGGenerator.cpp \
 	Fill.cpp \
 	libmspub_utils.cpp \
 	PolygonUtils.cpp \
@@ -42,7 +39,6 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBContentChunkType.h \
 	MSPUBParser.h \
 	MSPUBParser2k.h \
-	MSPUBSVGGenerator.h \
 	MSPUBTypes.h \
 	libmspub_utils.h \
 	ShapeFlags.h \

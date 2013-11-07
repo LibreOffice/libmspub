@@ -39,7 +39,7 @@
 #include "PolygonUtils.h"
 #include "Coordinate.h"
 
-WPXBinaryData &libmspub::MSPUBCollector::addEOTFont(const WPXString &name)
+librevenge::RVNGBinaryData &libmspub::MSPUBCollector::addEOTFont(const librevenge::RVNGString &name)
 {
   m_embeddedFonts.push_back(EmbeddedFontInfo(name));
   return m_embeddedFonts.back().m_blob;
@@ -104,7 +104,7 @@ void libmspub::MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
   m_shapeInfosBySeqNum[seqNum].m_stretchBorderArt = true;
 }
 
-void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, WPXPropertyList *props) const
+void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, librevenge::RVNGPropertyList *props) const
 {
   int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
   double x_center = m_width / 2;
@@ -166,7 +166,7 @@ void libmspub::MSPUBCollector::setNextPage(unsigned pageSeqNum)
 #define M_PI 3.14159265358979323846
 #endif
 
-libmspub::MSPUBCollector::MSPUBCollector(libwpg::WPGPaintInterface *painter) :
+libmspub::MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false),
   m_numPages(0), m_textStringsById(), m_pagesBySeqNum(),
@@ -309,7 +309,7 @@ void no_op()
 {
 }
 
-void endShapeGroup(libwpg::WPGPaintInterface *painter)
+void endShapeGroup(librevenge::RVNGDrawingInterface *painter)
 {
   painter->endLayer();
 }
@@ -386,11 +386,11 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   std::vector<int> adjustValues = getShapeAdjustValues(info);
   if (isGroup)
   {
-    m_painter->startLayer(WPXPropertyList());
+    m_painter->startLayer(librevenge::RVNGPropertyList());
     return boost::bind(&endShapeGroup, m_painter);
   }
-  WPXPropertyList graphicsProps;
-  WPXPropertyListVector graphicsPropsVector;
+  librevenge::RVNGPropertyList graphicsProps;
+  librevenge::RVNGPropertyListVector graphicsPropsVector;
   if (info.m_fill)
   {
     graphicsPropsVector = info.m_fill->getProperties(&graphicsProps);
@@ -414,7 +414,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       }
     }
   }
-  WPXString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
+  librevenge::RVNGString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
   bool hasText = !!maybeText;
@@ -433,7 +433,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       m_painter->startLayer(calcClipPath(info.m_clipPath, x, y, height, width, foldedTransform, info.getCustomShape()));
     }
     else
-      m_painter->startLayer(WPXPropertyList());
+      m_painter->startLayer(librevenge::RVNGPropertyList());
   }
   graphicsProps.insert("draw:stroke", "none");
   const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
@@ -473,14 +473,14 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       Color obc = info.m_pictureRecolor.get().getFinalColor(m_paletteColors);
       graphicsProps.insert("draw:color-mode", "greyscale");
       graphicsProps.insert("draw:red",
-                           static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.r) / 255.0, librevenge::RVNG_PERCENT);
       graphicsProps.insert("draw:blue",
-                           static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.b) / 255.0, librevenge::RVNG_PERCENT);
       graphicsProps.insert("draw:green",
-                           static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
+                           static_cast<double>(obc.g) / 255.0, librevenge::RVNG_PERCENT);
     }
     if (!!info.m_pictureBrightness)
-      graphicsProps.insert("draw:luminance", static_cast<double>(info.m_pictureBrightness.get() + 32768.0) / 65536.0, WPX_PERCENT);
+      graphicsProps.insert("draw:luminance", static_cast<double>(info.m_pictureBrightness.get() + 32768.0) / 65536.0, librevenge::RVNG_PERCENT);
     bool shadowPropsInserted = false;
     if (!!info.m_shadow)
     {
@@ -492,7 +492,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         graphicsProps.insert("draw:shadow-offset-x", static_cast<double>(s.m_offsetXInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("draw:shadow-offset-y", static_cast<double>(s.m_offsetYInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("draw:shadow-color", getColorString(s.m_color.getFinalColor(m_paletteColors)));
-        graphicsProps.insert("draw:shadow-opacity", s.m_opacity, WPX_PERCENT);
+        graphicsProps.insert("draw:shadow-opacity", s.m_opacity, librevenge::RVNG_PERCENT);
       }
       // TODO: Emulate shadows that don't conform
       // to LibreOffice's range of possible shadows.
@@ -560,30 +560,30 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
           const BorderArtInfo &ba = m_borderImages[maybeBorderImg.get()];
           if (!ba.m_offsets.empty())
           {
-            WPXPropertyList baProps;
+            librevenge::RVNGPropertyList baProps;
             baProps.insert("draw:stroke", "none");
             baProps.insert("draw:fill", "solid");
             baProps.insert("draw:fill-color", "#ffffff");
-            m_painter->setStyle(baProps, WPXPropertyListVector());
-            WPXPropertyList topRectProps;
+            m_painter->setStyle(baProps, librevenge::RVNGPropertyListVector());
+            librevenge::RVNGPropertyList topRectProps;
             topRectProps.insert("svg:x", x);
             topRectProps.insert("svg:y", y);
             topRectProps.insert("svg:height", borderImgWidth);
             topRectProps.insert("svg:width", width);
             m_painter->drawRectangle(topRectProps);
-            WPXPropertyList rightRectProps;
+            librevenge::RVNGPropertyList rightRectProps;
             rightRectProps.insert("svg:x", x + width - borderImgWidth);
             rightRectProps.insert("svg:y", y);
             rightRectProps.insert("svg:height", height);
             rightRectProps.insert("svg:width", borderImgWidth);
             m_painter->drawRectangle(rightRectProps);
-            WPXPropertyList botRectProps;
+            librevenge::RVNGPropertyList botRectProps;
             botRectProps.insert("svg:x", x);
             botRectProps.insert("svg:y", y + height - borderImgWidth);
             botRectProps.insert("svg:height", borderImgWidth);
             botRectProps.insert("svg:width", width);
             m_painter->drawRectangle(botRectProps);
-            WPXPropertyList leftRectProps;
+            librevenge::RVNGPropertyList leftRectProps;
             leftRectProps.insert("svg:x", x);
             leftRectProps.insert("svg:y", y);
             leftRectProps.insert("svg:height", height);
@@ -747,7 +747,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       {
         const Dash &dash = info.m_dash.get();
         graphicsProps.insert("draw:stroke", "dash");
-        graphicsProps.insert("draw:distance", dash.m_distance, WPX_INCH);
+        graphicsProps.insert("draw:distance", dash.m_distance, librevenge::RVNG_INCH);
         switch (dash.m_dotStyle)
         {
         case ROUND_DOT:
@@ -761,14 +761,14 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
         }
         for (unsigned i = 0; i < dash.m_dots.size(); ++i)
         {
-          WPXString dots;
+          librevenge::RVNGString dots;
           dots.sprintf("draw:dots%d", i + 1);
           graphicsProps.insert(dots.cstr(), static_cast<int>(dash.m_dots[i].m_count));
           if (!!dash.m_dots[i].m_length)
           {
-            WPXString length;
+            librevenge::RVNGString length;
             length.sprintf("draw:dots%d-length", i + 1);
-            graphicsProps.insert(length.cstr(), dash.m_dots[i].m_length.get(), WPX_INCH);
+            graphicsProps.insert(length.cstr(), dash.m_dots[i].m_length.get(), librevenge::RVNG_INCH);
           }
         }
       }
@@ -792,12 +792,12 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     Coordinate textCoord = isShapeTypeRectangle(type) ?
                            getFudgedCoordinates(coord, lines, false, borderPosition) : coord;
     m_painter->setStyle(graphicsProps, graphicsPropsVector);
-    WPXPropertyList props;
+    librevenge::RVNGPropertyList props;
     setRectCoordProps(textCoord, &props);
     double textRotation = thisTransform.getRotation();
     if (textRotation != 0)
     {
-      props.insert("libwpg:rotate", textRotation * 180 / M_PI);
+      props.insert("librevenge:rotate", textRotation * 180 / M_PI);
     }
     Margins margins = info.m_margins.get_value_or(Margins());
     props.insert("fo:padding-left", (double)margins.m_left / EMUS_IN_INCH);
@@ -832,22 +832,22 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       if (ngap > 0)
         props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
     }
-    m_painter->startTextObject(props, WPXPropertyListVector());
+    m_painter->startTextObject(props, librevenge::RVNGPropertyListVector());
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {
-      WPXPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
-      m_painter->startTextLine(paraProps);
+      librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
+      m_painter->openParagraph(paraProps, librevenge::RVNGPropertyListVector());
       for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
       {
-        WPXString textString;
+        librevenge::RVNGString textString;
         appendCharacters(textString, text[i_lines].spans[i_spans].chars,
                          getCalculatedEncoding());
-        WPXPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
-        m_painter->startTextSpan(charProps);
+        librevenge::RVNGPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
+        m_painter->openSpan(charProps);
         m_painter->insertText(textString);
-        m_painter->endTextSpan();
+        m_painter->closeSpan();
       }
-      m_painter->endTextLine();
+      m_painter->closeParagraph();
     }
     m_painter->endTextObject();
   }
@@ -927,23 +927,23 @@ void libmspub::MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
 }
 
 void libmspub::MSPUBCollector::writeImage(double x, double y,
-    double height, double width, ImgType type, const WPXBinaryData &blob,
+    double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
     boost::optional<Color> oneBitColor) const
 {
-  WPXPropertyList props;
+  librevenge::RVNGPropertyList props;
   if (!!oneBitColor)
   {
     Color obc = oneBitColor.get();
     props.insert("draw:color-mode", "greyscale");
-    props.insert("draw:red", static_cast<double>(obc.r) / 255.0, WPX_PERCENT);
-    props.insert("draw:blue", static_cast<double>(obc.b) / 255.0, WPX_PERCENT);
-    props.insert("draw:green", static_cast<double>(obc.g) / 255.0, WPX_PERCENT);
+    props.insert("draw:red", static_cast<double>(obc.r) / 255.0, librevenge::RVNG_PERCENT);
+    props.insert("draw:blue", static_cast<double>(obc.b) / 255.0, librevenge::RVNG_PERCENT);
+    props.insert("draw:green", static_cast<double>(obc.g) / 255.0, librevenge::RVNG_PERCENT);
   }
   props.insert("svg:x", x);
   props.insert("svg:y", y);
   props.insert("svg:width", width);
   props.insert("svg:height", height);
-  props.insert("libwpg:mime-type", mimeByImgType(type));
+  props.insert("librevenge:mime-type", mimeByImgType(type));
   m_painter->drawGraphicObject(props, blob);
 }
 
@@ -1148,11 +1148,11 @@ void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
   m_fonts.push_back(name);
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
+librevenge::RVNGPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
   const ParagraphStyle &defaultStyle = !!defaultParaStyleIndex && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
-  WPXPropertyList ret;
+  librevenge::RVNGPropertyList ret;
   Alignment align = style.m_align.get_value_or(
                       defaultStyle.m_align.get_value_or(LEFT));
   switch (align)
@@ -1179,11 +1179,11 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   {
     if (lineSpacingType == LINE_SPACING_SP)
     {
-      ret.insert("fo:line-height", lineSpacing, WPX_PERCENT);
+      ret.insert("fo:line-height", lineSpacing, librevenge::RVNG_PERCENT);
     }
     else if (lineSpacingType == LINE_SPACING_PT)
     {
-      ret.insert("fo:line-height", lineSpacing, WPX_POINT);
+      ret.insert("fo:line-height", lineSpacing, librevenge::RVNG_POINT);
     }
   }
   unsigned spaceAfterEmu = style.m_spaceAfterEmu.get_value_or(
@@ -1231,7 +1231,7 @@ WPXPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle
   return ret;
 }
 
-WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
+librevenge::RVNGPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
   if (!defaultCharStyleIndex)
@@ -1239,7 +1239,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
     defaultCharStyleIndex = 0;
   }
   const CharacterStyle &defaultCharStyle = defaultCharStyleIndex.get() < m_defaultCharStyles.size() ? m_defaultCharStyles[defaultCharStyleIndex.get()] : _nothing;
-  WPXPropertyList ret;
+  librevenge::RVNGPropertyList ret;
   if (style.italic ^ defaultCharStyle.italic)
   {
     ret.insert("fo:font-style", "italic");
@@ -1276,7 +1276,7 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   if (!!style.fontIndex &&
       style.fontIndex.get() < m_fonts.size())
   {
-    WPXString str;
+    librevenge::RVNGString str;
     appendCharacters(str, m_fonts[style.fontIndex.get()],
                      getCalculatedEncoding());
     ret.insert("style:font-name", str);
@@ -1284,14 +1284,14 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   else if (!!defaultCharStyle.fontIndex &&
            defaultCharStyle.fontIndex.get() < m_fonts.size())
   {
-    WPXString str;
+    librevenge::RVNGString str;
     appendCharacters(str, m_fonts[defaultCharStyle.fontIndex.get()],
                      getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
   else if (!m_fonts.empty())
   {
-    WPXString str;
+    librevenge::RVNGString str;
     appendCharacters(str, m_fonts[0],
                      getCalculatedEncoding());
     ret.insert("style:font-name", str);
@@ -1310,9 +1310,9 @@ WPXPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle
   return ret;
 }
 
-WPXString libmspub::MSPUBCollector::getColorString(const Color &color)
+librevenge::RVNGString libmspub::MSPUBCollector::getColorString(const Color &color)
 {
-  WPXString ret;
+  librevenge::RVNGString ret;
   ret.sprintf("#%.2x%.2x%.2x",(unsigned char)color.r, (unsigned char)color.g, (unsigned char)color.b);
   MSPUB_DEBUG_MSG(("String for r: 0x%x, g: 0x%x, b: 0x%x is %s\n", color.r, color.g, color.b, ret.cstr()));
   return ret;
@@ -1357,7 +1357,7 @@ boost::optional<unsigned> libmspub::MSPUBCollector::getMasterPageSeqNum(unsigned
 void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
 {
   const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
-  WPXPropertyList pageProps;
+  librevenge::RVNGPropertyList pageProps;
   if (m_widthSet)
   {
     pageProps.insert("svg:width", m_width);
@@ -1369,7 +1369,7 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
   const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
   if (!shapeGroupsOrdered.empty())
   {
-    m_painter->startGraphics(pageProps);
+    m_painter->startPage(pageProps);
     boost::optional<unsigned> masterSeqNum = getMasterPageSeqNum(pageSeqNum);
     bool hasMaster = !!masterSeqNum;
     if (hasMaster)
@@ -1382,7 +1382,7 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
       writePageShapes(masterSeqNum.get());
     }
     writePageShapes(pageSeqNum);
-    m_painter->endGraphics();
+    m_painter->endPage();
   }
 }
 
@@ -1495,16 +1495,16 @@ void libmspub::MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
   m_heightSet = true;
 }
 
-bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryData img)
+bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, librevenge::RVNGBinaryData img)
 {
   while (m_images.size() < index)
   {
-    m_images.push_back(std::pair<ImgType, WPXBinaryData>(UNKNOWN, WPXBinaryData()));
+    m_images.push_back(std::pair<ImgType, librevenge::RVNGBinaryData>(UNKNOWN, librevenge::RVNGBinaryData()));
   }
   if (index > 0)
   {
     MSPUB_DEBUG_MSG(("Image at index %u and of type 0x%x added.\n", index, type));
-    m_images[index - 1] = std::pair<ImgType, WPXBinaryData>(type, img);
+    m_images[index - 1] = std::pair<ImgType, librevenge::RVNGBinaryData>(type, img);
   }
   else
   {
@@ -1513,7 +1513,7 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, WPXBinaryD
   return index > 0;
 }
 
-WPXBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
+librevenge::RVNGBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
     unsigned borderArtIndex)
 {
   while (borderArtIndex >= m_borderImages.size())

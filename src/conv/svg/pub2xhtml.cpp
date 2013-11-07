@@ -33,8 +33,8 @@
 #include <fstream>
 #include <stdio.h>
 #include <string.h>
-#include <libwpd-stream/libwpd-stream.h>
-#include <libwpd/libwpd.h>
+#include <librevenge-stream/librevenge-stream.h>
+#include <librevenge/librevenge.h>
 #include <libmspub/libmspub.h>
 
 namespace
@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
   if (!in_file)
     return printUsage();
 
-  WPXFileStream input(in_file);
+  librevenge::RVNGFileStream input(in_file);
   std::ofstream o;
   if (out_file)
     o.open(out_file);
@@ -89,13 +89,13 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  libmspub::MSPUBStringVector outputStrings;
-  if (!libmspub::MSPUBDocument::generateSVG(&input, outputStrings))
+  librevenge::RVNGStringVector outputStrings;
+  librevenge::RVNGSVGDrawingGenerator generator(outputStrings, "");
+  if (!libmspub::MSPUBDocument::parse(&input, &generator))
   {
     std::cerr << "ERROR: SVG Generation failed!" << std::endl;
     return 1;
   }
-
   if (outputStrings.empty())
   {
     std::cerr << "ERROR: No SVG document generated!" << std::endl;

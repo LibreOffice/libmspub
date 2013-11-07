@@ -1,3 +1,5 @@
+if BUILD_TOOLS
+
 bin_PROGRAMS = pub2xhtml
 
 AM_CXXFLAGS = -I$(top_srcdir)/inc \
@@ -30,3 +32,5 @@ EXTRA_DIST = \
 # These may be in the builddir too
 BUILD_EXTRA_DIST = \
 	pub2xhtml.rc
+
+endif # BUILD_TOOLS

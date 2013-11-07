@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
   }
 
   librevenge::RVNGStringVector outputStrings;
-  librevenge::RVNGSVGDrawingGenerator generator(outputStrings, "");
+  librevenge::RVNGSVGDrawingGenerator generator(outputStrings, "svg");
   if (!libmspub::MSPUBDocument::parse(&input, &generator))
   {
     std::cerr << "ERROR: SVG Generation failed!" << std::endl;

@@ -86,11 +86,11 @@ librevenge::RVNGPropertyListVector PatternFill::getProperties(librevenge::RVNGPr
       fixedImg.append(fgColor.b);
       fixedImg.append(fgColor.g);
       fixedImg.append(fgColor.r);
-      fixedImg.append('\0');
+      fixedImg.append((unsigned char)'\0');
       fixedImg.append(bgColor.b);
       fixedImg.append(bgColor.g);
       fixedImg.append(bgColor.r);
-      fixedImg.append('\0');
+      fixedImg.append((unsigned char)'\0');
       fixedImg.append(data->getDataBuffer() + 0x36 + 8, data->size() - 0x36 - 8);
       data = &fixedImg;
     }

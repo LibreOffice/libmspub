@@ -944,7 +944,8 @@ void libmspub::MSPUBCollector::writeImage(double x, double y,
   props.insert("svg:width", width);
   props.insert("svg:height", height);
   props.insert("librevenge:mime-type", mimeByImgType(type));
-  m_painter->drawGraphicObject(props, blob);
+  props.insert("office:binary-data", blob);
+  m_painter->drawGraphicObject(props);
 }
 
 double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const

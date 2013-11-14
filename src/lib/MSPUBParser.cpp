@@ -293,23 +293,23 @@ bool libmspub::MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
         }
 
         librevenge::RVNGBinaryData tmpImg;
-        tmpImg.append(0x42);
-        tmpImg.append(0x4d);
+        tmpImg.append((unsigned char)0x42);
+        tmpImg.append((unsigned char)0x4d);
 
         tmpImg.append((unsigned char)((img.size() + 14) & 0x000000ff));
         tmpImg.append((unsigned char)(((img.size() + 14) & 0x0000ff00) >> 8));
         tmpImg.append((unsigned char)(((img.size() + 14) & 0x00ff0000) >> 16));
         tmpImg.append((unsigned char)(((img.size() + 14) & 0xff000000) >> 24));
 
-        tmpImg.append(0x00);
-        tmpImg.append(0x00);
-        tmpImg.append(0x00);
-        tmpImg.append(0x00);
+        tmpImg.append((unsigned char)0x00);
+        tmpImg.append((unsigned char)0x00);
+        tmpImg.append((unsigned char)0x00);
+        tmpImg.append((unsigned char)0x00);
 
-        tmpImg.append(0x36 + 4 * numPaletteColors);
-        tmpImg.append(0x00);
-        tmpImg.append(0x00);
-        tmpImg.append(0x00);
+        tmpImg.append((unsigned char)(0x36 + 4 * numPaletteColors));
+        tmpImg.append((unsigned char)0x00);
+        tmpImg.append((unsigned char)0x00);
+        tmpImg.append((unsigned char)0x00);
         tmpImg.append(img);
         img = tmpImg;
       }

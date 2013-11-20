@@ -240,10 +240,10 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
   {
   case 0x1:
     return RIGHT_TRIANGLE;
-    /*
-    case 0x2:
-      return GENERAL_TRIANGLE;
-    */
+  /*
+  case 0x2:
+    return GENERAL_TRIANGLE;
+  */
   case 0x3:
     return UP_ARROW;
   case 0x4:
@@ -254,10 +254,10 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
     return ISOCELES_TRIANGLE;
   case 0x7:
     return PARALLELOGRAM;
-    /*
-    case 0x8:
-      return TILTED_TRAPEZOID;
-    */
+  /*
+  case 0x8:
+    return TILTED_TRAPEZOID;
+  */
   case 0x9:
     return UP_DOWN_ARROW;
   case 0xA:
@@ -274,41 +274,41 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
     return BENT_ARROW;
   case 0x10:
     return SEAL_24;
-    /*
-    case 0x11:
-      return PIE;
-    */
+  /*
+  case 0x11:
+    return PIE;
+  */
   case 0x12:
     return PENTAGON;
   case 0x13:
     return HOME_PLATE;
-    /*
-    case 0x14:
-      return NOTCHED_TRIANGLE;
-    */
+  /*
+  case 0x14:
+    return NOTCHED_TRIANGLE;
+  */
   case 0x15:
     return U_TURN_ARROW;
   case 0x16:
     return IRREGULAR_SEAL_1;
-    /*
-    case 0x17:
-      return CHORD;
-    */
+  /*
+  case 0x17:
+    return CHORD;
+  */
   case 0x18:
     return HEXAGON;
-    /*
-    case 0x19:
-      return NOTCHED_RECTANGLE;
-    */
-    /*
-    case 0x1A:
-      return W_SHAPE; //This is a bizarre shape; the number of vertices depends on one of the adjust values.
-                      //We need to refactor our escher shape drawing routines before we can handle it.
-    */
-    /*
-    case 0x1B:
-      return ROUND_RECT_CALLOUT_2K; //This is not quite the same as the round rect. found in 2k2 and above.
-    */
+  /*
+  case 0x19:
+    return NOTCHED_RECTANGLE;
+  */
+  /*
+  case 0x1A:
+    return W_SHAPE; //This is a bizarre shape; the number of vertices depends on one of the adjust values.
+                    //We need to refactor our escher shape drawing routines before we can handle it.
+  */
+  /*
+  case 0x1B:
+    return ROUND_RECT_CALLOUT_2K; //This is not quite the same as the round rect. found in 2k2 and above.
+  */
   case 0x1C:
     return IRREGULAR_SEAL_2;
   case 0x1D:
@@ -319,10 +319,10 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
     return PLUS;
   case 0x20:
     return CUBE;
-    /*
-    case 0x21:
-      return OVAL_CALLOUT_2K; //Not sure yet if this is the same as the 2k2 one.
-    */
+  /*
+  case 0x21:
+    return OVAL_CALLOUT_2K; //Not sure yet if this is the same as the 2k2 one.
+  */
   case 0x22:
     return LIGHTNING_BOLT;
   default:

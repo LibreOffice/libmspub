@@ -832,7 +832,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       if (ngap > 0)
         props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
     }
-    m_painter->startTextObject(props, librevenge::RVNGPropertyListVector());
+    m_painter->startTextObject(props);
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {
       librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);

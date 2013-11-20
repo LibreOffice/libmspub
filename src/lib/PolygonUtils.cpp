@@ -6375,7 +6375,9 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
         vertices.append(end);
       }
     }
-    painter->drawPath(vertices);
+    librevenge::RVNGPropertyList propList;
+    propList.insert("svg:d", vertices);
+    painter->drawPath(propList);
   }
 }
 

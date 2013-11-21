@@ -836,7 +836,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
     {
       librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
-      m_painter->openParagraph(paraProps, librevenge::RVNGPropertyListVector());
+      m_painter->openParagraph(paraProps);
       for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
       {
         librevenge::RVNGString textString;

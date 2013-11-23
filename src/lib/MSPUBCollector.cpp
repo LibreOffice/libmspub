@@ -390,10 +390,9 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     return boost::bind(&endShapeGroup, m_painter);
   }
   librevenge::RVNGPropertyList graphicsProps;
-  librevenge::RVNGPropertyListVector graphicsPropsVector;
   if (info.m_fill)
   {
-    graphicsPropsVector = info.m_fill->getProperties(&graphicsProps);
+    info.m_fill->getProperties(&graphicsProps);
   }
   bool hasStroke = false;
   bool hasBorderArt = false;
@@ -497,7 +496,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       // TODO: Emulate shadows that don't conform
       // to LibreOffice's range of possible shadows.
     }
-    m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    m_painter->setStyle(graphicsProps);
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
@@ -564,7 +563,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
             baProps.insert("draw:stroke", "none");
             baProps.insert("draw:fill", "solid");
             baProps.insert("draw:fill-color", "#ffffff");
-            m_painter->setStyle(baProps, librevenge::RVNGPropertyListVector());
+            m_painter->setStyle(baProps);
             librevenge::RVNGPropertyList topRectProps;
             topRectProps.insert("svg:x", x);
             topRectProps.insert("svg:y", y);
@@ -776,7 +775,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       {
         graphicsProps.insert("draw:stroke", "solid");
       }
-      m_painter->setStyle(graphicsProps, graphicsPropsVector);
+      m_painter->setStyle(graphicsProps);
       writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                        false, foldedTransform, lines,
                        boost::bind(
@@ -791,7 +790,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     graphicsProps.insert("draw:fill", "none");
     Coordinate textCoord = isShapeTypeRectangle(type) ?
                            getFudgedCoordinates(coord, lines, false, borderPosition) : coord;
-    m_painter->setStyle(graphicsProps, graphicsPropsVector);
+    m_painter->setStyle(graphicsProps);
     librevenge::RVNGPropertyList props;
     setRectCoordProps(textCoord, &props);
     double textRotation = thisTransform.getRotation();

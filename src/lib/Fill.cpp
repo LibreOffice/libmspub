@@ -41,7 +41,7 @@ ImgFill::ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture,
 {
 }
 
-librevenge::RVNGPropertyListVector ImgFill::getProperties(librevenge::RVNGPropertyList *out) const
+void ImgFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   out->insert("draw:fill", "bitmap");
   if (m_imgIndex > 0 && m_imgIndex <= m_owner->m_images.size())
@@ -61,14 +61,13 @@ librevenge::RVNGPropertyListVector ImgFill::getProperties(librevenge::RVNGProper
       out->insert("librevenge:rotate", sValue);
     }
   }
-  return librevenge::RVNGPropertyListVector();
 }
 
 PatternFill::PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg) : ImgFill(imgIndex, owner, true, 0), m_fg(fg), m_bg(bg)
 {
 }
 
-librevenge::RVNGPropertyListVector PatternFill::getProperties(librevenge::RVNGPropertyList *out) const
+void PatternFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   Color fgColor = m_fg.getFinalColor(m_owner->m_paletteColors);
   Color bgColor = m_bg.getFinalColor(m_owner->m_paletteColors);
@@ -98,14 +97,13 @@ librevenge::RVNGPropertyListVector PatternFill::getProperties(librevenge::RVNGPr
     out->insert("draw:fill-image", data->getBase64Data());
     out->insert("draw:fill-image-ref-point", "top-left");
   }
-  return librevenge::RVNGPropertyListVector();
 }
 
 SolidFill::SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner) : Fill(owner), m_color(color), m_opacity(opacity)
 {
 }
 
-librevenge::RVNGPropertyListVector SolidFill::getProperties(librevenge::RVNGPropertyList *out) const
+void SolidFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   Color fillColor = m_color.getFinalColor(m_owner->m_paletteColors);
   out->insert("draw:fill", "solid");
@@ -114,7 +112,6 @@ librevenge::RVNGPropertyListVector SolidFill::getProperties(librevenge::RVNGProp
   val.sprintf("%d%%", (int)(m_opacity * 100));
   out->insert("draw:opacity", val);
   out->insert("svg:fill-rule", "nonzero");
-  return librevenge::RVNGPropertyListVector();
 }
 
 GradientFill::GradientFill(const MSPUBCollector *owner, double angle, int type) : Fill(owner), m_stops(), m_angle(angle), m_type(type), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0)
@@ -149,7 +146,7 @@ void GradientFill::completeComplexFill()
   }
 }
 
-librevenge::RVNGPropertyListVector GradientFill::getProperties(librevenge::RVNGPropertyList *out) const
+void GradientFill::getProperties(librevenge::RVNGPropertyList *out) const
 {
   librevenge::RVNGPropertyListVector ret;
   out->insert("draw:fill", "gradient");
@@ -189,7 +186,7 @@ librevenge::RVNGPropertyListVector GradientFill::getProperties(librevenge::RVNGP
     stopProps.insert("svg:stop-opacity", sValue);
     ret.append(stopProps);
   }
-  return ret;
+  out->insert("svg:linearGradient", ret);
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

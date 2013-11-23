@@ -46,7 +46,7 @@ protected:
   const MSPUBCollector *m_owner;
 public:
   Fill(const MSPUBCollector *owner);
-  virtual librevenge::RVNGPropertyListVector getProperties(librevenge::RVNGPropertyList *out) const = 0;
+  virtual void getProperties(librevenge::RVNGPropertyList *out) const = 0;
   virtual ~Fill() { }
 private:
   Fill(const Fill &) : m_owner(NULL) { }
@@ -63,7 +63,7 @@ protected:
   int m_rotation;
 public:
   ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture, int rotation);
-  virtual librevenge::RVNGPropertyListVector getProperties(librevenge::RVNGPropertyList *out) const;
+  virtual void getProperties(librevenge::RVNGPropertyList *out) const;
 private:
   ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false), m_rotation(0) { }
   ImgFill &operator=(const ImgFill &);
@@ -75,7 +75,7 @@ class PatternFill : public ImgFill
   ColorReference m_bg;
 public:
   PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg);
-  librevenge::RVNGPropertyListVector getProperties(librevenge::RVNGPropertyList *out) const;
+  void getProperties(librevenge::RVNGPropertyList *out) const;
 private:
   PatternFill(const PatternFill &) : ImgFill(0, NULL, true, 0), m_fg(0x08000000), m_bg(0x08000000) { }
   PatternFill &operator=(const ImgFill &);
@@ -87,7 +87,7 @@ class SolidFill : public Fill
   double m_opacity;
 public:
   SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner);
-  librevenge::RVNGPropertyListVector getProperties(librevenge::RVNGPropertyList *out) const;
+  void getProperties(librevenge::RVNGPropertyList *out) const;
 private:
   SolidFill(const SolidFill &) : Fill(NULL), m_color(0x08000000), m_opacity(1) { }
   SolidFill &operator=(const SolidFill &);
@@ -115,7 +115,7 @@ public:
   void addColor(ColorReference c, unsigned offsetPercent, double opacity);
   void addColorReverse(ColorReference c, unsigned offsetPercent, double opacity);
   void completeComplexFill();
-  librevenge::RVNGPropertyListVector getProperties(librevenge::RVNGPropertyList *out) const;
+  void getProperties(librevenge::RVNGPropertyList *out) const;
 private:
   GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0), m_type(7), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0) { }
   GradientFill &operator=(const GradientFill &);

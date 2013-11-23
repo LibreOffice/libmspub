@@ -5730,7 +5730,7 @@ struct LineInfo
     graphicsProps.insert("draw:stroke", m_lineExists ? "solid" : "none");
     graphicsProps.insert("svg:stroke-width", m_width);
     graphicsProps.insert("svg:stroke-color", m_color);
-    painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
+    painter->setStyle(graphicsProps);
     painter->drawPolyline(m_vertices);
   }
 private:
@@ -5960,7 +5960,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
         }
         graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
         graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
-        painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
+        painter->setStyle(graphicsProps);
       }
     }
     if (shouldDrawShape)
@@ -5992,7 +5992,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
       }
       graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
       graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
-      painter->setStyle(graphicsProps, librevenge::RVNGPropertyListVector());
+      painter->setStyle(graphicsProps);
     }
     unsigned vertexIndex = 0;
     bool hasUnclosedElements = false;

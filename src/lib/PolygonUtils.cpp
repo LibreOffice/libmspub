@@ -5731,7 +5731,9 @@ struct LineInfo
     graphicsProps.insert("svg:stroke-width", m_width);
     graphicsProps.insert("svg:stroke-color", m_color);
     painter->setStyle(graphicsProps);
-    painter->drawPolyline(m_vertices);
+    librevenge::RVNGPropertyList points;
+    points.insert("svg:points", m_vertices);
+    painter->drawPolyline(points);
   }
 private:
 };
@@ -5976,7 +5978,9 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
         vertex.insert("svg:y", vector.m_y);
         vertices.append(vertex);
       }
-      painter->drawPolygon(vertices);
+      librevenge::RVNGPropertyList points;
+      points.insert("svg:points", vertices);
+      painter->drawPolygon(points);
     }
   }
   else

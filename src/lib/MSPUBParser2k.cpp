@@ -98,7 +98,7 @@ libmspub::Color libmspub::MSPUBParser2k::getColorBy2kHex(unsigned hex)
 
 libmspub::Color libmspub::MSPUBParser2k::getColorBy2kIndex(unsigned char index)
 {
-  switch(index)
+  switch (index)
   {
   case 0x00:
     return Color(0, 0, 0);
@@ -780,7 +780,7 @@ bool libmspub::MSPUBParser2k::parse()
 
 libmspub::PageType libmspub::MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
 {
-  switch(seqNum)
+  switch (seqNum)
   {
   case 0x116:
   case 0x108:

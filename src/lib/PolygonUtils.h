@@ -92,7 +92,7 @@ struct CustomShape
   unsigned m_numGluePoints;
   unsigned char m_adjustShiftMask;
 
-  Coordinate getTextRectangle(double x, double y, double width, double height, boost::function<double (unsigned index)> calculator) const;
+  Coordinate getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const;
 
   CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const int *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints, unsigned char adjustShiftMask = 0) :
     mp_vertices(p_vertices), m_numVertices(numVertices),

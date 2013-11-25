@@ -85,7 +85,7 @@ unsigned libmspub::MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
 
 short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variable-length block with the data length as the first DWORD
 {
-  switch(type)
+  switch (type)
   {
   case DUMMY:
   case 0x5:
@@ -247,7 +247,7 @@ int libmspub::MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
 
 bool libmspub::MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
 {
-  while (stillReading (input, (unsigned long)-1))
+  while (stillReading(input, (unsigned long)-1))
   {
     EscherContainerInfo info = parseEscherContainer(input);
     const ImgType imgType = imgTypeByBlipType(info.type);
@@ -704,7 +704,7 @@ bool libmspub::MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       unsigned columnFirstOffset = 0;
       input->seek(rcao, librevenge::RVNG_SEEK_SET);
       unsigned arrayLength = readU32(input);
-      while(stillReading(input, rcao + arrayLength))
+      while (stillReading(input, rcao + arrayLength))
       {
         MSPUBBlockInfo info = parseBlock(input, true);
         if (info.id == 0)
@@ -1176,7 +1176,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(librevenge::RV
   while (stillReading(input, offset + len))
   {
     MSPUBBlockInfo info = parseBlock(input, true);
-    switch(info.id)
+    switch (info.id)
     {
     case PARAGRAPH_ALIGNMENT:
       ret.m_align = (Alignment)(info.data & 0xFF); // Is this correct?
@@ -1219,7 +1219,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(librevenge::RV
       break;
     case PARAGRAPH_TABS:
       input->seek(info.dataOffset + 4, librevenge::RVNG_SEEK_SET);
-      while(stillReading(input, info.dataOffset + info.dataLength))
+      while (stillReading(input, info.dataOffset + info.dataLength))
       {
         MSPUBBlockInfo tabArrayInfo = parseBlock(input, true);
         if (tabArrayInfo.id == TAB_ARRAY)
@@ -1409,7 +1409,7 @@ bool libmspub::MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
       {
         unsigned begin = input->tell();
         input->seek(begin + 10, librevenge::RVNG_SEEK_SET);
-        if (! (readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0))
+        if (!(readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0 && readU32(input) == 0))
         {
           m_escherDelayIndices.push_back(currentDelayIndex++);
         }
@@ -2080,7 +2080,7 @@ std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
   {
     entrySize = 4;
   }
-  if (! (entrySize == 2 || entrySize == 4 || entrySize == 8))
+  if (!(entrySize == 2 || entrySize == 4 || entrySize == 8))
   {
     MSPUB_DEBUG_MSG(("Incomprehensible entry size %u in vertex complex data!\n", entrySize));
     return ret;
@@ -2399,7 +2399,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(librevenge::RVNGInput
 
 libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
 {
-  switch(seqNum)
+  switch (seqNum)
   {
   case 0x10d:
   case 0x110:

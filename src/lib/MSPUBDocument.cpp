@@ -69,7 +69,7 @@ MSPUBVersion getVersion(librevenge::RVNGInputStream *input)
       return MSPUB_UNKNOWN_VERSION;
 
     MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
-    switch(magicVersionByte)
+    switch (magicVersionByte)
     {
     case 0x2C:
       version = MSPUB_2K2;

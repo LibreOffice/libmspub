@@ -5262,7 +5262,7 @@ const CustomShape CS_ACTION_BUTTON_MOVIE(
 
 const CustomShape *libmspub::getCustomShape(ShapeType type)
 {
-  switch(type)
+  switch (type)
   {
   case RECTANGLE:
     return &CS_RECTANGLE;
@@ -5623,7 +5623,7 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
 {
   Command cmd;
   unsigned count = 0;
-  switch(binary >> 8)
+  switch (binary >> 8)
   {
   case 0xAA:
     cmd = NOFILL;
@@ -5692,13 +5692,13 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   return ShapeElementCommand(cmd, count);
 }
 
-double getSpecialIfNecessary(boost::function<double (unsigned index)> calculator, int val)
+double getSpecialIfNecessary(boost::function<double(unsigned index)> calculator, int val)
 {
   bool special = val & 0x80000000;
   return special ? calculator(val ^ 0x80000000) : val;
 }
 
-Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double (unsigned index)> calculator) const
+Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const
 {
   double scaleX = width * m_coordWidth;
   double scaleY = height * m_coordHeight;
@@ -5742,7 +5742,7 @@ void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shap
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
                       bool drawStroke, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter,
-                      boost::function<double (unsigned index)> calculator,
+                      boost::function<double(unsigned index)> calculator,
                       const std::vector<Color> &palette)
 {
   std::vector<LineInfo> lineInfos;
@@ -6309,8 +6309,8 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
           Vector2D secondCtrl(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_x),
                               y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 1].m_y));
           secondCtrl = transform.transformWithOrigin(secondCtrl, center);
-          Vector2D end( x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x),
-                        y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y));
+          Vector2D end(x + scaleX * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_x),
+                       y + scaleY * getSpecialIfNecessary(calculator, shape->mp_vertices[vertexIndex + 2].m_y));
           lastPoint = end;
           end = transform.transformWithOrigin(end, center);
           librevenge::RVNGPropertyList bezier;

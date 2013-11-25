@@ -803,7 +803,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
     props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
     props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
     props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
-    if(!!info.m_verticalAlign)
+    if (!!info.m_verticalAlign)
     {
       switch (info.m_verticalAlign.get())
       {
@@ -1043,9 +1043,9 @@ double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsi
   case 8:
     return atan2(valTwo, valOne) / (M_PI / 180);
   case 9:
-    return valOne * sin(valTwo * (M_PI / 180) );
+    return valOne * sin(valTwo * (M_PI / 180));
   case 10:
-    return valOne * cos(valTwo * (M_PI / 180) );
+    return valOne * cos(valTwo * (M_PI / 180));
   case 11:
     return valOne * cos(atan2(valThree, valTwo));
   case 12:
@@ -1104,7 +1104,7 @@ void libmspub::MSPUBCollector::addDefaultParagraphStyle(const ParagraphStyle &st
 
 bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
 {
-  if (! (m_widthSet && m_heightSet) )
+  if (!(m_widthSet && m_heightSet))
   {
     return false;
   }

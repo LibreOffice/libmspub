@@ -1430,6 +1430,7 @@ bool libmspub::MSPUBCollector::go()
 {
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
+  m_painter->startDocument(librevenge::RVNGPropertyList());
   if (m_pageSeqNumsOrdered.empty())
   {
     for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();
@@ -1453,6 +1454,7 @@ bool libmspub::MSPUBCollector::go()
       }
     }
   }
+  m_painter->endDocument();
   return true;
 }
 

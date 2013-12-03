@@ -39,6 +39,90 @@
 #include "PolygonUtils.h"
 #include "Coordinate.h"
 
+namespace
+{
+
+static void separateTabsAndInsertText(librevenge::RVNGDrawingInterface *iface, const librevenge::RVNGString &text)
+{
+  if (!iface || text.empty())
+    return;
+  librevenge::RVNGString tmpText;
+  librevenge::RVNGString::Iter i(text);
+  for (i.rewind(); i.next();)
+  {
+    if (*(i()) == '\t')
+    {
+      if (!tmpText.empty())
+      {
+        if (iface)
+          iface->insertText(tmpText);
+        tmpText.clear();
+      }
+
+      if (iface)
+        iface->insertTab();
+    }
+    else if (*(i()) == '\n')
+    {
+      if (!tmpText.empty())
+      {
+        if (iface)
+          iface->insertText(tmpText);
+        tmpText.clear();
+      }
+
+      if (iface)
+        iface->insertLineBreak();
+    }
+    else
+    {
+      tmpText.append(i());
+    }
+  }
+  if (iface && !tmpText.empty())
+    iface->insertText(tmpText);
+}
+
+static void separateSpacesAndInsertText(librevenge::RVNGDrawingInterface *iface, const librevenge::RVNGString &text)
+{
+  if (!iface)
+    return;
+  if (text.empty())
+  {
+    iface->insertText(text);
+    return;
+  }
+  librevenge::RVNGString tmpText;
+  int numConsecutiveSpaces = 0;
+  librevenge::RVNGString::Iter i(text);
+  for (i.rewind(); i.next();)
+  {
+    if (*(i()) == ' ')
+      numConsecutiveSpaces++;
+    else
+      numConsecutiveSpaces = 0;
+
+    if (numConsecutiveSpaces > 1)
+    {
+      if (!tmpText.empty())
+      {
+        separateTabsAndInsertText(iface, tmpText);
+        tmpText.clear();
+      }
+
+      if (iface)
+        iface->insertSpace();
+    }
+    else
+    {
+      tmpText.append(i());
+    }
+  }
+  separateTabsAndInsertText(iface, tmpText);
+}
+
+} // anonymous namespace
+
 librevenge::RVNGBinaryData &libmspub::MSPUBCollector::addEOTFont(const librevenge::RVNGString &name)
 {
   m_embeddedFonts.push_back(EmbeddedFontInfo(name));
@@ -843,7 +927,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
                          getCalculatedEncoding());
         librevenge::RVNGPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
         m_painter->openSpan(charProps);
-        m_painter->insertText(textString);
+        separateSpacesAndInsertText(m_painter, textString);
         m_painter->closeSpan();
       }
       m_painter->closeParagraph();

@@ -130,55 +130,55 @@ librevenge::RVNGBinaryData &libmspub::MSPUBCollector::addEOTFont(const libreveng
 }
 
 void libmspub::MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
-    const ColorReference &recolor)
+                                                      const ColorReference &recolor)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureRecolor = recolor;
 }
 
 void libmspub::MSPUBCollector::setShapePictureBrightness(unsigned seqNum,
-    int brightness)
+                                                         int brightness)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureBrightness = brightness;
 }
 
 void libmspub::MSPUBCollector::setShapePictureContrast(unsigned seqNum,
-    int contrast)
+                                                       int contrast)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureContrast = contrast;
 }
 
 void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
-    const Arrow &arrow)
+                                                  const Arrow &arrow)
 {
   m_shapeInfosBySeqNum[seqNum].m_beginArrow = arrow;
 }
 
 void libmspub::MSPUBCollector::setShapeVerticalTextAlign(unsigned seqNum,
-    VerticalAlign va)
+                                                         VerticalAlign va)
 {
   m_shapeInfosBySeqNum[seqNum].m_verticalAlign = va;
 }
 
 void libmspub::MSPUBCollector::setShapeEndArrow(unsigned seqNum,
-    const Arrow &arrow)
+                                                const Arrow &arrow)
 {
   m_shapeInfosBySeqNum[seqNum].m_endArrow = arrow;
 }
 
 void libmspub::MSPUBCollector::setShapeTableInfo(unsigned seqNum,
-    const TableInfo &ti)
+                                                 const TableInfo &ti)
 {
   m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
 }
 
 void libmspub::MSPUBCollector::setShapeNumColumns(unsigned seqNum,
-    unsigned numColumns)
+                                                  unsigned numColumns)
 {
   m_shapeInfosBySeqNum[seqNum].m_numColumns = numColumns;
 }
 
 void libmspub::MSPUBCollector::setShapeColumnSpacing(unsigned seqNum,
-    unsigned spacing)
+                                                     unsigned spacing)
 {
   m_shapeInfosBySeqNum[seqNum].m_columnSpacing = spacing;
 }
@@ -309,7 +309,7 @@ void libmspub::MSPUBCollector::setShapeBorderImageId(unsigned seqNum, unsigned i
 }
 
 void libmspub::MSPUBCollector::setShapeCustomPath(unsigned seqNum,
-    const DynamicCustomShape &shape)
+                                                  const DynamicCustomShape &shape)
 {
   m_shapeInfosBySeqNum[seqNum].m_customShape = shape;
 }
@@ -1004,14 +1004,14 @@ csd_fail:
 }
 
 void libmspub::MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
-    ColorReference backColor)
+                                                     ColorReference backColor)
 {
   m_shapeInfosBySeqNum[shapeSeqNum].m_lineBackColor = backColor;
 }
 
 void libmspub::MSPUBCollector::writeImage(double x, double y,
-    double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
-    boost::optional<Color> oneBitColor) const
+                                          double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
+                                          boost::optional<Color> oneBitColor) const
 {
   librevenge::RVNGPropertyList props;
   if (!!oneBitColor)
@@ -1600,7 +1600,7 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, librevenge
 }
 
 librevenge::RVNGBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
-    unsigned borderArtIndex)
+                                                                     unsigned borderArtIndex)
 {
   while (borderArtIndex >= m_borderImages.size())
   {

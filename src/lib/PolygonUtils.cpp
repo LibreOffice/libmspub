@@ -6394,22 +6394,22 @@ bool libmspub::isShapeTypeRectangle(ShapeType type)
 boost::shared_ptr<const libmspub::CustomShape> libmspub::getFromDynamicCustomShape(const libmspub::DynamicCustomShape &dcs)
 {
   return boost::shared_ptr<const CustomShape>(new CustomShape(
-           dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
-           dcs.m_vertices.size(),
-           dcs.m_elements.empty() ? NULL : &dcs.m_elements[0],
-           dcs.m_elements.size(),
-           dcs.m_calculations.empty() ? NULL : &dcs.m_calculations[0],
-           dcs.m_calculations.size(),
-           dcs.m_defaultAdjustValues.empty() ? NULL :
-           &dcs.m_defaultAdjustValues[0],
-           dcs.m_defaultAdjustValues.size(),
-           dcs.m_textRectangles.empty() ? NULL : &dcs.m_textRectangles[0],
-           dcs.m_textRectangles.size(),
-           dcs.m_coordWidth, dcs.m_coordHeight,
-           dcs.m_gluePoints.empty() ? NULL : &dcs.m_gluePoints[0],
-           dcs.m_gluePoints.size(),
-           dcs.m_adjustShiftMask
-         ));
+                                                dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
+                                                dcs.m_vertices.size(),
+                                                dcs.m_elements.empty() ? NULL : &dcs.m_elements[0],
+                                                dcs.m_elements.size(),
+                                                dcs.m_calculations.empty() ? NULL : &dcs.m_calculations[0],
+                                                dcs.m_calculations.size(),
+                                                dcs.m_defaultAdjustValues.empty() ? NULL :
+                                                &dcs.m_defaultAdjustValues[0],
+                                                dcs.m_defaultAdjustValues.size(),
+                                                dcs.m_textRectangles.empty() ? NULL : &dcs.m_textRectangles[0],
+                                                dcs.m_textRectangles.size(),
+                                                dcs.m_coordWidth, dcs.m_coordHeight,
+                                                dcs.m_gluePoints.empty() ? NULL : &dcs.m_gluePoints[0],
+                                                dcs.m_gluePoints.size(),
+                                                dcs.m_adjustShiftMask
+                                              ));
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

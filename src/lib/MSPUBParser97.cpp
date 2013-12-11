@@ -92,7 +92,7 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInput
   unsigned prop3Index = readU16(input);
   unsigned prop3End = readU16(input);
   std::vector<SpanInfo97> spanInfos = getSpansInfo(input, prop1Index,
-                                      prop2Index, prop3Index, prop3End);
+                                                   prop2Index, prop3Index, prop3End);
   input->seek(textStart, librevenge::RVNG_SEEK_SET);
   TextInfo97 textInfo = getTextInfo(input, textEnd - textStart);
   unsigned iParaEnd = 0, iSpanEnd = 0;

@@ -478,7 +478,7 @@ bool libmspub::MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
 }
 
 void libmspub::MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *input, bool isGroup, bool isLine,
-    unsigned seqNum, unsigned chunkOffset)
+                                                 unsigned seqNum, unsigned chunkOffset)
 {
   input->seek(chunkOffset + 4, librevenge::RVNG_SEEK_SET);
   // shape transforms are NOT compounded with group transforms. They are equal to what they would be
@@ -494,7 +494,7 @@ void libmspub::MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *in
 }
 
 bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librevenge::RVNGInputStream *input,
-    boost::optional<unsigned> pageSeqNum, bool topLevelCall)
+                                                boost::optional<unsigned> pageSeqNum, bool topLevelCall)
 {
   unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);
   input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
@@ -611,7 +611,7 @@ void libmspub::MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
 }
 
 void libmspub::MSPUBParser2k::parseShapeCoordinates(librevenge::RVNGInputStream *input, unsigned seqNum,
-    unsigned chunkOffset)
+                                                    unsigned chunkOffset)
 {
   input->seek(chunkOffset + 6, librevenge::RVNG_SEEK_SET);
   int xs = translateCoordinateIfNecessary(readS32(input));
@@ -627,7 +627,7 @@ int libmspub::MSPUBParser2k::translateCoordinateIfNecessary(int coordinate) cons
 }
 
 void libmspub::MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input, unsigned flagsOffset, unsigned seqNum,
-    unsigned chunkOffset)
+                                              unsigned chunkOffset)
 {
   if (flagsOffset)
   {
@@ -640,9 +640,9 @@ void libmspub::MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input
 }
 
 void libmspub::MSPUBParser2k::parseShapeType(librevenge::RVNGInputStream *input,
-    unsigned seqNum, unsigned chunkOffset,
-    bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
-    unsigned &flagsOffset)
+                                             unsigned seqNum, unsigned chunkOffset,
+                                             bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
+                                             unsigned &flagsOffset)
 {
   input->seek(chunkOffset, librevenge::RVNG_SEEK_SET);
   unsigned short typeMarker = readU16(input);
@@ -712,7 +712,7 @@ unsigned libmspub::MSPUBParser2k::getSecondLineOffset() const
 }
 
 void libmspub::MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input, bool isRectangle, unsigned offset,
-    unsigned seqNum)
+                                             unsigned seqNum)
 {
   input->seek(offset + getFirstLineOffset(), librevenge::RVNG_SEEK_SET);
   unsigned short leftLineWidth = readU8(input);

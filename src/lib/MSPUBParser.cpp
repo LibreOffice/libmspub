@@ -69,7 +69,7 @@ libmspub::MSPUBParser::~MSPUBParser()
 }
 
 bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
-    unsigned *geomFlags)
+                                                    unsigned *geomFlags)
 {
   return flags &&
          !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE)) &&
@@ -1526,7 +1526,7 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
           const std::map<unsigned short, unsigned> &tertiaryFoptValues =
             maybe_tertiaryFoptValues.get();
           const unsigned *ptr_pictureRecolor = getIfExists_const(tertiaryFoptValues,
-                                               FIELDID_PICTURE_RECOLOR);
+                                                                 FIELDID_PICTURE_RECOLOR);
           if (ptr_pictureRecolor)
           {
             m_collector->setShapePictureRecolor(*shapeSeqNum,
@@ -1719,11 +1719,11 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
             }
           }
           unsigned *ptr_beginArrowStyle = getIfExists(foptValues.m_scalarValues,
-                                          FIELDID_BEGIN_ARROW_STYLE);
+                                                      FIELDID_BEGIN_ARROW_STYLE);
           unsigned *ptr_beginArrowWidth = getIfExists(foptValues.m_scalarValues,
-                                          FIELDID_BEGIN_ARROW_WIDTH);
+                                                      FIELDID_BEGIN_ARROW_WIDTH);
           unsigned *ptr_beginArrowHeight = getIfExists(foptValues.m_scalarValues,
-                                           FIELDID_BEGIN_ARROW_HEIGHT);
+                                                       FIELDID_BEGIN_ARROW_HEIGHT);
           m_collector->setShapeBeginArrow(*shapeSeqNum, Arrow(
                                             ptr_beginArrowStyle ? (ArrowStyle)(*ptr_beginArrowStyle) :
                                             NO_ARROW,
@@ -1732,11 +1732,11 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
                                             ptr_beginArrowHeight ? (ArrowSize)(*ptr_beginArrowHeight) :
                                             MEDIUM));
           unsigned *ptr_endArrowStyle = getIfExists(foptValues.m_scalarValues,
-                                        FIELDID_END_ARROW_STYLE);
+                                                    FIELDID_END_ARROW_STYLE);
           unsigned *ptr_endArrowWidth = getIfExists(foptValues.m_scalarValues,
-                                        FIELDID_END_ARROW_WIDTH);
+                                                    FIELDID_END_ARROW_WIDTH);
           unsigned *ptr_endArrowHeight = getIfExists(foptValues.m_scalarValues,
-                                         FIELDID_END_ARROW_HEIGHT);
+                                                     FIELDID_END_ARROW_HEIGHT);
           m_collector->setShapeEndArrow(*shapeSeqNum, Arrow(
                                           ptr_endArrowStyle ? (ArrowStyle)(*ptr_endArrowStyle) :
                                           NO_ARROW,
@@ -1763,15 +1763,15 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
               unsigned *shadowOriginX = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_ORIGIN_X);
               unsigned *shadowOriginY = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_ORIGIN_Y);
               m_collector->setShapeShadow(*shapeSeqNum, Shadow(shadowType,
-                                          shadowOffsetX ? static_cast<int>(*shadowOffsetX) : 0x6338,
-                                          shadowOffsetY ? static_cast<int>(*shadowOffsetY) : 0x6338,
-                                          shadowOffsetX2 ? static_cast<int>(*shadowOffsetX2) : 0,
-                                          shadowOffsetY2 ? static_cast<int>(*shadowOffsetY2) : 0,
-                                          shadowOriginX ? toFixedPoint(static_cast<int>(*shadowOriginX)) : 0,
-                                          shadowOriginY ? toFixedPoint(static_cast<int>(*shadowOriginY)) : 0,
-                                          toFixedPoint(shadowOpacity ? static_cast<int>(*shadowOpacity) : 0x10000),
-                                          ColorReference(shadowColor ? *shadowColor : 0x00808080),
-                                          ColorReference(shadowHColor ? *shadowHColor : 0x00CBCBCB)
+                                                               shadowOffsetX ? static_cast<int>(*shadowOffsetX) : 0x6338,
+                                                               shadowOffsetY ? static_cast<int>(*shadowOffsetY) : 0x6338,
+                                                               shadowOffsetX2 ? static_cast<int>(*shadowOffsetX2) : 0,
+                                                               shadowOffsetY2 ? static_cast<int>(*shadowOffsetY2) : 0,
+                                                               shadowOriginX ? toFixedPoint(static_cast<int>(*shadowOriginX)) : 0,
+                                                               shadowOriginY ? toFixedPoint(static_cast<int>(*shadowOriginY)) : 0,
+                                                               toFixedPoint(shadowOpacity ? static_cast<int>(*shadowOpacity) : 0x10000),
+                                                               ColorReference(shadowColor ? *shadowColor : 0x00808080),
+                                                               ColorReference(shadowHColor ? *shadowHColor : 0x00CBCBCB)
                                                               ));
 
             }
@@ -1787,8 +1787,8 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
             const std::vector<unsigned char> segmentData = foptValues.m_complexValues[FIELDID_P_SEGMENTS];
             const std::vector<unsigned char> guideData = foptValues.m_complexValues[FIELDID_P_GUIDES];
             m_collector->setShapeCustomPath(*shapeSeqNum, getDynamicCustomShape(vertexData, segmentData,
-                                            guideData, p_geoRight ? *p_geoRight : 21600,
-                                            p_geoBottom ? *p_geoBottom : 21600));
+                                                                                guideData, p_geoRight ? *p_geoRight : 21600,
+                                                                                p_geoBottom ? *p_geoBottom : 21600));
           }
           const std::vector<unsigned char> wrapVertexData = foptValues.m_complexValues[FIELDID_P_WRAPPOLYGONVERTICES];
           if (!wrapVertexData.empty())
@@ -1853,7 +1853,7 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
 }
 
 boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
-    bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
+                                                                    bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
@@ -2308,7 +2308,7 @@ bool libmspub::MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStre
     else if (type == BORDER_ART)
     {
       m_contentChunks.push_back(ContentChunkReference(type, offset, 0,
-                                m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
+                                                      m_lastSeenSeqNum, seenParentSeqNum ? parentSeqNum : 0));
       m_borderArtChunkIndices.push_back(
         unsigned(m_contentChunks.size() - 1));
       return true;
@@ -2316,8 +2316,8 @@ bool libmspub::MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStre
     else if (type == FONT)
     {
       m_contentChunks.push_back(ContentChunkReference(type, offset, 0,
-                                m_lastSeenSeqNum,
-                                seenParentSeqNum ? parentSeqNum : 0));
+                                                      m_lastSeenSeqNum,
+                                                      seenParentSeqNum ? parentSeqNum : 0));
       m_fontChunkIndices.push_back(unsigned(m_contentChunks.size() - 1));
       return true;
     }

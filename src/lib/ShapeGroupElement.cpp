@@ -85,7 +85,7 @@ void libmspub::ShapeGroupElement::visit(boost::function<
   double offsetX = centerX - relativeCenterX;
   double offsetY = centerY - relativeCenterY;
   VectorTransformation2D foldedTransform = VectorTransformation2D::fromTranslate(-offsetX, -offsetY)
-      * parentFoldedTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
+                                           * parentFoldedTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
   boost::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform);
   for (unsigned i = 0; i < m_children.size(); ++i)
   {

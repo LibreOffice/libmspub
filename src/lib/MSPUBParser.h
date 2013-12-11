@@ -148,7 +148,7 @@ protected:
   std::vector<Vertex> parseVertices(const std::vector<unsigned char>
                                     &vertexData);
   std::vector<unsigned> parseTableCellDefinitions(librevenge::RVNGInputStream *input,
-      const QuillChunkReference &chunk);
+                                                  const QuillChunkReference &chunk);
   std::vector<unsigned short> parseSegments(
     const std::vector<unsigned char> &segmentData);
   DynamicCustomShape getDynamicCustomShape(

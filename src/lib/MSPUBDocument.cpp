@@ -99,7 +99,7 @@ Analyzes the content of an input stream to see if it can be parsed
 \return A value that indicates whether the content from the input
 stream is a Microsoft Publisher Document that libmspub is able to parse
 */
-bool libmspub::MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
+PUBAPI bool libmspub::MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
 {
   try
   {
@@ -132,7 +132,7 @@ RVNGDrawingInterface class implementation when needed. This is often commonly ca
 \param painter A MSPUBPainterInterface implementation
 \return A value that indicates whether the parsing was successful
 */
-bool libmspub::MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
+PUBAPI bool libmspub::MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
 {
   try
   {

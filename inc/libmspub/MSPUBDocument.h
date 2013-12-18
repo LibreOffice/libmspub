@@ -32,15 +32,25 @@
 
 #include <librevenge/librevenge.h>
 
+#ifdef DLL_EXPORT
+#ifdef LIBMSPUB_BUILD
+#define PUBAPI __declspec(dllexport)
+#else
+#define PUBAPI __declspec(dllimport)
+#endif
+#else
+#define PUBAPI
+#endif
+
 namespace libmspub
 {
 class MSPUBDocument
 {
 public:
 
-  static bool isSupported(librevenge::RVNGInputStream *input);
+  static PUBAPI bool isSupported(librevenge::RVNGInputStream *input);
 
-  static bool parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter);
+  static PUBAPI bool parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter);
 };
 
 } // namespace libmspub

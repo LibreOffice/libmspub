@@ -9,3 +9,5 @@ Version: @VERSION@
 Requires: librevenge-0.0 librevenge-stream-0.0
 Libs: -L${libdir} -lmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@
 Cflags: -I${includedir}/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@
+
+Requires.private: icu-i18n zlib

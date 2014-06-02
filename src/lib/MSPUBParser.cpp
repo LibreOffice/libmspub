@@ -2369,6 +2369,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(librevenge::RVNGInput
     case 24:
       //FIXME: Not doing anything with this data for now.
       skipBlock(input, info);
+    // fall-through intended
     default:
       info.data = 0;
     }

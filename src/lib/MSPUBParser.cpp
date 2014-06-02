@@ -251,7 +251,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
       {
         // Reconstruct BMP header
         // cf. http://en.wikipedia.org/wiki/BMP_file_format , accessed 2012-5-31
-        librevenge::RVNGInputStream *buf = const_cast<librevenge::RVNGInputStream *>(img.getDataStream());
+        librevenge::RVNGInputStream *buf = img.getDataStream();
         if (img.size() < 0x2E + 4)
         {
           ++m_lastAddedImage;

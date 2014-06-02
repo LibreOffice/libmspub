@@ -255,7 +255,11 @@ uint8_t libmspub::readU8(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
-    MSPUB_DEBUG_MSG(("Something bad happened here!Tell: %ld\n", input->tell()));
+    MSPUB_DEBUG_MSG(("Something bad happened here!"));
+    if (input)
+    {
+      MSPUB_DEBUG_MSG((" Tell: %ld\n", input->tell()));
+    }
     throw EndOfStreamException();
   }
   unsigned long numBytesRead;

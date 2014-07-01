@@ -1,3 +1,9 @@
+libmspub 0.1.1
+
+- Fix a crash when opening certain documents in LibreOffice, caused by a symbol
+  clash.
+- Several minor code improvements.
+
 libmspub 0.1.0
 
 - switch to librevenge

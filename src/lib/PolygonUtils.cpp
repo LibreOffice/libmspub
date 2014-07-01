@@ -5715,6 +5715,9 @@ Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double wi
   return Coordinate(startX, startY, endX, endY);
 }
 
+namespace
+{
+
 struct LineInfo
 {
   WPXPropertyListVector m_vertices;
@@ -5735,6 +5738,8 @@ struct LineInfo
   }
 private:
 };
+
+}
 
 void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
                       Vector2D center, VectorTransformation2D transform,

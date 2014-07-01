@@ -9,7 +9,10 @@
 
 #include "ShapeGroupElement.h"
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform()
+namespace libmspub
+{
+
+ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform()
 {
   if (m_parent)
   {
@@ -17,7 +20,7 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_sh
   }
 }
 
-libmspub::ShapeGroupElement::~ShapeGroupElement()
+ShapeGroupElement::~ShapeGroupElement()
 {
   for (unsigned i = 0; i < m_children.size(); ++i)
   {
@@ -25,7 +28,7 @@ libmspub::ShapeGroupElement::~ShapeGroupElement()
   }
 }
 
-libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
+ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
 {
   if (m_parent)
   {
@@ -33,17 +36,17 @@ libmspub::ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsign
   }
 }
 
-void libmspub::ShapeGroupElement::setShapeInfo(const ShapeInfo &shapeInfo)
+void ShapeGroupElement::setShapeInfo(const ShapeInfo &shapeInfo)
 {
   m_shapeInfo = shapeInfo;
 }
 
-void libmspub::ShapeGroupElement::setTransform(const VectorTransformation2D &transform)
+void ShapeGroupElement::setTransform(const VectorTransformation2D &transform)
 {
   m_transform = transform;
 }
 
-void libmspub::ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &self)> visitor)
+void ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &self)> visitor)
 {
   visitor(*this);
   for (unsigned i = 0; i < m_children.size(); ++i)
@@ -52,10 +55,10 @@ void libmspub::ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &
   }
 }
 
-void libmspub::ShapeGroupElement::visit(boost::function<
-                                        boost::function<void(void)>
-                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform)
-                                        > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
+void ShapeGroupElement::visit(boost::function<
+                              boost::function<void(void)>
+                              (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
+                              > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
 {
   const ShapeInfo &info = m_shapeInfo.get_value_or(ShapeInfo());
   Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
@@ -75,39 +78,41 @@ void libmspub::ShapeGroupElement::visit(boost::function<
   afterOp();
 }
 
-void libmspub::ShapeGroupElement::visit(boost::function<
-                                        boost::function<void(void)>
-                                        (const libmspub::ShapeInfo &info, const libmspub::Coordinate &relativeTo, const libmspub::VectorTransformation2D &foldedTransform, bool isGroup, const libmspub::VectorTransformation2D &thisTransform)
-                                        > visitor) const
+void ShapeGroupElement::visit(boost::function<
+                              boost::function<void(void)>
+                              (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
+                              > visitor) const
 {
   Coordinate origin;
   VectorTransformation2D identity;
   visit(visitor, origin, identity);
 }
 
-bool libmspub::ShapeGroupElement::isGroup() const
+bool ShapeGroupElement::isGroup() const
 {
   return !m_children.empty();
 }
 
-libmspub::ShapeGroupElement *libmspub::ShapeGroupElement::getParent()
+ShapeGroupElement *ShapeGroupElement::getParent()
 {
   return m_parent;
 }
 
-const libmspub::ShapeGroupElement *libmspub::ShapeGroupElement::getParent() const
+const ShapeGroupElement *ShapeGroupElement::getParent() const
 {
   return m_parent;
 }
 
-void libmspub::ShapeGroupElement::setSeqNum(unsigned seqNum)
+void ShapeGroupElement::setSeqNum(unsigned seqNum)
 {
   m_seqNum = seqNum;
 }
 
-unsigned libmspub::ShapeGroupElement::getSeqNum() const
+unsigned ShapeGroupElement::getSeqNum() const
 {
   return m_seqNum;
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

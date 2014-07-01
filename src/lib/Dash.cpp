@@ -10,17 +10,20 @@
 #include "Dash.h"
 #include "libmspub_utils.h"
 
-bool libmspub::operator==(const libmspub::Dot &lhs, const libmspub::Dot &rhs)
+namespace libmspub
+{
+
+bool operator==(const Dot &lhs, const Dot &rhs)
 {
   return lhs.m_length == rhs.m_length && lhs.m_count == rhs.m_count;
 }
 
-bool libmspub::operator!=(const libmspub::Dot &lhs, const libmspub::Dot &rhs)
+bool operator!=(const Dot &lhs, const Dot &rhs)
 {
   return !operator==(lhs, rhs);
 }
 
-bool libmspub::operator==(const libmspub::Dash &lhs, const libmspub::Dash &rhs)
+bool operator==(const Dash &lhs, const Dash &rhs)
 {
   if (!(lhs.m_distance == rhs.m_distance &&
         lhs.m_dotStyle == rhs.m_dotStyle && lhs.m_dots.size() == rhs.m_dots.size()))
@@ -37,8 +40,8 @@ bool libmspub::operator==(const libmspub::Dash &lhs, const libmspub::Dash &rhs)
   return true;
 }
 
-libmspub::Dash libmspub::getDash(MSPUBDashStyle style, unsigned shapeLineWidthEmu,
-                                 DotStyle dotStyle)
+Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthEmu,
+             DotStyle dotStyle)
 {
   double shapeLineWidth = static_cast<double>(shapeLineWidthEmu) /
                           EMUS_IN_INCH;
@@ -114,6 +117,8 @@ libmspub::Dash libmspub::getDash(MSPUBDashStyle style, unsigned shapeLineWidthEm
     return ret;
   }
   }
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

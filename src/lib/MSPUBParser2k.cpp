@@ -19,7 +19,10 @@
 #include "libmspub_utils.h"
 #include "MSPUBCollector.h"
 
-libmspub::MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
+namespace libmspub
+{
+
+MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : MSPUBParser(input, collector),
     m_imageDataChunkIndices(),
     m_quillColorEntries(),
@@ -27,7 +30,7 @@ libmspub::MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUB
 {
 }
 
-unsigned libmspub::MSPUBParser2k::getColorIndexByQuillEntry(unsigned entry)
+unsigned MSPUBParser2k::getColorIndexByQuillEntry(unsigned entry)
 {
   unsigned translation = translate2kColorReference(entry);
   std::vector<unsigned>::const_iterator i_entry = std::find(m_quillColorEntries.begin(), m_quillColorEntries.end(), translation);
@@ -40,7 +43,7 @@ unsigned libmspub::MSPUBParser2k::getColorIndexByQuillEntry(unsigned entry)
   return i_entry - m_quillColorEntries.begin();
 }
 
-libmspub::MSPUBParser2k::~MSPUBParser2k()
+MSPUBParser2k::~MSPUBParser2k()
 {
 }
 
@@ -61,7 +64,7 @@ unsigned short translateLineWidth(unsigned char lineWidth)
   }
 }
 
-libmspub::Color libmspub::MSPUBParser2k::getColorBy2kHex(unsigned hex)
+Color MSPUBParser2k::getColorBy2kHex(unsigned hex)
 {
   switch ((hex >> 24) & 0xFF)
   {
@@ -76,7 +79,7 @@ libmspub::Color libmspub::MSPUBParser2k::getColorBy2kHex(unsigned hex)
   }
 }
 
-libmspub::Color libmspub::MSPUBParser2k::getColorBy2kIndex(unsigned char index)
+Color MSPUBParser2k::getColorBy2kIndex(unsigned char index)
 {
   switch (index)
   {
@@ -198,7 +201,7 @@ libmspub::Color libmspub::MSPUBParser2k::getColorBy2kIndex(unsigned char index)
 }
 
 // takes a color reference in 2k format and translates it into 2k2 format that collector understands.
-unsigned libmspub::MSPUBParser2k::translate2kColorReference(unsigned ref2k)
+unsigned MSPUBParser2k::translate2kColorReference(unsigned ref2k)
 {
   switch ((ref2k >> 24) & 0xFF)
   {
@@ -214,7 +217,7 @@ unsigned libmspub::MSPUBParser2k::translate2kColorReference(unsigned ref2k)
 }
 
 //FIXME: Valek found different values; what does this depend on?
-libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpecifier)
+ShapeType MSPUBParser2k::getShapeType(unsigned char shapeSpecifier)
 {
   switch (shapeSpecifier)
   {
@@ -310,11 +313,11 @@ libmspub::ShapeType libmspub::MSPUBParser2k::getShapeType(unsigned char shapeSpe
   }
 }
 
-void libmspub::MSPUBParser2k::parseContentsTextIfNecessary(librevenge::RVNGInputStream *)
+void MSPUBParser2k::parseContentsTextIfNecessary(librevenge::RVNGInputStream *)
 {
 }
 
-bool libmspub::MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
+bool MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
 {
   parseContentsTextIfNecessary(input);
   input->seek(0x16, librevenge::RVNG_SEEK_SET);
@@ -442,7 +445,7 @@ bool libmspub::MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
+bool MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
 {
   if (!!m_documentChunkIndex)
   {
@@ -457,8 +460,8 @@ bool libmspub::MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
   return false;
 }
 
-void libmspub::MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *input, bool isGroup, bool isLine,
-                                                 unsigned seqNum, unsigned chunkOffset)
+void MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *input, bool isGroup, bool isLine,
+                                       unsigned seqNum, unsigned chunkOffset)
 {
   input->seek(chunkOffset + 4, librevenge::RVNG_SEEK_SET);
   // shape transforms are NOT compounded with group transforms. They are equal to what they would be
@@ -473,8 +476,8 @@ void libmspub::MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *in
   }
 }
 
-bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librevenge::RVNGInputStream *input,
-                                                boost::optional<unsigned> pageSeqNum, bool topLevelCall)
+bool MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librevenge::RVNGInputStream *input,
+                                      boost::optional<unsigned> pageSeqNum, bool topLevelCall)
 {
   unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);
   input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
@@ -533,17 +536,17 @@ bool libmspub::MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chu
   return true;
 }
 
-unsigned libmspub::MSPUBParser2k::getShapeFillTypeOffset() const
+unsigned MSPUBParser2k::getShapeFillTypeOffset() const
 {
   return 0x2A;
 }
 
-unsigned libmspub::MSPUBParser2k::getShapeFillColorOffset() const
+unsigned MSPUBParser2k::getShapeFillColorOffset() const
 {
   return 0x22;
 }
 
-void libmspub::MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned chunkOffset)
+void MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned chunkOffset)
 {
   input->seek(chunkOffset + getShapeFillTypeOffset(), librevenge::RVNG_SEEK_SET);
   unsigned char fillType = readU8(input);
@@ -556,7 +559,7 @@ void libmspub::MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input,
   }
 }
 
-bool libmspub::MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned page)
+bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned page)
 {
   bool retVal = true;
   m_collector->beginGroup();
@@ -573,7 +576,7 @@ bool libmspub::MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, uns
   return retVal;
 }
 
-void libmspub::MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
+void MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
 {
   int i_dataIndex = -1;
   for (unsigned j = 0; j < m_imageDataChunkIndices.size(); ++j)
@@ -590,8 +593,8 @@ void libmspub::MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
   }
 }
 
-void libmspub::MSPUBParser2k::parseShapeCoordinates(librevenge::RVNGInputStream *input, unsigned seqNum,
-                                                    unsigned chunkOffset)
+void MSPUBParser2k::parseShapeCoordinates(librevenge::RVNGInputStream *input, unsigned seqNum,
+                                          unsigned chunkOffset)
 {
   input->seek(chunkOffset + 6, librevenge::RVNG_SEEK_SET);
   int xs = translateCoordinateIfNecessary(readS32(input));
@@ -601,13 +604,13 @@ void libmspub::MSPUBParser2k::parseShapeCoordinates(librevenge::RVNGInputStream 
   m_collector->setShapeCoordinatesInEmu(seqNum, xs, ys, xe, ye);
 }
 
-int libmspub::MSPUBParser2k::translateCoordinateIfNecessary(int coordinate) const
+int MSPUBParser2k::translateCoordinateIfNecessary(int coordinate) const
 {
   return coordinate;
 }
 
-void libmspub::MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input, unsigned flagsOffset, unsigned seqNum,
-                                              unsigned chunkOffset)
+void MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input, unsigned flagsOffset, unsigned seqNum,
+                                    unsigned chunkOffset)
 {
   if (flagsOffset)
   {
@@ -619,10 +622,10 @@ void libmspub::MSPUBParser2k::parseShapeFlips(librevenge::RVNGInputStream *input
   }
 }
 
-void libmspub::MSPUBParser2k::parseShapeType(librevenge::RVNGInputStream *input,
-                                             unsigned seqNum, unsigned chunkOffset,
-                                             bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
-                                             unsigned &flagsOffset)
+void MSPUBParser2k::parseShapeType(librevenge::RVNGInputStream *input,
+                                   unsigned seqNum, unsigned chunkOffset,
+                                   bool &isGroup, bool &isLine, bool &isImage, bool &isRectangle,
+                                   unsigned &flagsOffset)
 {
   input->seek(chunkOffset, librevenge::RVNG_SEEK_SET);
   unsigned short typeMarker = readU16(input);
@@ -671,28 +674,28 @@ void libmspub::MSPUBParser2k::parseShapeType(librevenge::RVNGInputStream *input,
   }
 }
 
-unsigned libmspub::MSPUBParser2k::getTextIdOffset() const
+unsigned MSPUBParser2k::getTextIdOffset() const
 {
   return 0x58;
 }
 
-unsigned short libmspub::MSPUBParser2k::getTextMarker() const
+unsigned short MSPUBParser2k::getTextMarker() const
 {
   return 0x0008;
 }
 
-unsigned libmspub::MSPUBParser2k::getFirstLineOffset() const
+unsigned MSPUBParser2k::getFirstLineOffset() const
 {
   return 0x2C;
 }
 
-unsigned libmspub::MSPUBParser2k::getSecondLineOffset() const
+unsigned MSPUBParser2k::getSecondLineOffset() const
 {
   return 0x35;
 }
 
-void libmspub::MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input, bool isRectangle, unsigned offset,
-                                             unsigned seqNum)
+void MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input, bool isRectangle, unsigned offset,
+                                   unsigned seqNum)
 {
   input->seek(offset + getFirstLineOffset(), librevenge::RVNG_SEEK_SET);
   unsigned short leftLineWidth = readU8(input);
@@ -729,7 +732,7 @@ void libmspub::MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input,
                                          translateLineWidth(leftLineWidth) * EMUS_IN_INCH / (4 * POINTS_IN_INCH), leftLineExists));
 }
 
-bool libmspub::MSPUBParser2k::parse()
+bool MSPUBParser2k::parse()
 {
   librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
   if (!contents)
@@ -758,7 +761,7 @@ bool libmspub::MSPUBParser2k::parse()
   return m_collector->go();
 }
 
-libmspub::PageType libmspub::MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
+PageType MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
 {
   switch (seqNum)
   {
@@ -773,6 +776,8 @@ libmspub::PageType libmspub::MSPUBParser2k::getPageTypeBySeqNum(unsigned seqNum)
   default:
     return NORMAL;
   }
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

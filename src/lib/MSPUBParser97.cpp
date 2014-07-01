@@ -12,23 +12,26 @@
 #include "libmspub_utils.h"
 #include "MSPUBTypes.h"
 
-libmspub::MSPUBParser97::MSPUBParser97(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
+namespace libmspub
+{
+
+MSPUBParser97::MSPUBParser97(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : MSPUBParser2k(input, collector), m_isBanner(false)
 {
   m_collector->useEncodingHeuristic();
 }
 
-unsigned short libmspub::MSPUBParser97::getTextMarker() const
+unsigned short MSPUBParser97::getTextMarker() const
 {
   return 0x0000;
 }
 
-unsigned libmspub::MSPUBParser97::getTextIdOffset() const
+unsigned MSPUBParser97::getTextIdOffset() const
 {
   return 0x46;
 }
 
-bool libmspub::MSPUBParser97::parse()
+bool MSPUBParser97::parse()
 {
   librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
   if (!contents)
@@ -45,7 +48,7 @@ bool libmspub::MSPUBParser97::parse()
   return m_collector->go();
 }
 
-bool libmspub::MSPUBParser97::parseDocument(librevenge::RVNGInputStream *input)
+bool MSPUBParser97::parseDocument(librevenge::RVNGInputStream *input)
 {
   if (!!m_documentChunkIndex)
   {
@@ -61,7 +64,7 @@ bool libmspub::MSPUBParser97::parseDocument(librevenge::RVNGInputStream *input)
   return false;
 }
 
-void libmspub::MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInputStream *input)
+void MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInputStream *input)
 {
   input->seek(0x12, librevenge::RVNG_SEEK_SET);
   input->seek(readU32(input), librevenge::RVNG_SEEK_SET);
@@ -140,7 +143,7 @@ void libmspub::MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInput
   }
 }
 
-std::vector<libmspub::MSPUBParser97::SpanInfo97> libmspub::MSPUBParser97::getSpansInfo(
+std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
   librevenge::RVNGInputStream *input,
   unsigned prop1Index, unsigned prop2Index, unsigned /* prop3Index */,
   unsigned /* prop3End */)
@@ -188,7 +191,7 @@ std::vector<libmspub::MSPUBParser97::SpanInfo97> libmspub::MSPUBParser97::getSpa
   return ret;
 }
 
-libmspub::CharacterStyle libmspub::MSPUBParser97::readCharacterStyle(
+CharacterStyle MSPUBParser97::readCharacterStyle(
   librevenge::RVNGInputStream *input, unsigned length)
 {
   unsigned begin = input->tell();
@@ -230,7 +233,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser97::readCharacterStyle(
                         fontIndex);
 }
 
-libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(librevenge::RVNGInputStream *input, unsigned length)
+MSPUBParser97::TextInfo97 MSPUBParser97::getTextInfo(librevenge::RVNGInputStream *input, unsigned length)
 {
   std::vector<unsigned char> chars;
   chars.reserve(length);
@@ -254,7 +257,7 @@ libmspub::MSPUBParser97::TextInfo97 libmspub::MSPUBParser97::getTextInfo(libreve
   return TextInfo97(chars, paragraphEnds, shapeEnds);
 }
 
-int libmspub::MSPUBParser97::translateCoordinateIfNecessary(int coordinate) const
+int MSPUBParser97::translateCoordinateIfNecessary(int coordinate) const
 {
   if (m_isBanner)
   {
@@ -266,24 +269,26 @@ int libmspub::MSPUBParser97::translateCoordinateIfNecessary(int coordinate) cons
   }
 }
 
-unsigned libmspub::MSPUBParser97::getFirstLineOffset() const
+unsigned MSPUBParser97::getFirstLineOffset() const
 {
   return 0x22;
 }
 
-unsigned libmspub::MSPUBParser97::getSecondLineOffset() const
+unsigned MSPUBParser97::getSecondLineOffset() const
 {
   return 0x2D;
 }
 
-unsigned libmspub::MSPUBParser97::getShapeFillTypeOffset() const
+unsigned MSPUBParser97::getShapeFillTypeOffset() const
 {
   return 0x20;
 }
 
-unsigned libmspub::MSPUBParser97::getShapeFillColorOffset() const
+unsigned MSPUBParser97::getShapeFillColorOffset() const
 {
   return 0x18;
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

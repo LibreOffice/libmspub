@@ -12,7 +12,8 @@
 #include "libmspub_utils.h"
 #include "MSPUBCollector.h"
 
-using namespace libmspub;
+namespace libmspub
+{
 
 Fill::Fill(const MSPUBCollector *owner) : m_owner(owner)
 {
@@ -168,6 +169,8 @@ void GradientFill::getProperties(librevenge::RVNGPropertyList *out) const
     ret.append(stopProps);
   }
   out->insert("svg:linearGradient", ret);
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

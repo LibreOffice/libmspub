@@ -9,8 +9,14 @@
 
 #include "Shadow.h"
 
-bool libmspub::needsEmulation(const Shadow &shadow)
+namespace libmspub
+{
+
+bool needsEmulation(const Shadow &shadow)
 {
   return !(shadow.m_type == OFFSET);
 }
+
+}
+
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

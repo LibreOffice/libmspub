@@ -19,6 +19,9 @@
 #include "MSPUBParser97.h"
 #include "libmspub_utils.h"
 
+namespace libmspub
+{
+
 namespace
 {
 
@@ -40,12 +43,12 @@ MSPUBVersion getVersion(librevenge::RVNGInputStream *input)
     if (!contentsStream)
       return MSPUB_UNKNOWN_VERSION;
 
-    if (0xe8 != libmspub::readU8(contentsStream.get()) || 0xac != libmspub::readU8(contentsStream.get()))
+    if (0xe8 != readU8(contentsStream.get()) || 0xac != readU8(contentsStream.get()))
       return MSPUB_UNKNOWN_VERSION;
 
-    unsigned char magicVersionByte = libmspub::readU8(contentsStream.get());
+    unsigned char magicVersionByte = readU8(contentsStream.get());
 
-    if (0x00 != libmspub::readU8(contentsStream.get()))
+    if (0x00 != readU8(contentsStream.get()))
       return MSPUB_UNKNOWN_VERSION;
 
     MSPUBVersion version = MSPUB_UNKNOWN_VERSION;
@@ -79,7 +82,7 @@ Analyzes the content of an input stream to see if it can be parsed
 \return A value that indicates whether the content from the input
 stream is a Microsoft Publisher Document that libmspub is able to parse
 */
-PUBAPI bool libmspub::MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
+PUBAPI bool MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
 {
   try
   {
@@ -112,7 +115,7 @@ RVNGDrawingInterface class implementation when needed. This is often commonly ca
 \param painter A MSPUBPainterInterface implementation
 \return A value that indicates whether the parsing was successful
 */
-PUBAPI bool libmspub::MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
+PUBAPI bool MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
 {
   try
   {
@@ -148,6 +151,8 @@ PUBAPI bool libmspub::MSPUBDocument::parse(librevenge::RVNGInputStream *input, l
   {
     return false;
   }
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

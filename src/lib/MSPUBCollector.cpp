@@ -18,6 +18,9 @@
 #include "PolygonUtils.h"
 #include "Coordinate.h"
 
+namespace libmspub
+{
+
 namespace
 {
 
@@ -102,72 +105,72 @@ static void separateSpacesAndInsertText(librevenge::RVNGDrawingInterface *iface,
 
 } // anonymous namespace
 
-librevenge::RVNGBinaryData &libmspub::MSPUBCollector::addEOTFont(const librevenge::RVNGString &name)
+librevenge::RVNGBinaryData &MSPUBCollector::addEOTFont(const librevenge::RVNGString &name)
 {
   m_embeddedFonts.push_back(EmbeddedFontInfo(name));
   return m_embeddedFonts.back().m_blob;
 }
 
-void libmspub::MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
-                                                      const ColorReference &recolor)
+void MSPUBCollector::setShapePictureRecolor(unsigned seqNum,
+                                            const ColorReference &recolor)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureRecolor = recolor;
 }
 
-void libmspub::MSPUBCollector::setShapePictureBrightness(unsigned seqNum,
-                                                         int brightness)
+void MSPUBCollector::setShapePictureBrightness(unsigned seqNum,
+                                               int brightness)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureBrightness = brightness;
 }
 
-void libmspub::MSPUBCollector::setShapePictureContrast(unsigned seqNum,
-                                                       int contrast)
+void MSPUBCollector::setShapePictureContrast(unsigned seqNum,
+                                             int contrast)
 {
   m_shapeInfosBySeqNum[seqNum].m_pictureContrast = contrast;
 }
 
-void libmspub::MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
-                                                  const Arrow &arrow)
+void MSPUBCollector::setShapeBeginArrow(unsigned seqNum,
+                                        const Arrow &arrow)
 {
   m_shapeInfosBySeqNum[seqNum].m_beginArrow = arrow;
 }
 
-void libmspub::MSPUBCollector::setShapeVerticalTextAlign(unsigned seqNum,
-                                                         VerticalAlign va)
+void MSPUBCollector::setShapeVerticalTextAlign(unsigned seqNum,
+                                               VerticalAlign va)
 {
   m_shapeInfosBySeqNum[seqNum].m_verticalAlign = va;
 }
 
-void libmspub::MSPUBCollector::setShapeEndArrow(unsigned seqNum,
-                                                const Arrow &arrow)
+void MSPUBCollector::setShapeEndArrow(unsigned seqNum,
+                                      const Arrow &arrow)
 {
   m_shapeInfosBySeqNum[seqNum].m_endArrow = arrow;
 }
 
-void libmspub::MSPUBCollector::setShapeTableInfo(unsigned seqNum,
-                                                 const TableInfo &ti)
+void MSPUBCollector::setShapeTableInfo(unsigned seqNum,
+                                       const TableInfo &ti)
 {
   m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
 }
 
-void libmspub::MSPUBCollector::setShapeNumColumns(unsigned seqNum,
-                                                  unsigned numColumns)
+void MSPUBCollector::setShapeNumColumns(unsigned seqNum,
+                                        unsigned numColumns)
 {
   m_shapeInfosBySeqNum[seqNum].m_numColumns = numColumns;
 }
 
-void libmspub::MSPUBCollector::setShapeColumnSpacing(unsigned seqNum,
-                                                     unsigned spacing)
+void MSPUBCollector::setShapeColumnSpacing(unsigned seqNum,
+                                           unsigned spacing)
 {
   m_shapeInfosBySeqNum[seqNum].m_columnSpacing = spacing;
 }
 
-void libmspub::MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
+void MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
 {
   m_shapeInfosBySeqNum[seqNum].m_stretchBorderArt = true;
 }
 
-void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, librevenge::RVNGPropertyList *props) const
+void MSPUBCollector::setRectCoordProps(Coordinate coord, librevenge::RVNGPropertyList *props) const
 {
   int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
   double x_center = m_width / 2;
@@ -178,28 +181,28 @@ void libmspub::MSPUBCollector::setRectCoordProps(Coordinate coord, librevenge::R
   props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
 }
 
-libmspub::Coordinate getFudgedCoordinates(libmspub::Coordinate coord, const std::vector<libmspub::Line> &lines, bool makeBigger, libmspub::BorderPosition borderPosition)
+Coordinate getFudgedCoordinates(Coordinate coord, const std::vector<Line> &lines, bool makeBigger, BorderPosition borderPosition)
 {
-  libmspub::Coordinate fudged = coord;
+  Coordinate fudged = coord;
   unsigned topFudge = 0;
   unsigned rightFudge = 0;
   unsigned bottomFudge = 0;
   unsigned leftFudge = 0;
   switch (borderPosition)
   {
-  case libmspub::HALF_INSIDE_SHAPE:
+  case HALF_INSIDE_SHAPE:
     topFudge = (!lines.empty()) ? lines[0].m_widthInEmu / 2 : 0;
     rightFudge = (lines.size() > 1) ? lines[1].m_widthInEmu / 2 : 0;
     bottomFudge = (lines.size() > 2) ? lines[2].m_widthInEmu / 2 : 0;
     leftFudge = (lines.size() > 3) ? lines[3].m_widthInEmu / 2 : 0;
     break;
-  case libmspub::OUTSIDE_SHAPE:
+  case OUTSIDE_SHAPE:
     topFudge = (!lines.empty()) ? lines[0].m_widthInEmu : 0;
     rightFudge = (lines.size() > 1) ? lines[1].m_widthInEmu : 0;
     bottomFudge = (lines.size() > 2) ? lines[2].m_widthInEmu : 0;
     leftFudge = (lines.size() > 3) ? lines[3].m_widthInEmu : 0;
     break;
-  case libmspub::INSIDE_SHAPE:
+  case INSIDE_SHAPE:
   default:
     break;
   }
@@ -220,7 +223,7 @@ libmspub::Coordinate getFudgedCoordinates(libmspub::Coordinate coord, const std:
   return fudged;
 }
 
-void libmspub::MSPUBCollector::setNextPage(unsigned pageSeqNum)
+void MSPUBCollector::setNextPage(unsigned pageSeqNum)
 {
   m_pageSeqNumsOrdered.push_back(pageSeqNum);
 }
@@ -229,7 +232,7 @@ void libmspub::MSPUBCollector::setNextPage(unsigned pageSeqNum)
 #define M_PI 3.14159265358979323846
 #endif
 
-libmspub::MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
+MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false),
   m_numPages(0), m_textStringsById(), m_pagesBySeqNum(),
@@ -251,54 +254,54 @@ libmspub::MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *paint
 {
 }
 
-void libmspub::MSPUBCollector::setTextStringOffset(
+void MSPUBCollector::setTextStringOffset(
   unsigned textId, unsigned offset)
 {
   m_stringOffsetsByTextId[textId] = offset;
 }
 
-void libmspub::MSPUBCollector::setNextTableCellTextEnds(
+void MSPUBCollector::setNextTableCellTextEnds(
   const std::vector<unsigned> &ends)
 {
   m_tableCellTextEndsVector.push_back(ends);
 }
 
-void libmspub::MSPUBCollector::useEncodingHeuristic()
+void MSPUBCollector::useEncodingHeuristic()
 {
   m_encodingHeuristic = true;
 }
 
-void libmspub::MSPUBCollector::setShapeShadow(unsigned seqNum, const Shadow &shadow)
+void MSPUBCollector::setShapeShadow(unsigned seqNum, const Shadow &shadow)
 {
   m_shapeInfosBySeqNum[seqNum].m_shadow = shadow;
 }
 
-void libmspub::noop(const CustomShape *)
+void noop(const CustomShape *)
 {
 }
 
-void libmspub::MSPUBCollector::setShapeCoordinatesRotated90(unsigned seqNum)
+void MSPUBCollector::setShapeCoordinatesRotated90(unsigned seqNum)
 {
   m_shapesWithCoordinatesRotated90.insert(seqNum);
 }
 
-void libmspub::MSPUBCollector::setShapeBorderImageId(unsigned seqNum, unsigned id)
+void MSPUBCollector::setShapeBorderImageId(unsigned seqNum, unsigned id)
 {
   m_shapeInfosBySeqNum[seqNum].m_borderImgIndex = id;
 }
 
-void libmspub::MSPUBCollector::setShapeCustomPath(unsigned seqNum,
-                                                  const DynamicCustomShape &shape)
+void MSPUBCollector::setShapeCustomPath(unsigned seqNum,
+                                        const DynamicCustomShape &shape)
 {
   m_shapeInfosBySeqNum[seqNum].m_customShape = shape;
 }
 
-void libmspub::MSPUBCollector::setShapeClipPath(unsigned seqNum, const std::vector<libmspub::Vertex> &clip)
+void MSPUBCollector::setShapeClipPath(unsigned seqNum, const std::vector<Vertex> &clip)
 {
   m_shapeInfosBySeqNum[seqNum].m_clipPath = clip;
 }
 
-void libmspub::MSPUBCollector::beginGroup()
+void MSPUBCollector::beginGroup()
 {
   ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup);
   if (!m_currentShapeGroup)
@@ -308,7 +311,7 @@ void libmspub::MSPUBCollector::beginGroup()
   m_currentShapeGroup = tmp;
 }
 
-bool libmspub::MSPUBCollector::endGroup()
+bool MSPUBCollector::endGroup()
 {
   if (!m_currentShapeGroup)
   {
@@ -318,32 +321,32 @@ bool libmspub::MSPUBCollector::endGroup()
   return true;
 }
 
-void libmspub::MSPUBCollector::addShapeLine(unsigned seqNum, Line line)
+void MSPUBCollector::addShapeLine(unsigned seqNum, Line line)
 {
   m_shapeInfosBySeqNum[seqNum].m_lines.push_back(line);
 }
 
-void libmspub::MSPUBCollector::setShapeBorderPosition(unsigned seqNum, BorderPosition pos)
+void MSPUBCollector::setShapeBorderPosition(unsigned seqNum, BorderPosition pos)
 {
   m_shapeInfosBySeqNum[seqNum].m_borderPosition = pos;
 }
 
-bool libmspub::MSPUBCollector::hasPage(unsigned seqNum) const
+bool MSPUBCollector::hasPage(unsigned seqNum) const
 {
   return m_pagesBySeqNum.find(seqNum) != m_pagesBySeqNum.end();
 }
 
-void libmspub::MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
+void MSPUBCollector::setShapeMargins(unsigned seqNum, unsigned left, unsigned top, unsigned right, unsigned bottom)
 {
   m_shapeInfosBySeqNum[seqNum].m_margins = Margins(left, top, right, bottom);
 }
 
-void libmspub::MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
+void MSPUBCollector::setPageBgShape(unsigned pageSeqNum, unsigned seqNum)
 {
   m_bgShapeSeqNumsByPageSeqNum[pageSeqNum] = seqNum;
 }
 
-bool libmspub::MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
+bool MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
 {
   if (!m_currentShapeGroup)
   {
@@ -354,7 +357,7 @@ bool libmspub::MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
+void MSPUBCollector::setShapeOrder(unsigned seqNum)
 {
   ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup, seqNum);
   if (!m_currentShapeGroup)
@@ -363,7 +366,7 @@ void libmspub::MSPUBCollector::setShapeOrder(unsigned seqNum)
   }
 }
 
-void libmspub::MSPUBCollector::addPaletteColor(Color c)
+void MSPUBCollector::addPaletteColor(Color c)
 {
   m_paletteColors.push_back(c);
 }
@@ -377,7 +380,7 @@ void endShapeGroup(librevenge::RVNGDrawingInterface *painter)
   painter->endLayer();
 }
 
-std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) const
+std::vector<int> MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) const
 {
   std::vector<int> ret;
   boost::shared_ptr<const CustomShape> ptr_shape = info.getCustomShape();
@@ -402,7 +405,7 @@ std::vector<int> libmspub::MSPUBCollector::getShapeAdjustValues(const ShapeInfo 
   return ret;
 }
 
-boost::optional<std::vector<libmspub::TextParagraph> > libmspub::MSPUBCollector::getShapeText(const ShapeInfo &info) const
+boost::optional<std::vector<TextParagraph> > MSPUBCollector::getShapeText(const ShapeInfo &info) const
 {
   if (!!info.m_textId)
   {
@@ -416,7 +419,7 @@ boost::optional<std::vector<libmspub::TextParagraph> > libmspub::MSPUBCollector:
   return boost::optional<std::vector<TextParagraph> >();
 }
 
-void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
+void MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
 {
   ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, elt.getSeqNum());
   if (ptr_info)
@@ -444,7 +447,7 @@ void libmspub::MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
 }
 
 
-boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const
+boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const
 {
   std::vector<int> adjustValues = getShapeAdjustValues(info);
   if (isGroup)
@@ -563,7 +566,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
-                     std::vector<Line>(), boost::bind(&libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
+                     std::vector<Line>(), boost::bind(&MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
     if (!!info.m_pictureRecolor)
     {
       graphicsProps.remove("draw:color-mode");
@@ -842,7 +845,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
       writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                        false, foldedTransform, lines,
                        boost::bind(
-                         &libmspub::MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
+                         &MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
                        ),
                        m_paletteColors, info.getCustomShape());
     }
@@ -920,7 +923,7 @@ boost::function<void(void)> libmspub::MSPUBCollector::paintShape(const ShapeInfo
   return &no_op;
 }
 
-const char *libmspub::MSPUBCollector::getCalculatedEncoding() const
+const char *MSPUBCollector::getCalculatedEncoding() const
 {
   if (!!m_calculatedEncoding)
   {
@@ -982,15 +985,15 @@ csd_fail:
   return "windows-1252"; // Pretty likely to give garbage text, but it's the best we can do.
 }
 
-void libmspub::MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
-                                                     ColorReference backColor)
+void MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,
+                                           ColorReference backColor)
 {
   m_shapeInfosBySeqNum[shapeSeqNum].m_lineBackColor = backColor;
 }
 
-void libmspub::MSPUBCollector::writeImage(double x, double y,
-                                          double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
-                                          boost::optional<Color> oneBitColor) const
+void MSPUBCollector::writeImage(double x, double y,
+                                double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
+                                boost::optional<Color> oneBitColor) const
 {
   librevenge::RVNGPropertyList props;
   if (!!oneBitColor)
@@ -1010,7 +1013,7 @@ void libmspub::MSPUBCollector::writeImage(double x, double y,
   m_painter->drawGraphicObject(props);
 }
 
-double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const
+double MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape &shape, int arg, const std::vector<int> &adjustValues) const
 {
   if (PROP_ADJUST_VAL_FIRST <= arg && PROP_ADJUST_VAL_LAST >= arg)
   {
@@ -1050,7 +1053,7 @@ double libmspub::MSPUBCollector::getSpecialValue(const ShapeInfo &info, const Cu
   return 0;
 }
 
-double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const
+double MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const
 {
   boost::shared_ptr<const CustomShape> p_shape = info.getCustomShape();
   if (! p_shape)
@@ -1130,42 +1133,42 @@ double libmspub::MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsi
   }
 }
 
-libmspub::MSPUBCollector::~MSPUBCollector()
+MSPUBCollector::~MSPUBCollector()
 {
 }
 
-void libmspub::MSPUBCollector::setShapeRotation(unsigned seqNum, double rotation)
+void MSPUBCollector::setShapeRotation(unsigned seqNum, double rotation)
 {
   m_shapeInfosBySeqNum[seqNum].m_rotation = rotation;
   m_shapeInfosBySeqNum[seqNum].m_innerRotation = (int)rotation;
 }
 
-void libmspub::MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
+void MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipHorizontal)
 {
   m_shapeInfosBySeqNum[seqNum].m_flips = std::pair<bool, bool>(flipVertical, flipHorizontal);
 }
 
-void libmspub::MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
+void MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
 {
   m_shapeInfosBySeqNum[seqNum].m_type = type;
 }
 
-void libmspub::MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, int adjust)
+void MSPUBCollector::setAdjustValue(unsigned seqNum, unsigned index, int adjust)
 {
   m_shapeInfosBySeqNum[seqNum].m_adjustValuesByIndex[index] = adjust;
 }
 
-void libmspub::MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
+void MSPUBCollector::addDefaultCharacterStyle(const CharacterStyle &st)
 {
   m_defaultCharStyles.push_back(st);
 }
 
-void libmspub::MSPUBCollector::addDefaultParagraphStyle(const ParagraphStyle &st)
+void MSPUBCollector::addDefaultParagraphStyle(const ParagraphStyle &st)
 {
   m_defaultParaStyles.push_back(st);
 }
 
-bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
+bool MSPUBCollector::addPage(unsigned seqNum)
 {
   if (!(m_widthSet && m_heightSet))
   {
@@ -1176,23 +1179,23 @@ bool libmspub::MSPUBCollector::addPage(unsigned seqNum)
   return true;
 }
 
-void libmspub::MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum)
+void MSPUBCollector::addTextShape(unsigned stringId, unsigned seqNum)
 {
   m_shapeInfosBySeqNum[seqNum].m_textId = stringId;
 }
 
-void libmspub::MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
+void MSPUBCollector::setShapeImgIndex(unsigned seqNum, unsigned index)
 {
   MSPUB_DEBUG_MSG(("Setting image index of shape with seqnum 0x%x to 0x%x\n", seqNum, index));
   m_shapeInfosBySeqNum[seqNum].m_imgIndex = index;
 }
 
-void libmspub::MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
+void MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
 {
   m_shapeInfosBySeqNum[seqNum].m_dash = dash;
 }
 
-void libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)
+void MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)
 {
   m_shapeInfosBySeqNum[seqNum].m_fill = fill;
   if (skipIfNotBg)
@@ -1201,17 +1204,17 @@ void libmspub::MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<F
   }
 }
 
-void libmspub::MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
+void MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye)
 {
   m_shapeInfosBySeqNum[seqNum].m_coordinates = Coordinate(xs, ys, xe, ye);
 }
 
-void libmspub::MSPUBCollector::addFont(std::vector<unsigned char> name)
+void MSPUBCollector::addFont(std::vector<unsigned char> name)
 {
   m_fonts.push_back(name);
 }
 
-librevenge::RVNGPropertyList libmspub::MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
+librevenge::RVNGPropertyList MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
   const ParagraphStyle &defaultStyle = !!defaultParaStyleIndex && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
@@ -1294,7 +1297,7 @@ librevenge::RVNGPropertyList libmspub::MSPUBCollector::getParaStyleProps(const P
   return ret;
 }
 
-librevenge::RVNGPropertyList libmspub::MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
+librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
   CharacterStyle _nothing = CharacterStyle(false, false, false);
   if (!defaultCharStyleIndex)
@@ -1373,7 +1376,7 @@ librevenge::RVNGPropertyList libmspub::MSPUBCollector::getCharStyleProps(const C
   return ret;
 }
 
-librevenge::RVNGString libmspub::MSPUBCollector::getColorString(const Color &color)
+librevenge::RVNGString MSPUBCollector::getColorString(const Color &color)
 {
   librevenge::RVNGString ret;
   ret.sprintf("#%.2x%.2x%.2x",(unsigned char)color.r, (unsigned char)color.g, (unsigned char)color.b);
@@ -1381,7 +1384,7 @@ librevenge::RVNGString libmspub::MSPUBCollector::getColorString(const Color &col
   return ret;
 }
 
-void libmspub::MSPUBCollector::addBlackToPaletteIfNecessary()
+void MSPUBCollector::addBlackToPaletteIfNecessary()
 {
   if (m_paletteColors.size() < 8)
   {
@@ -1389,12 +1392,12 @@ void libmspub::MSPUBCollector::addBlackToPaletteIfNecessary()
   }
 }
 
-void libmspub::MSPUBCollector::assignShapesToPages()
+void MSPUBCollector::assignShapesToPages()
 {
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
     unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getSeqNum());
-    m_topLevelShapes[i].setup(boost::bind(&libmspub::MSPUBCollector::setupShapeStructures, this, _1));
+    m_topLevelShapes[i].setup(boost::bind(&MSPUBCollector::setupShapeStructures, this, _1));
     if (ptr_pageSeqNum)
     {
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
@@ -1406,7 +1409,7 @@ void libmspub::MSPUBCollector::assignShapesToPages()
   }
 }
 
-boost::optional<unsigned> libmspub::MSPUBCollector::getMasterPageSeqNum(unsigned pageSeqNum) const
+boost::optional<unsigned> MSPUBCollector::getMasterPageSeqNum(unsigned pageSeqNum) const
 {
   boost::optional<unsigned> toReturn;
   const unsigned *ptr_masterSeqNum = getIfExists_const(m_masterPagesByPageSeqNum, pageSeqNum);
@@ -1417,7 +1420,7 @@ boost::optional<unsigned> libmspub::MSPUBCollector::getMasterPageSeqNum(unsigned
   return toReturn;
 }
 
-void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
+void MSPUBCollector::writePage(unsigned pageSeqNum) const
 {
   const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
   librevenge::RVNGPropertyList pageProps;
@@ -1449,18 +1452,18 @@ void libmspub::MSPUBCollector::writePage(unsigned pageSeqNum) const
   }
 }
 
-void libmspub::MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
+void MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
 {
   const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
   const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
   for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
   {
     ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
-    shapeGroup->visit(boost::bind(&libmspub::MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+    shapeGroup->visit(boost::bind(&MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
   }
 }
 
-void libmspub::MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
+void MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
 {
   const unsigned *ptr_fillSeqNum = getIfExists_const(m_bgShapeSeqNumsByPageSeqNum, pageSeqNum);
   if (ptr_fillSeqNum)
@@ -1484,12 +1487,12 @@ void libmspub::MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
   }
 }
 
-bool libmspub::MSPUBCollector::pageIsMaster(unsigned pageSeqNum) const
+bool MSPUBCollector::pageIsMaster(unsigned pageSeqNum) const
 {
   return m_masterPages.find(pageSeqNum) != m_masterPages.end();
 }
 
-bool libmspub::MSPUBCollector::go()
+bool MSPUBCollector::go()
 {
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
@@ -1522,7 +1525,7 @@ bool libmspub::MSPUBCollector::go()
 }
 
 
-bool libmspub::MSPUBCollector::addTextString(const std::vector<TextParagraph> &str, unsigned id)
+bool MSPUBCollector::addTextString(const std::vector<TextParagraph> &str, unsigned id)
 {
   MSPUB_DEBUG_MSG(("addTextString, id: 0x%x\n", id));
   m_textStringsById[id] = str;
@@ -1533,7 +1536,7 @@ bool libmspub::MSPUBCollector::addTextString(const std::vector<TextParagraph> &s
   return true; //FIXME: Warn if the string already existed in the map.
 }
 
-void libmspub::MSPUBCollector::ponderStringEncoding(
+void MSPUBCollector::ponderStringEncoding(
   const std::vector<TextParagraph> &str)
 {
   for (unsigned i = 0; i < str.size(); ++i)
@@ -1546,21 +1549,21 @@ void libmspub::MSPUBCollector::ponderStringEncoding(
   }
 }
 
-void libmspub::MSPUBCollector::setWidthInEmu(unsigned long widthInEmu)
+void MSPUBCollector::setWidthInEmu(unsigned long widthInEmu)
 {
   //FIXME: Warn if this is called twice
   m_width = ((double)widthInEmu) / EMUS_IN_INCH;
   m_widthSet = true;
 }
 
-void libmspub::MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
+void MSPUBCollector::setHeightInEmu(unsigned long heightInEmu)
 {
   //FIXME: Warn if this is called twice
   m_height = ((double)heightInEmu) / EMUS_IN_INCH;
   m_heightSet = true;
 }
 
-bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, librevenge::RVNGBinaryData img)
+bool MSPUBCollector::addImage(unsigned index, ImgType type, librevenge::RVNGBinaryData img)
 {
   while (m_images.size() < index)
   {
@@ -1578,8 +1581,8 @@ bool libmspub::MSPUBCollector::addImage(unsigned index, ImgType type, librevenge
   return index > 0;
 }
 
-librevenge::RVNGBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType type,
-                                                                     unsigned borderArtIndex)
+librevenge::RVNGBinaryData *MSPUBCollector::addBorderImage(ImgType type,
+                                                           unsigned borderArtIndex)
 {
   while (borderArtIndex >= m_borderImages.size())
   {
@@ -1589,7 +1592,7 @@ librevenge::RVNGBinaryData *libmspub::MSPUBCollector::addBorderImage(ImgType typ
   return &(m_borderImages[borderArtIndex].m_images.back().m_imgBlob);
 }
 
-void libmspub::MSPUBCollector::setBorderImageOffset(unsigned index, unsigned offset)
+void MSPUBCollector::setBorderImageOffset(unsigned index, unsigned offset)
 {
   while (index >= m_borderImages.size())
   {
@@ -1614,30 +1617,32 @@ void libmspub::MSPUBCollector::setBorderImageOffset(unsigned index, unsigned off
   }
 }
 
-void libmspub::MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)
+void MSPUBCollector::setShapePage(unsigned seqNum, unsigned pageSeqNum)
 {
   m_shapeInfosBySeqNum[seqNum].m_pageSeqNum = pageSeqNum;
   m_pageSeqNumsByShapeSeqNum[seqNum] = pageSeqNum;
 }
 
-void libmspub::MSPUBCollector::addTextColor(ColorReference c)
+void MSPUBCollector::addTextColor(ColorReference c)
 {
   m_textColors.push_back(c);
 }
 
-void libmspub::MSPUBCollector::designateMasterPage(unsigned seqNum)
+void MSPUBCollector::designateMasterPage(unsigned seqNum)
 {
   m_masterPages.insert(seqNum);
 }
 
-void libmspub::MSPUBCollector::setMasterPage(unsigned seqNum, unsigned masterPageSeqNum)
+void MSPUBCollector::setMasterPage(unsigned seqNum, unsigned masterPageSeqNum)
 {
   m_masterPagesByPageSeqNum[seqNum] = masterPageSeqNum;
 }
 
-void libmspub::MSPUBCollector::setShapeCropType(unsigned seqNum, ShapeType cropType)
+void MSPUBCollector::setShapeCropType(unsigned seqNum, ShapeType cropType)
 {
   m_shapeInfosBySeqNum[seqNum].m_cropType = cropType;
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

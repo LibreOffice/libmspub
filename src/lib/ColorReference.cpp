@@ -9,7 +9,10 @@
 
 #include "ColorReference.h"
 
-libmspub::Color libmspub::ColorReference::getRealColor(unsigned c, const std::vector<Color> &palette) const
+namespace libmspub
+{
+
+Color ColorReference::getRealColor(unsigned c, const std::vector<Color> &palette) const
 {
   unsigned char type = (c >> 24) & 0xFF;
   if (type == 0x08)
@@ -22,7 +25,7 @@ libmspub::Color libmspub::ColorReference::getRealColor(unsigned c, const std::ve
   }
   return Color(c & 0xFF, (c >> 8) & 0xFF, (c >> 16) & 0xFF);
 }
-libmspub::Color libmspub::ColorReference::getFinalColor(const std::vector<Color> &palette) const
+Color ColorReference::getFinalColor(const std::vector<Color> &palette) const
 {
   unsigned char modifiedType = (m_modifiedColor >> 24) & 0xFF;
   if (modifiedType == CHANGE_INTENSITY)
@@ -46,9 +49,7 @@ libmspub::Color libmspub::ColorReference::getFinalColor(const std::vector<Color>
   }
 }
 
-namespace libmspub
-{
-bool operator==(const libmspub::ColorReference &l, const libmspub::ColorReference &r)
+bool operator==(const ColorReference &l, const ColorReference &r)
 {
   return l.m_baseColor == r.m_baseColor && l.m_modifiedColor == r.m_modifiedColor;
 }

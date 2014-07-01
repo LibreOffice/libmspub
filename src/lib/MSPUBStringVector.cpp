@@ -20,24 +20,22 @@ public:
   std::vector<librevenge::RVNGString> m_strings;
 };
 
-} // namespace libmspub
-
-libmspub::MSPUBStringVector::MSPUBStringVector()
+MSPUBStringVector::MSPUBStringVector()
   : m_pImpl(new MSPUBStringVectorImpl())
 {
 }
 
-libmspub::MSPUBStringVector::MSPUBStringVector(const MSPUBStringVector &vec)
+MSPUBStringVector::MSPUBStringVector(const MSPUBStringVector &vec)
   : m_pImpl(new MSPUBStringVectorImpl(*(vec.m_pImpl)))
 {
 }
 
-libmspub::MSPUBStringVector::~MSPUBStringVector()
+MSPUBStringVector::~MSPUBStringVector()
 {
   delete m_pImpl;
 }
 
-libmspub::MSPUBStringVector &libmspub::MSPUBStringVector::operator=(const MSPUBStringVector &vec)
+MSPUBStringVector &MSPUBStringVector::operator=(const MSPUBStringVector &vec)
 {
   // Check for self-assignment
   if (this == &vec)
@@ -48,29 +46,31 @@ libmspub::MSPUBStringVector &libmspub::MSPUBStringVector::operator=(const MSPUBS
   return *this;
 }
 
-unsigned libmspub::MSPUBStringVector::size() const
+unsigned MSPUBStringVector::size() const
 {
   return (unsigned)(m_pImpl->m_strings.size());
 }
 
-bool libmspub::MSPUBStringVector::empty() const
+bool MSPUBStringVector::empty() const
 {
   return m_pImpl->m_strings.empty();
 }
 
-const librevenge::RVNGString &libmspub::MSPUBStringVector::operator[](unsigned idx) const
+const librevenge::RVNGString &MSPUBStringVector::operator[](unsigned idx) const
 {
   return m_pImpl->m_strings[idx];
 }
 
-void libmspub::MSPUBStringVector::append(const librevenge::RVNGString &str)
+void MSPUBStringVector::append(const librevenge::RVNGString &str)
 {
   m_pImpl->m_strings.push_back(str);
 }
 
-void libmspub::MSPUBStringVector::clear()
+void MSPUBStringVector::clear()
 {
   m_pImpl->m_strings.clear();
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -31,7 +31,10 @@
 #include "TableInfo.h"
 #include "VerticalAlign.h"
 
-libmspub::MSPUBParser::MSPUBParser(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
+namespace libmspub
+{
+
+MSPUBParser::MSPUBParser(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : m_input(input), m_collector(collector),
     m_blockInfo(), m_contentChunks(),
     m_cellsChunkIndices(),
@@ -44,12 +47,12 @@ libmspub::MSPUBParser::MSPUBParser(librevenge::RVNGInputStream *input, MSPUBColl
 {
 }
 
-libmspub::MSPUBParser::~MSPUBParser()
+MSPUBParser::~MSPUBParser()
 {
 }
 
-bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
-                                                    unsigned *geomFlags)
+bool MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
+                                          unsigned *geomFlags)
 {
   return flags &&
          !(((*flags) & FLAG_USE_LINE) && !((*flags) & FLAG_LINE)) &&
@@ -58,12 +61,12 @@ bool libmspub::MSPUBParser::lineExistsByFlagPointer(unsigned *flags,
 
 }
 
-unsigned libmspub::MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
+unsigned MSPUBParser::getColorIndexByQuillEntry(unsigned entry)
 {
   return entry;
 }
 
-short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variable-length block with the data length as the first DWORD
+short MSPUBParser::getBlockDataLength(unsigned type) // -1 for variable-length block with the data length as the first DWORD
 {
   switch (type)
   {
@@ -106,7 +109,7 @@ short libmspub::MSPUBParser::getBlockDataLength(unsigned type) // -1 for variabl
   return 0;
 }
 
-bool libmspub::MSPUBParser::parse()
+bool MSPUBParser::parse()
 {
   MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isStructured())
@@ -160,7 +163,7 @@ bool libmspub::MSPUBParser::parse()
   return m_collector->go();
 }
 
-libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
+ImgType MSPUBParser::imgTypeByBlipType(unsigned short type)
 {
   switch (type)
   {
@@ -184,7 +187,7 @@ libmspub::ImgType libmspub::MSPUBParser::imgTypeByBlipType(unsigned short type)
   return UNKNOWN;
 }
 
-int libmspub::MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
+int MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
 {
   bool oneUid = true;
   int offset = 0x11;
@@ -225,7 +228,7 @@ int libmspub::MSPUBParser::getStartOffset(ImgType type, unsigned short initial)
   return offset + (oneUid ? 0 : 0x10);
 }
 
-bool libmspub::MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
+bool MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
 {
   while (stillReading(input, (unsigned long)-1))
   {
@@ -305,7 +308,7 @@ bool libmspub::MSPUBParser::parseEscherDelay(librevenge::RVNGInputStream *input)
   return true;
 }
 
-bool libmspub::MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
+bool MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseContents\n"));
   input->seek(0x1a, librevenge::RVNG_SEEK_SET);
@@ -315,7 +318,7 @@ bool libmspub::MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
   unsigned trailerLength = readU32(input);
   for (unsigned i=0; i<3; i++)
   {
-    libmspub::MSPUBBlockInfo trailerPart = parseBlock(input);
+    MSPUBBlockInfo trailerPart = parseBlock(input);
     MSPUB_DEBUG_MSG(("Trailer SubBlock %i, startPosition 0x%lx, id %i, type 0x%x, dataLength 0x%lx\n", i+1, trailerPart.startPosition, trailerPart.id, trailerPart.type, trailerPart.dataLength));
     if (trailerPart.type == TRAILER_DIRECTORY)
     {
@@ -409,9 +412,9 @@ bool libmspub::MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
 }
 
 #ifdef DEBUG
-bool libmspub::MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
+bool MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
 #else
-bool libmspub::MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &)
+bool MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &)
 #endif
 {
   MSPUB_DEBUG_MSG(("parseDocumentChunk: offset 0x%lx, end 0x%lx\n", input->tell(), chunk.end));
@@ -419,12 +422,12 @@ bool libmspub::MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *inpu
   unsigned long len = readU32(input);
   while (stillReading(input, begin + len))
   {
-    libmspub::MSPUBBlockInfo info = parseBlock(input);
+    MSPUBBlockInfo info = parseBlock(input);
     if (info.id == DOCUMENT_SIZE)
     {
       while (stillReading(input, info.dataOffset + info.dataLength))
       {
-        libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
+        MSPUBBlockInfo subInfo = parseBlock(input, true);
         if (subInfo.id == DOCUMENT_WIDTH)
         {
           m_collector->setWidthInEmu(subInfo.data);
@@ -455,7 +458,7 @@ bool libmspub::MSPUBParser::parseDocumentChunk(librevenge::RVNGInputStream *inpu
   return true; //FIXME: return false for failure
 }
 
-bool libmspub::MSPUBParser::parseFontChunk(
+bool MSPUBParser::parseFontChunk(
   librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
 {
   unsigned length = readU32(input);
@@ -508,7 +511,7 @@ bool libmspub::MSPUBParser::parseFontChunk(
   return true;
 }
 
-bool libmspub::MSPUBParser::parseBorderArtChunk(
+bool MSPUBParser::parseBorderArtChunk(
   librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
 {
   unsigned length = readU32(input);
@@ -572,7 +575,7 @@ bool libmspub::MSPUBParser::parseBorderArtChunk(
   return true;
 }
 
-bool libmspub::MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
+bool MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parsePageChunk: offset 0x%lx, end 0x%lx, seqnum 0x%x, parent 0x%x\n", input->tell(), chunk.end, chunk.seqNum, chunk.parentSeqNum));
   unsigned long length = readU32(input);
@@ -583,7 +586,7 @@ bool libmspub::MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, c
   }
   while (stillReading(input, chunk.offset + length))
   {
-    libmspub::MSPUBBlockInfo info = parseBlock(input);
+    MSPUBBlockInfo info = parseBlock(input);
     if (info.id == PAGE_BG_SHAPE)
     {
       m_collector->setPageBgShape(chunk.seqNum, info.data);
@@ -614,12 +617,12 @@ bool libmspub::MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, c
   return true;
 }
 
-bool libmspub::MSPUBParser::parsePageShapeList(librevenge::RVNGInputStream *input, libmspub::MSPUBBlockInfo info, unsigned pageSeqNum)
+bool MSPUBParser::parsePageShapeList(librevenge::RVNGInputStream *input, MSPUBBlockInfo info, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parsePageShapeList: page seqnum 0x%x\n", pageSeqNum));
   while (stillReading(input, info.dataOffset + info.dataLength))
   {
-    libmspub::MSPUBBlockInfo subInfo = parseBlock(input, true);
+    MSPUBBlockInfo subInfo = parseBlock(input, true);
     if (subInfo.type == SHAPE_SEQNUM)
     {
       m_collector->setShapePage(subInfo.data, pageSeqNum);
@@ -628,8 +631,8 @@ bool libmspub::MSPUBParser::parsePageShapeList(librevenge::RVNGInputStream *inpu
   return true;
 }
 
-bool libmspub::MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
-                                       const ContentChunkReference &chunk)
+bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
+                             const ContentChunkReference &chunk)
 {
   MSPUB_DEBUG_MSG(("parseShape: seqNum 0x%x\n", chunk.seqNum));
   unsigned long pos = input->tell();
@@ -646,7 +649,7 @@ bool libmspub::MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
     boost::optional<unsigned> rowcolArrayOffset;
     while (stillReading(input, pos + length))
     {
-      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+      MSPUBBlockInfo info = parseBlock(input, true);
       if (info.id == TABLE_WIDTH)
       {
         width = info.data;
@@ -755,7 +758,7 @@ bool libmspub::MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
     unsigned textId = 0;
     while (stillReading(input, pos + length))
     {
-      libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+      MSPUBBlockInfo info = parseBlock(input, true);
       if (info.id == SHAPE_WIDTH)
       {
         width = info.data;
@@ -811,9 +814,9 @@ bool libmspub::MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
   }
 }
 
-libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(librevenge::RVNGInputStream *input)
+QuillChunkReference MSPUBParser::parseQuillChunkReference(librevenge::RVNGInputStream *input)
 {
-  libmspub::QuillChunkReference ret;
+  QuillChunkReference ret;
   readU16(input); //FIXME: Can we do something sensible if this is not 0x18 ?
   char name[5];
   for (int i = 0; i < 4; ++i)
@@ -836,7 +839,7 @@ libmspub::QuillChunkReference libmspub::MSPUBParser::parseQuillChunkReference(li
   return ret;
 }
 
-std::vector<unsigned> libmspub::MSPUBParser::parseTableCellDefinitions(
+std::vector<unsigned> MSPUBParser::parseTableCellDefinitions(
   librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
 {
   std::vector<unsigned> ret;
@@ -854,7 +857,7 @@ std::vector<unsigned> libmspub::MSPUBParser::parseTableCellDefinitions(
   return ret;
 }
 
-bool libmspub::MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
+bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseQuill\n"));
   unsigned chunkReferenceListOffset = 0x18;
@@ -866,7 +869,7 @@ bool libmspub::MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
     chunkReferenceListOffset = readU32(input);
     for (unsigned i = 0; i < numChunks; ++i)
     {
-      libmspub::QuillChunkReference quillChunkReference = parseQuillChunkReference(input);
+      QuillChunkReference quillChunkReference = parseQuillChunkReference(input);
       chunkReferences.push_back(quillChunkReference);
     }
   }
@@ -1021,7 +1024,7 @@ bool libmspub::MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
   return true;
 }
 
-void libmspub::MSPUBParser::parseFonts(librevenge::RVNGInputStream *input, const QuillChunkReference &)
+void MSPUBParser::parseFonts(librevenge::RVNGInputStream *input, const QuillChunkReference &)
 {
   readU32(input);
   unsigned numElements = readU32(input);
@@ -1039,7 +1042,7 @@ void libmspub::MSPUBParser::parseFonts(librevenge::RVNGInputStream *input, const
   }
 }
 
-void libmspub::MSPUBParser::parseDefaultStyle(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
+void MSPUBParser::parseDefaultStyle(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
 {
   readU32(input);
   unsigned numElements = readU32(input);
@@ -1067,7 +1070,7 @@ void libmspub::MSPUBParser::parseDefaultStyle(librevenge::RVNGInputStream *input
 }
 
 
-void libmspub::MSPUBParser::parseColors(librevenge::RVNGInputStream *input, const QuillChunkReference &)
+void MSPUBParser::parseColors(librevenge::RVNGInputStream *input, const QuillChunkReference &)
 {
   unsigned numEntries = readU32(input);
   input->seek(input->tell() + 8, librevenge::RVNG_SEEK_SET);
@@ -1086,7 +1089,7 @@ void libmspub::MSPUBParser::parseColors(librevenge::RVNGInputStream *input, cons
   }
 }
 
-std::vector<libmspub::MSPUBParser::TextParagraphReference> libmspub::MSPUBParser::parseParagraphStyles(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
+std::vector<MSPUBParser::TextParagraphReference> MSPUBParser::parseParagraphStyles(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
 {
   std::vector<TextParagraphReference> ret;
   unsigned short numEntries = readU16(input);
@@ -1114,7 +1117,7 @@ std::vector<libmspub::MSPUBParser::TextParagraphReference> libmspub::MSPUBParser
   return ret;
 }
 
-std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::parseCharacterStyles(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
+std::vector<MSPUBParser::TextSpanReference> MSPUBParser::parseCharacterStyles(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
 {
   unsigned short numEntries = readU16(input);
   input->seek(input->tell() + 6, librevenge::RVNG_SEEK_SET);
@@ -1141,7 +1144,7 @@ std::vector<libmspub::MSPUBParser::TextSpanReference> libmspub::MSPUBParser::par
   }
   return ret;
 }
-libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(librevenge::RVNGInputStream *input)
+ParagraphStyle MSPUBParser::getParagraphStyle(librevenge::RVNGInputStream *input)
 {
   ParagraphStyle ret;
 
@@ -1271,7 +1274,7 @@ libmspub::ParagraphStyle libmspub::MSPUBParser::getParagraphStyle(librevenge::RV
   return ret;
 }
 
-libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input)
+CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input)
 {
   bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
   int textSize1 = -1, /* textSize2 = -1,*/ colorIndex = -1;
@@ -1281,7 +1284,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(librevenge::RV
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
   {
-    libmspub::MSPUBBlockInfo info = parseBlock(input, true);
+    MSPUBBlockInfo info = parseBlock(input, true);
     switch (info.id)
     {
     case BOLD_1_ID:
@@ -1331,7 +1334,7 @@ libmspub::CharacterStyle libmspub::MSPUBParser::getCharacterStyle(librevenge::RV
   return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex, sst);
 }
 
-unsigned libmspub::MSPUBParser::getFontIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)
+unsigned MSPUBParser::getFontIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)
 {
   MSPUB_DEBUG_MSG(("In getFontIndex\n"));
   input->seek(info.dataOffset + 4, librevenge::RVNG_SEEK_SET);
@@ -1352,7 +1355,7 @@ unsigned libmspub::MSPUBParser::getFontIndex(librevenge::RVNGInputStream *input,
   return 0;
 }
 
-int libmspub::MSPUBParser::getColorIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)
+int MSPUBParser::getColorIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)
 {
   input->seek(info.dataOffset + 4, librevenge::RVNG_SEEK_SET);
   while (stillReading(input, info.dataOffset + info.dataLength))
@@ -1369,19 +1372,19 @@ int libmspub::MSPUBParser::getColorIndex(librevenge::RVNGInputStream *input, con
   return -1;
 }
 
-bool libmspub::MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
+bool MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
 {
   MSPUB_DEBUG_MSG(("MSPUBParser::parseEscher\n"));
-  libmspub::EscherContainerInfo fakeroot;
+  EscherContainerInfo fakeroot;
   fakeroot.initial = 0;
   fakeroot.type = 0;
   fakeroot.contentsOffset = input->tell();
   fakeroot.contentsLength = (unsigned long)-1; //FIXME: Get the actual length
-  libmspub::EscherContainerInfo dg, dgg;
+  EscherContainerInfo dg, dgg;
   //Note: this assumes that dgg comes before any dg with images.
   if (findEscherContainer(input, fakeroot, dgg, OFFICE_ART_DGG_CONTAINER))
   {
-    libmspub::EscherContainerInfo bsc;
+    EscherContainerInfo bsc;
     if (findEscherContainer(input, fakeroot, bsc, OFFICE_ART_B_STORE_CONTAINER))
     {
       unsigned short currentDelayIndex = 1;
@@ -1404,7 +1407,7 @@ bool libmspub::MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
   }
   while (findEscherContainer(input, fakeroot, dg, OFFICE_ART_DG_CONTAINER))
   {
-    libmspub::EscherContainerInfo spgr;
+    EscherContainerInfo spgr;
     while (findEscherContainer(input, dg, spgr, OFFICE_ART_SPGR_CONTAINER))
     {
       Coordinate c1, c2;
@@ -1415,9 +1418,9 @@ bool libmspub::MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
   return true;
 }
 
-void libmspub::MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
+void MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
 {
-  libmspub::EscherContainerInfo shapeOrGroup;
+  EscherContainerInfo shapeOrGroup;
   std::set<unsigned short> types;
   types.insert(OFFICE_ART_SPGR_CONTAINER);
   types.insert(OFFICE_ART_SP_CONTAINER);
@@ -1438,16 +1441,16 @@ void libmspub::MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, 
   }
 }
 
-void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const EscherContainerInfo &sp, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
+void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const EscherContainerInfo &sp, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord)
 {
   Coordinate thisParentCoordinateSystem = parentCoordinateSystem;
   bool definesRelativeCoordinates = false;
-  libmspub::EscherContainerInfo cData;
-  libmspub::EscherContainerInfo cAnchor;
-  libmspub::EscherContainerInfo cFopt;
-  libmspub::EscherContainerInfo cTertiaryFopt;
-  libmspub::EscherContainerInfo cFsp;
-  libmspub::EscherContainerInfo cFspgr;
+  EscherContainerInfo cData;
+  EscherContainerInfo cAnchor;
+  EscherContainerInfo cFopt;
+  EscherContainerInfo cTertiaryFopt;
+  EscherContainerInfo cFsp;
+  EscherContainerInfo cFspgr;
   unsigned shapeFlags = 0;
   bool isGroupLeader = false;
   ShapeType st = RECTANGLE;
@@ -1773,7 +1776,7 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
           const std::vector<unsigned char> wrapVertexData = foptValues.m_complexValues[FIELDID_P_WRAPPOLYGONVERTICES];
           if (!wrapVertexData.empty())
           {
-            std::vector<libmspub::Vertex> ret = parseVertices(wrapVertexData);
+            std::vector<Vertex> ret = parseVertices(wrapVertexData);
             m_collector->setShapeClipPath(*shapeSeqNum, ret);
           }
         }
@@ -1832,8 +1835,8 @@ void libmspub::MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input,
   }
 }
 
-boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
-                                                                    bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
+boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
+                                                bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
@@ -2001,7 +2004,7 @@ boost::shared_ptr<libmspub::Fill> libmspub::MSPUBParser::getNewFill(const std::m
   }
 }
 
-libmspub::DynamicCustomShape libmspub::MSPUBParser::getDynamicCustomShape(
+DynamicCustomShape MSPUBParser::getDynamicCustomShape(
   const std::vector<unsigned char> &vertexData, const std::vector<unsigned char> &segmentData,
   const std::vector<unsigned char> &guideData, unsigned geoWidth,
   unsigned geoHeight)
@@ -2013,7 +2016,7 @@ libmspub::DynamicCustomShape libmspub::MSPUBParser::getDynamicCustomShape(
   return ret;
 }
 
-std::vector<unsigned short> libmspub::MSPUBParser::parseSegments(
+std::vector<unsigned short> MSPUBParser::parseSegments(
   const std::vector<unsigned char> &segmentData)
 {
   std::vector<unsigned short> ret;
@@ -2036,7 +2039,7 @@ std::vector<unsigned short> libmspub::MSPUBParser::parseSegments(
   return ret;
 }
 
-std::vector<libmspub::Calculation> libmspub::MSPUBParser::parseGuides(
+std::vector<Calculation> MSPUBParser::parseGuides(
   const std::vector<unsigned char> &/* guideData */)
 {
   std::vector<Calculation> ret;
@@ -2046,10 +2049,10 @@ std::vector<libmspub::Calculation> libmspub::MSPUBParser::parseGuides(
   return ret;
 }
 
-std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
+std::vector<Vertex> MSPUBParser::parseVertices(
   const std::vector<unsigned char> &vertexData)
 {
-  std::vector<libmspub::Vertex> ret;
+  std::vector<Vertex> ret;
   if (vertexData.size() < 6)
   {
     return ret;
@@ -2095,14 +2098,14 @@ std::vector<libmspub::Vertex> libmspub::MSPUBParser::parseVertices(
       y = 0;
       break;
     }
-    libmspub::Vertex v = {x, y};
+    Vertex v = {x, y};
     ret.push_back(v);
     offset += entrySize;
   }
   return ret;
 }
 
-unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)
+unsigned MSPUBParser::getEscherElementTailLength(unsigned short type)
 {
   switch (type)
   {
@@ -2114,7 +2117,7 @@ unsigned libmspub::MSPUBParser::getEscherElementTailLength(unsigned short type)
   }
 }
 
-unsigned libmspub::MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned short type)
+unsigned MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned short type)
 {
   switch (type)
   {
@@ -2125,11 +2128,11 @@ unsigned libmspub::MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned 
   return 0;
 }
 
-bool libmspub::MSPUBParser::findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const libmspub::EscherContainerInfo &parent, libmspub::EscherContainerInfo &out, std::set<unsigned short> types)
+bool MSPUBParser::findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, std::set<unsigned short> types)
 {
   while (stillReading(input, parent.contentsOffset + parent.contentsLength))
   {
-    libmspub::EscherContainerInfo next = parseEscherContainer(input);
+    EscherContainerInfo next = parseEscherContainer(input);
     if (types.find(next.type) != types.end())
     {
       out = next;
@@ -2140,12 +2143,12 @@ bool libmspub::MSPUBParser::findEscherContainerWithTypeInSet(librevenge::RVNGInp
   return false;
 }
 
-bool libmspub::MSPUBParser::findEscherContainer(librevenge::RVNGInputStream *input, const libmspub::EscherContainerInfo &parent, libmspub::EscherContainerInfo &out, unsigned short desiredType)
+bool MSPUBParser::findEscherContainer(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, unsigned short desiredType)
 {
   MSPUB_DEBUG_MSG(("At offset 0x%lx, attempting to find escher container of type 0x%x\n", input->tell(), desiredType));
   while (stillReading(input, parent.contentsOffset + parent.contentsLength))
   {
-    libmspub::EscherContainerInfo next = parseEscherContainer(input);
+    EscherContainerInfo next = parseEscherContainer(input);
     if (next.type == desiredType)
     {
       out = next;
@@ -2156,7 +2159,7 @@ bool libmspub::MSPUBParser::findEscherContainer(librevenge::RVNGInputStream *inp
   return false;
 }
 
-libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(librevenge::RVNGInputStream *input, const libmspub::EscherContainerInfo &record)
+FOPTValues MSPUBParser::extractFOPTValues(librevenge::RVNGInputStream *input, const EscherContainerInfo &record)
 {
   FOPTValues ret;
   input->seek(record.contentsOffset, librevenge::RVNG_SEEK_SET);
@@ -2202,7 +2205,7 @@ libmspub::FOPTValues libmspub::MSPUBParser::extractFOPTValues(librevenge::RVNGIn
   return ret;
 }
 
-std::map<unsigned short, unsigned> libmspub::MSPUBParser::extractEscherValues(librevenge::RVNGInputStream *input, const libmspub::EscherContainerInfo &record)
+std::map<unsigned short, unsigned> MSPUBParser::extractEscherValues(librevenge::RVNGInputStream *input, const EscherContainerInfo &record)
 {
   std::map<unsigned short, unsigned> ret;
   input->seek(record.contentsOffset + getEscherElementAdditionalHeaderLength(record.type), librevenge::RVNG_SEEK_SET);
@@ -2216,11 +2219,11 @@ std::map<unsigned short, unsigned> libmspub::MSPUBParser::extractEscherValues(li
 }
 
 
-bool libmspub::MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input, const libmspub::MSPUBBlockInfo block)
+bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input, const MSPUBBlockInfo block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
-  libmspub::MSPUBContentChunkType type = (libmspub::MSPUBContentChunkType)0;
+  MSPUBContentChunkType type = (MSPUBContentChunkType)0;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;
@@ -2228,11 +2231,11 @@ bool libmspub::MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStre
   bool seenParentSeqNum = false;
   while (stillReading(input, block.dataOffset + block.dataLength))
   {
-    libmspub::MSPUBBlockInfo subBlock = parseBlock(input, true);
+    MSPUBBlockInfo subBlock = parseBlock(input, true);
     //FIXME: Warn if multiple of these blocks seen.
     if (subBlock.id == CHUNK_TYPE)
     {
-      type = (libmspub::MSPUBContentChunkType)subBlock.data;
+      type = (MSPUBContentChunkType)subBlock.data;
       seenType = true;
     }
     else if (subBlock.id == CHUNK_OFFSET)
@@ -2307,18 +2310,18 @@ bool libmspub::MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStre
   return false;
 }
 
-bool libmspub::MSPUBParser::isBlockDataString(unsigned type)
+bool MSPUBParser::isBlockDataString(unsigned type)
 {
   return type == STRING_CONTAINER;
 }
-void libmspub::MSPUBParser::skipBlock(librevenge::RVNGInputStream *input, libmspub::MSPUBBlockInfo block)
+void MSPUBParser::skipBlock(librevenge::RVNGInputStream *input, MSPUBBlockInfo block)
 {
   input->seek(block.dataOffset + block.dataLength, librevenge::RVNG_SEEK_SET);
 }
 
-libmspub::EscherContainerInfo libmspub::MSPUBParser::parseEscherContainer(librevenge::RVNGInputStream *input)
+EscherContainerInfo MSPUBParser::parseEscherContainer(librevenge::RVNGInputStream *input)
 {
-  libmspub::EscherContainerInfo info;
+  EscherContainerInfo info;
   info.initial = readU16(input);
   info.type = readU16(input);
   info.contentsLength = readU32(input);
@@ -2327,9 +2330,9 @@ libmspub::EscherContainerInfo libmspub::MSPUBParser::parseEscherContainer(librev
   return info;
 }
 
-libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(librevenge::RVNGInputStream *input, bool skipHierarchicalData)
+MSPUBBlockInfo MSPUBParser::parseBlock(librevenge::RVNGInputStream *input, bool skipHierarchicalData)
 {
-  libmspub::MSPUBBlockInfo info;
+  MSPUBBlockInfo info;
   info.startPosition = input->tell();
   info.id = (MSPUBBlockID)readU8(input);
   info.type = (MSPUBBlockType)readU8(input);
@@ -2378,7 +2381,7 @@ libmspub::MSPUBBlockInfo libmspub::MSPUBParser::parseBlock(librevenge::RVNGInput
   return info;
 }
 
-libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
+PageType MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
 {
   switch (seqNum)
   {
@@ -2392,7 +2395,7 @@ libmspub::PageType libmspub::MSPUBParser::getPageTypeBySeqNum(unsigned seqNum)
   }
 }
 
-bool libmspub::MSPUBParser::parsePaletteChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
+bool MSPUBParser::parsePaletteChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk)
 {
   unsigned length = readU32(input);
   while (stillReading(input, chunk.offset + length))
@@ -2419,7 +2422,7 @@ bool libmspub::MSPUBParser::parsePaletteChunk(librevenge::RVNGInputStream *input
   return true;
 }
 
-void libmspub::MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlockInfo info)
+void MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlockInfo info)
 {
   while (stillReading(input, info.dataOffset + info.dataLength))
   {
@@ -2429,6 +2432,8 @@ void libmspub::MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input
       m_collector->addPaletteColor(Color(subInfo.data & 0xFF, (subInfo.data >> 8) & 0xFF, (subInfo.data >> 16) & 0xFF));
     }
   }
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

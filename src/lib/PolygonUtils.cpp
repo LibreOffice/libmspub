@@ -23,7 +23,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-using namespace libmspub;
+namespace libmspub
+{
 
 const Vertex LINE_VERTICES[] =
 {
@@ -5241,7 +5242,7 @@ const CustomShape CS_ACTION_BUTTON_MOVIE(
   21600, 21600,
   NULL, 0);
 
-const CustomShape *libmspub::getCustomShape(ShapeType type)
+const CustomShape *getCustomShape(ShapeType type)
 {
   switch (type)
   {
@@ -5679,7 +5680,7 @@ double getSpecialIfNecessary(boost::function<double(unsigned index)> calculator,
   return special ? calculator(val ^ 0x80000000) : val;
 }
 
-Coordinate libmspub::CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const
+Coordinate CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const
 {
   double scaleX = width * m_coordWidth;
   double scaleY = height * m_coordHeight;
@@ -5707,7 +5708,7 @@ struct LineInfo
   bool m_lineExists;
   LineInfo(librevenge::RVNGPropertyListVector vertices, Line current, std::vector<Color> palette) : m_vertices(vertices),
     m_width((double)(current.m_widthInEmu) / EMUS_IN_INCH),
-    m_color(libmspub::MSPUBCollector::getColorString(current.m_color.getFinalColor(palette))),
+    m_color(MSPUBCollector::getColorString(current.m_color.getFinalColor(palette))),
     m_lineExists(current.m_lineExists) { }
   void output(librevenge::RVNGDrawingInterface *painter, librevenge::RVNGPropertyList &graphicsProps)
   {
@@ -5879,7 +5880,7 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
   yOut += cy;
 }
 
-librevenge::RVNGPropertyList libmspub::calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
+librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
 {
   librevenge::RVNGPropertyList vertices;
   Vector2D center(x + width / 2, y + height / 2);
@@ -5904,7 +5905,7 @@ librevenge::RVNGPropertyList libmspub::calcClipPath(const std::vector<libmspub::
   return vertices;
 }
 
-void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
+void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)
@@ -5947,7 +5948,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
           graphicsProps.insert("draw:stroke", "none");
         }
         graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
-        graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
+        graphicsProps.insert("svg:stroke-color", MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
         painter->setStyle(graphicsProps);
       }
     }
@@ -5981,7 +5982,7 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
         graphicsProps.insert("draw:stroke", "none");
       }
       graphicsProps.insert("svg:stroke-width", (double)(first.m_widthInEmu) / EMUS_IN_INCH);
-      graphicsProps.insert("svg:stroke-color", libmspub::MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
+      graphicsProps.insert("svg:stroke-color", MSPUBCollector::getColorString(first.m_color.getFinalColor(palette)));
       painter->setStyle(graphicsProps);
     }
     unsigned vertexIndex = 0;
@@ -6371,13 +6372,13 @@ void libmspub::writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyLis
   }
 }
 
-bool libmspub::isShapeTypeRectangle(ShapeType type)
+bool isShapeTypeRectangle(ShapeType type)
 {
   return type == RECTANGLE || type == TEXT_BOX;
 }
 
 
-boost::shared_ptr<const libmspub::CustomShape> libmspub::getFromDynamicCustomShape(const libmspub::DynamicCustomShape &dcs)
+boost::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs)
 {
   return boost::shared_ptr<const CustomShape>(new CustomShape(
                                                 dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
@@ -6396,6 +6397,8 @@ boost::shared_ptr<const libmspub::CustomShape> libmspub::getFromDynamicCustomSha
                                                 dcs.m_gluePoints.size(),
                                                 dcs.m_adjustShiftMask
                                               ));
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

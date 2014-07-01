@@ -23,8 +23,11 @@
 
 #define ZLIB_CHUNK 16384
 
+namespace libmspub
+{
+
 using std::strcmp;
-const char *libmspub::windowsCharsetNameByOriginalCharset(const char *name)
+const char *windowsCharsetNameByOriginalCharset(const char *name)
 {
   if (strcmp(name, "Shift_JIS") == 0)
   {
@@ -57,7 +60,7 @@ const char *libmspub::windowsCharsetNameByOriginalCharset(const char *name)
   return NULL;
 }
 
-const char *libmspub::mimeByImgType(ImgType type)
+const char *mimeByImgType(ImgType type)
 {
   switch (type)
   {
@@ -81,7 +84,7 @@ const char *libmspub::mimeByImgType(ImgType type)
   }
 }
 
-void libmspub::rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
+void rotateCounter(double &x, double &y, double centerX, double centerY, short rotation)
 {
   double vecX = x - centerX;
   double vecY = centerY - y;
@@ -93,7 +96,7 @@ void libmspub::rotateCounter(double &x, double &y, double centerX, double center
   y = centerY - newVecY;
 }
 
-double libmspub::doubleModulo(double x, double y)
+double doubleModulo(double x, double y)
 {
   if (y <= 0) // y <= 0 doesn't make sense
   {
@@ -110,19 +113,19 @@ double libmspub::doubleModulo(double x, double y)
   return x;
 }
 
-double libmspub::toFixedPoint(int fp)
+double toFixedPoint(int fp)
 {
   unsigned short fractionalPart = ((unsigned short) fp) & 0xFFFF;
   short integralPart = fp >> 16;
   return integralPart + fractionalPart / 65536.;
 }
 
-double libmspub::readFixedPoint(librevenge::RVNGInputStream *input)
+double readFixedPoint(librevenge::RVNGInputStream *input)
 {
   return toFixedPoint(readS32(input));
 }
 
-void libmspub::flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal)
+void flipIfNecessary(double &x, double &y, double centerX, double centerY, bool flipVertical, bool flipHorizontal)
 {
   double vecX = x - centerX;
   double vecY = centerY - y;
@@ -136,7 +139,7 @@ void libmspub::flipIfNecessary(double &x, double &y, double centerX, double cent
   }
 }
 
-unsigned libmspub::correctModulo(int x, unsigned n) // returns the canonical representation of x in Z/nZ
+unsigned correctModulo(int x, unsigned n) // returns the canonical representation of x in Z/nZ
 //difference with C++ % operator is that this never returns negative values.
 {
   if (x < 0)
@@ -152,7 +155,7 @@ unsigned libmspub::correctModulo(int x, unsigned n) // returns the canonical rep
   return x % n;
 }
 
-librevenge::RVNGBinaryData libmspub::inflateData(librevenge::RVNGBinaryData deflated)
+librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData deflated)
 {
   librevenge::RVNGBinaryData inflated;
   unsigned char out[ZLIB_CHUNK];
@@ -251,7 +254,7 @@ static void _appendUCS4(librevenge::RVNGString &text, unsigned ucs4Character)
 
 #define MSPUB_NUM_ELEMENTS(array) sizeof(array)/sizeof(array[0])
 
-uint8_t libmspub::readU8(librevenge::RVNGInputStream *input)
+uint8_t readU8(librevenge::RVNGInputStream *input)
 {
   if (!input || input->isEnd())
   {
@@ -270,14 +273,14 @@ uint8_t libmspub::readU8(librevenge::RVNGInputStream *input)
   throw EndOfStreamException();
 }
 
-uint16_t libmspub::readU16(librevenge::RVNGInputStream *input)
+uint16_t readU16(librevenge::RVNGInputStream *input)
 {
   uint16_t p0 = (uint16_t)readU8(input);
   uint16_t p1 = (uint16_t)readU8(input);
   return (uint16_t)(p0|(p1<<8));
 }
 
-uint32_t libmspub::readU32(librevenge::RVNGInputStream *input)
+uint32_t readU32(librevenge::RVNGInputStream *input)
 {
   uint32_t p0 = (uint32_t)readU8(input);
   uint32_t p1 = (uint32_t)readU8(input);
@@ -286,22 +289,22 @@ uint32_t libmspub::readU32(librevenge::RVNGInputStream *input)
   return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
 }
 
-int8_t libmspub::readS8(librevenge::RVNGInputStream *input)
+int8_t readS8(librevenge::RVNGInputStream *input)
 {
   return (int8_t)readU8(input);
 }
 
-int16_t libmspub::readS16(librevenge::RVNGInputStream *input)
+int16_t readS16(librevenge::RVNGInputStream *input)
 {
   return (int16_t)readU16(input);
 }
 
-int32_t libmspub::readS32(librevenge::RVNGInputStream *input)
+int32_t readS32(librevenge::RVNGInputStream *input)
 {
   return (int32_t)readU32(input);
 }
 
-uint64_t libmspub::readU64(librevenge::RVNGInputStream *input)
+uint64_t readU64(librevenge::RVNGInputStream *input)
 {
   uint64_t p0 = (uint64_t)readU8(input);
   uint64_t p1 = (uint64_t)readU8(input);
@@ -314,7 +317,7 @@ uint64_t libmspub::readU64(librevenge::RVNGInputStream *input)
   return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
 }
 
-void libmspub::readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::vector<unsigned char> &out)
+void readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::vector<unsigned char> &out)
 {
   if (length == 0)
   {
@@ -337,8 +340,8 @@ void libmspub::readNBytes(librevenge::RVNGInputStream *input, unsigned long leng
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 
-void libmspub::appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> characters,
-                                const char *encoding)
+void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> characters,
+                      const char *encoding)
 {
   if (characters.empty())
   {
@@ -370,7 +373,7 @@ void libmspub::appendCharacters(librevenge::RVNGString &text, const std::vector<
   }
 }
 
-bool libmspub::stillReading(librevenge::RVNGInputStream *input, unsigned long until)
+bool stillReading(librevenge::RVNGInputStream *input, unsigned long until)
 {
   if (input->isEnd())
     return false;
@@ -379,6 +382,8 @@ bool libmspub::stillReading(librevenge::RVNGInputStream *input, unsigned long un
   if ((unsigned long)input->tell() >= until)
     return false;
   return true;
+}
+
 }
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -84,6 +84,9 @@ stream is a Microsoft Publisher Document that libmspub is able to parse
 */
 PUBAPI bool MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
 {
+  if (!input)
+    return false;
+
   try
   {
     MSPUBVersion version = getVersion(input);
@@ -117,6 +120,9 @@ RVNGDrawingInterface class implementation when needed. This is often commonly ca
 */
 PUBAPI bool MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge::RVNGDrawingInterface *painter)
 {
+  if (!input || !painter)
+    return false;
+
   try
   {
     MSPUBCollector collector(painter);

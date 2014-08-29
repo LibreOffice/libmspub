@@ -18,8 +18,12 @@
 #else
 #define PUBAPI __declspec(dllimport)
 #endif
+#else // !DLL_EXPORT
+#ifdef LIBMSPUB_VISIBILITY
+#define PUBAPI __attribute__((visibility("default")))
 #else
 #define PUBAPI
+#endif
 #endif
 
 namespace libmspub

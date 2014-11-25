@@ -967,13 +967,13 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
     unsigned bytesRead = 0;
     std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
     std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
-    for (unsigned j = 0; j < textIDs.size() && j < textLengths.size(); ++j)
+    for (unsigned j = 0; j < textIDs.size() && j < textLengths.size() && currentTextPara != paras.end(); ++j)
     {
       MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
       std::vector<TextParagraph> readParas;
       std::vector<TextSpan> readSpans;
       std::vector<unsigned char> text;
-      for (unsigned k = 0; k < textLengths[j]; ++k)
+      for (unsigned k = 0; k < textLengths[j] && currentTextSpan != spans.end(); ++k)
       {
         text.push_back(readU8(input));
         text.push_back(readU8(input));

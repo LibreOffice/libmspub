@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <set>
 #include <sstream>
 #include <string>
 #include <algorithm>
@@ -862,11 +863,18 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
   MSPUB_DEBUG_MSG(("MSPUBParser::parseQuill\n"));
   unsigned chunkReferenceListOffset = 0x18;
   std::list<QuillChunkReference> chunkReferences;
+  std::set<unsigned> readChunks; // guard against cycle in the chunk list
   while (chunkReferenceListOffset != 0xffffffff)
   {
     input->seek(chunkReferenceListOffset + 2, librevenge::RVNG_SEEK_SET);
     unsigned short numChunks = readU16(input);
     chunkReferenceListOffset = readU32(input);
+    if (readChunks.find(chunkReferenceListOffset) != readChunks.end())
+    {
+      MSPUB_DEBUG_MSG(("Found a cycle in chunk reference list: a broken file!\n"));
+      break;
+    }
+    readChunks.insert(chunkReferenceListOffset);
     for (unsigned i = 0; i < numChunks; ++i)
     {
       QuillChunkReference quillChunkReference = parseQuillChunkReference(input);

@@ -497,7 +497,7 @@ bool MSPUBParser::parseFontChunk(
             // skip length, we've already read that
             // TODO: Why do we not read the data as part of the block info?
             input->seek(eotOffset.get() + 4, librevenge::RVNG_SEEK_SET);
-            librevenge::RVNGBinaryData &data = m_collector->addEOTFont(name.get());
+            librevenge::RVNGBinaryData data;
             unsigned long toRead = eotLength;
             while (toRead > 0 && stillReading(input, (unsigned long)-1))
             {
@@ -506,6 +506,7 @@ bool MSPUBParser::parseFontChunk(
               data.append(buf, howManyRead);
               toRead -= howManyRead;
             }
+            m_collector->addEOTFont(name.get(), data);
             input->seek(subInfo.dataOffset + subInfo.dataLength, librevenge::RVNG_SEEK_SET);
           }
         }

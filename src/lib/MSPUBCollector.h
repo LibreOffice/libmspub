@@ -95,7 +95,7 @@ public:
 
   // Microsoft "Embedded OpenType" ... need to figure out how to convert
   // this to a sane format and how to get LibreOffice to understand embedded fonts.
-  librevenge::RVNGBinaryData &addEOTFont(const librevenge::RVNGString &name);
+  void addEOTFont(const librevenge::RVNGString &name, const librevenge::RVNGBinaryData &data);
 
   void beginGroup();
   bool endGroup();

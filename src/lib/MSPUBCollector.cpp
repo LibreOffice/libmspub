@@ -105,10 +105,9 @@ static void separateSpacesAndInsertText(librevenge::RVNGDrawingInterface *iface,
 
 } // anonymous namespace
 
-librevenge::RVNGBinaryData &MSPUBCollector::addEOTFont(const librevenge::RVNGString &name)
+void MSPUBCollector::addEOTFont(const librevenge::RVNGString &name, const librevenge::RVNGBinaryData &data)
 {
-  m_embeddedFonts.push_back(EmbeddedFontInfo(name));
-  return m_embeddedFonts.back().m_blob;
+  m_embeddedFonts.push_back(EmbeddedFontInfo(name, data));
 }
 
 void MSPUBCollector::setShapePictureRecolor(unsigned seqNum,

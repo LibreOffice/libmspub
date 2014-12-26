@@ -18,8 +18,8 @@ struct EmbeddedFontInfo
 {
   librevenge::RVNGString m_name;
   librevenge::RVNGBinaryData m_blob;
-  EmbeddedFontInfo(const librevenge::RVNGString &name) :
-    m_name(name), m_blob()
+  EmbeddedFontInfo(const librevenge::RVNGString &name, const librevenge::RVNGBinaryData &data) :
+    m_name(name), m_blob(data)
   {
   }
 };

@@ -6016,7 +6016,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
           bool modifier = cmd.m_command == ELLIPTICALQUADRANTX ? true : false;
           const Vertex &curr = shape->mp_vertices[vertexIndex];
           Vector2D curr2D(x + scaleX * getSpecialIfNecessary(calculator, curr.m_x), y + scaleY * getSpecialIfNecessary(calculator, curr.m_y));
-          if (!!lastPoint)
+          if (bool(lastPoint))
           {
             if (!pathBegin)
             {
@@ -6338,7 +6338,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
       //intentionally no break
       case ENDSUBPATH:
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
-        if (closeEverything && !!pathBegin)
+        if (closeEverything && bool(pathBegin))
         {
           librevenge::RVNGPropertyList end;
           end.insert("librevenge:path-action", "Z");
@@ -6359,7 +6359,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
     }
     if (hasUnclosedElements && closeEverything)
     {
-      if (!!pathBegin)
+      if (bool(pathBegin))
       {
         librevenge::RVNGPropertyList end;
         end.insert("librevenge:path-action", "Z");

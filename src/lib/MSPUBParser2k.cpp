@@ -447,7 +447,7 @@ bool MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
 
 bool MSPUBParser2k::parseDocument(librevenge::RVNGInputStream *input)
 {
-  if (!!m_documentChunkIndex)
+  if (bool(m_documentChunkIndex))
   {
     input->seek(m_contentChunks[m_documentChunkIndex.get()].offset, librevenge::RVNG_SEEK_SET);
     input->seek(0x14, librevenge::RVNG_SEEK_CUR);

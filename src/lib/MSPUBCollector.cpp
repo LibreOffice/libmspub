@@ -407,7 +407,7 @@ std::vector<int> MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) con
 
 boost::optional<std::vector<TextParagraph> > MSPUBCollector::getShapeText(const ShapeInfo &info) const
 {
-  if (!!info.m_textId)
+  if (bool(info.m_textId))
   {
     unsigned stringId = info.m_textId.get();
     const std::vector<TextParagraph> *ptr_str = getIfExists_const(m_textStringsById, stringId);
@@ -424,11 +424,11 @@ void MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
   ShapeInfo *ptr_info = getIfExists(m_shapeInfosBySeqNum, elt.getSeqNum());
   if (ptr_info)
   {
-    if (!!ptr_info->m_imgIndex)
+    if (bool(ptr_info->m_imgIndex))
     {
       unsigned index = ptr_info->m_imgIndex.get();
       int rot = 0;
-      if (!!ptr_info->m_innerRotation)
+      if (bool(ptr_info->m_innerRotation))
         rot = ptr_info->m_innerRotation.get();
       if (index - 1 < m_images.size())
       {
@@ -463,7 +463,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
   bool hasStroke = false;
   bool hasBorderArt = false;
   boost::optional<unsigned> maybeBorderImg = info.m_borderImgIndex;
-  if (!!maybeBorderImg && !info.m_lines.empty())
+  if (bool(maybeBorderImg) && !info.m_lines.empty())
   {
     hasStroke = true;
     hasBorderArt = true;
@@ -482,7 +482,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
   librevenge::RVNGString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
-  bool hasText = !!maybeText;
+  bool hasText = bool(maybeText);
   bool makeLayer = hasBorderArt ||
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
@@ -505,7 +505,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
   BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
   ShapeType type;
-  if (!!info.m_cropType)
+  if (bool(info.m_cropType))
   {
     type = info.m_cropType.get();
   }
@@ -533,7 +533,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
         width -= 2 * borderImgWidth;
       }
     }
-    if (!!info.m_pictureRecolor)
+    if (bool(info.m_pictureRecolor))
     {
       Color obc = info.m_pictureRecolor.get().getFinalColor(m_paletteColors);
       graphicsProps.insert("draw:color-mode", "greyscale");
@@ -544,10 +544,10 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
       graphicsProps.insert("draw:green",
                            static_cast<double>(obc.g) / 255.0, librevenge::RVNG_PERCENT);
     }
-    if (!!info.m_pictureBrightness)
+    if (bool(info.m_pictureBrightness))
       graphicsProps.insert("draw:luminance", static_cast<double>(info.m_pictureBrightness.get() + 32768.0) / 65536.0, librevenge::RVNG_PERCENT);
     bool shadowPropsInserted = false;
-    if (!!info.m_shadow)
+    if (bool(info.m_shadow))
     {
       const Shadow &s = info.m_shadow.get();
       if (!needsEmulation(s))
@@ -567,14 +567,14 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
                      std::vector<Line>(), boost::bind(&MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
-    if (!!info.m_pictureRecolor)
+    if (bool(info.m_pictureRecolor))
     {
       graphicsProps.remove("draw:color-mode");
       graphicsProps.remove("draw:red");
       graphicsProps.remove("draw:blue");
       graphicsProps.remove("draw:green");
     }
-    if (!!info.m_pictureBrightness)
+    if (bool(info.m_pictureBrightness))
       graphicsProps.remove("draw:luminance");
     if (shadowPropsInserted)
     {
@@ -656,7 +656,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
             m_painter->drawRectangle(leftRectProps);
             std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
             boost::optional<Color> oneBitColor;
-            if (!!info.m_lineBackColor)
+            if (bool(info.m_lineBackColor))
             {
               oneBitColor = info.m_lineBackColor.get().getFinalColor(m_paletteColors);
             }
@@ -808,7 +808,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
       height = strokeCoord.getHeightIn();
       width = strokeCoord.getWidthIn();
       graphicsProps.insert("draw:fill", "none");
-      if (!!info.m_dash && !info.m_dash.get().m_dots.empty())
+      if (bool(info.m_dash) && !info.m_dash.get().m_dots.empty())
       {
         const Dash &dash = info.m_dash.get();
         graphicsProps.insert("draw:stroke", "dash");
@@ -829,7 +829,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
           librevenge::RVNGString dots;
           dots.sprintf("draw:dots%d", i + 1);
           graphicsProps.insert(dots.cstr(), static_cast<int>(dash.m_dots[i].m_count));
-          if (!!dash.m_dots[i].m_length)
+          if (bool(dash.m_dots[i].m_length))
           {
             librevenge::RVNGString length;
             length.sprintf("draw:dots%d-length", i + 1);
@@ -869,7 +869,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
     props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
     props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
     props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
-    if (!!info.m_verticalAlign)
+    if (bool(info.m_verticalAlign))
     {
       switch (info.m_verticalAlign.get())
       {
@@ -925,7 +925,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
 
 const char *MSPUBCollector::getCalculatedEncoding() const
 {
-  if (!!m_calculatedEncoding)
+  if (bool(m_calculatedEncoding))
   {
     return m_calculatedEncoding.get();
   }
@@ -996,7 +996,7 @@ void MSPUBCollector::writeImage(double x, double y,
                                 boost::optional<Color> oneBitColor) const
 {
   librevenge::RVNGPropertyList props;
-  if (!!oneBitColor)
+  if (bool(oneBitColor))
   {
     Color obc = oneBitColor.get();
     props.insert("draw:color-mode", "greyscale");
@@ -1217,7 +1217,7 @@ void MSPUBCollector::addFont(std::vector<unsigned char> name)
 librevenge::RVNGPropertyList MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
 {
   ParagraphStyle _nothing;
-  const ParagraphStyle &defaultStyle = !!defaultParaStyleIndex && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
+  const ParagraphStyle &defaultStyle = bool(defaultParaStyleIndex) && defaultParaStyleIndex.get() < m_defaultParaStyles.size() ? m_defaultParaStyles[defaultParaStyleIndex.get()] : _nothing;
   librevenge::RVNGPropertyList ret;
   Alignment align = style.m_align.get_value_or(
                       defaultStyle.m_align.get_value_or(LEFT));
@@ -1318,11 +1318,11 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
   {
     ret.insert("style:text-underline-type", "single");
   }
-  if (!!style.textSizeInPt)
+  if (bool(style.textSizeInPt))
   {
     ret.insert("fo:font-size", style.textSizeInPt.get() / POINTS_IN_INCH);
   }
-  else if (!!defaultCharStyle.textSizeInPt)
+  else if (bool(defaultCharStyle.textSizeInPt))
   {
     ret.insert("fo:font-size", defaultCharStyle.textSizeInPt.get()
                / POINTS_IN_INCH);
@@ -1339,7 +1339,7 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
   {
     ret.insert("fo:color", getColorString(Color(0, 0, 0)));  // default color is black
   }
-  if (!!style.fontIndex &&
+  if (bool(style.fontIndex) &&
       style.fontIndex.get() < m_fonts.size())
   {
     librevenge::RVNGString str;
@@ -1347,7 +1347,7 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
                      getCalculatedEncoding());
     ret.insert("style:font-name", str);
   }
-  else if (!!defaultCharStyle.fontIndex &&
+  else if (bool(defaultCharStyle.fontIndex) &&
            defaultCharStyle.fontIndex.get() < m_fonts.size())
   {
     librevenge::RVNGString str;
@@ -1437,7 +1437,7 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
   {
     m_painter->startPage(pageProps);
     boost::optional<unsigned> masterSeqNum = getMasterPageSeqNum(pageSeqNum);
-    bool hasMaster = !!masterSeqNum;
+    bool hasMaster = bool(masterSeqNum);
     if (hasMaster)
     {
       writePageBackground(masterSeqNum.get());

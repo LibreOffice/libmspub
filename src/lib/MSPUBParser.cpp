@@ -492,7 +492,7 @@ bool MSPUBParser::parseFontChunk(
               eotLength = subSubInfo.dataLength;
             }
           }
-          if (!!name && !!eotOffset)
+          if (bool(name) && bool(eotOffset))
           {
             // skip length, we've already read that
             // TODO: Why do we not read the data as part of the block info?
@@ -679,7 +679,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
         rowcolArrayOffset = info.dataOffset;
       }
     }
-    if (!!cellsSeqNum && !!numRows && !!numCols && !!rowcolArrayOffset)
+    if (bool(cellsSeqNum) && bool(numRows) && bool(numCols) && bool(rowcolArrayOffset))
     {
       unsigned nr = numRows.get();
       unsigned nc = numCols.get();
@@ -1515,7 +1515,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
         {
           maybe_tertiaryFoptValues = extractEscherValues(input, cTertiaryFopt);
         }
-        if (!!maybe_tertiaryFoptValues)
+        if (bool(maybe_tertiaryFoptValues))
         {
           const std::map<unsigned short, unsigned> &tertiaryFoptValues =
             maybe_tertiaryFoptValues.get();
@@ -1581,7 +1581,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
             }
             else
             {
-              if (!!maybe_tertiaryFoptValues)
+              if (bool(maybe_tertiaryFoptValues))
               {
                 std::map<unsigned short, unsigned> &tertiaryFoptValues =
                   maybe_tertiaryFoptValues.get();
@@ -1698,7 +1698,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
                                         dotStyle));
           }
 
-          if (!!maybe_tertiaryFoptValues)
+          if (bool(maybe_tertiaryFoptValues))
           {
             std::map<unsigned short, unsigned> &tertiaryFoptValues = maybe_tertiaryFoptValues.get();
             unsigned *ptr_numColumns = getIfExists(tertiaryFoptValues, FIELDID_NUM_COLUMNS);

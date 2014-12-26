@@ -50,7 +50,7 @@ bool MSPUBParser97::parse()
 
 bool MSPUBParser97::parseDocument(librevenge::RVNGInputStream *input)
 {
-  if (!!m_documentChunkIndex)
+  if (bool(m_documentChunkIndex))
   {
     input->seek(m_contentChunks[m_documentChunkIndex.get()].offset + 0x12, librevenge::RVNG_SEEK_SET);
     unsigned short coordinateSystemMark = readU16(input);

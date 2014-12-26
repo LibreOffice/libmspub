@@ -476,6 +476,7 @@ bool MSPUBParser::parseFontChunk(
         {
           boost::optional<librevenge::RVNGString> name;
           boost::optional<unsigned> eotOffset;
+          unsigned eotLength = 0;
           input->seek(subInfo.dataOffset + 4, librevenge::RVNG_SEEK_SET);
           while (stillReading(input, subInfo.dataOffset + subInfo.dataLength))
           {
@@ -483,19 +484,21 @@ bool MSPUBParser::parseFontChunk(
             if (subSubInfo.id == EMBEDDED_FONT_NAME)
             {
               name = librevenge::RVNGString();
-              appendCharacters(name.get(), subSubInfo.stringData, "UTF-16");
+              appendCharacters(name.get(), subSubInfo.stringData, "UTF-16LE");
             }
             else if (subSubInfo.id == EMBEDDED_EOT)
             {
               eotOffset = subSubInfo.dataOffset;
+              eotLength = subSubInfo.dataLength;
             }
           }
           if (!!name && !!eotOffset)
           {
-            input->seek(eotOffset.get(), librevenge::RVNG_SEEK_SET);
-            MSPUBBlockInfo eotRecord = parseBlock(input, true);
+            // skip length, we've already read that
+            // TODO: Why do we not read the data as part of the block info?
+            input->seek(eotOffset.get() + 4, librevenge::RVNG_SEEK_SET);
             librevenge::RVNGBinaryData &data = m_collector->addEOTFont(name.get());
-            unsigned long toRead = eotRecord.dataLength;
+            unsigned long toRead = eotLength;
             while (toRead > 0 && stillReading(input, (unsigned long)-1))
             {
               unsigned long howManyRead = 0;

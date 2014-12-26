@@ -1497,6 +1497,16 @@ bool MSPUBCollector::go()
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
   m_painter->startDocument(librevenge::RVNGPropertyList());
+
+  for (std::list<EmbeddedFontInfo>::const_iterator i = m_embeddedFonts.begin(); i != m_embeddedFonts.end(); ++i)
+  {
+    librevenge::RVNGPropertyList props;
+    props.insert("librevenge:name", i->m_name);
+    props.insert("librevenge:mime-type", "application/vnd.ms-fontobject");
+    props.insert("office:binary-data",i->m_blob);
+    m_painter->defineEmbeddedFont(props);
+  }
+
   if (m_pageSeqNumsOrdered.empty())
   {
     for (std::map<unsigned, PageInfo>::const_iterator i = m_pagesBySeqNum.begin();

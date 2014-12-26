@@ -484,6 +484,14 @@ bool MSPUBParser::parseFontChunk(
             if (subSubInfo.id == EMBEDDED_FONT_NAME)
             {
               name = librevenge::RVNGString();
+              // drop trailing 0
+              // TODO: This could be a general problem. Check.
+              const std::size_t len = subSubInfo.stringData.size();
+              if ((len > 2) && (subSubInfo.stringData[len - 1] == 0) && (subSubInfo.stringData[len - 2] == 0))
+              {
+                subSubInfo.stringData.pop_back();
+                subSubInfo.stringData.pop_back();
+              }
               appendCharacters(name.get(), subSubInfo.stringData, "UTF-16LE");
             }
             else if (subSubInfo.id == EMBEDDED_EOT)

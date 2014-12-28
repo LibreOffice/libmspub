@@ -10,16 +10,37 @@
 #ifndef __TABLEINFO_H__
 #define __TABLEINFO_H__
 
+#include <vector>
+
 namespace libmspub
 {
+
+struct CellInfo
+{
+  CellInfo()
+    : m_startRow()
+    , m_endRow()
+    , m_startColumn()
+    , m_endColumn()
+  {
+  }
+
+  unsigned m_startRow;
+  unsigned m_endRow;
+  unsigned m_startColumn;
+  unsigned m_endColumn;
+};
+
 struct TableInfo
 {
   std::vector<unsigned> m_rowOffsetsInEmu;
   std::vector<unsigned> m_columnOffsetsInEmu;
   unsigned m_numRows;
   unsigned m_numColumns;
+  std::vector<CellInfo> m_cells;
   TableInfo(unsigned numRows, unsigned numColumns) : m_rowOffsetsInEmu(),
-    m_columnOffsetsInEmu(), m_numRows(numRows), m_numColumns(numColumns)
+    m_columnOffsetsInEmu(), m_numRows(numRows), m_numColumns(numColumns),
+    m_cells()
   {
   }
 };

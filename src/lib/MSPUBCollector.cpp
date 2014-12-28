@@ -9,6 +9,8 @@
 
 #include <math.h>
 
+#include <boost/multi_array.hpp>
+
 #include <unicode/ucsdet.h>
 
 #include "MSPUBCollector.h"
@@ -101,6 +103,79 @@ static void separateSpacesAndInsertText(librevenge::RVNGDrawingInterface *iface,
     }
   }
   separateTabsAndInsertText(iface, tmpText);
+}
+
+struct TableLayoutCell
+{
+  TableLayoutCell()
+    : m_rowSpan(0)
+    , m_colSpan(0)
+  {
+  }
+
+  unsigned m_rowSpan;
+  unsigned m_colSpan;
+};
+
+bool isCovered(const TableLayoutCell &cell)
+{
+  assert((cell.m_rowSpan == 0) == (cell.m_colSpan == 0));
+  return (cell.m_rowSpan == 0) && (cell.m_colSpan == 0);
+}
+
+typedef boost::multi_array<TableLayoutCell, 2> TableLayout;
+
+void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLayout)
+{
+  for (std::vector<CellInfo>::const_iterator it = cells.begin(); it != cells.end(); ++it)
+  {
+    if ((it->m_endRow >= tableLayout.shape()[0]) || (it->m_endColumn >= tableLayout.shape()[1]))
+    {
+      MSPUB_DEBUG_MSG((
+                        "cell %u (rows %u to %u, columns %u to %u) overflows the table, ignoring\n",
+                        unsigned(int(it - cells.begin())),
+                        it->m_startRow, it->m_endRow,
+                        it->m_startColumn, it->m_endColumn,
+                      ));
+      continue;
+    }
+    if (it->m_startRow > it->m_endRow)
+    {
+      MSPUB_DEBUG_MSG((
+                        "cell %u (rows %u to %u) has got negative row span, ignoring\n",
+                        unsigned(int(it - cells.begin())),
+                        it->m_startRow, it->m_endRow,
+                      ));
+      continue;
+    }
+    if (it->m_startColumn > it->m_endColumn)
+    {
+      MSPUB_DEBUG_MSG((
+                        "cell %u (columns %u to %u) has got negative column span, ignoring\n",
+                        unsigned(int(it - cells.begin())),
+                        it->m_startColumn, it->m_endColumn,
+                      ));
+      continue;
+    }
+
+    const unsigned rowSpan = it->m_endRow - it->m_startRow + 1;
+    const unsigned colSpan = it->m_endColumn - it->m_startColumn + 1;
+
+    if ((rowSpan == 0) != (colSpan == 0))
+    {
+      MSPUB_DEBUG_MSG((
+                        "cell %u (rows %u to %u, columns %u to %u) has got 0 span in one dimension, ignoring\n",
+                        unsigned(int(it - cells.begin())),
+                        it->m_startRow, it->m_endRow,
+                        it->m_startColumn, it->m_endColumn,
+                      ));
+      continue;
+    }
+
+    TableLayoutCell &layoutCell = tableLayout[it->m_startRow][it->m_startColumn];
+    layoutCell.m_rowSpan = rowSpan;
+    layoutCell.m_colSpan = colSpan;
+  }
 }
 
 } // anonymous namespace
@@ -874,62 +949,72 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
       std::vector<unsigned> tableCellTextEnds;
       if (bool(info.m_tableCellTextEnds))
         tableCellTextEnds = get(info.m_tableCellTextEnds);
-      unsigned row = 0;
-      unsigned column = 0;
+      TableLayout tableLayout(boost::extents[get(info.m_tableInfo).m_numRows][get(info.m_tableInfo).m_numColumns]);
+      createTableLayout(get(info.m_tableInfo).m_cells, tableLayout);
+
+      unsigned cell = 0;
       unsigned para = 0;
       unsigned offset = 1;
-      for (unsigned cell = 0; cell != get(info.m_tableInfo).m_numColumns * get(info.m_tableInfo).m_numRows; ++cell)
+      for (unsigned row = 0; row != tableLayout.shape()[0]; ++row)
       {
-        assert(row < get(info.m_tableInfo).m_numRows);
-        assert(column < get(info.m_tableInfo).m_numColumns);
+        m_painter->openTableRow(librevenge::RVNGPropertyList());
 
-        if (column == 0)
-          m_painter->openTableRow(librevenge::RVNGPropertyList());
-
-        librevenge::RVNGPropertyList cellProps;
-        cellProps.insert("librevenge:column", int(column));
-        cellProps.insert("librevenge:row", int(row));
-        m_painter->openTableCell(cellProps);
-
-        if (cell < tableCellTextEnds.size())
+        for (unsigned col = 0; col != tableLayout.shape()[1]; ++col)
         {
-          const unsigned cellEnd = tableCellTextEnds[cell];
-          while ((para < text.size()) && (offset < cellEnd))
+          librevenge::RVNGPropertyList cellProps;
+          cellProps.insert("librevenge:column", int(col));
+          cellProps.insert("librevenge:row", int(row));
+
+          if (isCovered(tableLayout[row][col]))
           {
-            librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[para].style, text[para].style.m_defaultCharStyleIndex);
-            m_painter->openParagraph(paraProps);
-            for (unsigned i_spans = 0; (i_spans < text[para].spans.size()) && (offset < cellEnd); ++i_spans)
+            m_painter->insertCoveredTableCell(cellProps);
+          }
+          else
+          {
+            if (tableLayout[row][col].m_colSpan > 1)
+              cellProps.insert("table:number-columns-spanned", int(tableLayout[row][col].m_colSpan));
+            if (tableLayout[row][col].m_rowSpan > 1)
+              cellProps.insert("table:number-rows-spanned", int(tableLayout[row][col].m_rowSpan));
+
+            m_painter->openTableCell(cellProps);
+
+            if (cell < tableCellTextEnds.size())
             {
-              librevenge::RVNGString textString;
-              appendCharacters(textString, text[para].spans[i_spans].chars,
-                               getCalculatedEncoding());
-              offset += textString.len();
-              // TODO: why do we not drop these during parse already?
-              if ((i_spans == text[para].spans.size() - 1) && (textString == "\r"))
-                continue;
-              librevenge::RVNGPropertyList charProps = getCharStyleProps(text[para].spans[i_spans].style, text[para].style.m_defaultCharStyleIndex);
-              m_painter->openSpan(charProps);
-              separateSpacesAndInsertText(m_painter, textString);
-              m_painter->closeSpan();
+              const unsigned cellEnd = tableCellTextEnds[cell];
+              while ((para < text.size()) && (offset < cellEnd))
+              {
+                librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[para].style, text[para].style.m_defaultCharStyleIndex);
+                m_painter->openParagraph(paraProps);
+                for (unsigned i_spans = 0; (i_spans < text[para].spans.size()) && (offset < cellEnd); ++i_spans)
+                {
+                  librevenge::RVNGString textString;
+                  appendCharacters(textString, text[para].spans[i_spans].chars,
+                                   getCalculatedEncoding());
+                  offset += textString.len();
+                  // TODO: why do we not drop these during parse already?
+                  if ((i_spans == text[para].spans.size() - 1) && (textString == "\r"))
+                    continue;
+                  librevenge::RVNGPropertyList charProps = getCharStyleProps(text[para].spans[i_spans].style, text[para].style.m_defaultCharStyleIndex);
+                  m_painter->openSpan(charProps);
+                  separateSpacesAndInsertText(m_painter, textString);
+                  m_painter->closeSpan();
+                }
+
+                if (offset > cellEnd)
+                {
+                  MSPUB_DEBUG_MSG(("cell text ends in the middle of a span!\n"));
+                }
+                m_painter->closeParagraph();
+                ++para;
+              }
             }
 
-            if (offset > cellEnd)
-            {
-              MSPUB_DEBUG_MSG(("cell text ends in the middle of a span!\n"));
-            }
-            m_painter->closeParagraph();
-            ++para;
+            ++cell;
+            m_painter->closeTableCell();
           }
         }
 
-        m_painter->closeTableCell();
-        ++column;
-        if (column == get(info.m_tableInfo).m_numColumns)
-        {
-          m_painter->closeTableRow();
-          ++row;
-          column = 0;
-        }
+        m_painter->closeTableRow();
       }
 
       m_painter->endTableObject();

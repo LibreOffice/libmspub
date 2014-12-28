@@ -751,6 +751,11 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
           break;
         }
       }
+
+      TableInfo ti(nr, nc);
+      ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
+      ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
+
       if (!index)
       {
         MSPUB_DEBUG_MSG(("WARNING: Couldn't find cells of seqnum %u corresponding to table of seqnum %u.\n",
@@ -759,11 +764,67 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       }
       else
       {
-        // Currently do nothing with the cells chunk.
+        const ContentChunkReference &cellsChunk = m_contentChunks[m_cellsChunkIndices[get(index)]];
+        input->seek(cellsChunk.offset, librevenge::RVNG_SEEK_SET);
+        const unsigned cellsLength = readU32(input);
+        boost::optional<unsigned> cellCount;
+        while (stillReading(input, cellsChunk.offset + cellsLength))
+        {
+          MSPUBBlockInfo info = parseBlock(input, true);
+          switch (info.id)
+          {
+          case 0x01:
+            cellCount = info.data;
+            break;
+          case 0x02:
+          {
+            input->seek(info.dataOffset + 4, librevenge::RVNG_SEEK_SET);
+            while (stillReading(input, info.dataOffset + info.dataLength))
+            {
+              const MSPUBBlockInfo itemInfo = parseBlock(input, true);
+              if (itemInfo.id == 0)
+              {
+                input->seek(itemInfo.dataOffset + 4, librevenge::RVNG_SEEK_SET);
+                CellInfo currentCell;
+                while (stillReading(input, itemInfo.dataOffset + itemInfo.dataLength))
+                {
+                  const MSPUBBlockInfo subInfo = parseBlock(input, true);
+                  switch (subInfo.id)
+                  {
+                  case 0x01:
+                    currentCell.m_startRow = subInfo.data;
+                    break;
+                  case 0x02:
+                    currentCell.m_endRow = subInfo.data;
+                    break;
+                  case 0x03:
+                    currentCell.m_startColumn = subInfo.data;
+                    break;
+                  case 0x04:
+                    currentCell.m_endColumn = subInfo.data;
+                    break;
+                  // TODO: 0x09 - 0x0e: width/height of content + margins?
+                  default:
+                    break;
+                  }
+                }
+                ti.m_cells.push_back(currentCell);
+              }
+            }
+
+            break;
+          }
+          default:
+            break;
+          }
+        }
+
+        if (bool(cellCount) && (get(cellCount) != ti.m_cells.size()))
+        {
+          MSPUB_DEBUG_MSG(("%u cell records expected, but read %u\n", get(cellCount), ti.m_cells.size()));
+        }
       }
-      TableInfo ti(nr, nc);
-      ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
-      ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
+
       m_collector->setShapeTableInfo(chunk.seqNum, ti);
       if (bool(textId))
         m_collector->addTextShape(get(textId), chunk.seqNum);

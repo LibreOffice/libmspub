@@ -660,6 +660,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
     boost::optional<unsigned> numRows;
     boost::optional<unsigned> numCols;
     boost::optional<unsigned> rowcolArrayOffset;
+    boost::optional<unsigned> textId;
     while (stillReading(input, pos + length))
     {
       MSPUBBlockInfo info = parseBlock(input, true);
@@ -686,6 +687,10 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       else if (info.id == TABLE_ROWCOL_ARRAY)
       {
         rowcolArrayOffset = info.dataOffset;
+      }
+      else if (info.id == SHAPE_TEXT_ID)
+      {
+        textId = info.data;
       }
     }
     if (bool(cellsSeqNum) && bool(numRows) && bool(numCols) && bool(rowcolArrayOffset))
@@ -760,6 +765,8 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
       ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
       m_collector->setShapeTableInfo(chunk.seqNum, ti);
+      if (bool(textId))
+        m_collector->addTextShape(get(textId), chunk.seqNum);
       return true;
     }
     return false;

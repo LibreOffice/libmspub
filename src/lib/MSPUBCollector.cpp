@@ -150,6 +150,8 @@ void MSPUBCollector::setShapeTableInfo(unsigned seqNum,
                                        const TableInfo &ti)
 {
   m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
+  if (!m_tableCellTextEndsVector.empty())
+    m_shapeInfosBySeqNum[seqNum].m_tableCellTextEnds = m_tableCellTextEndsVector.back();
 }
 
 void MSPUBCollector::setShapeNumColumns(unsigned seqNum,
@@ -482,6 +484,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
   bool hasText = bool(maybeText);
+  const bool isTable = bool(info.m_tableInfo);
   bool makeLayer = hasBorderArt ||
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
@@ -863,57 +866,128 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
     {
       props.insert("librevenge:rotate", textRotation * 180 / M_PI);
     }
-    Margins margins = info.m_margins.get_value_or(Margins());
-    props.insert("fo:padding-left", (double)margins.m_left / EMUS_IN_INCH);
-    props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
-    props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
-    props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
-    if (bool(info.m_verticalAlign))
+
+    if (isTable)
     {
-      switch (info.m_verticalAlign.get())
+      m_painter->startTableObject(props);
+
+      std::vector<unsigned> tableCellTextEnds;
+      if (bool(info.m_tableCellTextEnds))
+        tableCellTextEnds = get(info.m_tableCellTextEnds);
+      unsigned row = 0;
+      unsigned column = 0;
+      unsigned para = 0;
+      unsigned offset = 1;
+      for (unsigned cell = 0; cell != get(info.m_tableInfo).m_numColumns * get(info.m_tableInfo).m_numRows; ++cell)
       {
-      default:
-      case TOP:
-        props.insert("draw:textarea-vertical-align", "top");
-        break;
-      case MIDDLE:
-        props.insert("draw:textarea-vertical-align", "middle");
-        break;
-      case BOTTOM:
-        props.insert("draw:textarea-vertical-align", "bottom");
-        break;
+        assert(row < get(info.m_tableInfo).m_numRows);
+        assert(column < get(info.m_tableInfo).m_numColumns);
+
+        if (column == 0)
+          m_painter->openTableRow(librevenge::RVNGPropertyList());
+
+        librevenge::RVNGPropertyList cellProps;
+        cellProps.insert("librevenge:column", int(column));
+        cellProps.insert("librevenge:row", int(row));
+        m_painter->openTableCell(cellProps);
+
+        if (cell < tableCellTextEnds.size())
+        {
+          const unsigned cellEnd = tableCellTextEnds[cell];
+          while ((para < text.size()) && (offset < cellEnd))
+          {
+            librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[para].style, text[para].style.m_defaultCharStyleIndex);
+            m_painter->openParagraph(paraProps);
+            for (unsigned i_spans = 0; (i_spans < text[para].spans.size()) && (offset < cellEnd); ++i_spans)
+            {
+              librevenge::RVNGString textString;
+              appendCharacters(textString, text[para].spans[i_spans].chars,
+                               getCalculatedEncoding());
+              offset += textString.len();
+              // TODO: why do we not drop these during parse already?
+              if ((i_spans == text[para].spans.size() - 1) && (textString == "\r"))
+                continue;
+              librevenge::RVNGPropertyList charProps = getCharStyleProps(text[para].spans[i_spans].style, text[para].style.m_defaultCharStyleIndex);
+              m_painter->openSpan(charProps);
+              separateSpacesAndInsertText(m_painter, textString);
+              m_painter->closeSpan();
+            }
+
+            if (offset > cellEnd)
+            {
+              MSPUB_DEBUG_MSG(("cell text ends in the middle of a span!\n"));
+            }
+            m_painter->closeParagraph();
+            ++para;
+          }
+        }
+
+        m_painter->closeTableCell();
+        ++column;
+        if (column == get(info.m_tableInfo).m_numColumns)
+        {
+          m_painter->closeTableRow();
+          ++row;
+          column = 0;
+        }
       }
+
+      m_painter->endTableObject();
     }
-    if (info.m_numColumns)
+    else // a text object
     {
-      unsigned ncols = info.m_numColumns.get_value_or(0);
-      if (ncols > 0)
-        props.insert("fo:column-count", (int)ncols);
-    }
-    if (info.m_columnSpacing)
-    {
-      unsigned ngap = info.m_columnSpacing;
-      if (ngap > 0)
-        props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
-    }
-    m_painter->startTextObject(props);
-    for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
-    {
-      librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
-      m_painter->openParagraph(paraProps);
-      for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
+      Margins margins = info.m_margins.get_value_or(Margins());
+      props.insert("fo:padding-left", (double)margins.m_left / EMUS_IN_INCH);
+      props.insert("fo:padding-top", (double)margins.m_top / EMUS_IN_INCH);
+      props.insert("fo:padding-right", (double)margins.m_right / EMUS_IN_INCH);
+      props.insert("fo:padding-bottom", (double)margins.m_bottom / EMUS_IN_INCH);
+      if (bool(info.m_verticalAlign))
       {
-        librevenge::RVNGString textString;
-        appendCharacters(textString, text[i_lines].spans[i_spans].chars,
-                         getCalculatedEncoding());
-        librevenge::RVNGPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
-        m_painter->openSpan(charProps);
-        separateSpacesAndInsertText(m_painter, textString);
-        m_painter->closeSpan();
+        switch (info.m_verticalAlign.get())
+        {
+        default:
+        case TOP:
+          props.insert("draw:textarea-vertical-align", "top");
+          break;
+        case MIDDLE:
+          props.insert("draw:textarea-vertical-align", "middle");
+          break;
+        case BOTTOM:
+          props.insert("draw:textarea-vertical-align", "bottom");
+          break;
+        }
       }
-      m_painter->closeParagraph();
+      if (info.m_numColumns)
+      {
+        unsigned ncols = info.m_numColumns.get_value_or(0);
+        if (ncols > 0)
+          props.insert("fo:column-count", (int)ncols);
+      }
+      if (info.m_columnSpacing)
+      {
+        unsigned ngap = info.m_columnSpacing;
+        if (ngap > 0)
+          props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
+      }
+      m_painter->startTextObject(props);
+      for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
+      {
+        librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
+        m_painter->openParagraph(paraProps);
+        for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
+        {
+          librevenge::RVNGString textString;
+          appendCharacters(textString, text[i_lines].spans[i_spans].chars,
+                           getCalculatedEncoding());
+          librevenge::RVNGPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
+          m_painter->openSpan(charProps);
+          separateSpacesAndInsertText(m_painter, textString);
+          m_painter->closeSpan();
+        }
+        m_painter->closeParagraph();
+      }
+      m_painter->endTextObject();
     }
-    m_painter->endTextObject();
   }
   if (makeLayer)
   {

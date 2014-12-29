@@ -1053,7 +1053,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
                   m_painter->closeSpan();
                 }
 
-                  m_painter->closeParagraph();
+                m_painter->closeParagraph();
               }
             }
 

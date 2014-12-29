@@ -135,7 +135,7 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
                         "cell %u (rows %u to %u, columns %u to %u) overflows the table, ignoring\n",
                         unsigned(int(it - cells.begin())),
                         it->m_startRow, it->m_endRow,
-                        it->m_startColumn, it->m_endColumn,
+                        it->m_startColumn, it->m_endColumn
                       ));
       continue;
     }
@@ -144,7 +144,7 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
       MSPUB_DEBUG_MSG((
                         "cell %u (rows %u to %u) has got negative row span, ignoring\n",
                         unsigned(int(it - cells.begin())),
-                        it->m_startRow, it->m_endRow,
+                        it->m_startRow, it->m_endRow
                       ));
       continue;
     }
@@ -153,7 +153,7 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
       MSPUB_DEBUG_MSG((
                         "cell %u (columns %u to %u) has got negative column span, ignoring\n",
                         unsigned(int(it - cells.begin())),
-                        it->m_startColumn, it->m_endColumn,
+                        it->m_startColumn, it->m_endColumn
                       ));
       continue;
     }
@@ -167,7 +167,7 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
                         "cell %u (rows %u to %u, columns %u to %u) has got 0 span in one dimension, ignoring\n",
                         unsigned(int(it - cells.begin())),
                         it->m_startRow, it->m_endRow,
-                        it->m_startColumn, it->m_endColumn,
+                        it->m_startColumn, it->m_endColumn
                       ));
       continue;
     }

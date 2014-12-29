@@ -973,6 +973,7 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
   std::vector<unsigned> textLengths;
   std::vector<unsigned> textIDs;
   std::vector<unsigned> textOffsets;
+  std::map<unsigned, std::vector<unsigned> > tableCellTextEnds;
   unsigned textOffsetAccum = 0;
   std::vector<TextSpanReference> spans;
   std::vector<TextParagraphReference> paras;
@@ -1045,8 +1046,7 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
     else if (i->name == "TCD ")
     {
       input->seek(i->offset, librevenge::RVNG_SEEK_SET);
-      std::vector<unsigned> ends = parseTableCellDefinitions(input, *i);
-      m_collector->setNextTableCellTextEnds(ends);
+      tableCellTextEnds[i->id] = parseTableCellDefinitions(input, *i);
     }
   }
   if (parsedStrs && parsedSyid && parsedFdpc && parsedFdpp && parsedStsh && parsedFont && textChunkReference != chunkReferences.end())
@@ -1106,6 +1106,9 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
       }
       m_collector->addTextString(readParas, textIDs[j]);
       m_collector->setTextStringOffset(textIDs[j], textOffsets[j]);
+      const std::map<unsigned, std::vector<unsigned> >::const_iterator it = tableCellTextEnds.find(j);
+      if (it != tableCellTextEnds.end())
+        m_collector->setTableCellTextEnds(textIDs[j], it->second);
     }
     textChunkReference = chunkReferences.end();
   }

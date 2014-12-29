@@ -121,7 +121,7 @@ public:
 
   void useEncodingHeuristic();
 
-  void setNextTableCellTextEnds(const std::vector<unsigned> &ends);
+  void setTableCellTextEnds(unsigned textId, const std::vector<unsigned> &ends);
   void setTextStringOffset(unsigned textId, unsigned offset);
 
   bool go();
@@ -165,7 +165,7 @@ private:
   std::set<unsigned> m_masterPages;
   std::set<unsigned> m_shapesWithCoordinatesRotated90;
   std::map<unsigned, unsigned> m_masterPagesByPageSeqNum;
-  std::vector<std::vector<unsigned> > m_tableCellTextEndsVector;
+  std::map<unsigned, std::vector<unsigned> > m_tableCellTextEndsByTextId;
   std::map<unsigned, unsigned> m_stringOffsetsByTextId;
   mutable std::vector<bool> m_calculationValuesSeen;
   std::vector<unsigned> m_pageSeqNumsOrdered;

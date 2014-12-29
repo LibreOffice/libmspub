@@ -282,8 +282,6 @@ void MSPUBCollector::setShapeTableInfo(unsigned seqNum,
                                        const TableInfo &ti)
 {
   m_shapeInfosBySeqNum[seqNum].m_tableInfo = ti;
-  if (!m_tableCellTextEndsVector.empty())
-    m_shapeInfosBySeqNum[seqNum].m_tableCellTextEnds = m_tableCellTextEndsVector.back();
 }
 
 void MSPUBCollector::setShapeNumColumns(unsigned seqNum,
@@ -380,7 +378,7 @@ MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_shapeInfosBySeqNum(), m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
   m_masterPagesByPageSeqNum(),
-  m_tableCellTextEndsVector(), m_stringOffsetsByTextId(),
+  m_tableCellTextEndsByTextId(), m_stringOffsetsByTextId(),
   m_calculationValuesSeen(), m_pageSeqNumsOrdered(),
   m_encodingHeuristic(false), m_allText(),
   m_calculatedEncoding()
@@ -393,10 +391,10 @@ void MSPUBCollector::setTextStringOffset(
   m_stringOffsetsByTextId[textId] = offset;
 }
 
-void MSPUBCollector::setNextTableCellTextEnds(
-  const std::vector<unsigned> &ends)
+void MSPUBCollector::setTableCellTextEnds(
+  const unsigned textId, const std::vector<unsigned> &ends)
 {
-  m_tableCellTextEndsVector.push_back(ends);
+  m_tableCellTextEndsByTextId[textId] = ends;
 }
 
 void MSPUBCollector::useEncodingHeuristic()
@@ -1003,9 +1001,8 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
     {
       m_painter->startTableObject(props);
 
-      std::vector<unsigned> tableCellTextEnds;
-      if (bool(info.m_tableCellTextEnds))
-        tableCellTextEnds = get(info.m_tableCellTextEnds);
+      const std::map<unsigned, std::vector<unsigned> >::const_iterator it = m_tableCellTextEndsByTextId.find(get(info.m_textId));
+      const std::vector<unsigned> &tableCellTextEnds = (it != m_tableCellTextEndsByTextId.end()) ? it->second : std::vector<unsigned>();
 
       TableLayout tableLayout(boost::extents[get(info.m_tableInfo).m_numRows][get(info.m_tableInfo).m_numColumns]);
       createTableLayout(get(info.m_tableInfo).m_cells, tableLayout);

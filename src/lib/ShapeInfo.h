@@ -53,7 +53,6 @@ struct ShapeInfo
   boost::optional<ColorReference> m_lineBackColor;
   boost::optional<Dash> m_dash;
   boost::optional<TableInfo> m_tableInfo;
-  boost::optional<std::vector<unsigned> > m_tableCellTextEnds;
   boost::optional<unsigned> m_numColumns;
   unsigned m_columnSpacing;
   boost::optional<Arrow> m_beginArrow;
@@ -71,7 +70,7 @@ struct ShapeInfo
     m_rotation(), m_flips(), m_margins(), m_borderPosition(),
     m_fill(), m_customShape(), m_stretchBorderArt(false),
     m_lineBackColor(), m_dash(), m_tableInfo(),
-    m_tableCellTextEnds(), m_numColumns(),
+    m_numColumns(),
     m_columnSpacing(0), m_beginArrow(), m_endArrow(),
     m_verticalAlign(), m_pictureRecolor(), m_shadow(), m_innerRotation(), m_clipPath(), m_pictureBrightness(), m_pictureContrast()
   {

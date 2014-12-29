@@ -108,11 +108,13 @@ static void separateSpacesAndInsertText(librevenge::RVNGDrawingInterface *iface,
 struct TableLayoutCell
 {
   TableLayoutCell()
-    : m_rowSpan(0)
+    : m_cell(0)
+    , m_rowSpan(0)
     , m_colSpan(0)
   {
   }
 
+  unsigned m_cell;
   unsigned m_rowSpan;
   unsigned m_colSpan;
 };
@@ -173,9 +175,64 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
     }
 
     TableLayoutCell &layoutCell = tableLayout[it->m_startRow][it->m_startColumn];
+    layoutCell.m_cell = unsigned(int(it - cells.begin()));
     layoutCell.m_rowSpan = rowSpan;
     layoutCell.m_colSpan = colSpan;
   }
+}
+
+typedef std::vector<std::pair<unsigned, unsigned> > ParagraphToCellMap_t;
+typedef std::vector<librevenge::RVNGString> SpanTexts_t;
+typedef std::vector<SpanTexts_t> ParagraphTexts_t;
+
+void mapTableTextToCells(
+  const std::vector<TextParagraph> &text,
+  const std::vector<unsigned> &tableCellTextEnds,
+  const char *const encoding,
+  ParagraphToCellMap_t &paraToCellMap,
+  ParagraphTexts_t &paraTexts
+)
+{
+  assert(paraToCellMap.empty());
+  assert(paraTexts.empty());
+
+  paraToCellMap.reserve(tableCellTextEnds.size());
+  paraTexts.reserve(tableCellTextEnds.size());
+
+  unsigned firstPara = 0;
+  unsigned offset = 1;
+  for (unsigned para = 0; para != text.size(); ++para)
+  {
+    paraTexts.push_back(SpanTexts_t());
+    paraTexts.back().reserve(text[para].spans.size());
+
+    for (unsigned i_spans = 0; i_spans != text[para].spans.size(); ++i_spans)
+    {
+      librevenge::RVNGString textString;
+      appendCharacters(textString, text[para].spans[i_spans].chars, encoding);
+      offset += textString.len();
+      // TODO: why do we not drop these during parse already?
+      if ((i_spans == text[para].spans.size() - 1) && (textString == "\r"))
+        continue;
+      paraTexts.back().push_back(textString);
+    }
+
+    assert(paraTexts.back().size() <= text[para].spans.size());
+
+    if ((paraToCellMap.size() < tableCellTextEnds.size()))
+    {
+      if (offset > tableCellTextEnds[paraToCellMap.size()])
+      {
+        MSPUB_DEBUG_MSG(("text of cell %u ends in the middle of a paragraph!\n", unsigned(paraToCellMap.size())));
+      }
+
+      paraToCellMap.push_back(std::make_pair(firstPara, para));
+      firstPara = para + 1;
+    }
+  }
+
+  assert(paraTexts.size() == text.size());
+  assert(paraToCellMap.size() <= tableCellTextEnds.size());
 }
 
 } // anonymous namespace
@@ -949,12 +1006,14 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
       std::vector<unsigned> tableCellTextEnds;
       if (bool(info.m_tableCellTextEnds))
         tableCellTextEnds = get(info.m_tableCellTextEnds);
+
       TableLayout tableLayout(boost::extents[get(info.m_tableInfo).m_numRows][get(info.m_tableInfo).m_numColumns]);
       createTableLayout(get(info.m_tableInfo).m_cells, tableLayout);
 
-      unsigned cell = 0;
-      unsigned para = 0;
-      unsigned offset = 1;
+      ParagraphToCellMap_t paraToCellMap;
+      ParagraphTexts_t paraTexts;
+      mapTableTextToCells(text, tableCellTextEnds, getCalculatedEncoding(), paraToCellMap, paraTexts);
+
       for (unsigned row = 0; row != tableLayout.shape()[0]; ++row)
       {
         m_painter->openTableRow(librevenge::RVNGPropertyList());
@@ -978,38 +1037,26 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
 
             m_painter->openTableCell(cellProps);
 
-            if (cell < tableCellTextEnds.size())
+            if (tableLayout[row][col].m_cell < paraToCellMap.size())
             {
-              const unsigned cellEnd = tableCellTextEnds[cell];
-              while ((para < text.size()) && (offset < cellEnd))
+              const std::pair<unsigned, unsigned> &cellParas = paraToCellMap[tableLayout[row][col].m_cell];
+              for (unsigned para = cellParas.first; para <= cellParas.second; ++para)
               {
                 librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[para].style, text[para].style.m_defaultCharStyleIndex);
                 m_painter->openParagraph(paraProps);
-                for (unsigned i_spans = 0; (i_spans < text[para].spans.size()) && (offset < cellEnd); ++i_spans)
+
+                for (unsigned i_spans = 0; i_spans < paraTexts[para].size(); ++i_spans)
                 {
-                  librevenge::RVNGString textString;
-                  appendCharacters(textString, text[para].spans[i_spans].chars,
-                                   getCalculatedEncoding());
-                  offset += textString.len();
-                  // TODO: why do we not drop these during parse already?
-                  if ((i_spans == text[para].spans.size() - 1) && (textString == "\r"))
-                    continue;
                   librevenge::RVNGPropertyList charProps = getCharStyleProps(text[para].spans[i_spans].style, text[para].style.m_defaultCharStyleIndex);
                   m_painter->openSpan(charProps);
-                  separateSpacesAndInsertText(m_painter, textString);
+                  separateSpacesAndInsertText(m_painter, paraTexts[para][i_spans]);
                   m_painter->closeSpan();
                 }
 
-                if (offset > cellEnd)
-                {
-                  MSPUB_DEBUG_MSG(("cell text ends in the middle of a span!\n"));
-                }
-                m_painter->closeParagraph();
-                ++para;
+                  m_painter->closeParagraph();
               }
             }
 
-            ++cell;
             m_painter->closeTableCell();
           }
         }

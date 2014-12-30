@@ -821,7 +821,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
 
         if (bool(cellCount) && (get(cellCount) != ti.m_cells.size()))
         {
-          MSPUB_DEBUG_MSG(("%u cell records expected, but read %u\n", get(cellCount), ti.m_cells.size()));
+          MSPUB_DEBUG_MSG(("%u cell records expected, but read %u\n", get(cellCount), unsigned(ti.m_cells.size())));
         }
       }
 

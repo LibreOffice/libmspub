@@ -7,6 +7,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <cassert>
 #include <set>
 #include <sstream>
 #include <string>
@@ -14,6 +15,8 @@
 #include <string.h>
 #include <librevenge-stream/librevenge-stream.h>
 #include <zlib.h>
+
+#include "MSPUBMetaData.h"
 #include "MSPUBParser.h"
 #include "MSPUBCollector.h"
 #include "MSPUBBlockID.h"
@@ -115,6 +118,11 @@ bool MSPUBParser::parse()
   MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isStructured())
     return false;
+  librevenge::RVNGInputStream *metaData = m_input->getSubStreamByName("\x05SummaryInformation");
+  if (metaData)
+    // No check: metadata are not important enough to fail if they can't be parsed
+    parseMetaData(metaData);
+  delete metaData;
   librevenge::RVNGInputStream *quill = m_input->getSubStreamByName("Quill/QuillSub/CONTENTS");
   if (!quill)
   {
@@ -2524,6 +2532,20 @@ void MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlo
     }
   }
 }
+
+bool MSPUBParser::parseMetaData(librevenge::RVNGInputStream *const input)
+{
+  assert(input);
+
+  MSPUBMetaData metaData;
+  metaData.parse(input);
+  m_input->seek(0, librevenge::RVNG_SEEK_SET);
+  metaData.parseTimes(m_input);
+  m_collector->collectMetaData(metaData.getMetaData());
+
+  return true;
+}
+
 
 }
 

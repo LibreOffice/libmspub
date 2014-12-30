@@ -57,6 +57,8 @@ public:
   virtual ~MSPUBCollector();
 
   // collector functions
+  void collectMetaData(const librevenge::RVNGPropertyList &metaData);
+
   bool addPage(unsigned seqNum);
   bool addTextString(const std::vector<TextParagraph> &str, unsigned id);
   void addTextShape(unsigned stringId, unsigned seqNum);
@@ -172,6 +174,8 @@ private:
   bool m_encodingHeuristic;
   std::vector<unsigned char> m_allText;
   mutable boost::optional<const char *> m_calculatedEncoding;
+  librevenge::RVNGPropertyList m_metaData;
+
   // helper functions
   std::vector<int> getShapeAdjustValues(const ShapeInfo &info) const;
   boost::optional<unsigned> getMasterPageSeqNum(unsigned pageSeqNum) const;

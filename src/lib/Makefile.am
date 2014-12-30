@@ -38,6 +38,8 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	MSPUBConstants.h \
 	MSPUBContentChunkType.h \
 	MSPUBDocument.cpp \
+	MSPUBMetaData.cpp \
+	MSPUBMetaData.h \
 	MSPUBParser.cpp \
 	MSPUBParser.h \
 	MSPUBParser2k.cpp \

@@ -237,6 +237,11 @@ void mapTableTextToCells(
 
 } // anonymous namespace
 
+void MSPUBCollector::collectMetaData(const librevenge::RVNGPropertyList &metaData)
+{
+  m_metaData = metaData;
+}
+
 void MSPUBCollector::addEOTFont(const librevenge::RVNGString &name, const librevenge::RVNGBinaryData &data)
 {
   m_embeddedFonts.push_back(EmbeddedFontInfo(name, data));
@@ -381,7 +386,8 @@ MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_tableCellTextEndsByTextId(), m_stringOffsetsByTextId(),
   m_calculationValuesSeen(), m_pageSeqNumsOrdered(),
   m_encodingHeuristic(false), m_allText(),
-  m_calculatedEncoding()
+  m_calculatedEncoding(),
+  m_metaData()
 {
 }
 
@@ -1699,6 +1705,7 @@ bool MSPUBCollector::go()
   addBlackToPaletteIfNecessary();
   assignShapesToPages();
   m_painter->startDocument(librevenge::RVNGPropertyList());
+  m_painter->setDocumentMetaData(m_metaData);
 
   for (std::list<EmbeddedFontInfo>::const_iterator i = m_embeddedFonts.begin(); i != m_embeddedFonts.end(); ++i)
   {

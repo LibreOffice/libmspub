@@ -1,3 +1,15 @@
+libmspub 0.1.2
+
+- Check arguments of public functions. Passing NULL no longer causes
+  a crash.
+- Use symbol visibility on Linux. The library only exports the two public
+  functions now.
+- Fix several crashes and hangs when reading broken files, found with the help
+  of american-fuzzy-lop.
+- Add support for embedded fonts.
+- Add initial support for tables.
+- Parse document metadata.
+
 libmspub 0.1.1
 
 - Fix a crash when opening certain documents in LibreOffice, caused by a symbol

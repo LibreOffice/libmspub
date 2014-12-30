@@ -2311,6 +2311,12 @@ std::map<unsigned short, unsigned> MSPUBParser::extractEscherValues(librevenge::
   while (stillReading(input, record.contentsOffset + record.contentsLength))
   {
     unsigned short id = readU16(input);
+    if (id == 0)
+    {
+      if (!stillReading(input, record.contentsOffset + record.contentsLength))
+        break;
+      MSPUB_DEBUG_MSG(("found escher value with ID 0!\n"));
+    }
     unsigned value = readU32(input);
     ret[id] = value;
   }

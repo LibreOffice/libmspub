@@ -1101,9 +1101,9 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
           readSpans.clear();
         }
       }
-      if (!readSpans.empty())
+      if (!readSpans.empty() && currentTextPara != paras.end())
       {
-        if (!text.empty())
+        if (!text.empty() && currentTextSpan != spans.end())
         {
           readSpans.push_back(TextSpan(text, currentTextSpan->charStyle));
           MSPUB_DEBUG_MSG(("Saw text span %d in the current text paragraph.\n", (unsigned)readSpans.size()));

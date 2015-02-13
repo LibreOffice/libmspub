@@ -33,13 +33,13 @@ struct CellInfo
 
 struct TableInfo
 {
-  std::vector<unsigned> m_rowOffsetsInEmu;
-  std::vector<unsigned> m_columnOffsetsInEmu;
+  std::vector<unsigned> m_rowHeightsInEmu;
+  std::vector<unsigned> m_columnWidthsInEmu;
   unsigned m_numRows;
   unsigned m_numColumns;
   std::vector<CellInfo> m_cells;
-  TableInfo(unsigned numRows, unsigned numColumns) : m_rowOffsetsInEmu(),
-    m_columnOffsetsInEmu(), m_numRows(numRows), m_numColumns(numColumns),
+  TableInfo(unsigned numRows, unsigned numColumns) : m_rowHeightsInEmu(),
+    m_columnWidthsInEmu(), m_numRows(numRows), m_numColumns(numColumns),
     m_cells()
   {
   }

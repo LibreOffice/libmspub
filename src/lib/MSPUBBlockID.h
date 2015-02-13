@@ -73,6 +73,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   TABLE_NUM_COLS = 0x67,
   TABLE_ROWCOL_ARRAY = 0x6D,
   TABLE_ROWCOL_OFFSET = 0x01,
+  TABLE_ROWCOL_SIZE = 0x02,
   FONT_CONTAINER_ARRAY = 0x02,
   EMBEDDED_EOT = 0x0C,
   EMBEDDED_FONT_NAME = 0x04,

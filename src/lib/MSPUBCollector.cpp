@@ -1005,6 +1005,15 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
 
     if (isTable)
     {
+      librevenge::RVNGPropertyListVector columnWidths;
+        for (unsigned col = 0; col < (get(info.m_tableInfo).m_columnWidthsInEmu.size()); ++col)
+        {
+      librevenge::RVNGPropertyList columnWidth;
+          columnWidth.insert("style:column-width", double(get(info.m_tableInfo).m_columnWidthsInEmu[col]) / EMUS_IN_INCH);
+          columnWidths.append(columnWidth);
+        }
+        props.insert("librevenge:table-columns", columnWidths);
+
       m_painter->startTableObject(props);
 
       const std::map<unsigned, std::vector<unsigned> >::const_iterator it = m_tableCellTextEndsByTextId.find(get(info.m_textId));
@@ -1019,7 +1028,10 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
 
       for (unsigned row = 0; row != tableLayout.shape()[0]; ++row)
       {
-        m_painter->openTableRow(librevenge::RVNGPropertyList());
+        librevenge::RVNGPropertyList rowProps;
+        if (row < (get(info.m_tableInfo).m_rowHeightsInEmu.size()))
+          rowProps.insert("librevenge:row-height", double(get(info.m_tableInfo).m_rowHeightsInEmu[row]) / EMUS_IN_INCH);
+        m_painter->openTableRow(rowProps);
 
         for (unsigned col = 0; col != tableLayout.shape()[1]; ++col)
         {

@@ -707,10 +707,8 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       unsigned nc = numCols.get();
       unsigned rcao = rowcolArrayOffset.get();
       unsigned csn = cellsSeqNum.get();
-      std::vector<unsigned> rowOffsetsInEmu;
-      std::vector<unsigned> columnOffsetsInEmu;
-      unsigned rowFirstOffset = 0;
-      unsigned columnFirstOffset = 0;
+      std::vector<unsigned> rowHeightsInEmu;
+      std::vector<unsigned> columnWidthsInEmu;
       input->seek(rcao, librevenge::RVNG_SEEK_SET);
       unsigned arrayLength = readU32(input);
       while (stillReading(input, rcao + arrayLength))
@@ -722,30 +720,17 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
           while (stillReading(input, info.dataOffset + info.dataLength))
           {
             MSPUBBlockInfo subInfo = parseBlock(input, true);
-            if (subInfo.id == TABLE_ROWCOL_OFFSET)
+            if (subInfo.id == TABLE_ROWCOL_SIZE)
             {
-              unsigned rowcolOffset = readU32(input);
-              if (columnOffsetsInEmu.size() < nc)
-              {
-                if (columnOffsetsInEmu.empty())
-                {
-                  columnFirstOffset = rowcolOffset;
-                }
-                columnOffsetsInEmu.push_back(rowcolOffset - columnFirstOffset);
-              }
-              else if (rowOffsetsInEmu.size() < nr)
-              {
-                if (rowOffsetsInEmu.empty())
-                {
-                  rowFirstOffset = rowcolOffset;
-                }
-                rowOffsetsInEmu.push_back(rowcolOffset - rowFirstOffset);
-              }
+              if (columnWidthsInEmu.size() < nc)
+                columnWidthsInEmu.push_back(subInfo.data);
+              else if (rowHeightsInEmu.size() < nr)
+                rowHeightsInEmu.push_back(subInfo.data);
             }
           }
         }
       }
-      if (rowOffsetsInEmu.size() != nr || columnOffsetsInEmu.size() != nc)
+      if (rowHeightsInEmu.size() != nr || columnWidthsInEmu.size() != nc)
       {
         MSPUB_DEBUG_MSG(("ERROR: Wrong number of rows or columns found in table definition.\n"));
         return false;
@@ -761,8 +746,8 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       }
 
       TableInfo ti(nr, nc);
-      ti.m_rowOffsetsInEmu = rowOffsetsInEmu;
-      ti.m_columnOffsetsInEmu = columnOffsetsInEmu;
+      ti.m_rowHeightsInEmu = rowHeightsInEmu;
+      ti.m_columnWidthsInEmu = columnWidthsInEmu;
 
       if (!index)
       {

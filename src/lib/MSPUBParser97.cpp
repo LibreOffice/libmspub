@@ -112,7 +112,7 @@ void MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInputStream *in
         }
         const CharacterStyle &spanStyle = spanInfo.m_style;
         std::vector<unsigned char> spanChars;
-        spanChars.reserve(spanEnd - currentSpanIndex);
+        spanChars.reserve(std::min(spanEnd - currentSpanIndex, m_length));
         for (unsigned i = currentSpanIndex; i < spanEnd; ++i)
         {
           unsigned char ch = textInfo.m_chars[i];

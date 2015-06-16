@@ -564,12 +564,15 @@ bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqN
   bool retVal = true;
   m_collector->beginGroup();
   m_collector->setCurrentGroupSeqNum(seqNum);
-  for (unsigned i = 0; i < m_chunkChildIndicesById[seqNum].size(); ++i)
+  if (seqNum < m_chunkChildIndicesById.size())
   {
-    const ContentChunkReference &childChunk = m_contentChunks.at(m_chunkChildIndicesById[seqNum][i]);
-    if (childChunk.type == SHAPE || childChunk.type == GROUP)
+    for (unsigned i = 0; i < m_chunkChildIndicesById[seqNum].size(); ++i)
     {
-      retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);
+      const ContentChunkReference &childChunk = m_contentChunks.at(m_chunkChildIndicesById[seqNum][i]);
+      if (childChunk.type == SHAPE || childChunk.type == GROUP)
+      {
+        retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);
+      }
     }
   }
   m_collector->endGroup();

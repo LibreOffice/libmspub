@@ -238,6 +238,7 @@ CharacterStyle MSPUBParser97::readCharacterStyle(
 
 MSPUBParser97::TextInfo97 MSPUBParser97::getTextInfo(librevenge::RVNGInputStream *input, unsigned length)
 {
+  length = std::min(length, m_length); // sanity check
   std::vector<unsigned char> chars;
   chars.reserve(length);
   std::vector<unsigned> paragraphEnds;

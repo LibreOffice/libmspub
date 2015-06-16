@@ -1006,13 +1006,13 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
     if (isTable)
     {
       librevenge::RVNGPropertyListVector columnWidths;
-        for (unsigned col = 0; col < (get(info.m_tableInfo).m_columnWidthsInEmu.size()); ++col)
-        {
-      librevenge::RVNGPropertyList columnWidth;
-          columnWidth.insert("style:column-width", double(get(info.m_tableInfo).m_columnWidthsInEmu[col]) / EMUS_IN_INCH);
-          columnWidths.append(columnWidth);
-        }
-        props.insert("librevenge:table-columns", columnWidths);
+      for (unsigned col = 0; col < (get(info.m_tableInfo).m_columnWidthsInEmu.size()); ++col)
+      {
+        librevenge::RVNGPropertyList columnWidth;
+        columnWidth.insert("style:column-width", double(get(info.m_tableInfo).m_columnWidthsInEmu[col]) / EMUS_IN_INCH);
+        columnWidths.append(columnWidth);
+      }
+      props.insert("librevenge:table-columns", columnWidths);
 
       m_painter->startTableObject(props);
 

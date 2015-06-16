@@ -11,6 +11,7 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <utility>
 #include <algorithm>
 #include <string.h>
 
@@ -1134,7 +1135,7 @@ void MSPUBParser::parseFonts(librevenge::RVNGInputStream *input, const QuillChun
 void MSPUBParser::parseDefaultStyle(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk)
 {
   readU32(input);
-  unsigned numElements = readU32(input);
+  unsigned numElements = std::min(readU32(input), m_length);
   input->seek(input->tell() + 12, librevenge::RVNG_SEEK_SET);
   std::vector<unsigned> offsets;
   offsets.reserve(numElements);

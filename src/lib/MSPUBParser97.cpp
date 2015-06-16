@@ -8,6 +8,9 @@
  */
 
 #include "MSPUBParser97.h"
+
+#include <utility>
+
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
 #include "MSPUBTypes.h"

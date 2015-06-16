@@ -337,6 +337,37 @@ void readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::v
   return;
 }
 
+unsigned long getLength(librevenge::RVNGInputStream *const input)
+{
+  if (!input)
+    throw EndOfStreamException();
+
+  const long orig = input->tell();
+
+  unsigned long end = 0;
+
+  if (0 == input->seek(0, librevenge::RVNG_SEEK_END))
+  {
+    end = static_cast<unsigned long>(input->tell());
+  }
+  else
+  {
+    // RVNG_SEEK_END does not work. Use the harder way.
+    if (0 != input->seek(0, librevenge::RVNG_SEEK_SET))
+      throw EndOfStreamException();
+    while (!input->isEnd())
+    {
+      readU8(input);
+      ++end;
+    }
+  }
+
+  if (0 != input->seek(orig, librevenge::RVNG_SEEK_SET))
+    throw EndOfStreamException();
+
+  return end;
+}
+
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 

@@ -13,6 +13,9 @@
 #include <string>
 #include <algorithm>
 #include <string.h>
+
+#include <boost/numeric/conversion/cast.hpp>
+
 #include <librevenge-stream/librevenge-stream.h>
 #include <zlib.h>
 
@@ -39,7 +42,9 @@ namespace libmspub
 {
 
 MSPUBParser::MSPUBParser(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
-  : m_input(input), m_collector(collector),
+  : m_input(input),
+    m_length(boost::numeric_cast<unsigned>(getLength(input))),
+    m_collector(collector),
     m_blockInfo(), m_contentChunks(),
     m_cellsChunkIndices(),
     m_pageChunkIndices(), m_shapeChunkIndices(),

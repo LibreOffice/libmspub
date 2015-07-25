@@ -8,6 +8,7 @@
  */
 
 #include <cmath>
+#include <cstdio>
 #include <cstring>
 #include <ctime>
 

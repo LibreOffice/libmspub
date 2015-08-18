@@ -22,11 +22,35 @@
 namespace libmspub
 {
 
+namespace
+{
+
+class ChunkNestingGuard
+{
+public:
+  ChunkNestingGuard(std::deque<unsigned> &chunks, const unsigned seqNum)
+    : m_chunks(chunks)
+  {
+    m_chunks.push_front(seqNum);
+  }
+
+  ~ChunkNestingGuard()
+  {
+    m_chunks.pop_front();
+  }
+
+private:
+  std::deque<unsigned> &m_chunks;
+};
+
+}
+
 MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : MSPUBParser(input, collector),
     m_imageDataChunkIndices(),
     m_quillColorEntries(),
-    m_chunkChildIndicesById()
+    m_chunkChildIndicesById(),
+    m_chunksBeingRead()
 {
 }
 
@@ -479,6 +503,13 @@ void MSPUBParser2k::parseShapeRotation(librevenge::RVNGInputStream *input, bool 
 bool MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librevenge::RVNGInputStream *input,
                                       boost::optional<unsigned> pageSeqNum, bool topLevelCall)
 {
+  if (find(m_chunksBeingRead.begin(), m_chunksBeingRead.end(), chunk.seqNum) != m_chunksBeingRead.end())
+  {
+    MSPUB_DEBUG_MSG(("chunk %u is nested in itself", chunk.seqNum));
+    return false;
+  }
+  const ChunkNestingGuard guard(m_chunksBeingRead, chunk.seqNum);
+
   unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);
   input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
   if (topLevelCall)

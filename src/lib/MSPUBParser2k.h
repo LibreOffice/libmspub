@@ -10,6 +10,7 @@
 #ifndef __MSPUBPARSER2K_H__
 #define __MSPUBPARSER2K_H__
 
+#include <deque>
 #include <vector>
 #include <map>
 
@@ -25,6 +26,7 @@ class MSPUBParser2k : public MSPUBParser
   std::vector<unsigned> m_imageDataChunkIndices;
   std::vector<unsigned> m_quillColorEntries;
   std::map<unsigned, std::vector<unsigned> > m_chunkChildIndicesById;
+  std::deque<unsigned> m_chunksBeingRead;
 
 protected:
   // helper functions

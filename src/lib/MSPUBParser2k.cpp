@@ -564,11 +564,13 @@ bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqN
   bool retVal = true;
   m_collector->beginGroup();
   m_collector->setCurrentGroupSeqNum(seqNum);
-  if (seqNum < m_chunkChildIndicesById.size())
+  const std::map<unsigned, std::vector<unsigned> >::const_iterator it = m_chunkChildIndicesById.find(seqNum);
+  if (it != m_chunkChildIndicesById.end())
   {
-    for (unsigned i = 0; i < m_chunkChildIndicesById[seqNum].size(); ++i)
+    const std::vector<unsigned> &chunkChildIndices = it->second;
+    for (unsigned i = 0; i < chunkChildIndices.size(); ++i)
     {
-      const ContentChunkReference &childChunk = m_contentChunks.at(m_chunkChildIndicesById[seqNum][i]);
+      const ContentChunkReference &childChunk = m_contentChunks.at(chunkChildIndices[i]);
       if (childChunk.type == SHAPE || childChunk.type == GROUP)
       {
         retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);

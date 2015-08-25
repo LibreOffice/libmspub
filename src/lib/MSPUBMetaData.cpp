@@ -237,6 +237,9 @@ librevenge::RVNGString libmspub::MSPUBMetaData::readCodePageString(librevenge::R
 {
   uint32_t size = readU32(input);
 
+  if (size == 0)
+    return librevenge::RVNGString();
+
   std::vector<unsigned char> characters;
   for (uint32_t i = 0; i < size; ++i)
     characters.push_back(readU8(input));

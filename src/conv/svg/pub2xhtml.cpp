@@ -7,6 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -16,16 +20,31 @@
 #include <librevenge/librevenge.h>
 #include <libmspub/libmspub.h>
 
+#ifndef VERSION
+#define VERSION "UNKNOWN VERSION"
+#endif
+
 namespace
 {
 
 int printUsage()
 {
-  printf("Usage: pub2xhtml [OPTION] <Microsoft Publisher Document> [<Output filename>]\n");
+  printf("`pub2xhtml' converts Microsoft Publisher documents to SVG.\n");
+  printf("\n");
+  printf("Usage: pub2xhtml [OPTION] INPUT [OUTPUT]\n");
   printf("\n");
   printf("Options:\n");
-  printf("--help                Shows this help message\n");
+  printf("\t--help                show this help message\n");
+  printf("\t--version             show version information\n");
+  printf("\n");
+  printf("Report bugs to <https://bugs.documentfoundation.org/>.\n");
   return -1;
+}
+
+int printVersion()
+{
+  printf("pub2raw " VERSION "\n");
+  return 0;
 }
 
 } // anonymous namespace
@@ -41,7 +60,9 @@ int main(int argc, char *argv[])
   {
     if (!in_file)
     {
-      if (strncmp(argv[i], "--", 2))
+      if (!strcmp(argv[i], "--version"))
+        return printVersion();
+      else if (strncmp(argv[i], "--", 2))
         in_file = argv[i];
     }
     else if (!out_file)
@@ -106,4 +127,5 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

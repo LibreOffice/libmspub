@@ -1,14 +1,18 @@
 CREDITS
 
-Current maintainers and authors of libmspub
----------------------------------------------
-Brennan Vincent (brennan.vincent@gmail.com)
+Current maintainers
+-------------------
+David Tardon (dtardon@redhat.com)
 Fridrich Strba (fridrich.strba@bluewin.ch)
 
+Retired maintainers
+-------------------
+Brennan Vincent (brennan.vincent@gmail.com)
+
 Contributors
----------------------------------------------
-David Tardon (dtardon@redhat.com)
+------------
+Franz Schmid (franz@linux-hp-i7.site)
 
 Special thanks
----------------------------------------------
+--------------
 Valek Filippov

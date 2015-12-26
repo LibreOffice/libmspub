@@ -5,10 +5,6 @@ version_info = -version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)
 endif
 
 lib_LTLIBRARIES = libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la
-libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_includedir = $(includedir)/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@/libmspub
-libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_include_HEADERS = \
-	$(top_srcdir)/inc/libmspub/libmspub.h \
-	$(top_srcdir)/inc/libmspub/MSPUBDocument.h
 
 AM_CXXFLAGS = -I$(top_srcdir)/inc $(REVENGE_CFLAGS) $(ZLIB_CFLAGS) $(ICU_CFLAGS) $(DEBUG_CXXFLAGS) -DLIBMSPUB_BUILD=1
 

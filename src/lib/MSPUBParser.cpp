@@ -124,11 +124,8 @@ bool MSPUBParser::parse()
   MSPUB_DEBUG_MSG(("***NOTE***: Where applicable, the meanings of block/chunk IDs and Types printed below may be found in:\n\t***MSPUBBlockType.h\n\t***MSPUBBlockID.h\n\t***MSPUBContentChunkType.h\n*****\n"));
   if (!m_input->isStructured())
     return false;
-  librevenge::RVNGInputStream *metaData = m_input->getSubStreamByName("\x05SummaryInformation");
-  if (metaData)
-    // No check: metadata are not important enough to fail if they can't be parsed
-    parseMetaData(metaData);
-  delete metaData;
+  // No check: metadata are not important enough to fail if they can't be parsed
+  parseMetaData();
   librevenge::RVNGInputStream *quill = m_input->getSubStreamByName("Quill/QuillSub/CONTENTS");
   if (!quill)
   {
@@ -2530,12 +2527,25 @@ void MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlo
   }
 }
 
-bool MSPUBParser::parseMetaData(librevenge::RVNGInputStream *const input)
+bool MSPUBParser::parseMetaData()
 {
-  assert(input);
-
+  m_input->seek(0, librevenge::RVNG_SEEK_SET);
   MSPUBMetaData metaData;
-  metaData.parse(input);
+
+  librevenge::RVNGInputStream *sumaryInfo = m_input->getSubStreamByName("\x05SummaryInformation");
+  if (sumaryInfo)
+  {
+    metaData.parse(sumaryInfo);
+    delete sumaryInfo;
+  }
+
+  librevenge::RVNGInputStream *docSumaryInfo = m_input->getSubStreamByName("\005DocumentSummaryInformation");
+  if (docSumaryInfo)
+  {
+    metaData.parse(docSumaryInfo);
+    delete docSumaryInfo;
+  }
+
   m_input->seek(0, librevenge::RVNG_SEEK_SET);
   metaData.parseTimes(m_input);
   m_collector->collectMetaData(metaData.getMetaData());

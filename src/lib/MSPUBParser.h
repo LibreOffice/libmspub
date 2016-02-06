@@ -91,7 +91,7 @@ protected:
   MSPUBParser(const MSPUBParser &);
   MSPUBParser &operator=(const MSPUBParser &);
   virtual bool parseContents(librevenge::RVNGInputStream *input);
-  bool parseMetaData(librevenge::RVNGInputStream *input);
+  bool parseMetaData();
   bool parseQuill(librevenge::RVNGInputStream *input);
   bool parseEscher(librevenge::RVNGInputStream *input);
   bool parseEscherDelay(librevenge::RVNGInputStream *input);

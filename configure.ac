@@ -186,7 +186,7 @@ AS_IF([test $platform_win32 = yes],
 # Check for cflags
 # ================
 AC_ARG_ENABLE([werror],
-	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, usefull for development])],
+	[AS_HELP_STRING([--enable-werror], [Treat all warnings as errors, useful for development])],
 	[enable_werror="$enableval"],
 	[enable_werror=no]
 )
@@ -195,7 +195,7 @@ AS_IF([test x"$enable_werror" != "xno"], [
 	CXXFLAGS="$CXXFLAGS -Werror"
 ])
 AC_ARG_ENABLE([weffc],
-	[AS_HELP_STRING([--disable-weffc], [ Disable -Weffc++ warnings, usefull when using an old version of gcc or of boost])],
+	[AS_HELP_STRING([--disable-weffc], [ Disable -Weffc++ warnings, useful when using an old version of gcc or of boost])],
 	[enable_weffc="$enableval"],
 	[enable_weffc=yes]
 )

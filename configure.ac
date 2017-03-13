@@ -337,7 +337,7 @@ Build configuration:
 	debug:           ${enable_debug}
 	docs:            ${build_docs}
 	fuzzers:         ${enable_fuzzers}
-	static-tools:    ${enable_static_tools}
+	tools:           ${enable_tools}
 	werror:          ${enable_werror}
 ==============================================================================
 ])

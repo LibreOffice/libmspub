@@ -52,7 +52,19 @@ AC_ARG_ENABLE([tools],
 	[enable_tools="$enableval"],
 	[enable_tools=yes]
 )
-AS_IF([test "x$enable_tools" = "xyes"], [
+AM_CONDITIONAL(BUILD_TOOLS, [test "x$enable_tools" = "xyes"])
+
+# =======
+# Fuzzers
+# =======
+AC_ARG_ENABLE([fuzzers],
+	[AS_HELP_STRING([--disable-fuzzers], [Build fuzzer(s)])],
+	[enable_fuzzers="$enableval"],
+	[enable_fuzzers=no]
+)
+AM_CONDITIONAL(BUILD_FUZZERS, [test "x$enable_fuzzers" = "xyes"])
+
+AS_IF([test "x$enable_tools" = "xyes" -o "x$enable_fuzzers" = "xyes"], [
 	PKG_CHECK_MODULES([REVENGE_STREAM],[
 		librevenge-stream-0.0
 	])
@@ -64,7 +76,6 @@ AC_SUBST([REVENGE_STREAM_CFLAGS])
 AC_SUBST([REVENGE_STREAM_LIBS])
 AC_SUBST([REVENGE_GENERATORS_CFLAGS])
 AC_SUBST([REVENGE_GENERATORS_LIBS])
-AM_CONDITIONAL(BUILD_TOOLS, [test "x$enable_tools" = "xyes"])
 
 # =========
 # Find zlib
@@ -304,6 +315,7 @@ src/conv/raw/Makefile
 src/conv/raw/pub2raw.rc
 src/conv/svg/Makefile
 src/conv/svg/pub2xhtml.rc
+src/fuzz/Makefile
 src/lib/Makefile
 src/lib/libmspub.rc
 inc/Makefile
@@ -324,6 +336,7 @@ AC_MSG_NOTICE([
 Build configuration:
 	debug:           ${enable_debug}
 	docs:            ${build_docs}
+	fuzzers:         ${enable_fuzzers}
 	static-tools:    ${enable_static_tools}
 	werror:          ${enable_werror}
 ==============================================================================

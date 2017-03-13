@@ -28,7 +28,6 @@ if OS_WIN32
 endif
 
 EXTRA_DIST = \
-	$(pub2raw_SOURCES) \
 	pub2raw.rc.in
 
 # These may be in the builddir too

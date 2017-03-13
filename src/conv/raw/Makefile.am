@@ -11,7 +11,7 @@ AM_CXXFLAGS = -I$(top_srcdir)/inc \
 pub2raw_DEPENDENCIES = @PUB2RAW_WIN32_RESOURCE@
 
 pub2raw_LDADD = \
-	../../lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la \
+	$(top_builddir)/src/lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la \
 	$(REVENGE_GENERATORS_LIBS) \
 	$(REVENGE_LIBS) \
 	$(REVENGE_STREAM_LIBS) \

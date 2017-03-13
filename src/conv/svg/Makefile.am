@@ -10,7 +10,7 @@ AM_CXXFLAGS = -I$(top_srcdir)/inc \
 pub2xhtml_DEPENDENCIES = @PUB2XHTML_WIN32_RESOURCE@
 
 pub2xhtml_LDADD = \
-	../../lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la \
+	$(top_builddir)/src/lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la \
 	$(REVENGE_LIBS) \
 	$(REVENGE_STREAM_LIBS) \
 	@PUB2XHTML_WIN32_RESOURCE@ 

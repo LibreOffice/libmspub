@@ -11,6 +11,8 @@
 
 #include <utility>
 
+#include <boost/scoped_ptr.hpp>
+
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
 #include "MSPUBTypes.h"
@@ -36,16 +38,15 @@ unsigned MSPUBParser97::getTextIdOffset() const
 
 bool MSPUBParser97::parse()
 {
-  librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
+  boost::scoped_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
     return false;
   }
-  if (!parseContents(contents))
+  if (!parseContents(contents.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
-    delete contents;
     return false;
   }
   return m_collector->go();

@@ -1,5 +1,3 @@
-if BUILD_TOOLS
-
 bin_PROGRAMS = pub2raw
 
 AM_CXXFLAGS = -I$(top_srcdir)/inc \
@@ -33,5 +31,3 @@ EXTRA_DIST = \
 # These may be in the builddir too
 BUILD_EXTRA_DIST = \
 	pub2raw.rc	 
-
-endif # BUILD_TOOLS

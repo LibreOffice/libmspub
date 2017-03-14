@@ -5,4 +5,4 @@
 *.o
 Makefile
 Makefile.in
-pubfuzz
+pubfuzzer

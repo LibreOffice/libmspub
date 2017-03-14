@@ -1,4 +1,4 @@
-bin_PROGRAMS = pubfuzz
+bin_PROGRAMS = pubfuzzer
 
 AM_CXXFLAGS = -I$(top_srcdir)/inc \
 	$(REVENGE_GENERATORS_CFLAGS) \
@@ -6,12 +6,12 @@ AM_CXXFLAGS = -I$(top_srcdir)/inc \
 	$(REVENGE_STREAM_LIBS) \
 	$(DEBUG_CXXFLAGS)
 
-pubfuzz_LDADD = \
+pubfuzzer_LDADD = \
 	$(top_builddir)/src/lib/libmspub-@MSPUB_MAJOR_VERSION@.@MSPUB_MINOR_VERSION@.la \
 	$(REVENGE_GENERATORS_LIBS) \
 	$(REVENGE_LIBS) \
 	$(REVENGE_STREAM_LIBS) \
 	-lFuzzingEngine
 
-pubfuzz_SOURCES = \
-	pubfuzz.cpp
+pubfuzzer_SOURCES = \
+	pubfuzzer.cpp

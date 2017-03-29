@@ -16,6 +16,7 @@
 #include <string.h>
 
 #include <boost/numeric/conversion/cast.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <librevenge-stream/librevenge-stream.h>
 #include <zlib.h>
@@ -126,51 +127,44 @@ bool MSPUBParser::parse()
     return false;
   // No check: metadata are not important enough to fail if they can't be parsed
   parseMetaData();
-  librevenge::RVNGInputStream *quill = m_input->getSubStreamByName("Quill/QuillSub/CONTENTS");
+  boost::scoped_ptr<librevenge::RVNGInputStream> quill(m_input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
   if (!quill)
   {
     MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));
     return false;
   }
-  if (!parseQuill(quill))
+  if (!parseQuill(quill.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse quill stream.\n"));
-    delete quill;
     return false;
   }
-  delete quill;
-  librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
+  boost::scoped_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
     return false;
   }
-  if (!parseContents(contents))
+  if (!parseContents(contents.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
-    delete contents;
     return false;
   }
-  delete contents;
-  librevenge::RVNGInputStream *escherDelay = m_input->getSubStreamByName("Escher/EscherDelayStm");
+  boost::scoped_ptr<librevenge::RVNGInputStream> escherDelay(m_input->getSubStreamByName("Escher/EscherDelayStm"));
   if (escherDelay)
   {
-    parseEscherDelay(escherDelay);
-    delete escherDelay;
+    parseEscherDelay(escherDelay.get());
   }
-  librevenge::RVNGInputStream *escher = m_input->getSubStreamByName("Escher/EscherStm");
+  boost::scoped_ptr<librevenge::RVNGInputStream> escher(m_input->getSubStreamByName("Escher/EscherStm"));
   if (!escher)
   {
     MSPUB_DEBUG_MSG(("Couldn't get escher stream.\n"));
     return false;
   }
-  if (!parseEscher(escher))
+  if (!parseEscher(escher.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse escher stream.\n"));
-    delete escher;
     return false;
   }
-  delete escher;
 
   return m_collector->go();
 }

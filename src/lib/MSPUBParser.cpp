@@ -2526,18 +2526,16 @@ bool MSPUBParser::parseMetaData()
   m_input->seek(0, librevenge::RVNG_SEEK_SET);
   MSPUBMetaData metaData;
 
-  librevenge::RVNGInputStream *sumaryInfo = m_input->getSubStreamByName("\x05SummaryInformation");
+  boost::scoped_ptr<librevenge::RVNGInputStream> sumaryInfo(m_input->getSubStreamByName("\x05SummaryInformation"));
   if (sumaryInfo)
   {
-    metaData.parse(sumaryInfo);
-    delete sumaryInfo;
+    metaData.parse(sumaryInfo.get());
   }
 
-  librevenge::RVNGInputStream *docSumaryInfo = m_input->getSubStreamByName("\005DocumentSummaryInformation");
+  boost::scoped_ptr<librevenge::RVNGInputStream> docSumaryInfo(m_input->getSubStreamByName("\005DocumentSummaryInformation"));
   if (docSumaryInfo)
   {
-    metaData.parse(docSumaryInfo);
-    delete docSumaryInfo;
+    metaData.parse(docSumaryInfo.get());
   }
 
   m_input->seek(0, librevenge::RVNG_SEEK_SET);

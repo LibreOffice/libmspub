@@ -182,7 +182,7 @@ librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData deflated)
       strm.avail_out = ZLIB_CHUNK;
       strm.next_out = out;
       ret = inflate(&strm, Z_NO_FLUSH);
-      if (ret == Z_STREAM_ERROR || ret == Z_NEED_DICT || ret == Z_DATA_ERROR || ret == Z_MEM_ERROR)
+      if (ret < 0 || ret == Z_NEED_DICT)
       {
         inflateEnd(&strm);
         return librevenge::RVNGBinaryData();

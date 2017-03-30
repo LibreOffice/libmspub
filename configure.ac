@@ -58,7 +58,7 @@ AM_CONDITIONAL(BUILD_TOOLS, [test "x$enable_tools" = "xyes"])
 # Fuzzers
 # =======
 AC_ARG_ENABLE([fuzzers],
-	[AS_HELP_STRING([--disable-fuzzers], [Build fuzzer(s)])],
+	[AS_HELP_STRING([--enable-fuzzers], [Build fuzzer(s)])],
 	[enable_fuzzers="$enableval"],
 	[enable_fuzzers=no]
 )

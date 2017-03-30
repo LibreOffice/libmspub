@@ -3,7 +3,7 @@ bin_PROGRAMS = pubfuzzer
 AM_CXXFLAGS = -I$(top_srcdir)/inc \
 	$(REVENGE_GENERATORS_CFLAGS) \
 	$(REVENGE_CFLAGS) \
-	$(REVENGE_STREAM_LIBS) \
+	$(REVENGE_STREAM_CFLAGS) \
 	$(DEBUG_CXXFLAGS)
 
 pubfuzzer_LDADD = \

@@ -1,4 +1,4 @@
-bin_PROGRAMS = pubfuzzer
+noinst_PROGRAMS = pubfuzzer
 
 AM_CXXFLAGS = -I$(top_srcdir)/inc \
 	$(REVENGE_GENERATORS_CFLAGS) \

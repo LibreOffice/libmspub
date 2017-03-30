@@ -2078,6 +2078,7 @@ boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, u
     {
       return boost::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));
     }
+    return boost::shared_ptr<Fill>();
   }
   case BACKGROUND:
   default:

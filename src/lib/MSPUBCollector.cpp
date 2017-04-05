@@ -639,7 +639,7 @@ boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, co
       m_painter->startLayer(librevenge::RVNGPropertyList());
   }
   graphicsProps.insert("draw:stroke", "none");
-  const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+  const Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
   BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
   ShapeType type;

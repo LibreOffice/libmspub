@@ -9,9 +9,8 @@
 
 #include "MSPUBParser97.h"
 
+#include <memory>
 #include <utility>
-
-#include <boost/scoped_ptr.hpp>
 
 #include "MSPUBCollector.h"
 #include "libmspub_utils.h"
@@ -38,7 +37,7 @@ unsigned MSPUBParser97::getTextIdOffset() const
 
 bool MSPUBParser97::parse()
 {
-  boost::scoped_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
+  std::unique_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));

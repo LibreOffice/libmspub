@@ -7,10 +7,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <memory>
 #include <sstream>
 #include <string>
 #include <string.h>
-#include <boost/scoped_ptr.hpp>
+
 #include <libmspub/libmspub.h>
 
 #include "MSPUBCollector.h"
@@ -39,7 +40,7 @@ MSPUBVersion getVersion(librevenge::RVNGInputStream *input)
     if (!input->isStructured())
       return MSPUB_UNKNOWN_VERSION;
 
-    boost::scoped_ptr<librevenge::RVNGInputStream> contentsStream(input->getSubStreamByName("Contents"));
+    std::unique_ptr<librevenge::RVNGInputStream> contentsStream(input->getSubStreamByName("Contents"));
     if (!contentsStream)
       return MSPUB_UNKNOWN_VERSION;
 
@@ -95,10 +96,10 @@ PUBAPI bool MSPUBDocument::isSupported(librevenge::RVNGInputStream *input)
 
     if (version == MSPUB_2K2)
     {
-      boost::scoped_ptr<librevenge::RVNGInputStream> escherStream(input->getSubStreamByName("Escher/EscherStm"));
+      std::unique_ptr<librevenge::RVNGInputStream> escherStream(input->getSubStreamByName("Escher/EscherStm"));
       if (!escherStream)
         return false;
-      boost::scoped_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
+      std::unique_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
       if (!quillStream)
         return false;
     }
@@ -127,12 +128,12 @@ PUBAPI bool MSPUBDocument::parse(librevenge::RVNGInputStream *input, librevenge:
   {
     MSPUBCollector collector(painter);
     input->seek(0, librevenge::RVNG_SEEK_SET);
-    boost::scoped_ptr<MSPUBParser> parser;
+    std::unique_ptr<MSPUBParser> parser;
     switch (getVersion(input))
     {
     case MSPUB_2K:
     {
-      boost::scoped_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
+      std::unique_ptr<librevenge::RVNGInputStream> quillStream(input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
       if (!quillStream)
         parser.reset(new MSPUBParser97(input, &collector));
       else

@@ -8,6 +8,7 @@
  */
 
 #include <cassert>
+#include <memory>
 #include <set>
 #include <sstream>
 #include <string>
@@ -16,7 +17,6 @@
 #include <string.h>
 
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include <librevenge-stream/librevenge-stream.h>
 #include <zlib.h>
@@ -127,7 +127,7 @@ bool MSPUBParser::parse()
     return false;
   // No check: metadata are not important enough to fail if they can't be parsed
   parseMetaData();
-  boost::scoped_ptr<librevenge::RVNGInputStream> quill(m_input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
+  std::unique_ptr<librevenge::RVNGInputStream> quill(m_input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
   if (!quill)
   {
     MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));
@@ -138,7 +138,7 @@ bool MSPUBParser::parse()
     MSPUB_DEBUG_MSG(("Couldn't parse quill stream.\n"));
     return false;
   }
-  boost::scoped_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
+  std::unique_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
@@ -149,12 +149,12 @@ bool MSPUBParser::parse()
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
     return false;
   }
-  boost::scoped_ptr<librevenge::RVNGInputStream> escherDelay(m_input->getSubStreamByName("Escher/EscherDelayStm"));
+  std::unique_ptr<librevenge::RVNGInputStream> escherDelay(m_input->getSubStreamByName("Escher/EscherDelayStm"));
   if (escherDelay)
   {
     parseEscherDelay(escherDelay.get());
   }
-  boost::scoped_ptr<librevenge::RVNGInputStream> escher(m_input->getSubStreamByName("Escher/EscherStm"));
+  std::unique_ptr<librevenge::RVNGInputStream> escher(m_input->getSubStreamByName("Escher/EscherStm"));
   if (!escher)
   {
     MSPUB_DEBUG_MSG(("Couldn't get escher stream.\n"));
@@ -2527,13 +2527,13 @@ bool MSPUBParser::parseMetaData()
   m_input->seek(0, librevenge::RVNG_SEEK_SET);
   MSPUBMetaData metaData;
 
-  boost::scoped_ptr<librevenge::RVNGInputStream> sumaryInfo(m_input->getSubStreamByName("\x05SummaryInformation"));
+  std::unique_ptr<librevenge::RVNGInputStream> sumaryInfo(m_input->getSubStreamByName("\x05SummaryInformation"));
   if (sumaryInfo)
   {
     metaData.parse(sumaryInfo.get());
   }
 
-  boost::scoped_ptr<librevenge::RVNGInputStream> docSumaryInfo(m_input->getSubStreamByName("\005DocumentSummaryInformation"));
+  std::unique_ptr<librevenge::RVNGInputStream> docSumaryInfo(m_input->getSubStreamByName("\005DocumentSummaryInformation"));
   if (docSumaryInfo)
   {
     metaData.parse(docSumaryInfo.get());

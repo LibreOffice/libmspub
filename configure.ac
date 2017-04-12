@@ -100,7 +100,6 @@ AC_CHECK_HEADERS(
 	boost/numeric/conversion/cast.hpp \
 	boost/optional.hpp \
 	boost/ptr_container/ptr_vector.hpp \
-	boost/scoped_ptr.hpp \
 	boost/shared_ptr.hpp,
 	[],
 	[AC_MSG_ERROR(Required boost headers not found. Install boost)],

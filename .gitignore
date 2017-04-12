@@ -18,7 +18,6 @@ libmspub.spec
 libmspub-zip
 libmspub-*.tar.*
 ltmain.sh
-m4
 missing
 mkinstalldirs
 stamp-h1

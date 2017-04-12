@@ -21,6 +21,7 @@ ltmain.sh
 missing
 mkinstalldirs
 stamp-h1
+tags
 *.pc
 *.rc
 *~

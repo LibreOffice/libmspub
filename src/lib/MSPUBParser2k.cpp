@@ -8,8 +8,7 @@
  */
 
 #include <algorithm>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <librevenge-stream/librevenge-stream.h>
 
@@ -586,7 +585,7 @@ void MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input, unsigned 
     input->seek(chunkOffset + getShapeFillColorOffset(), librevenge::RVNG_SEEK_SET);
     unsigned fillColorReference = readU32(input);
     unsigned translatedFillColorReference = translate2kColorReference(fillColorReference);
-    m_collector->setShapeFill(seqNum, boost::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
+    m_collector->setShapeFill(seqNum, std::shared_ptr<Fill>(new SolidFill(ColorReference(translatedFillColorReference), 1, m_collector)), false);
   }
 }
 

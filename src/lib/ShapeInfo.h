@@ -10,8 +10,8 @@
 #ifndef __SHAPEINFO_H__
 #define __SHAPEINFO_H__
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <map>
+#include <memory>
 #include <vector>
 #include <boost/function.hpp>
 #include "ShapeType.h"
@@ -47,7 +47,7 @@ struct ShapeInfo
   boost::optional<std::pair<bool, bool> > m_flips;
   boost::optional<Margins> m_margins;
   boost::optional<BorderPosition> m_borderPosition; // Irrelevant except for rectangular shapes
-  boost::shared_ptr<const Fill> m_fill;
+  std::shared_ptr<const Fill> m_fill;
   boost::optional<DynamicCustomShape> m_customShape;
   bool m_stretchBorderArt;
   boost::optional<ColorReference> m_lineBackColor;
@@ -75,7 +75,7 @@ struct ShapeInfo
     m_verticalAlign(), m_pictureRecolor(), m_shadow(), m_innerRotation(), m_clipPath(), m_pictureBrightness(), m_pictureContrast()
   {
   }
-  boost::shared_ptr<const CustomShape> getCustomShape() const
+  std::shared_ptr<const CustomShape> getCustomShape() const
   {
     if (bool(m_customShape))
     {
@@ -83,11 +83,11 @@ struct ShapeInfo
     }
     if (bool(m_cropType))
     {
-      return boost::shared_ptr<const CustomShape>(
+      return std::shared_ptr<const CustomShape>(
                libmspub::getCustomShape(m_cropType.get()),
                boost::function<void (const CustomShape *)>(noop));
     }
-    return boost::shared_ptr<const CustomShape>(
+    return std::shared_ptr<const CustomShape>(
              libmspub::getCustomShape(m_type.get_value_or(RECTANGLE)),
              boost::function<void (const CustomShape *)>(noop));
   }

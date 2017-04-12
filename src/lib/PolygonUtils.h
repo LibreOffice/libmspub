@@ -10,11 +10,11 @@
 #ifndef __POLYGONUTILS_H__
 #define __POLYGONUTILS_H__
 
+#include <memory>
 #include <vector>
 
 #include <librevenge/librevenge.h>
 #include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
 
 #include "ShapeType.h"
 #include "VectorTransformation2D.h"
@@ -110,12 +110,12 @@ struct DynamicCustomShape
   }
 };
 
-boost::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs);
+std::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs);
 
 const CustomShape *getCustomShape(ShapeType type);
 bool isShapeTypeRectangle(ShapeType type);
-librevenge::RVNGPropertyList calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape);
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape);
+librevenge::RVNGPropertyList calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, std::shared_ptr<const CustomShape> shape);
+void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

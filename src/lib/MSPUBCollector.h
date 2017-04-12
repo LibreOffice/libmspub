@@ -78,7 +78,7 @@ public:
   void setShapeBorderImageId(unsigned seqNum, unsigned borderImageId);
   void setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, int xe, int ye);
   void setShapeImgIndex(unsigned seqNum, unsigned index);
-  void setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg);
+  void setShapeFill(unsigned seqNum, std::shared_ptr<Fill> fill, bool skipIfNotBg);
   void setShapeDash(unsigned seqNum, const Dash &dash);
   void setAdjustValue(unsigned seqNum, unsigned index, int adjust);
   void setShapeRotation(unsigned seqNum, double rotation);

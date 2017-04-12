@@ -5725,7 +5725,7 @@ private:
 
 }
 
-void drawEmulatedLine(boost::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
+void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
                       bool drawStroke, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter,
@@ -5880,7 +5880,7 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
   yOut += cy;
 }
 
-librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, boost::shared_ptr<const CustomShape> shape)
+librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, std::shared_ptr<const CustomShape> shape)
 {
   librevenge::RVNGPropertyList vertices;
   Vector2D center(x + width / 2, y + height / 2);
@@ -5905,7 +5905,7 @@ librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, doub
   return vertices;
 }
 
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, boost::shared_ptr<const CustomShape> shape)
+void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)
@@ -6378,25 +6378,25 @@ bool isShapeTypeRectangle(ShapeType type)
 }
 
 
-boost::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs)
+std::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs)
 {
-  return boost::shared_ptr<const CustomShape>(new CustomShape(
-                                                dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
-                                                dcs.m_vertices.size(),
-                                                dcs.m_elements.empty() ? NULL : &dcs.m_elements[0],
-                                                dcs.m_elements.size(),
-                                                dcs.m_calculations.empty() ? NULL : &dcs.m_calculations[0],
-                                                dcs.m_calculations.size(),
-                                                dcs.m_defaultAdjustValues.empty() ? NULL :
-                                                &dcs.m_defaultAdjustValues[0],
-                                                dcs.m_defaultAdjustValues.size(),
-                                                dcs.m_textRectangles.empty() ? NULL : &dcs.m_textRectangles[0],
-                                                dcs.m_textRectangles.size(),
-                                                dcs.m_coordWidth, dcs.m_coordHeight,
-                                                dcs.m_gluePoints.empty() ? NULL : &dcs.m_gluePoints[0],
-                                                dcs.m_gluePoints.size(),
-                                                dcs.m_adjustShiftMask
-                                              ));
+  return std::shared_ptr<const CustomShape>(new CustomShape(
+                                              dcs.m_vertices.empty() ? NULL : &dcs.m_vertices[0],
+                                              dcs.m_vertices.size(),
+                                              dcs.m_elements.empty() ? NULL : &dcs.m_elements[0],
+                                              dcs.m_elements.size(),
+                                              dcs.m_calculations.empty() ? NULL : &dcs.m_calculations[0],
+                                              dcs.m_calculations.size(),
+                                              dcs.m_defaultAdjustValues.empty() ? NULL :
+                                              &dcs.m_defaultAdjustValues[0],
+                                              dcs.m_defaultAdjustValues.size(),
+                                              dcs.m_textRectangles.empty() ? NULL : &dcs.m_textRectangles[0],
+                                              dcs.m_textRectangles.size(),
+                                              dcs.m_coordWidth, dcs.m_coordHeight,
+                                              dcs.m_gluePoints.empty() ? NULL : &dcs.m_gluePoints[0],
+                                              dcs.m_gluePoints.size(),
+                                              dcs.m_adjustShiftMask
+                                            ));
 }
 
 }

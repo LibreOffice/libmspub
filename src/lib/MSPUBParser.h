@@ -11,11 +11,11 @@
 #define __MSPUBPARSER_H__
 
 #include <map>
+#include <memory>
 #include <set>
 #include <vector>
 #include <memory>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/optional.hpp>
 
 #include <librevenge/librevenge.h>
@@ -141,7 +141,7 @@ protected:
   unsigned getFontIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(librevenge::RVNGInputStream *input);
   ParagraphStyle getParagraphStyle(librevenge::RVNGInputStream *input);
-  boost::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptVal);
+  std::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptVal);
 
   librevenge::RVNGInputStream *m_input;
   unsigned m_length;

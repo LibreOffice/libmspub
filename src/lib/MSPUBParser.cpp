@@ -1639,7 +1639,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           bool useLine = lineExistsByFlagPointer(
                            ptr_lineFlags, ptr_geomFlags);
           bool skipIfNotBg = false;
-          boost::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg, foptValues.m_complexValues);
+          std::shared_ptr<Fill> ptr_fill = getNewFill(foptValues.m_scalarValues, skipIfNotBg, foptValues.m_complexValues);
           unsigned lineWidth = 0;
           if (useLine)
           {
@@ -1916,8 +1916,8 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
   }
 }
 
-boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
-                                                bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
+std::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
+                                              bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
 {
   const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
   FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
@@ -1931,9 +1931,9 @@ boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, u
     if (ptr_fillColor && !skipIfNotBg)
     {
       const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
-      return boost::shared_ptr<Fill>(new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector));
+      return std::shared_ptr<Fill>(new SolidFill(ColorReference(*ptr_fillColor), ptr_fillOpacity ? (double)(*ptr_fillOpacity) / 0xFFFF : 1, m_collector));
     }
-    return boost::shared_ptr<Fill>();
+    return std::shared_ptr<Fill>();
   }
   case SHADE_SHAPE:
   case SHADE_CENTER:
@@ -1985,7 +1985,7 @@ boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, u
     if (ptr_fillBottom)
       fillBottomVal = toFixedPoint(*ptr_fillBottom);
 
-    boost::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle, (int)fillType));
+    std::shared_ptr<GradientFill> ret(new GradientFill(m_collector, angle, (int)fillType));
     ret->setFillCenter(fillLeftVal, fillTopVal, fillRightVal, fillBottomVal);
 
     const unsigned *ptr_fillGrad = getIfExists_const(foptProperties, FIELDID_FILL_SHADE_COMPLEX);
@@ -2062,9 +2062,9 @@ boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, u
     const unsigned *ptr_bgPxId = getIfExists_const(foptProperties, FIELDID_BG_PXID);
     if (ptr_bgPxId && *ptr_bgPxId > 0 && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
-      return boost::shared_ptr<Fill>(new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE, rotation));
+      return std::shared_ptr<Fill>(new ImgFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fillType == TEXTURE, rotation));
     }
-    return boost::shared_ptr<Fill>();
+    return std::shared_ptr<Fill>();
   }
   case PATTERN:
   {
@@ -2076,13 +2076,13 @@ boost::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, u
     ColorReference back = ptr_fillBackColor ? ColorReference(*ptr_fillBackColor) : ColorReference(0x00FFFFFF);
     if (ptr_bgPxId && *ptr_bgPxId > 0 && *ptr_bgPxId <= m_escherDelayIndices.size() && m_escherDelayIndices[*ptr_bgPxId - 1] >= 0)
     {
-      return boost::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));
+      return std::shared_ptr<Fill>(new PatternFill(m_escherDelayIndices[*ptr_bgPxId - 1], m_collector, fill, back));
     }
-    return boost::shared_ptr<Fill>();
+    return std::shared_ptr<Fill>();
   }
   case BACKGROUND:
   default:
-    return boost::shared_ptr<Fill>();
+    return std::shared_ptr<Fill>();
   }
 }
 

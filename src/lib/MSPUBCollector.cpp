@@ -520,7 +520,7 @@ void endShapeGroup(librevenge::RVNGDrawingInterface *painter)
 std::vector<int> MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) const
 {
   std::vector<int> ret;
-  boost::shared_ptr<const CustomShape> ptr_shape = info.getCustomShape();
+  std::shared_ptr<const CustomShape> ptr_shape = info.getCustomShape();
   if (ptr_shape)
   {
     for (unsigned i = 0; i < ptr_shape->m_numDefaultAdjustValues; ++i)
@@ -569,7 +569,7 @@ void MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
         rot = ptr_info->m_innerRotation.get();
       if (index - 1 < m_images.size())
       {
-        ptr_info->m_fill = boost::shared_ptr<const Fill>(new ImgFill(index, this, false, rot));
+        ptr_info->m_fill = std::shared_ptr<const Fill>(new ImgFill(index, this, false, rot));
       }
     }
     elt.setShapeInfo(*ptr_info);
@@ -1275,7 +1275,7 @@ double MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape 
 
 double MSPUBCollector::getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const
 {
-  boost::shared_ptr<const CustomShape> p_shape = info.getCustomShape();
+  std::shared_ptr<const CustomShape> p_shape = info.getCustomShape();
   if (! p_shape)
   {
     return 0;
@@ -1415,7 +1415,7 @@ void MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
   m_shapeInfosBySeqNum[seqNum].m_dash = dash;
 }
 
-void MSPUBCollector::setShapeFill(unsigned seqNum, boost::shared_ptr<Fill> fill, bool skipIfNotBg)
+void MSPUBCollector::setShapeFill(unsigned seqNum, std::shared_ptr<Fill> fill, bool skipIfNotBg)
 {
   m_shapeInfosBySeqNum[seqNum].m_fill = fill;
   if (skipIfNotBg)
@@ -1688,7 +1688,7 @@ void MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
   const unsigned *ptr_fillSeqNum = getIfExists_const(m_bgShapeSeqNumsByPageSeqNum, pageSeqNum);
   if (ptr_fillSeqNum)
   {
-    boost::shared_ptr<const Fill> ptr_fill;
+    std::shared_ptr<const Fill> ptr_fill;
     const ShapeInfo *ptr_info = getIfExists_const(m_shapeInfosBySeqNum, *ptr_fillSeqNum);
     if (ptr_info)
     {

@@ -209,10 +209,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\src\lib\MSPUBStringVector.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\src\lib\MSPUBSVGGenerator.cpp"
 				>
 			</File>
@@ -243,10 +239,6 @@
 			</File>
 			<File
 				RelativePath="..\..\inc\libmspub\MSPUBDocument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\inc\libmspub\MSPUBStringVector.h"
 				>
 			</File>
 			<File

@@ -13,7 +13,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\inc\libmspub\libmspub.h" />
     <ClInclude Include="..\..\inc\libmspub\MSPUBDocument.h" />
-    <ClInclude Include="..\..\inc\libmspub\MSPUBStringVector.h" />
     <ClInclude Include="..\..\src\lib\Arrow.h" />
     <ClInclude Include="..\..\src\lib\BorderArtInfo.h" />
     <ClInclude Include="..\..\src\lib\ColorReference.h" />
@@ -61,7 +60,6 @@
     <ClCompile Include="..\..\src\lib\MSPUBParser.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBParser2k.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBParser97.cpp" />
-    <ClCompile Include="..\..\src\lib\MSPUBStringVector.cpp" />
     <ClCompile Include="..\..\src\lib\MSPUBSVGGenerator.cpp" />
     <ClCompile Include="..\..\src\lib\PolygonUtils.cpp" />
     <ClCompile Include="..\..\src\lib\Shadow.cpp" />

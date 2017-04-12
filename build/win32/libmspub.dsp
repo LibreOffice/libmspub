@@ -123,10 +123,6 @@ SOURCE=..\..\src\lib\MSPUBParser97.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\src\lib\MSPUBStringVector.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\src\lib\MSPUBSVGGenerator.cpp
 # End Source File
 # Begin Source File
@@ -156,10 +152,6 @@ SOURCE=..\..\inc\libmspub\libmspub.h
 # Begin Source File
 
 SOURCE=..\..\inc\libmspub\MSPUBDocument.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\inc\libmspub\MSPUBStringVector.h
 # End Source File
 # Begin Source File
 

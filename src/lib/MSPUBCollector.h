@@ -19,7 +19,6 @@
 #include <algorithm>
 
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/bind.hpp>
 
 #include <librevenge/librevenge.h>
 #include <librevenge/librevenge.h>

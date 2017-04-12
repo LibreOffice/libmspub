@@ -23,6 +23,8 @@
 namespace libmspub
 {
 
+using namespace std::placeholders;
+
 namespace
 {
 
@@ -590,7 +592,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   if (isGroup)
   {
     m_painter->startLayer(librevenge::RVNGPropertyList());
-    return boost::bind(&endShapeGroup, m_painter);
+    return std::bind(&endShapeGroup, m_painter);
   }
   librevenge::RVNGPropertyList graphicsProps;
   if (info.m_fill)
@@ -704,7 +706,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
 
     writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                      true, foldedTransform,
-                     std::vector<Line>(), boost::bind(&MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
+                     std::vector<Line>(), std::bind(&MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues), m_paletteColors, info.getCustomShape());
     if (bool(info.m_pictureRecolor))
     {
       graphicsProps.remove("draw:color-mode");
@@ -982,7 +984,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
       m_painter->setStyle(graphicsProps);
       writeCustomShape(type, graphicsProps, m_painter, x, y, height, width,
                        false, foldedTransform, lines,
-                       boost::bind(
+                       std::bind(
                          &MSPUBCollector::getCalculationValue, this, info, _1, false, adjustValues
                        ),
                        m_paletteColors, info.getCustomShape());
@@ -1617,7 +1619,7 @@ void MSPUBCollector::assignShapesToPages()
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
     unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getSeqNum());
-    m_topLevelShapes[i].setup(boost::bind(&MSPUBCollector::setupShapeStructures, this, _1));
+    m_topLevelShapes[i].setup(std::bind(&MSPUBCollector::setupShapeStructures, this, _1));
     if (ptr_pageSeqNum)
     {
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
@@ -1679,7 +1681,7 @@ void MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
   for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
   {
     ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
-    shapeGroup->visit(boost::bind(&MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
+    shapeGroup->visit(std::bind(&MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
   }
 }
 

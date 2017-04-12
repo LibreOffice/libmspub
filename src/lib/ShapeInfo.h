@@ -10,10 +10,10 @@
 #ifndef __SHAPEINFO_H__
 #define __SHAPEINFO_H__
 #include <boost/optional.hpp>
+#include <functional>
 #include <map>
 #include <memory>
 #include <vector>
-#include <boost/function.hpp>
 #include "ShapeType.h"
 #include "Coordinate.h"
 #include "Line.h"
@@ -85,11 +85,11 @@ struct ShapeInfo
     {
       return std::shared_ptr<const CustomShape>(
                libmspub::getCustomShape(m_cropType.get()),
-               boost::function<void (const CustomShape *)>(noop));
+               std::function<void (const CustomShape *)>(noop));
     }
     return std::shared_ptr<const CustomShape>(
              libmspub::getCustomShape(m_type.get_value_or(RECTANGLE)),
-             boost::function<void (const CustomShape *)>(noop));
+             std::function<void (const CustomShape *)>(noop));
   }
 };
 }

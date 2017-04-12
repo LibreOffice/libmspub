@@ -10,6 +10,7 @@
 #ifndef __MSPUBCOLLECTOR_H__
 #define __MSPUBCOLLECTOR_H__
 
+#include <functional>
 #include <list>
 #include <vector>
 #include <map>
@@ -19,7 +20,6 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/bind.hpp>
-#include <boost/function.hpp>
 
 #include <librevenge/librevenge.h>
 #include <librevenge/librevenge.h>
@@ -192,7 +192,7 @@ private:
                   boost::optional<Color> oneBitColor) const;
   bool pageIsMaster(unsigned pageSeqNum) const;
 
-  boost::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
+  std::function<void(void)> paintShape(const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const;
   double getCalculationValue(const ShapeInfo &info, unsigned index, bool recursiveEntry, const std::vector<int> &adjustValues) const;
 
   librevenge::RVNGPropertyList getCharStyleProps(const CharacterStyle &, boost::optional<unsigned> defaultCharStyleIndex) const;

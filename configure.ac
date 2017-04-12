@@ -96,7 +96,6 @@ AC_SUBST(ZLIB_LIBS)
 # ===========================
 AC_CHECK_HEADERS(
 	boost/bind.hpp \
-	boost/function.hpp \
 	boost/numeric/conversion/cast.hpp \
 	boost/optional.hpp \
 	boost/ptr_container/ptr_vector.hpp \

@@ -584,7 +584,7 @@ void MSPUBCollector::setupShapeStructures(ShapeGroupElement &elt)
 }
 
 
-boost::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const
+std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, const Coordinate &/* relativeTo*/, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform) const
 {
   std::vector<int> adjustValues = getShapeAdjustValues(info);
   if (isGroup)

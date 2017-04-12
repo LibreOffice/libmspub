@@ -5674,13 +5674,13 @@ ShapeElementCommand getCommandFromBinary(unsigned short binary)
   return ShapeElementCommand(cmd, count);
 }
 
-double getSpecialIfNecessary(boost::function<double(unsigned index)> calculator, int val)
+double getSpecialIfNecessary(std::function<double(unsigned index)> calculator, int val)
 {
   bool special = val & 0x80000000;
   return special ? calculator(val ^ 0x80000000) : val;
 }
 
-Coordinate CustomShape::getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const
+Coordinate CustomShape::getTextRectangle(double x, double y, double width, double height, std::function<double(unsigned index)> calculator) const
 {
   double scaleX = width * m_coordWidth;
   double scaleY = height * m_coordHeight;
@@ -5729,7 +5729,7 @@ void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeT
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
                       bool drawStroke, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter,
-                      boost::function<double(unsigned index)> calculator,
+                      std::function<double(unsigned index)> calculator,
                       const std::vector<Color> &palette)
 {
   std::vector<LineInfo> lineInfos;
@@ -5905,7 +5905,7 @@ librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, doub
   return vertices;
 }
 
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape)
+void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)

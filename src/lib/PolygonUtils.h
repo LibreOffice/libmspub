@@ -10,11 +10,11 @@
 #ifndef __POLYGONUTILS_H__
 #define __POLYGONUTILS_H__
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 #include <librevenge/librevenge.h>
-#include <boost/function.hpp>
 
 #include "ShapeType.h"
 #include "VectorTransformation2D.h"
@@ -73,7 +73,7 @@ struct CustomShape
   unsigned m_numGluePoints;
   unsigned char m_adjustShiftMask;
 
-  Coordinate getTextRectangle(double x, double y, double width, double height, boost::function<double(unsigned index)> calculator) const;
+  Coordinate getTextRectangle(double x, double y, double width, double height, std::function<double(unsigned index)> calculator) const;
 
   CustomShape(const Vertex *p_vertices, unsigned numVertices, const unsigned short *p_elements, unsigned numElements, const Calculation *p_calculations, unsigned numCalculations, const int *p_defaultAdjustValues, unsigned numDefaultAdjustValues, const TextRectangle *p_textRectangles, unsigned numTextRectangles, unsigned coordWidth, unsigned coordHeight, const Vertex *p_gluePoints, unsigned numGluePoints, unsigned char adjustShiftMask = 0) :
     mp_vertices(p_vertices), m_numVertices(numVertices),
@@ -115,7 +115,7 @@ std::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustom
 const CustomShape *getCustomShape(ShapeType type);
 bool isShapeTypeRectangle(ShapeType type);
 librevenge::RVNGPropertyList calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, std::shared_ptr<const CustomShape> shape);
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, boost::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
+void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
 
 } // libmspub
 #endif /* __POLYGONUTILS_H__ */

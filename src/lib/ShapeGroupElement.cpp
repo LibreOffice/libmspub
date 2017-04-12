@@ -46,7 +46,7 @@ void ShapeGroupElement::setTransform(const VectorTransformation2D &transform)
   m_transform = transform;
 }
 
-void ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &self)> visitor)
+void ShapeGroupElement::setup(std::function<void(ShapeGroupElement &self)> visitor)
 {
   visitor(*this);
   for (unsigned i = 0; i < m_children.size(); ++i)
@@ -55,8 +55,8 @@ void ShapeGroupElement::setup(boost::function<void(ShapeGroupElement &self)> vis
   }
 }
 
-void ShapeGroupElement::visit(boost::function<
-                              boost::function<void(void)>
+void ShapeGroupElement::visit(std::function<
+                              std::function<void(void)>
                               (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
                               > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
 {
@@ -70,7 +70,7 @@ void ShapeGroupElement::visit(boost::function<
   double offsetY = centerY - relativeCenterY;
   VectorTransformation2D foldedTransform = VectorTransformation2D::fromTranslate(-offsetX, -offsetY)
                                            * parentFoldedTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
-  boost::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform);
+  std::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform);
   for (unsigned i = 0; i < m_children.size(); ++i)
   {
     m_children[i]->visit(visitor, coord, foldedTransform);
@@ -78,8 +78,8 @@ void ShapeGroupElement::visit(boost::function<
   afterOp();
 }
 
-void ShapeGroupElement::visit(boost::function<
-                              boost::function<void(void)>
+void ShapeGroupElement::visit(std::function<
+                              std::function<void(void)>
                               (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
                               > visitor) const
 {

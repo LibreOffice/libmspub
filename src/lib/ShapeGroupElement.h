@@ -10,7 +10,7 @@
 #ifndef __SHAPEGROUPELEMENT_H__
 #define __SHAPEGROUPELEMENT_H__
 #include <boost/optional.hpp>
-#include <boost/function.hpp>
+#include <functional>
 #include <vector>
 
 #include "ShapeInfo.h"
@@ -32,13 +32,13 @@ public:
   ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum);
   ~ShapeGroupElement();
   void setShapeInfo(const ShapeInfo &shapeInfo);
-  void setup(boost::function<void(ShapeGroupElement &self)> visitor);
-  void visit(boost::function<
-             boost::function<void(void)>
+  void setup(std::function<void(ShapeGroupElement &self)> visitor);
+  void visit(std::function<
+             std::function<void(void)>
              (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor,
              const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform) const;
-  void visit(boost::function<
-             boost::function<void(void)>
+  void visit(std::function<
+             std::function<void(void)>
              (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor) const;
   bool isGroup() const;
   ShapeGroupElement *getParent();

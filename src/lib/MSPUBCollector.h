@@ -14,11 +14,10 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <memory>
 #include <set>
 #include <string>
 #include <algorithm>
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 #include <librevenge/librevenge.h>
 #include <librevenge/librevenge.h>
@@ -132,7 +131,7 @@ private:
 
   struct PageInfo
   {
-    std::vector<ShapeGroupElement *> m_shapeGroupsOrdered;
+    std::vector<std::shared_ptr<ShapeGroupElement>> m_shapeGroupsOrdered;
     PageInfo() : m_shapeGroupsOrdered() { }
   };
 
@@ -158,9 +157,9 @@ private:
   std::map<unsigned, unsigned> m_pageSeqNumsByShapeSeqNum;
   std::map<unsigned, unsigned> m_bgShapeSeqNumsByPageSeqNum;
   std::set<unsigned> m_skipIfNotBgSeqNums;
-  ShapeGroupElement *m_currentShapeGroup;
-  boost::ptr_vector<ShapeGroupElement> m_topLevelShapes;
-  std::map<unsigned, ShapeGroupElement *> m_groupsBySeqNum;
+  std::shared_ptr<ShapeGroupElement> m_currentShapeGroup;
+  std::vector<std::shared_ptr<ShapeGroupElement>> m_topLevelShapes;
+  std::map<unsigned, std::shared_ptr<ShapeGroupElement>> m_groupsBySeqNum;
   std::list<EmbeddedFontInfo> m_embeddedFonts;
   std::map<unsigned, ShapeInfo> m_shapeInfosBySeqNum;
   std::set<unsigned> m_masterPages;

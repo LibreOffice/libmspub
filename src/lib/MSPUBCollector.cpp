@@ -442,7 +442,7 @@ void MSPUBCollector::setShapeClipPath(unsigned seqNum, const std::vector<Vertex>
 
 void MSPUBCollector::beginGroup()
 {
-  ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup);
+  auto tmp = std::make_shared<ShapeGroupElement>(m_currentShapeGroup.get());
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);
@@ -456,7 +456,9 @@ bool MSPUBCollector::endGroup()
   {
     return false;
   }
-  m_currentShapeGroup = m_currentShapeGroup->getParent();
+  auto parent = m_currentShapeGroup->getParent();
+  if (parent)
+    m_currentShapeGroup = parent->shared_from_this();
   return true;
 }
 
@@ -492,13 +494,13 @@ bool MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
     return false;
   }
   m_currentShapeGroup->setSeqNum(seqNum);
-  m_groupsBySeqNum.insert(std::pair<unsigned, ShapeGroupElement *>(seqNum, m_currentShapeGroup));
+  m_groupsBySeqNum.insert(std::make_pair(seqNum, m_currentShapeGroup));
   return true;
 }
 
 void MSPUBCollector::setShapeOrder(unsigned seqNum)
 {
-  ShapeGroupElement *tmp = new ShapeGroupElement(m_currentShapeGroup, seqNum);
+  auto tmp = std::make_shared<ShapeGroupElement>(m_currentShapeGroup.get(), seqNum);
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);
@@ -1618,14 +1620,14 @@ void MSPUBCollector::assignShapesToPages()
 {
   for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
   {
-    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i].getSeqNum());
-    m_topLevelShapes[i].setup(std::bind(&MSPUBCollector::setupShapeStructures, this, _1));
+    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i]->getSeqNum());
+    m_topLevelShapes[i]->setup(std::bind(&MSPUBCollector::setupShapeStructures, this, _1));
     if (ptr_pageSeqNum)
     {
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
       if (ptr_page)
       {
-        ptr_page->m_shapeGroupsOrdered.push_back(&m_topLevelShapes[i]);
+        ptr_page->m_shapeGroupsOrdered.push_back(m_topLevelShapes[i]);
       }
     }
   }
@@ -1654,7 +1656,7 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
   {
     pageProps.insert("svg:height", m_height);
   }
-  const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
+  const auto &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
   if (!shapeGroupsOrdered.empty())
   {
     m_painter->startPage(pageProps);
@@ -1677,12 +1679,8 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
 void MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
 {
   const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
-  const std::vector<ShapeGroupElement *> &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
-  for (unsigned i = 0; i < shapeGroupsOrdered.size(); ++i)
-  {
-    ShapeGroupElement *shapeGroup = shapeGroupsOrdered[i];
+  for (const auto &shapeGroup : pageInfo.m_shapeGroupsOrdered)
     shapeGroup->visit(std::bind(&MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
-  }
 }
 
 void MSPUBCollector::writePageBackground(unsigned pageSeqNum) const

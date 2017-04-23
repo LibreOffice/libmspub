@@ -11,6 +11,7 @@
 #define __SHAPEGROUPELEMENT_H__
 #include <boost/optional.hpp>
 #include <functional>
+#include <memory>
 #include <vector>
 
 #include "ShapeInfo.h"
@@ -18,11 +19,11 @@
 
 namespace libmspub
 {
-class ShapeGroupElement
+class ShapeGroupElement : public std::enable_shared_from_this<ShapeGroupElement>
 {
   boost::optional<ShapeInfo> m_shapeInfo;
   ShapeGroupElement *m_parent;
-  std::vector<ShapeGroupElement *> m_children;
+  std::vector<std::shared_ptr<ShapeGroupElement>> m_children;
   unsigned m_seqNum;
   ShapeGroupElement &operator=(const ShapeGroupElement &); //not implemented
   ShapeGroupElement(const ShapeGroupElement &); //not implemented

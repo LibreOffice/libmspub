@@ -16,23 +16,19 @@ ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(),
 {
   if (m_parent)
   {
-    m_parent->m_children.push_back(this);
+    m_parent->m_children.push_back(shared_from_this());
   }
 }
 
 ShapeGroupElement::~ShapeGroupElement()
 {
-  for (unsigned i = 0; i < m_children.size(); ++i)
-  {
-    delete m_children[i];
-  }
 }
 
 ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
 {
   if (m_parent)
   {
-    m_parent->m_children.push_back(this);
+    m_parent->m_children.push_back(shared_from_this());
   }
 }
 

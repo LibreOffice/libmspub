@@ -97,7 +97,6 @@ AC_SUBST(ZLIB_LIBS)
 AC_CHECK_HEADERS(
 	boost/numeric/conversion/cast.hpp \
 	boost/optional.hpp \
-	boost/ptr_container/ptr_vector.hpp \
 	,
 	[],
 	[AC_MSG_ERROR(Required boost headers not found. Install boost)],

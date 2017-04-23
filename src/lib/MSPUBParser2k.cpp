@@ -769,28 +769,26 @@ void MSPUBParser2k::parseShapeLine(librevenge::RVNGInputStream *input, bool isRe
 
 bool MSPUBParser2k::parse()
 {
-  librevenge::RVNGInputStream *contents = m_input->getSubStreamByName("Contents");
+  std::unique_ptr<librevenge::RVNGInputStream> contents(m_input->getSubStreamByName("Contents"));
   if (!contents)
   {
     MSPUB_DEBUG_MSG(("Couldn't get contents stream.\n"));
     return false;
   }
-  if (!parseContents(contents))
+  if (!parseContents(contents.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse contents stream.\n"));
-    delete contents;
     return false;
   }
-  librevenge::RVNGInputStream *quill = m_input->getSubStreamByName("Quill/QuillSub/CONTENTS");
+  std::unique_ptr<librevenge::RVNGInputStream> quill(m_input->getSubStreamByName("Quill/QuillSub/CONTENTS"));
   if (!quill)
   {
     MSPUB_DEBUG_MSG(("Couldn't get quill stream.\n"));
     return false;
   }
-  if (!parseQuill(quill))
+  if (!parseQuill(quill.get()))
   {
     MSPUB_DEBUG_MSG(("Couldn't parse quill stream.\n"));
-    delete quill;
     return false;
   }
   return m_collector->go();

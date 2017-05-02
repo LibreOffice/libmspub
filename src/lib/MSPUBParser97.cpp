@@ -9,6 +9,7 @@
 
 #include "MSPUBParser97.h"
 
+#include <limits>
 #include <memory>
 #include <utility>
 
@@ -263,14 +264,11 @@ MSPUBParser97::TextInfo97 MSPUBParser97::getTextInfo(librevenge::RVNGInputStream
 
 int MSPUBParser97::translateCoordinateIfNecessary(int coordinate) const
 {
-  if (m_isBanner)
-  {
-    return coordinate - 120 * EMUS_IN_INCH;
-  }
+  const int offset = (m_isBanner ? 120 : 25) * EMUS_IN_INCH;
+  if (std::numeric_limits<int>::min() + offset > coordinate)
+    return std::numeric_limits<int>::min();
   else
-  {
-    return coordinate - 25 * EMUS_IN_INCH;
-  }
+    return coordinate - offset;
 }
 
 unsigned MSPUBParser97::getFirstLineOffset() const

@@ -27,11 +27,11 @@ struct Coordinate
   }
   double getWidthIn() const
   {
-    return double(m_xe - m_xs) / EMUS_IN_INCH;
+    return double(int64_t(m_xe) - m_xs) / EMUS_IN_INCH;
   }
   double getHeightIn() const
   {
-    return double(m_ye - m_ys) / EMUS_IN_INCH;
+    return double(int64_t(m_ye) - m_ys) / EMUS_IN_INCH;
   }
 };
 }

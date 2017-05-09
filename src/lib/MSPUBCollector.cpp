@@ -310,13 +310,13 @@ void MSPUBCollector::setShapeStretchBorderArt(unsigned seqNum)
 
 void MSPUBCollector::setRectCoordProps(Coordinate coord, librevenge::RVNGPropertyList *props) const
 {
-  int xs = coord.m_xs, ys = coord.m_ys, xe = coord.m_xe, ye = coord.m_ye;
+  int xs = coord.m_xs, ys = coord.m_ys;
   double x_center = m_width / 2;
   double y_center = m_height / 2;
   props->insert("svg:x", x_center + (double)xs / EMUS_IN_INCH);
   props->insert("svg:y", y_center + (double)ys / EMUS_IN_INCH);
-  props->insert("svg:width", (double)(xe - xs) / EMUS_IN_INCH);
-  props->insert("svg:height", (double)(ye - ys) / EMUS_IN_INCH);
+  props->insert("svg:width", coord.getWidthIn());
+  props->insert("svg:height", coord.getHeightIn());
 }
 
 Coordinate getFudgedCoordinates(Coordinate coord, const std::vector<Line> &lines, bool makeBigger, BorderPosition borderPosition)

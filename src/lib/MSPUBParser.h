@@ -141,7 +141,7 @@ protected:
   unsigned getFontIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info);
   CharacterStyle getCharacterStyle(librevenge::RVNGInputStream *input);
   ParagraphStyle getParagraphStyle(librevenge::RVNGInputStream *input);
-  std::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptValues, bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptVal);
+  std::shared_ptr<Fill> getNewFill(const std::map<unsigned short, unsigned> &foptProperties, bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues);
 
   librevenge::RVNGInputStream *m_input;
   unsigned m_length;

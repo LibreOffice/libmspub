@@ -51,7 +51,7 @@ class MSPUBCollector
 public:
   typedef std::list<ContentChunkReference>::const_iterator ccr_iterator_t;
 
-  MSPUBCollector(::librevenge::RVNGDrawingInterface *painter);
+  MSPUBCollector(librevenge::RVNGDrawingInterface *painter);
   virtual ~MSPUBCollector();
 
   // collector functions

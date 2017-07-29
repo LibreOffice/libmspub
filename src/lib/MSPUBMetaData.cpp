@@ -252,8 +252,8 @@ librevenge::RVNGString libmspub::MSPUBMetaData::readCodePageString(librevenge::R
   {
     // http://msdn.microsoft.com/en-us/library/windows/desktop/dd374130%28v=vs.85%29.aspx
     // says this is UTF-8.
-    for (std::vector<unsigned char>::const_iterator i = characters.begin(); i != characters.end(); ++i)
-      string.append((const char)*i);
+    characters.push_back(0);
+    string.append(reinterpret_cast<const char *>(characters.data()));
   }
   else
   {

@@ -237,17 +237,17 @@ static void _appendUCS4(librevenge::RVNGString &text, unsigned ucs4Character)
     len = 6;
   }
 
-  unsigned char outbuf[6] = { 0, 0, 0, 0, 0, 0 };
+  char outbuf[7] = { 0 };
   int i;
   for (i = len - 1; i > 0; --i)
   {
-    outbuf[i] = (ucs4Character & 0x3f) | 0x80;
+    outbuf[i] = char((ucs4Character & 0x3f) | 0x80);
     ucs4Character >>= 6;
   }
-  outbuf[0] = (ucs4Character & 0xff) | first;
+  outbuf[0] = char((ucs4Character & 0xff) | first);
+  outbuf[len] = '\0';
 
-  for (i = 0; i < len; i++)
-    text.append(outbuf[i]);
+  text.append(outbuf);
 }
 
 } // anonymous namespace

@@ -1174,7 +1174,7 @@ const char *MSPUBCollector::getCalculatedEncoding() const
     goto csd_fail;
   }
   // don't worry, the below call doesn't require a null-terminated string.
-  ucsdet_setText(ucd, (const char *)(&m_allText[0]), m_allText.size(), &status);
+  ucsdet_setText(ucd, (const char *)m_allText.data(), m_allText.size(), &status);
   if (U_FAILURE(status))
   {
     goto csd_fail;

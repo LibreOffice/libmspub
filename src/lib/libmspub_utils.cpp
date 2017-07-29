@@ -333,7 +333,7 @@ void readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::v
     return;
   }
   out = std::vector<unsigned char>(numBytesRead);
-  memcpy(&out[0], tmpBuffer, numBytesRead);
+  memcpy(out.data(), tmpBuffer, numBytesRead);
   return;
 }
 
@@ -387,7 +387,7 @@ void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned c
   {
     // ICU documentation claims that character-by-character processing is faster "for small amounts of data" and "'normal' charsets"
     // (in any case, it is more convenient :) )
-    const char *src = (const char *)&characters[0];
+    const char *src = (const char *)characters.data();
     const char *srcLimit = (const char *)src + characters.size();
     while (src < srcLimit)
     {

@@ -46,9 +46,9 @@ protected:
   bool parseGroup(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned page);
   void assignShapeImgIndex(unsigned seqNum);
   void parseShapeFill(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned chunkOffset);
-  bool parseContents(librevenge::RVNGInputStream *input);
+  bool parseContents(librevenge::RVNGInputStream *input) override;
   virtual bool parseDocument(librevenge::RVNGInputStream *input);
-  virtual unsigned getColorIndexByQuillEntry(unsigned entry);
+  unsigned getColorIndexByQuillEntry(unsigned entry) override;
   virtual int translateCoordinateIfNecessary(int coordinate) const;
   virtual unsigned getFirstLineOffset() const;
   virtual unsigned getSecondLineOffset() const;
@@ -63,8 +63,8 @@ protected:
   virtual void parseContentsTextIfNecessary(librevenge::RVNGInputStream *input);
 public:
   explicit MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector *collector);
-  virtual bool parse();
-  virtual ~MSPUBParser2k();
+  bool parse() override;
+  ~MSPUBParser2k() override;
 };
 
 } // namespace libmspub

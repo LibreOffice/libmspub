@@ -42,24 +42,24 @@ class MSPUBParser97 : public MSPUBParser2k
 
   bool m_isBanner;
 
-  bool parseDocument(librevenge::RVNGInputStream *input);
-  int translateCoordinateIfNecessary(int coordinate) const;
-  unsigned getFirstLineOffset() const;
-  unsigned getSecondLineOffset() const;
-  unsigned getShapeFillTypeOffset() const;
-  unsigned getShapeFillColorOffset() const;
-  unsigned short getTextMarker() const;
-  unsigned getTextIdOffset() const;
+  bool parseDocument(librevenge::RVNGInputStream *input) override;
+  int translateCoordinateIfNecessary(int coordinate) const override;
+  unsigned getFirstLineOffset() const override;
+  unsigned getSecondLineOffset() const override;
+  unsigned getShapeFillTypeOffset() const override;
+  unsigned getShapeFillColorOffset() const override;
+  unsigned short getTextMarker() const override;
+  unsigned getTextIdOffset() const override;
   CharacterStyle readCharacterStyle(librevenge::RVNGInputStream *input,
                                     unsigned length);
-  void parseContentsTextIfNecessary(librevenge::RVNGInputStream *input);
+  void parseContentsTextIfNecessary(librevenge::RVNGInputStream *input) override;
   std::vector<SpanInfo97> getSpansInfo(librevenge::RVNGInputStream *input,
                                        unsigned prop1Index, unsigned prop2Index, unsigned prop3Index,
                                        unsigned prop3End);
   TextInfo97 getTextInfo(librevenge::RVNGInputStream *input, unsigned length);
 public:
   MSPUBParser97(librevenge::RVNGInputStream *input, MSPUBCollector *collector);
-  bool parse();
+  bool parse() override;
 };
 }
 

@@ -57,7 +57,7 @@ const char *windowsCharsetNameByOriginalCharset(const char *name)
   {
     return "windows-1256";
   }
-  return NULL;
+  return nullptr;
 }
 
 const char *mimeByImgType(ImgType type)
@@ -80,7 +80,7 @@ const char *mimeByImgType(ImgType type)
     return "image/tiff";
   default:
     MSPUB_DEBUG_MSG(("Unknown image type %d passed to mimeByImgType!\n", type));
-    return 0;
+    return nullptr;
   }
 }
 
@@ -381,7 +381,7 @@ void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned c
   }
 
   UErrorCode status = U_ZERO_ERROR;
-  UConverter *conv = NULL;
+  UConverter *conv = nullptr;
   conv = ucnv_open(encoding, &status);
   if (U_SUCCESS(status))
   {

@@ -30,7 +30,7 @@ public:
   virtual void getProperties(librevenge::RVNGPropertyList *out) const = 0;
   virtual ~Fill() { }
 private:
-  Fill(const Fill &) : m_owner(NULL) { }
+  Fill(const Fill &) : m_owner(nullptr) { }
   Fill &operator=(const Fill &);
 };
 
@@ -46,7 +46,7 @@ public:
   ImgFill(unsigned imgIndex, const MSPUBCollector *owner, bool isTexture, int rotation);
   void getProperties(librevenge::RVNGPropertyList *out) const override;
 private:
-  ImgFill(const ImgFill &) : Fill(NULL), m_imgIndex(0), m_isTexture(false), m_rotation(0) { }
+  ImgFill(const ImgFill &) : Fill(nullptr), m_imgIndex(0), m_isTexture(false), m_rotation(0) { }
   ImgFill &operator=(const ImgFill &);
 };
 
@@ -58,7 +58,7 @@ public:
   PatternFill(unsigned imgIndex, const MSPUBCollector *owner, ColorReference fg, ColorReference bg);
   void getProperties(librevenge::RVNGPropertyList *out) const override;
 private:
-  PatternFill(const PatternFill &) : ImgFill(0, NULL, true, 0), m_fg(0x08000000), m_bg(0x08000000) { }
+  PatternFill(const PatternFill &) : ImgFill(0, nullptr, true, 0), m_fg(0x08000000), m_bg(0x08000000) { }
   PatternFill &operator=(const ImgFill &);
 };
 
@@ -70,7 +70,7 @@ public:
   SolidFill(ColorReference color, double opacity, const MSPUBCollector *owner);
   void getProperties(librevenge::RVNGPropertyList *out) const override;
 private:
-  SolidFill(const SolidFill &) : Fill(NULL), m_color(0x08000000), m_opacity(1) { }
+  SolidFill(const SolidFill &) : Fill(nullptr), m_color(0x08000000), m_opacity(1) { }
   SolidFill &operator=(const SolidFill &);
 };
 
@@ -98,7 +98,7 @@ public:
   void completeComplexFill();
   void getProperties(librevenge::RVNGPropertyList *out) const override;
 private:
-  GradientFill(const GradientFill &) : Fill(NULL), m_stops(), m_angle(0), m_type(7), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0) { }
+  GradientFill(const GradientFill &) : Fill(nullptr), m_stops(), m_angle(0), m_type(7), m_fillLeftVal(0.0), m_fillTopVal(0.0), m_fillRightVal(0.0), m_fillBottomVal(0.0) { }
   GradientFill &operator=(const GradientFill &);
 };
 }

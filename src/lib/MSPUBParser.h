@@ -169,7 +169,7 @@ protected:
   static ImgType imgTypeByBlipType(unsigned short type);
   static int getStartOffset(ImgType type, unsigned short initial);
   static bool lineExistsByFlagPointer(unsigned *flags,
-                                      unsigned *geomFlags = NULL);
+                                      unsigned *geomFlags = nullptr);
 };
 
 } // namespace libmspub

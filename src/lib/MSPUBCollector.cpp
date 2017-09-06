@@ -377,7 +377,7 @@ MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(),
-  m_currentShapeGroup(NULL), m_topLevelShapes(),
+  m_currentShapeGroup(nullptr), m_topLevelShapes(),
   m_groupsBySeqNum(), m_embeddedFonts(),
   m_shapeInfosBySeqNum(), m_masterPages(),
   m_shapesWithCoordinatesRotated90(),
@@ -1158,13 +1158,13 @@ const char *MSPUBCollector::getCalculatedEncoding() const
   }
   // for older versions of PUB, see if we can get ICU to tell us the encoding.
   UErrorCode status = U_ZERO_ERROR;
-  UCharsetDetector *ucd = NULL;
-  const UCharsetMatch **matches = NULL;
-  const UCharsetMatch *ucm = NULL;
+  UCharsetDetector *ucd = nullptr;
+  const UCharsetMatch **matches = nullptr;
+  const UCharsetMatch *ucm = nullptr;
   ucd = ucsdet_open(&status);
   int matchesFound = -1;
-  const char *name = NULL;
-  const char *windowsName = NULL;
+  const char *name = nullptr;
+  const char *windowsName = nullptr;
   if (m_allText.empty())
   {
     goto csd_fail;

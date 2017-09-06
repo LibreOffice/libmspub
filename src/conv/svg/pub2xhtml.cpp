@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
   if (argc < 2)
     return printUsage();
 
-  char *in_file = 0, *out_file = 0;
+  char *in_file = nullptr, *out_file = nullptr;
 
   for (int i = 1; i < argc; i++)
   {

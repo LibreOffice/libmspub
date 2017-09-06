@@ -33,12 +33,12 @@ const Vertex LINE_VERTICES[] =
 
 const CustomShape CS_LINE(
   LINE_VERTICES, sizeof(LINE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex WAVE_VERTICES[] =
 {
@@ -151,7 +151,7 @@ const CustomShape CS_LEFT_ARROW(
   LEFT_ARROW_DEFAULT_ADJUST, sizeof(LEFT_ARROW_DEFAULT_ADJUST) / sizeof(int),
   LEFT_ARROW_TRS, sizeof(LEFT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex UP_DOWN_ARROW_VERTICES[] =
 {
@@ -185,7 +185,7 @@ const CustomShape CS_UP_DOWN_ARROW(
   UP_DOWN_ARROW_DEFAULT_ADJUST, sizeof(UP_DOWN_ARROW_DEFAULT_ADJUST) / sizeof(int),
   UP_DOWN_ARROW_TRS, sizeof(UP_DOWN_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex IRREGULAR_SEAL_1_VERTICES[] =
 {
@@ -204,9 +204,9 @@ const Vertex IRREGULAR_SEAL_1_GLUE_POINTS[] =
 
 const CustomShape CS_IRREGULAR_SEAL_1(
   IRREGULAR_SEAL_1_VERTICES, sizeof(IRREGULAR_SEAL_1_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   IRREGULAR_SEAL_1_TRS, sizeof(IRREGULAR_SEAL_1_TRS) / sizeof(TextRectangle),
   21600, 21600,
   IRREGULAR_SEAL_1_GLUE_POINTS, sizeof(IRREGULAR_SEAL_1_GLUE_POINTS) / sizeof(Vertex));
@@ -228,9 +228,9 @@ const Vertex LIGHTNING_BOLT_GLUE_POINTS[] =
 
 const CustomShape CS_LIGHTNING_BOLT(
   LIGHTNING_BOLT_VERTICES, sizeof(LIGHTNING_BOLT_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   LIGHTNING_BOLT_TRS, sizeof(LIGHTNING_BOLT_TRS) / sizeof(TextRectangle),
   21600, 21600,
   LIGHTNING_BOLT_GLUE_POINTS, sizeof(LIGHTNING_BOLT_GLUE_POINTS) / sizeof(Vertex));
@@ -252,9 +252,9 @@ const Vertex IRREGULAR_SEAL_2_GLUE_POINTS[] =
 
 const CustomShape CS_IRREGULAR_SEAL_2(
   IRREGULAR_SEAL_2_VERTICES, sizeof(IRREGULAR_SEAL_2_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   IRREGULAR_SEAL_2_TRS, sizeof(IRREGULAR_SEAL_2_TRS) / sizeof(TextRectangle),
   21600, 21600,
   IRREGULAR_SEAL_2_GLUE_POINTS, sizeof(IRREGULAR_SEAL_2_GLUE_POINTS) / sizeof(Vertex));
@@ -283,8 +283,8 @@ const Vertex HEART_GLUE_POINTS[] =
 const CustomShape CS_HEART(
   HEART_VERTICES, sizeof(HEART_VERTICES) / sizeof(Vertex),
   HEART_SEGMENTS, sizeof(HEART_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   HEART_TRS, sizeof(HEART_TRS) / sizeof(TextRectangle),
   21600, 21600,
   HEART_GLUE_POINTS, sizeof(HEART_GLUE_POINTS) / sizeof(Vertex));
@@ -321,7 +321,7 @@ const CustomShape CS_QUAD_ARROW(
   QUAD_ARROW_DEFAULT_ADJUST, sizeof(QUAD_ARROW_DEFAULT_ADJUST) / sizeof(int),
   QUAD_ARROW_TRS, sizeof(QUAD_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BEVEL_VERTICES[] =
 {
@@ -355,7 +355,7 @@ const CustomShape CS_BEVEL(
   BEVEL_DEFAULT_ADJUST, sizeof(BEVEL_DEFAULT_ADJUST) / sizeof(int),
   BEVEL_TRS, sizeof(BEVEL_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex LEFT_BRACKET_VERTICES[] =
 {
@@ -545,7 +545,7 @@ const CustomShape CS_LEFT_UP_ARROW(
   LEFT_UP_ARROW_DEFAULT_ADJUST, sizeof(LEFT_UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
   LEFT_UP_ARROW_TRS, sizeof(LEFT_UP_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex SMILEY_FACE_VERTICES[] =
 {
@@ -659,7 +659,7 @@ const CustomShape CS_CIRCULAR_ARROW(
   CIRCULAR_ARROW_DEFAULT_ADJUST, sizeof(CIRCULAR_ARROW_DEFAULT_ADJUST) / sizeof(int),
   CIRCULAR_ARROW_TRS, sizeof(CIRCULAR_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0, 1 | 2);
+  nullptr, 0, 1 | 2);
 
 const Vertex U_TURN_ARROW_VERTICES[] =
 {
@@ -679,11 +679,11 @@ const TextRectangle U_TURN_ARROW_TRS[] =
 const CustomShape CS_U_TURN_ARROW(
   U_TURN_ARROW_VERTICES, sizeof(U_TURN_ARROW_VERTICES) / sizeof(Vertex),
   U_TURN_ARROW_SEGMENTS, sizeof(U_TURN_ARROW_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   U_TURN_ARROW_TRS, sizeof(U_TURN_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CURVED_RIGHT_ARROW_VERTICES[] =
 {
@@ -827,11 +827,11 @@ const TextRectangle FLOW_CHART_INTERNAL_STORAGE_TRS[] =
 const CustomShape CS_FLOW_CHART_INTERNAL_STORAGE(
   FLOW_CHART_INTERNAL_STORAGE_VERTICES, sizeof(FLOW_CHART_INTERNAL_STORAGE_VERTICES) / sizeof(Vertex),
   FLOW_CHART_INTERNAL_STORAGE_SEGMENTS, sizeof(FLOW_CHART_INTERNAL_STORAGE_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_INTERNAL_STORAGE_TRS, sizeof(FLOW_CHART_INTERNAL_STORAGE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex FLOW_CHART_DOCUMENT_VERTICES[] =
 {
@@ -856,8 +856,8 @@ const Vertex FLOW_CHART_DOCUMENT_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_DOCUMENT(
   FLOW_CHART_DOCUMENT_VERTICES, sizeof(FLOW_CHART_DOCUMENT_VERTICES) / sizeof(Vertex),
   FLOW_CHART_DOCUMENT_SEGMENTS, sizeof(FLOW_CHART_DOCUMENT_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_DOCUMENT_TRS, sizeof(FLOW_CHART_DOCUMENT_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_DOCUMENT_GLUE_POINTS, sizeof(FLOW_CHART_DOCUMENT_GLUE_POINTS) / sizeof(Vertex));
@@ -885,8 +885,8 @@ const Vertex FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_MULTI_DOCUMENT(
   FLOW_CHART_MULTI_DOCUMENT_VERTICES, sizeof(FLOW_CHART_MULTI_DOCUMENT_VERTICES) / sizeof(Vertex),
   FLOW_CHART_MULTI_DOCUMENT_SEGMENTS, sizeof(FLOW_CHART_MULTI_DOCUMENT_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MULTI_DOCUMENT_TRS, sizeof(FLOW_CHART_MULTI_DOCUMENT_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS, sizeof(FLOW_CHART_MULTI_DOCUMENT_GLUE_POINTS) / sizeof(Vertex));
@@ -914,8 +914,8 @@ const Vertex FLOW_CHART_TERMINATOR_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_TERMINATOR(
   FLOW_CHART_TERMINATOR_VERTICES, sizeof(FLOW_CHART_TERMINATOR_VERTICES) / sizeof(Vertex),
   FLOW_CHART_TERMINATOR_SEGMENTS, sizeof(FLOW_CHART_TERMINATOR_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_TERMINATOR_TRS, sizeof(FLOW_CHART_TERMINATOR_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_TERMINATOR_GLUE_POINTS, sizeof(FLOW_CHART_TERMINATOR_GLUE_POINTS) / sizeof(Vertex));
@@ -923,11 +923,11 @@ const CustomShape CS_FLOW_CHART_TERMINATOR(
 const CustomShape CS_FLOW_CHART_PREDEFINED_PROCESS(
   FLOW_CHART_PREDEFINED_PROCESS_VERTICES, sizeof(FLOW_CHART_PREDEFINED_PROCESS_VERTICES) / sizeof(Vertex),
   FLOW_CHART_PREDEFINED_PROCESS_SEGMENTS, sizeof(FLOW_CHART_PREDEFINED_PROCESS_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_PREDEFINED_PROCESS_TRS, sizeof(FLOW_CHART_PREDEFINED_PROCESS_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex FLOW_CHART_IO_VERTICES[] =
 {
@@ -946,9 +946,9 @@ const Vertex FLOW_CHART_IO_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_IO(
   FLOW_CHART_IO_VERTICES, sizeof(FLOW_CHART_IO_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_IO_TRS, sizeof(FLOW_CHART_IO_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_IO_GLUE_POINTS, sizeof(FLOW_CHART_IO_GLUE_POINTS) / sizeof(Vertex));
@@ -980,19 +980,19 @@ const Vertex FLOW_CHART_DECISION_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_DECISION(
   FLOW_CHART_DECISION_VERTICES, sizeof(FLOW_CHART_DECISION_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_DECISION_TRS, sizeof(FLOW_CHART_DECISION_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_DECISION_GLUE_POINTS, sizeof(FLOW_CHART_DECISION_GLUE_POINTS) / sizeof(Vertex));
 
 const CustomShape CS_FLOW_CHART_PROCESS(
   FLOW_CHART_PROCESS_VERTICES, sizeof(FLOW_CHART_PROCESS_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
   FLOW_CHART_PROCESS_GLUE_POINTS, sizeof(FLOW_CHART_PROCESS_GLUE_POINTS) / sizeof(Vertex));
 
@@ -1051,7 +1051,7 @@ const CustomShape CS_HORIZONTAL_SCROLL(
   HORIZONTAL_SCROLL_DEFAULT_ADJUST, sizeof(HORIZONTAL_SCROLL_DEFAULT_ADJUST) / sizeof(int),
   HORIZONTAL_SCROLL_TRS, sizeof(HORIZONTAL_SCROLL_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const CustomShape CS_VERTICAL_SCROLL(
   VERTICAL_SCROLL_VERTICES, sizeof(VERTICAL_SCROLL_VERTICES) / sizeof(Vertex),
@@ -1060,7 +1060,7 @@ const CustomShape CS_VERTICAL_SCROLL(
   VERTICAL_SCROLL_DEFAULT_ADJUST, sizeof(VERTICAL_SCROLL_DEFAULT_ADJUST) / sizeof(int),
   VERTICAL_SCROLL_TRS, sizeof(VERTICAL_SCROLL_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const CustomShape CS_SMILEY_FACE(
   SMILEY_FACE_VERTICES, sizeof(SMILEY_FACE_VERTICES) / sizeof(Vertex),
@@ -1103,9 +1103,9 @@ const CustomShape CS_BLOCK_ARC(
   BLOCK_ARC_SEGMENTS, sizeof(BLOCK_ARC_SEGMENTS) / sizeof(unsigned short),
   BLOCK_ARC_CALC, sizeof(BLOCK_ARC_CALC) / sizeof(Calculation),
   BLOCK_ARC_DEFAULT_ADJUST, sizeof(BLOCK_ARC_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0, 0x1);
+  nullptr, 0, 0x1);
 
 const Vertex NOTCHED_RIGHT_ARROW_VERTICES[] =
 {
@@ -1129,12 +1129,12 @@ const int NOTCHED_RIGHT_ARROW_DEFAULT_ADJUST[] =
 
 const CustomShape CS_NOTCHED_RIGHT_ARROW(
   NOTCHED_RIGHT_ARROW_VERTICES, sizeof(NOTCHED_RIGHT_ARROW_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   NOTCHED_RIGHT_ARROW_CALC, sizeof(NOTCHED_RIGHT_ARROW_CALC) / sizeof(Calculation),
   NOTCHED_RIGHT_ARROW_DEFAULT_ADJUST, sizeof(NOTCHED_RIGHT_ARROW_DEFAULT_ADJUST) / sizeof(int),
   NOTCHED_RIGHT_ARROW_TRS, sizeof(NOTCHED_RIGHT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex STRIPED_RIGHT_ARROW_VERTICES[] =
 {
@@ -1168,7 +1168,7 @@ const CustomShape CS_STRIPED_RIGHT_ARROW(
   STRIPED_RIGHT_ARROW_DEFAULT_ADJUST, sizeof(STRIPED_RIGHT_ARROW_DEFAULT_ADJUST) / sizeof(int),
   STRIPED_RIGHT_ARROW_TRS, sizeof(STRIPED_RIGHT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex SEAL_24_VERTICES[] =
 {
@@ -1192,12 +1192,12 @@ const int SEAL_24_DEFAULT_ADJUST[] =
 
 const CustomShape CS_SEAL_24(
   SEAL_24_VERTICES, sizeof(SEAL_24_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   SEAL_24_CALC, sizeof(SEAL_24_CALC) / sizeof(Calculation),
   SEAL_24_DEFAULT_ADJUST, sizeof(SEAL_24_DEFAULT_ADJUST) / sizeof(int),
   SEAL_24_TRS, sizeof(SEAL_24_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BENT_ARROW_VERTICES[] =
 {
@@ -1231,7 +1231,7 @@ const CustomShape CS_BENT_ARROW(
   BENT_ARROW_DEFAULT_ADJUST, sizeof(BENT_ARROW_DEFAULT_ADJUST) / sizeof(int),
   BENT_ARROW_TRS, sizeof(BENT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BENT_UP_ARROW_VERTICES[] =
 {
@@ -1265,7 +1265,7 @@ const CustomShape CS_BENT_UP_ARROW(
   BENT_UP_ARROW_DEFAULT_ADJUST, sizeof(BENT_UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
   BENT_UP_ARROW_TRS, sizeof(BENT_UP_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex DOWN_ARROW_VERTICES[] =
 {
@@ -1299,7 +1299,7 @@ const CustomShape CS_DOWN_ARROW(
   DOWN_ARROW_DEFAULT_ADJUST, sizeof(DOWN_ARROW_DEFAULT_ADJUST) / sizeof(int),
   DOWN_ARROW_TRS, sizeof(DOWN_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex UP_ARROW_VERTICES[] =
 {
@@ -1333,7 +1333,7 @@ const CustomShape CS_UP_ARROW(
   UP_ARROW_DEFAULT_ADJUST, sizeof(UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
   UP_ARROW_TRS, sizeof(UP_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex LEFT_RIGHT_ARROW_VERTICES[] =
 {
@@ -1367,7 +1367,7 @@ const CustomShape CS_LEFT_RIGHT_ARROW(
   LEFT_RIGHT_ARROW_DEFAULT_ADJUST, sizeof(LEFT_RIGHT_ARROW_DEFAULT_ADJUST) / sizeof(int),
   LEFT_RIGHT_ARROW_TRS, sizeof(LEFT_RIGHT_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex SEAL_32_VERTICES[] =
 {
@@ -1391,12 +1391,12 @@ const int SEAL_32_DEFAULT_ADJUST[] =
 
 const CustomShape CS_SEAL_32(
   SEAL_32_VERTICES, sizeof(SEAL_32_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   SEAL_32_CALC, sizeof(SEAL_32_CALC) / sizeof(Calculation),
   SEAL_32_DEFAULT_ADJUST, sizeof(SEAL_32_DEFAULT_ADJUST) / sizeof(int),
   SEAL_32_TRS, sizeof(SEAL_32_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex SEAL_16_VERTICES[] =
 {
@@ -1420,12 +1420,12 @@ const int SEAL_16_DEFAULT_ADJUST[] =
 
 const CustomShape CS_SEAL_16(
   SEAL_16_VERTICES, sizeof(SEAL_16_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   SEAL_16_CALC, sizeof(SEAL_16_CALC) / sizeof(Calculation),
   SEAL_16_DEFAULT_ADJUST, sizeof(SEAL_16_DEFAULT_ADJUST) / sizeof(int),
   SEAL_16_TRS, sizeof(SEAL_16_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex NO_SMOKING_VERTICES[] =
 {
@@ -1488,12 +1488,12 @@ const int SEAL_8_DEFAULT_ADJUST[] =
 
 const CustomShape CS_SEAL_8(
   SEAL_8_VERTICES, sizeof(SEAL_8_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   SEAL_8_CALC, sizeof(SEAL_8_CALC) / sizeof(Calculation),
   SEAL_8_DEFAULT_ADJUST, sizeof(SEAL_8_DEFAULT_ADJUST) / sizeof(int),
   SEAL_8_TRS, sizeof(SEAL_8_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex RIBBON_2_VERTICES[] =
 {
@@ -1527,7 +1527,7 @@ const CustomShape CS_RIBBON_2(
   RIBBON_2_DEFAULT_ADJUST, sizeof(RIBBON_2_DEFAULT_ADJUST) / sizeof(int),
   RIBBON_2_TRS, sizeof(RIBBON_2_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CHEVRON_VERTICES[] =
 {
@@ -1561,7 +1561,7 @@ const CustomShape CS_CHEVRON(
   CHEVRON_DEFAULT_ADJUST, sizeof(CHEVRON_DEFAULT_ADJUST) / sizeof(int),
   CHEVRON_TRS, sizeof(CHEVRON_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex PENTAGON_VERTICES[] =
 {
@@ -1580,9 +1580,9 @@ const Vertex PENTAGON_GLUE_POINTS[] =
 
 const CustomShape CS_PENTAGON(
   PENTAGON_VERTICES, sizeof(PENTAGON_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   PENTAGON_TRS, sizeof(PENTAGON_TRS) / sizeof(TextRectangle),
   21600, 21600,
   PENTAGON_GLUE_POINTS, sizeof(PENTAGON_GLUE_POINTS) / sizeof(Vertex));
@@ -1652,9 +1652,9 @@ const CustomShape CS_CALLOUT_2(
   CALLOUT_2_SEGMENTS, sizeof(CALLOUT_2_SEGMENTS) / sizeof(unsigned short),
   CALLOUT_2_CALC, sizeof(CALLOUT_2_CALC) / sizeof(Calculation),
   CALLOUT_2_DEFAULT_ADJUST, sizeof(CALLOUT_2_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CALLOUT_3_VERTICES[] =
 {
@@ -1682,9 +1682,9 @@ const CustomShape CS_CALLOUT_3(
   CALLOUT_3_SEGMENTS, sizeof(CALLOUT_3_SEGMENTS) / sizeof(unsigned short),
   CALLOUT_3_CALC, sizeof(CALLOUT_3_CALC) / sizeof(Calculation),
   CALLOUT_3_DEFAULT_ADJUST, sizeof(CALLOUT_3_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CALLOUT_1_VERTICES[] =
 {
@@ -1712,9 +1712,9 @@ const CustomShape CS_CALLOUT_1(
   CALLOUT_1_SEGMENTS, sizeof(CALLOUT_1_SEGMENTS) / sizeof(unsigned short),
   CALLOUT_1_CALC, sizeof(CALLOUT_1_CALC) / sizeof(Calculation),
   CALLOUT_1_DEFAULT_ADJUST, sizeof(CALLOUT_1_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CURVED_CONNECTOR_5_VERTICES[] =
 {
@@ -1741,9 +1741,9 @@ const CustomShape CS_CURVED_CONNECTOR_5(
   CURVED_CONNECTOR_5_SEGMENTS, sizeof(CURVED_CONNECTOR_5_SEGMENTS) / sizeof(unsigned short),
   CURVED_CONNECTOR_5_CALC, sizeof(CURVED_CONNECTOR_5_CALC) / sizeof(Calculation),
   CURVED_CONNECTOR_5_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_5_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CURVED_CONNECTOR_4_VERTICES[] =
 {
@@ -1770,9 +1770,9 @@ const CustomShape CS_CURVED_CONNECTOR_4(
   CURVED_CONNECTOR_4_SEGMENTS, sizeof(CURVED_CONNECTOR_4_SEGMENTS) / sizeof(unsigned short),
   CURVED_CONNECTOR_4_CALC, sizeof(CURVED_CONNECTOR_4_CALC) / sizeof(Calculation),
   CURVED_CONNECTOR_4_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_4_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CURVED_CONNECTOR_3_VERTICES[] =
 {
@@ -1799,9 +1799,9 @@ const CustomShape CS_CURVED_CONNECTOR_3(
   CURVED_CONNECTOR_3_SEGMENTS, sizeof(CURVED_CONNECTOR_3_SEGMENTS) / sizeof(unsigned short),
   CURVED_CONNECTOR_3_CALC, sizeof(CURVED_CONNECTOR_3_CALC) / sizeof(Calculation),
   CURVED_CONNECTOR_3_DEFAULT_ADJUST, sizeof(CURVED_CONNECTOR_3_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 
 const Vertex BENT_CONNECTOR_5_VERTICES[] =
@@ -1829,9 +1829,9 @@ const CustomShape CS_BENT_CONNECTOR_5(
   BENT_CONNECTOR_5_SEGMENTS, sizeof(BENT_CONNECTOR_5_SEGMENTS) / sizeof(unsigned short),
   BENT_CONNECTOR_5_CALC, sizeof(BENT_CONNECTOR_5_CALC) / sizeof(Calculation),
   BENT_CONNECTOR_5_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_5_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CURVED_CONNECTOR_2_VERTICES[] =
 {
@@ -1846,11 +1846,11 @@ const unsigned short CURVED_CONNECTOR_2_SEGMENTS[] =
 const CustomShape CS_CURVED_CONNECTOR_2(
   CURVED_CONNECTOR_2_VERTICES, sizeof(CURVED_CONNECTOR_2_VERTICES) / sizeof(Vertex),
   CURVED_CONNECTOR_2_SEGMENTS, sizeof(CURVED_CONNECTOR_2_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BENT_CONNECTOR_4_VERTICES[] =
 {
@@ -1877,9 +1877,9 @@ const CustomShape CS_BENT_CONNECTOR_4(
   BENT_CONNECTOR_4_SEGMENTS, sizeof(BENT_CONNECTOR_4_SEGMENTS) / sizeof(unsigned short),
   BENT_CONNECTOR_4_CALC, sizeof(BENT_CONNECTOR_4_CALC) / sizeof(Calculation),
   BENT_CONNECTOR_4_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_4_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BENT_CONNECTOR_3_VERTICES[] =
 {
@@ -1906,9 +1906,9 @@ const CustomShape CS_BENT_CONNECTOR_3(
   BENT_CONNECTOR_3_SEGMENTS, sizeof(BENT_CONNECTOR_3_SEGMENTS) / sizeof(unsigned short),
   BENT_CONNECTOR_3_CALC, sizeof(BENT_CONNECTOR_3_CALC) / sizeof(Calculation),
   BENT_CONNECTOR_3_DEFAULT_ADJUST, sizeof(BENT_CONNECTOR_3_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex BENT_CONNECTOR_2_VERTICES[] =
 {
@@ -1923,11 +1923,11 @@ const unsigned short BENT_CONNECTOR_2_SEGMENTS[] =
 const CustomShape CS_BENT_CONNECTOR_2(
   BENT_CONNECTOR_2_VERTICES, sizeof(BENT_CONNECTOR_2_VERTICES) / sizeof(Vertex),
   BENT_CONNECTOR_2_SEGMENTS, sizeof(BENT_CONNECTOR_2_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex STRAIGHT_CONNECTOR_1_VERTICES[] =
 {
@@ -1942,11 +1942,11 @@ const unsigned short STRAIGHT_CONNECTOR_1_SEGMENTS[] =
 const CustomShape CS_STRAIGHT_CONNECTOR_1(
   STRAIGHT_CONNECTOR_1_VERTICES, sizeof(STRAIGHT_CONNECTOR_1_VERTICES) / sizeof(Vertex),
   STRAIGHT_CONNECTOR_1_SEGMENTS, sizeof(STRAIGHT_CONNECTOR_1_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_SIMPLE_VERTICES[] =
 {
@@ -1955,12 +1955,12 @@ const Vertex TEXT_SIMPLE_VERTICES[] =
 
 const CustomShape CS_TEXT_SIMPLE(
   TEXT_SIMPLE_VERTICES, sizeof(TEXT_SIMPLE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex DONUT_VERTICES[] =
 {
@@ -2135,7 +2135,7 @@ const CustomShape CS_ARC(
   ARC_SEGMENTS, sizeof(ARC_SEGMENTS) / sizeof(unsigned short),
   ARC_CALC, sizeof(ARC_CALC) / sizeof(Calculation),
   ARC_DEFAULT_ADJUST, sizeof(ARC_DEFAULT_ADJUST) / sizeof(int),
-  NULL, 0,
+  nullptr, 0,
   21600, 21600,
   ARC_GLUE_POINTS, sizeof(ARC_GLUE_POINTS) / sizeof(Vertex), 2 | 1);
 
@@ -2146,7 +2146,7 @@ const CustomShape CS_BALLOON(
   BALLOON_DEFAULT_ADJUST, sizeof(BALLOON_DEFAULT_ADJUST) / sizeof(int),
   BALLOON_TRS, sizeof(BALLOON_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex CUBE_VERTICES[] =
 {
@@ -2219,7 +2219,7 @@ const CustomShape CS_HOME_PLATE(
   HOME_PLATE_DEFAULT_ADJUST, sizeof(HOME_PLATE_DEFAULT_ADJUST) / sizeof(int),
   HOME_PLATE_TRS, sizeof(HOME_PLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ARROW_VERTICES[] =
 {
@@ -2253,7 +2253,7 @@ const CustomShape CS_ARROW(
   ARROW_DEFAULT_ADJUST, sizeof(ARROW_DEFAULT_ADJUST) / sizeof(int),
   ARROW_TRS, sizeof(ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex OCTAGON_VERTICES[] =
 {
@@ -2347,7 +2347,7 @@ const CustomShape CS_ROUND_RECTANGLE(
   ROUND_RECTANGLE_DEFAULT_ADJUST, sizeof(ROUND_RECTANGLE_DEFAULT_ADJUST) / sizeof(int),
   ROUND_RECTANGLE_TRS, sizeof(ROUND_RECTANGLE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex STAR_VERTICES[] =
 {
@@ -2361,12 +2361,12 @@ const TextRectangle STAR_TRS[] =
 
 const CustomShape CS_STAR(
   STAR_VERTICES, sizeof(STAR_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   STAR_TRS, sizeof(STAR_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex PLUS_VERTICES[] =
 {
@@ -2395,7 +2395,7 @@ const Vertex PLUS_GLUE_POINTS[] =
 
 const CustomShape CS_PLUS(
   PLUS_VERTICES, sizeof(PLUS_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   PLUS_CALC, sizeof(PLUS_CALC) / sizeof(Calculation),
   PLUS_DEFAULT_ADJUST, sizeof(PLUS_DEFAULT_ADJUST) / sizeof(int),
   PLUS_TRS, sizeof(PLUS_TRS) / sizeof(TextRectangle),
@@ -2459,9 +2459,9 @@ const Vertex DIAMOND_GLUE_POINTS[] =
 
 const CustomShape CS_DIAMOND(
   DIAMOND_VERTICES, sizeof(DIAMOND_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   DIAMOND_TRS, sizeof(DIAMOND_TRS) / sizeof(TextRectangle),
   21600, 21600,
   DIAMOND_GLUE_POINTS, sizeof(DIAMOND_GLUE_POINTS) / sizeof(Vertex));
@@ -2483,9 +2483,9 @@ const Vertex RIGHT_TRIANGLE_GLUE_POINTS[] =
 
 const CustomShape CS_RIGHT_TRIANGLE(
   RIGHT_TRIANGLE_VERTICES, sizeof(RIGHT_TRIANGLE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   RIGHT_TRIANGLE_TRS, sizeof(RIGHT_TRIANGLE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   RIGHT_TRIANGLE_GLUE_POINTS, sizeof(RIGHT_TRIANGLE_GLUE_POINTS) / sizeof(Vertex));
@@ -2498,12 +2498,12 @@ const Vertex RECTANGLE_VERTICES[] =
 
 const CustomShape CS_RECTANGLE(
   RECTANGLE_VERTICES, sizeof(RECTANGLE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ELLIPSE_VERTICES[] =
 {
@@ -2529,8 +2529,8 @@ const Vertex ELLIPSE_GLUE_PTS[] =
 const CustomShape CS_ELLIPSE(
   ELLIPSE_VERTICES, sizeof(ELLIPSE_VERTICES) / sizeof(Vertex),
   ELLIPSE_SEGMENTS, sizeof(ELLIPSE_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   ELLIPSE_TRS, sizeof(ELLIPSE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   ELLIPSE_GLUE_PTS, sizeof(ELLIPSE_GLUE_PTS) / sizeof(Vertex));
@@ -2565,12 +2565,12 @@ const int SEAL_4_DEFAULT_ADJUST[] =
 
 const CustomShape CS_SEAL_4(
   SEAL_4_VERTICES, sizeof(SEAL_4_VERTICES) / sizeof(Vertex),
-  NULL, 0,
+  nullptr, 0,
   SEAL_4_CALC, sizeof(SEAL_4_CALC) / sizeof(Calculation),
   SEAL_4_DEFAULT_ADJUST, sizeof(SEAL_4_DEFAULT_ADJUST) / sizeof(int),
   SEAL_4_TRS, sizeof(SEAL_4_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ISOCELES_TRIANGLE_VERTICES[] =
 {
@@ -2722,8 +2722,8 @@ const Vertex FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_SUMMING_JUNCTION(
   FLOW_CHART_SUMMING_JUNCTION_VERTICES, sizeof(FLOW_CHART_SUMMING_JUNCTION_VERTICES) / sizeof(Vertex),
   FLOW_CHART_SUMMING_JUNCTION_SEGMENTS, sizeof(FLOW_CHART_SUMMING_JUNCTION_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_SUMMING_JUNCTION_TRS, sizeof(FLOW_CHART_SUMMING_JUNCTION_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS, sizeof(FLOW_CHART_SUMMING_JUNCTION_GLUE_POINTS) / sizeof(Vertex));
@@ -2745,9 +2745,9 @@ const Vertex FLOW_CHART_PREPARATION_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_PREPARATION(
   FLOW_CHART_PREPARATION_VERTICES, sizeof(FLOW_CHART_PREPARATION_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_PREPARATION_TRS, sizeof(FLOW_CHART_PREPARATION_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_PREPARATION_GLUE_POINTS, sizeof(FLOW_CHART_PREPARATION_GLUE_POINTS) / sizeof(Vertex));
@@ -2775,8 +2775,8 @@ const Vertex FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_PUNCHED_TAPE(
   FLOW_CHART_PUNCHED_TAPE_VERTICES, sizeof(FLOW_CHART_PUNCHED_TAPE_VERTICES) / sizeof(Vertex),
   FLOW_CHART_PUNCHED_TAPE_SEGMENTS, sizeof(FLOW_CHART_PUNCHED_TAPE_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_PUNCHED_TAPE_TRS, sizeof(FLOW_CHART_PUNCHED_TAPE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS, sizeof(FLOW_CHART_PUNCHED_TAPE_GLUE_POINTS) / sizeof(Vertex));
@@ -2798,9 +2798,9 @@ const Vertex FLOW_CHART_PUNCHED_CARD_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_PUNCHED_CARD(
   FLOW_CHART_PUNCHED_CARD_VERTICES, sizeof(FLOW_CHART_PUNCHED_CARD_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_PUNCHED_CARD_TRS, sizeof(FLOW_CHART_PUNCHED_CARD_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_PUNCHED_CARD_GLUE_POINTS, sizeof(FLOW_CHART_PUNCHED_CARD_GLUE_POINTS) / sizeof(Vertex));
@@ -2828,8 +2828,8 @@ const Vertex FLOW_CHART_CONNECTOR_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_CONNECTOR(
   FLOW_CHART_CONNECTOR_VERTICES, sizeof(FLOW_CHART_CONNECTOR_VERTICES) / sizeof(Vertex),
   FLOW_CHART_CONNECTOR_SEGMENTS, sizeof(FLOW_CHART_CONNECTOR_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_CONNECTOR_TRS, sizeof(FLOW_CHART_CONNECTOR_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_CONNECTOR_GLUE_POINTS, sizeof(FLOW_CHART_CONNECTOR_GLUE_POINTS) / sizeof(Vertex));
@@ -2851,9 +2851,9 @@ const Vertex FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_MANUAL_OPERATION(
   FLOW_CHART_MANUAL_OPERATION_VERTICES, sizeof(FLOW_CHART_MANUAL_OPERATION_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MANUAL_OPERATION_TRS, sizeof(FLOW_CHART_MANUAL_OPERATION_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS, sizeof(FLOW_CHART_MANUAL_OPERATION_GLUE_POINTS) / sizeof(Vertex));
@@ -2875,9 +2875,9 @@ const Vertex FLOW_CHART_MANUAL_INPUT_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_MANUAL_INPUT(
   FLOW_CHART_MANUAL_INPUT_VERTICES, sizeof(FLOW_CHART_MANUAL_INPUT_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MANUAL_INPUT_TRS, sizeof(FLOW_CHART_MANUAL_INPUT_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MANUAL_INPUT_GLUE_POINTS, sizeof(FLOW_CHART_MANUAL_INPUT_GLUE_POINTS) / sizeof(Vertex));
@@ -2906,8 +2906,8 @@ const Vertex FLOW_CHART_OR_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_OR(
   FLOW_CHART_OR_VERTICES, sizeof(FLOW_CHART_OR_VERTICES) / sizeof(Vertex),
   FLOW_CHART_OR_SEGMENTS, sizeof(FLOW_CHART_OR_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_OR_TRS, sizeof(FLOW_CHART_OR_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_OR_GLUE_POINTS, sizeof(FLOW_CHART_OR_GLUE_POINTS) / sizeof(Vertex));
@@ -2929,9 +2929,9 @@ const Vertex FLOW_CHART_COLLATE_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_COLLATE(
   FLOW_CHART_COLLATE_VERTICES, sizeof(FLOW_CHART_COLLATE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_COLLATE_TRS, sizeof(FLOW_CHART_COLLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_COLLATE_GLUE_POINTS, sizeof(FLOW_CHART_COLLATE_GLUE_POINTS) / sizeof(Vertex));
@@ -2954,11 +2954,11 @@ const TextRectangle FLOW_CHART_SORT_TRS[] =
 const CustomShape CS_FLOW_CHART_SORT(
   FLOW_CHART_SORT_VERTICES, sizeof(FLOW_CHART_SORT_VERTICES) / sizeof(Vertex),
   FLOW_CHART_SORT_SEGMENTS, sizeof(FLOW_CHART_SORT_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_SORT_TRS, sizeof(FLOW_CHART_SORT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex FLOW_CHART_EXTRACT_VERTICES[] =
 {
@@ -2977,9 +2977,9 @@ const Vertex FLOW_CHART_EXTRACT_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_EXTRACT(
   FLOW_CHART_EXTRACT_VERTICES, sizeof(FLOW_CHART_EXTRACT_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_EXTRACT_TRS, sizeof(FLOW_CHART_EXTRACT_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_EXTRACT_GLUE_POINTS, sizeof(FLOW_CHART_EXTRACT_GLUE_POINTS) / sizeof(Vertex));
@@ -3001,9 +3001,9 @@ const Vertex FLOW_CHART_MERGE_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_MERGE(
   FLOW_CHART_MERGE_VERTICES, sizeof(FLOW_CHART_MERGE_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MERGE_TRS, sizeof(FLOW_CHART_MERGE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MERGE_GLUE_POINTS, sizeof(FLOW_CHART_MERGE_GLUE_POINTS) / sizeof(Vertex));
@@ -3031,8 +3031,8 @@ const Vertex FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_ONLINE_STORAGE(
   FLOW_CHART_ONLINE_STORAGE_VERTICES, sizeof(FLOW_CHART_ONLINE_STORAGE_VERTICES) / sizeof(Vertex),
   FLOW_CHART_ONLINE_STORAGE_SEGMENTS, sizeof(FLOW_CHART_ONLINE_STORAGE_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_ONLINE_STORAGE_TRS, sizeof(FLOW_CHART_ONLINE_STORAGE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS, sizeof(FLOW_CHART_ONLINE_STORAGE_GLUE_POINTS) / sizeof(Vertex));
@@ -3060,8 +3060,8 @@ const Vertex FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_MAGNETIC_TAPE(
   FLOW_CHART_MAGNETIC_TAPE_VERTICES, sizeof(FLOW_CHART_MAGNETIC_TAPE_VERTICES) / sizeof(Vertex),
   FLOW_CHART_MAGNETIC_TAPE_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_TAPE_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MAGNETIC_TAPE_TRS, sizeof(FLOW_CHART_MAGNETIC_TAPE_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_TAPE_GLUE_POINTS) / sizeof(Vertex));
@@ -3089,8 +3089,8 @@ const Vertex FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_MAGNETIC_DISK(
   FLOW_CHART_MAGNETIC_DISK_VERTICES, sizeof(FLOW_CHART_MAGNETIC_DISK_VERTICES) / sizeof(Vertex),
   FLOW_CHART_MAGNETIC_DISK_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_DISK_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MAGNETIC_DISK_TRS, sizeof(FLOW_CHART_MAGNETIC_DISK_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_DISK_GLUE_POINTS) / sizeof(Vertex));
@@ -3118,8 +3118,8 @@ const Vertex FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_MAGNETIC_DRUM(
   FLOW_CHART_MAGNETIC_DRUM_VERTICES, sizeof(FLOW_CHART_MAGNETIC_DRUM_VERTICES) / sizeof(Vertex),
   FLOW_CHART_MAGNETIC_DRUM_SEGMENTS, sizeof(FLOW_CHART_MAGNETIC_DRUM_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_MAGNETIC_DRUM_TRS, sizeof(FLOW_CHART_MAGNETIC_DRUM_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS, sizeof(FLOW_CHART_MAGNETIC_DRUM_GLUE_POINTS) / sizeof(Vertex));
@@ -3147,8 +3147,8 @@ const Vertex FLOW_CHART_DIPSLAY_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_DIPSLAY(
   FLOW_CHART_DIPSLAY_VERTICES, sizeof(FLOW_CHART_DIPSLAY_VERTICES) / sizeof(Vertex),
   FLOW_CHART_DIPSLAY_SEGMENTS, sizeof(FLOW_CHART_DIPSLAY_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_DIPSLAY_TRS, sizeof(FLOW_CHART_DIPSLAY_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_DIPSLAY_GLUE_POINTS, sizeof(FLOW_CHART_DIPSLAY_GLUE_POINTS) / sizeof(Vertex));
@@ -3176,8 +3176,8 @@ const Vertex FLOW_CHART_DELAY_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_DELAY(
   FLOW_CHART_DELAY_VERTICES, sizeof(FLOW_CHART_DELAY_VERTICES) / sizeof(Vertex),
   FLOW_CHART_DELAY_SEGMENTS, sizeof(FLOW_CHART_DELAY_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_DELAY_TRS, sizeof(FLOW_CHART_DELAY_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_DELAY_GLUE_POINTS, sizeof(FLOW_CHART_DELAY_GLUE_POINTS) / sizeof(Vertex));
@@ -3214,7 +3214,7 @@ const CustomShape CS_TEXT_PLAIN_TEXT(
   TEXT_PLAIN_TEXT_DEFAULT_ADJUST, sizeof(TEXT_PLAIN_TEXT_DEFAULT_ADJUST) / sizeof(int),
   TEXT_PLAIN_TEXT_TRS, sizeof(TEXT_PLAIN_TEXT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_STOP_VERTICES[] =
 {
@@ -3248,7 +3248,7 @@ const CustomShape CS_TEXT_STOP(
   TEXT_STOP_DEFAULT_ADJUST, sizeof(TEXT_STOP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_STOP_TRS, sizeof(TEXT_STOP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_TRIANGLE_VERTICES[] =
 {
@@ -3282,7 +3282,7 @@ const CustomShape CS_TEXT_TRIANGLE(
   TEXT_TRIANGLE_DEFAULT_ADJUST, sizeof(TEXT_TRIANGLE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_TRIANGLE_TRS, sizeof(TEXT_TRIANGLE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_TRIANGLE_INVERTED_VERTICES[] =
 {
@@ -3316,7 +3316,7 @@ const CustomShape CS_TEXT_TRIANGLE_INVERTED(
   TEXT_TRIANGLE_INVERTED_DEFAULT_ADJUST, sizeof(TEXT_TRIANGLE_INVERTED_DEFAULT_ADJUST) / sizeof(int),
   TEXT_TRIANGLE_INVERTED_TRS, sizeof(TEXT_TRIANGLE_INVERTED_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex FLOW_CHART_DISPLAY_VERTICES[] =
 {
@@ -3341,8 +3341,8 @@ const Vertex FLOW_CHART_DISPLAY_GLUE_POINTS[] =
 const CustomShape CS_FLOW_CHART_DISPLAY(
   FLOW_CHART_DISPLAY_VERTICES, sizeof(FLOW_CHART_DISPLAY_VERTICES) / sizeof(Vertex),
   FLOW_CHART_DISPLAY_SEGMENTS, sizeof(FLOW_CHART_DISPLAY_SEGMENTS) / sizeof(unsigned short),
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_DISPLAY_TRS, sizeof(FLOW_CHART_DISPLAY_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_DISPLAY_GLUE_POINTS, sizeof(FLOW_CHART_DISPLAY_GLUE_POINTS) / sizeof(Vertex));
@@ -3379,7 +3379,7 @@ const CustomShape CS_TEXT_CHEVRON(
   TEXT_CHEVRON_DEFAULT_ADJUST, sizeof(TEXT_CHEVRON_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CHEVRON_TRS, sizeof(TEXT_CHEVRON_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CHEVRON_INVERTED_VERTICES[] =
 {
@@ -3452,7 +3452,7 @@ const CustomShape CS_TEXT_RING_OUTSIDE(
   TEXT_RING_OUTSIDE_DEFAULT_ADJUST, sizeof(TEXT_RING_OUTSIDE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_RING_OUTSIDE_TRS, sizeof(TEXT_RING_OUTSIDE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_ARCH_UP_CURVE_VERTICES[] =
 {
@@ -3486,7 +3486,7 @@ const CustomShape CS_TEXT_ARCH_UP_CURVE(
   TEXT_ARCH_UP_CURVE_DEFAULT_ADJUST, sizeof(TEXT_ARCH_UP_CURVE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_ARCH_UP_CURVE_TRS, sizeof(TEXT_ARCH_UP_CURVE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_ARCH_UP_POUR_VERTICES[] =
 {
@@ -3520,7 +3520,7 @@ const CustomShape CS_TEXT_ARCH_UP_POUR(
   TEXT_ARCH_UP_POUR_DEFAULT_ADJUST, sizeof(TEXT_ARCH_UP_POUR_DEFAULT_ADJUST) / sizeof(int),
   TEXT_ARCH_UP_POUR_TRS, sizeof(TEXT_ARCH_UP_POUR_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_ARCH_DOWN_CURVE_VERTICES[] =
 {
@@ -3554,7 +3554,7 @@ const CustomShape CS_TEXT_ARCH_DOWN_CURVE(
   TEXT_ARCH_DOWN_CURVE_DEFAULT_ADJUST, sizeof(TEXT_ARCH_DOWN_CURVE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_ARCH_DOWN_CURVE_TRS, sizeof(TEXT_ARCH_DOWN_CURVE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CIRCLE_CURVE_VERTICES[] =
 {
@@ -3588,7 +3588,7 @@ const CustomShape CS_TEXT_CIRCLE_CURVE(
   TEXT_CIRCLE_CURVE_DEFAULT_ADJUST, sizeof(TEXT_CIRCLE_CURVE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CIRCLE_CURVE_TRS, sizeof(TEXT_CIRCLE_CURVE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_BUTTON_CURVE_VERTICES[] =
 {
@@ -3622,7 +3622,7 @@ const CustomShape CS_TEXT_BUTTON_CURVE(
   TEXT_BUTTON_CURVE_DEFAULT_ADJUST, sizeof(TEXT_BUTTON_CURVE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_BUTTON_CURVE_TRS, sizeof(TEXT_BUTTON_CURVE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_ARCH_DOWN_POUR_VERTICES[] =
 {
@@ -3656,7 +3656,7 @@ const CustomShape CS_TEXT_ARCH_DOWN_POUR(
   TEXT_ARCH_DOWN_POUR_DEFAULT_ADJUST, sizeof(TEXT_ARCH_DOWN_POUR_DEFAULT_ADJUST) / sizeof(int),
   TEXT_ARCH_DOWN_POUR_TRS, sizeof(TEXT_ARCH_DOWN_POUR_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CIRCLE_POUR_VERTICES[] =
 {
@@ -3690,7 +3690,7 @@ const CustomShape CS_TEXT_CIRCLE_POUR(
   TEXT_CIRCLE_POUR_DEFAULT_ADJUST, sizeof(TEXT_CIRCLE_POUR_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CIRCLE_POUR_TRS, sizeof(TEXT_CIRCLE_POUR_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_BUTTON_POUR_VERTICES[] =
 {
@@ -3724,7 +3724,7 @@ const CustomShape CS_TEXT_BUTTON_POUR(
   TEXT_BUTTON_POUR_DEFAULT_ADJUST, sizeof(TEXT_BUTTON_POUR_DEFAULT_ADJUST) / sizeof(int),
   TEXT_BUTTON_POUR_TRS, sizeof(TEXT_BUTTON_POUR_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CURVE_UP_VERTICES[] =
 {
@@ -3758,7 +3758,7 @@ const CustomShape CS_TEXT_CURVE_UP(
   TEXT_CURVE_UP_DEFAULT_ADJUST, sizeof(TEXT_CURVE_UP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CURVE_UP_TRS, sizeof(TEXT_CURVE_UP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CURVE_DOWN_VERTICES[] =
 {
@@ -3792,7 +3792,7 @@ const CustomShape CS_TEXT_CURVE_DOWN(
   TEXT_CURVE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CURVE_DOWN_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CURVE_DOWN_TRS, sizeof(TEXT_CURVE_DOWN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CASCADE_UP_VERTICES[] =
 {
@@ -3826,7 +3826,7 @@ const CustomShape CS_TEXT_CASCADE_UP(
   TEXT_CASCADE_UP_DEFAULT_ADJUST, sizeof(TEXT_CASCADE_UP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CASCADE_UP_TRS, sizeof(TEXT_CASCADE_UP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CASCADE_DOWN_VERTICES[] =
 {
@@ -3860,7 +3860,7 @@ const CustomShape CS_TEXT_CASCADE_DOWN(
   TEXT_CASCADE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CASCADE_DOWN_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CASCADE_DOWN_TRS, sizeof(TEXT_CASCADE_DOWN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_WAVE_1_VERTICES[] =
 {
@@ -3894,7 +3894,7 @@ const CustomShape CS_TEXT_WAVE_1(
   TEXT_WAVE_1_DEFAULT_ADJUST, sizeof(TEXT_WAVE_1_DEFAULT_ADJUST) / sizeof(int),
   TEXT_WAVE_1_TRS, sizeof(TEXT_WAVE_1_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_WAVE_2_VERTICES[] =
 {
@@ -3928,7 +3928,7 @@ const CustomShape CS_TEXT_WAVE_2(
   TEXT_WAVE_2_DEFAULT_ADJUST, sizeof(TEXT_WAVE_2_DEFAULT_ADJUST) / sizeof(int),
   TEXT_WAVE_2_TRS, sizeof(TEXT_WAVE_2_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_WAVE_3_VERTICES[] =
 {
@@ -3962,7 +3962,7 @@ const CustomShape CS_TEXT_WAVE_3(
   TEXT_WAVE_3_DEFAULT_ADJUST, sizeof(TEXT_WAVE_3_DEFAULT_ADJUST) / sizeof(int),
   TEXT_WAVE_3_TRS, sizeof(TEXT_WAVE_3_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_WAVE_4_VERTICES[] =
 {
@@ -4035,7 +4035,7 @@ const CustomShape CS_TEXT_INFLATE(
   TEXT_INFLATE_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_INFLATE_TRS, sizeof(TEXT_INFLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_DEFLATE_VERTICES[] =
 {
@@ -4069,7 +4069,7 @@ const CustomShape CS_TEXT_DEFLATE(
   TEXT_DEFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_DEFLATE_TRS, sizeof(TEXT_DEFLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_INFLATE_BOTTOM_VERTICES[] =
 {
@@ -4103,7 +4103,7 @@ const CustomShape CS_TEXT_INFLATE_BOTTOM(
   TEXT_INFLATE_BOTTOM_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_BOTTOM_DEFAULT_ADJUST) / sizeof(int),
   TEXT_INFLATE_BOTTOM_TRS, sizeof(TEXT_INFLATE_BOTTOM_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_DEFLATE_BOTTOM_VERTICES[] =
 {
@@ -4137,7 +4137,7 @@ const CustomShape CS_TEXT_DEFLATE_BOTTOM(
   TEXT_DEFLATE_BOTTOM_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_BOTTOM_DEFAULT_ADJUST) / sizeof(int),
   TEXT_DEFLATE_BOTTOM_TRS, sizeof(TEXT_DEFLATE_BOTTOM_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_INFLATE_TOP_VERTICES[] =
 {
@@ -4171,7 +4171,7 @@ const CustomShape CS_TEXT_INFLATE_TOP(
   TEXT_INFLATE_TOP_DEFAULT_ADJUST, sizeof(TEXT_INFLATE_TOP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_INFLATE_TOP_TRS, sizeof(TEXT_INFLATE_TOP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_DEFLATE_TOP_VERTICES[] =
 {
@@ -4205,7 +4205,7 @@ const CustomShape CS_TEXT_DEFLATE_TOP(
   TEXT_DEFLATE_TOP_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_TOP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_DEFLATE_TOP_TRS, sizeof(TEXT_DEFLATE_TOP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_DEFLATE_INFLATE_VERTICES[] =
 {
@@ -4239,7 +4239,7 @@ const CustomShape CS_TEXT_DEFLATE_INFLATE(
   TEXT_DEFLATE_INFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_INFLATE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_DEFLATE_INFLATE_TRS, sizeof(TEXT_DEFLATE_INFLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_DEFLATE_INFLATE_DEFLATE_VERTICES[] =
 {
@@ -4273,7 +4273,7 @@ const CustomShape CS_TEXT_DEFLATE_INFLATE_DEFLATE(
   TEXT_DEFLATE_INFLATE_DEFLATE_DEFAULT_ADJUST, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_DEFAULT_ADJUST) / sizeof(int),
   TEXT_DEFLATE_INFLATE_DEFLATE_TRS, sizeof(TEXT_DEFLATE_INFLATE_DEFLATE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_FADE_RIGHT_VERTICES[] =
 {
@@ -4307,7 +4307,7 @@ const CustomShape CS_TEXT_FADE_RIGHT(
   TEXT_FADE_RIGHT_DEFAULT_ADJUST, sizeof(TEXT_FADE_RIGHT_DEFAULT_ADJUST) / sizeof(int),
   TEXT_FADE_RIGHT_TRS, sizeof(TEXT_FADE_RIGHT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_FADE_LEFT_VERTICES[] =
 {
@@ -4341,7 +4341,7 @@ const CustomShape CS_TEXT_FADE_LEFT(
   TEXT_FADE_LEFT_DEFAULT_ADJUST, sizeof(TEXT_FADE_LEFT_DEFAULT_ADJUST) / sizeof(int),
   TEXT_FADE_LEFT_TRS, sizeof(TEXT_FADE_LEFT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_FADE_UP_VERTICES[] =
 {
@@ -4375,7 +4375,7 @@ const CustomShape CS_TEXT_FADE_UP(
   TEXT_FADE_UP_DEFAULT_ADJUST, sizeof(TEXT_FADE_UP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_FADE_UP_TRS, sizeof(TEXT_FADE_UP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_FADE_DOWN_VERTICES[] =
 {
@@ -4409,7 +4409,7 @@ const CustomShape CS_TEXT_FADE_DOWN(
   TEXT_FADE_DOWN_DEFAULT_ADJUST, sizeof(TEXT_FADE_DOWN_DEFAULT_ADJUST) / sizeof(int),
   TEXT_FADE_DOWN_TRS, sizeof(TEXT_FADE_DOWN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_SLANT_UP_VERTICES[] =
 {
@@ -4443,7 +4443,7 @@ const CustomShape CS_TEXT_SLANT_UP(
   TEXT_SLANT_UP_DEFAULT_ADJUST, sizeof(TEXT_SLANT_UP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_SLANT_UP_TRS, sizeof(TEXT_SLANT_UP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_SLANT_DOWN_VERTICES[] =
 {
@@ -4477,7 +4477,7 @@ const CustomShape CS_TEXT_SLANT_DOWN(
   TEXT_SLANT_DOWN_DEFAULT_ADJUST, sizeof(TEXT_SLANT_DOWN_DEFAULT_ADJUST) / sizeof(int),
   TEXT_SLANT_DOWN_TRS, sizeof(TEXT_SLANT_DOWN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CAN_UP_VERTICES[] =
 {
@@ -4511,7 +4511,7 @@ const CustomShape CS_TEXT_CAN_UP(
   TEXT_CAN_UP_DEFAULT_ADJUST, sizeof(TEXT_CAN_UP_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CAN_UP_TRS, sizeof(TEXT_CAN_UP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex TEXT_CAN_DOWN_VERTICES[] =
 {
@@ -4545,7 +4545,7 @@ const CustomShape CS_TEXT_CAN_DOWN(
   TEXT_CAN_DOWN_DEFAULT_ADJUST, sizeof(TEXT_CAN_DOWN_DEFAULT_ADJUST) / sizeof(int),
   TEXT_CAN_DOWN_TRS, sizeof(TEXT_CAN_DOWN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex FLOW_CHART_ALTERNATE_PROCESS_VERTICES[] =
 {
@@ -4576,7 +4576,7 @@ const CustomShape CS_FLOW_CHART_ALTERNATE_PROCESS(
   FLOW_CHART_ALTERNATE_PROCESS_VERTICES, sizeof(FLOW_CHART_ALTERNATE_PROCESS_VERTICES) / sizeof(Vertex),
   FLOW_CHART_ALTERNATE_PROCESS_SEGMENTS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_SEGMENTS) / sizeof(unsigned short),
   FLOW_CHART_ALTERNATE_PROCESS_CALC, sizeof(FLOW_CHART_ALTERNATE_PROCESS_CALC) / sizeof(Calculation),
-  NULL, 0,
+  nullptr, 0,
   FLOW_CHART_ALTERNATE_PROCESS_TRS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_ALTERNATE_PROCESS_GLUE_POINTS, sizeof(FLOW_CHART_ALTERNATE_PROCESS_GLUE_POINTS) / sizeof(Vertex));
@@ -4598,9 +4598,9 @@ const Vertex FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS[] =
 
 const CustomShape CS_FLOW_CHART_OFFPAGE_CONNECTOR(
   FLOW_CHART_OFFPAGE_CONNECTOR_VERTICES, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_VERTICES) / sizeof(Vertex),
-  NULL, 0,
-  NULL, 0,
-  NULL, 0,
+  nullptr, 0,
+  nullptr, 0,
+  nullptr, 0,
   FLOW_CHART_OFFPAGE_CONNECTOR_TRS, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_TRS) / sizeof(TextRectangle),
   21600, 21600,
   FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS, sizeof(FLOW_CHART_OFFPAGE_CONNECTOR_GLUE_POINTS) / sizeof(Vertex));
@@ -4637,7 +4637,7 @@ const CustomShape CS_LEFT_RIGHT_UP_ARROW(
   LEFT_RIGHT_UP_ARROW_DEFAULT_ADJUST, sizeof(LEFT_RIGHT_UP_ARROW_DEFAULT_ADJUST) / sizeof(int),
   LEFT_RIGHT_UP_ARROW_TRS, sizeof(LEFT_RIGHT_UP_ARROW_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex SUN_VERTICES[] =
 {
@@ -4866,7 +4866,7 @@ const CustomShape CS_ACTION_BUTTON_BLANK(
   ACTION_BUTTON_BLANK_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BLANK_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_BLANK_TRS, sizeof(ACTION_BUTTON_BLANK_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_HOME_VERTICES[] =
 {
@@ -4900,7 +4900,7 @@ const CustomShape CS_ACTION_BUTTON_HOME(
   ACTION_BUTTON_HOME_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_HOME_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_HOME_TRS, sizeof(ACTION_BUTTON_HOME_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_HELP_VERTICES[] =
 {
@@ -4934,7 +4934,7 @@ const CustomShape CS_ACTION_BUTTON_HELP(
   ACTION_BUTTON_HELP_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_HELP_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_HELP_TRS, sizeof(ACTION_BUTTON_HELP_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_INFORMATION_VERTICES[] =
 {
@@ -4968,7 +4968,7 @@ const CustomShape CS_ACTION_BUTTON_INFORMATION(
   ACTION_BUTTON_INFORMATION_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_INFORMATION_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_INFORMATION_TRS, sizeof(ACTION_BUTTON_INFORMATION_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_FORWARD_NEXT_VERTICES[] =
 {
@@ -5002,7 +5002,7 @@ const CustomShape CS_ACTION_BUTTON_FORWARD_NEXT(
   ACTION_BUTTON_FORWARD_NEXT_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_FORWARD_NEXT_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_FORWARD_NEXT_TRS, sizeof(ACTION_BUTTON_FORWARD_NEXT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_BACK_PREVIOUS_VERTICES[] =
 {
@@ -5036,7 +5036,7 @@ const CustomShape CS_ACTION_BUTTON_BACK_PREVIOUS(
   ACTION_BUTTON_BACK_PREVIOUS_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BACK_PREVIOUS_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_BACK_PREVIOUS_TRS, sizeof(ACTION_BUTTON_BACK_PREVIOUS_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_END_VERTICES[] =
 {
@@ -5070,7 +5070,7 @@ const CustomShape CS_ACTION_BUTTON_END(
   ACTION_BUTTON_END_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_END_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_END_TRS, sizeof(ACTION_BUTTON_END_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_BEGINNING_VERTICES[] =
 {
@@ -5104,7 +5104,7 @@ const CustomShape CS_ACTION_BUTTON_BEGINNING(
   ACTION_BUTTON_BEGINNING_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_BEGINNING_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_BEGINNING_TRS, sizeof(ACTION_BUTTON_BEGINNING_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_RETURN_VERTICES[] =
 {
@@ -5138,7 +5138,7 @@ const CustomShape CS_ACTION_BUTTON_RETURN(
   ACTION_BUTTON_RETURN_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_RETURN_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_RETURN_TRS, sizeof(ACTION_BUTTON_RETURN_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_DOCUMENT_VERTICES[] =
 {
@@ -5172,7 +5172,7 @@ const CustomShape CS_ACTION_BUTTON_DOCUMENT(
   ACTION_BUTTON_DOCUMENT_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_DOCUMENT_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_DOCUMENT_TRS, sizeof(ACTION_BUTTON_DOCUMENT_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_SOUND_VERTICES[] =
 {
@@ -5206,7 +5206,7 @@ const CustomShape CS_ACTION_BUTTON_SOUND(
   ACTION_BUTTON_SOUND_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_SOUND_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_SOUND_TRS, sizeof(ACTION_BUTTON_SOUND_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const Vertex ACTION_BUTTON_MOVIE_VERTICES[] =
 {
@@ -5240,7 +5240,7 @@ const CustomShape CS_ACTION_BUTTON_MOVIE(
   ACTION_BUTTON_MOVIE_DEFAULT_ADJUST, sizeof(ACTION_BUTTON_MOVIE_DEFAULT_ADJUST) / sizeof(int),
   ACTION_BUTTON_MOVIE_TRS, sizeof(ACTION_BUTTON_MOVIE_TRS) / sizeof(TextRectangle),
   21600, 21600,
-  NULL, 0);
+  nullptr, 0);
 
 const CustomShape *getCustomShape(ShapeType type)
 {
@@ -5572,7 +5572,7 @@ const CustomShape *getCustomShape(ShapeType type)
   case ACTION_BUTTON_MOVIE:
     return &CS_ACTION_BUTTON_MOVIE;
   default:
-    return NULL;
+    return nullptr;
   }
 }
 
@@ -5806,9 +5806,9 @@ void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeT
   if (rectangle)
   {
     LineInfo *top = &lineInfos[0];
-    LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : NULL;
-    LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : NULL;
-    LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : NULL;
+    LineInfo *right = (lineInfos.size() > 1) ? &lineInfos[1] : nullptr;
+    LineInfo *bottom = (lineInfos.size() > 2) ? &lineInfos[2] : nullptr;
+    LineInfo *left = (lineInfos.size() > 3) ? &lineInfos[3] : nullptr;
     if (left)
     {
       left->output(painter, graphicsProps);
@@ -5929,7 +5929,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
     const Line &l2 = lines[i + 1];
     allLinesSame = l1 == l2;
   }
-  if (shape->mp_elements == NULL)
+  if (shape->mp_elements == nullptr)
   {
     bool shouldDrawShape = true;
     if ((!graphicsProps["draw:fill"]) || (graphicsProps["draw:fill"]->getStr() == "none"))
@@ -6381,19 +6381,19 @@ bool isShapeTypeRectangle(ShapeType type)
 std::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs)
 {
   return std::shared_ptr<const CustomShape>(new CustomShape(
-                                              dcs.m_vertices.empty() ? NULL : dcs.m_vertices.data(),
+                                              dcs.m_vertices.empty() ? nullptr : dcs.m_vertices.data(),
                                               dcs.m_vertices.size(),
-                                              dcs.m_elements.empty() ? NULL : dcs.m_elements.data(),
+                                              dcs.m_elements.empty() ? nullptr : dcs.m_elements.data(),
                                               dcs.m_elements.size(),
-                                              dcs.m_calculations.empty() ? NULL : dcs.m_calculations.data(),
+                                              dcs.m_calculations.empty() ? nullptr : dcs.m_calculations.data(),
                                               dcs.m_calculations.size(),
-                                              dcs.m_defaultAdjustValues.empty() ? NULL :
+                                              dcs.m_defaultAdjustValues.empty() ? nullptr :
                                               dcs.m_defaultAdjustValues.data(),
                                               dcs.m_defaultAdjustValues.size(),
-                                              dcs.m_textRectangles.empty() ? NULL : dcs.m_textRectangles.data(),
+                                              dcs.m_textRectangles.empty() ? nullptr : dcs.m_textRectangles.data(),
                                               dcs.m_textRectangles.size(),
                                               dcs.m_coordWidth, dcs.m_coordHeight,
-                                              dcs.m_gluePoints.empty() ? NULL : dcs.m_gluePoints.data(),
+                                              dcs.m_gluePoints.empty() ? nullptr : dcs.m_gluePoints.data(),
                                               dcs.m_gluePoints.size(),
                                               dcs.m_adjustShiftMask
                                             ));

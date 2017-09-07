@@ -608,9 +608,9 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   }
   else
   {
-    for (unsigned i = 0; i < info.m_lines.size(); ++i)
+    for (const auto &line : info.m_lines)
     {
-      hasStroke = hasStroke || info.m_lines[i].m_lineExists;
+      hasStroke = hasStroke || line.m_lineExists;
       if (hasStroke)
       {
         break;
@@ -1007,10 +1007,10 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
     if (isTable)
     {
       librevenge::RVNGPropertyListVector columnWidths;
-      for (unsigned col = 0; col < (get(info.m_tableInfo).m_columnWidthsInEmu.size()); ++col)
+      for (unsigned int col : get(info.m_tableInfo).m_columnWidthsInEmu)
       {
         librevenge::RVNGPropertyList columnWidth;
-        columnWidth.insert("style:column-width", double(get(info.m_tableInfo).m_columnWidthsInEmu[col]) / EMUS_IN_INCH);
+        columnWidth.insert("style:column-width", double(col) / EMUS_IN_INCH);
         columnWidths.append(columnWidth);
       }
       props.insert("librevenge:table-columns", columnWidths);
@@ -1118,16 +1118,16 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
           props.insert("fo:column-gap", (double)ngap / EMUS_IN_INCH);
       }
       m_painter->startTextObject(props);
-      for (unsigned i_lines = 0; i_lines < text.size(); ++i_lines)
+      for (const auto &line : text)
       {
-        librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[i_lines].style, text[i_lines].style.m_defaultCharStyleIndex);
+        librevenge::RVNGPropertyList paraProps = getParaStyleProps(line.style, line.style.m_defaultCharStyleIndex);
         m_painter->openParagraph(paraProps);
-        for (unsigned i_spans = 0; i_spans < text[i_lines].spans.size(); ++i_spans)
+        for (unsigned i_spans = 0; i_spans < line.spans.size(); ++i_spans)
         {
           librevenge::RVNGString textString;
-          appendCharacters(textString, text[i_lines].spans[i_spans].chars,
+          appendCharacters(textString, line.spans[i_spans].chars,
                            getCalculatedEncoding());
-          librevenge::RVNGPropertyList charProps = getCharStyleProps(text[i_lines].spans[i_spans].style, text[i_lines].style.m_defaultCharStyleIndex);
+          librevenge::RVNGPropertyList charProps = getCharStyleProps(line.spans[i_spans].style, line.style.m_defaultCharStyleIndex);
           m_painter->openSpan(charProps);
           separateSpacesAndInsertText(m_painter, textString);
           m_painter->closeSpan();
@@ -1615,16 +1615,16 @@ void MSPUBCollector::addBlackToPaletteIfNecessary()
 
 void MSPUBCollector::assignShapesToPages()
 {
-  for (unsigned i = 0; i < m_topLevelShapes.size(); ++i)
+  for (auto &topLevelShape : m_topLevelShapes)
   {
-    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, m_topLevelShapes[i]->getSeqNum());
-    m_topLevelShapes[i]->setup(std::bind(&MSPUBCollector::setupShapeStructures, this, _1));
+    unsigned *ptr_pageSeqNum = getIfExists(m_pageSeqNumsByShapeSeqNum, topLevelShape->getSeqNum());
+    topLevelShape->setup(std::bind(&MSPUBCollector::setupShapeStructures, this, _1));
     if (ptr_pageSeqNum)
     {
       PageInfo *ptr_page = getIfExists(m_pagesBySeqNum, *ptr_pageSeqNum);
       if (ptr_page)
       {
-        ptr_page->m_shapeGroupsOrdered.push_back(m_topLevelShapes[i]);
+        ptr_page->m_shapeGroupsOrdered.push_back(topLevelShape);
       }
     }
   }
@@ -1738,10 +1738,10 @@ bool MSPUBCollector::go()
   }
   else
   {
-    for (unsigned i = 0; i < m_pageSeqNumsOrdered.size(); ++i)
+    for (unsigned int i : m_pageSeqNumsOrdered)
     {
       std::map<unsigned, PageInfo>::const_iterator iter =
-        m_pagesBySeqNum.find(m_pageSeqNumsOrdered[i]);
+        m_pagesBySeqNum.find(i);
       if (iter != m_pagesBySeqNum.end() && !pageIsMaster(iter->first))
       {
         writePage(iter->first);
@@ -1767,11 +1767,11 @@ bool MSPUBCollector::addTextString(const std::vector<TextParagraph> &str, unsign
 void MSPUBCollector::ponderStringEncoding(
   const std::vector<TextParagraph> &str)
 {
-  for (unsigned i = 0; i < str.size(); ++i)
+  for (const auto &i : str)
   {
-    for (unsigned j = 0; j < str[i].spans.size(); ++j)
+    for (unsigned j = 0; j < i.spans.size(); ++j)
     {
-      const std::vector<unsigned char> &chars = str[i].spans[j].chars;
+      const std::vector<unsigned char> &chars = i.spans[j].chars;
       m_allText.insert(m_allText.end(), chars.begin(), chars.end());
     }
   }

@@ -5828,9 +5828,9 @@ void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeT
   }
   else
   {
-    for (unsigned i = 0; i < lineInfos.size(); ++i)
+    for (auto &lineInfo : lineInfos)
     {
-      lineInfos[i].output(painter, graphicsProps);
+      lineInfo.output(painter, graphicsProps);
     }
   }
 }

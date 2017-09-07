@@ -354,42 +354,39 @@ bool MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
         return false;
       }
       const ContentChunkReference &documentChunk = m_contentChunks.at(m_documentChunkIndex.get());
-      for (unsigned i_pal = 0; i_pal < m_paletteChunkIndices.size(); ++i_pal)
+      for (unsigned int paletteChunkIndex : m_paletteChunkIndices)
       {
-        const ContentChunkReference &paletteChunk = m_contentChunks.at(m_paletteChunkIndices[i_pal]);
+        const ContentChunkReference &paletteChunk = m_contentChunks.at(paletteChunkIndex);
         input->seek(paletteChunk.offset, librevenge::RVNG_SEEK_SET);
         if (! parsePaletteChunk(input, paletteChunk))
         {
           return false;
         }
       }
-      for (unsigned i_ba = 0; i_ba < m_borderArtChunkIndices.size();
-           ++i_ba)
+      for (unsigned int borderArtChunkIndex : m_borderArtChunkIndices)
       {
         const ContentChunkReference &baChunk =
-          m_contentChunks.at(m_borderArtChunkIndices[i_ba]);
+          m_contentChunks.at(borderArtChunkIndex);
         input->seek(baChunk.offset, librevenge::RVNG_SEEK_SET);
         if (!parseBorderArtChunk(input, baChunk))
         {
           return false;
         }
       }
-      for (unsigned i_shape = 0; i_shape < m_shapeChunkIndices.size();
-           ++i_shape)
+      for (unsigned int shapeChunkIndex : m_shapeChunkIndices)
       {
         const ContentChunkReference &shapeChunk =
-          m_contentChunks.at(m_shapeChunkIndices[i_shape]);
+          m_contentChunks.at(shapeChunkIndex);
         input->seek(shapeChunk.offset, librevenge::RVNG_SEEK_SET);
         if (!parseShape(input, shapeChunk))
         {
           return false;
         }
       }
-      for (unsigned i_font = 0; i_font < m_fontChunkIndices.size();
-           ++i_font)
+      for (unsigned int fontChunkIndex : m_fontChunkIndices)
       {
         const ContentChunkReference &fontChunk =
-          m_contentChunks.at(m_fontChunkIndices[i_font]);
+          m_contentChunks.at(fontChunkIndex);
         input->seek(fontChunk.offset, librevenge::RVNG_SEEK_SET);
         if (!parseFontChunk(input, fontChunk))
         {
@@ -401,9 +398,9 @@ bool MSPUBParser::parseContents(librevenge::RVNGInputStream *input)
       {
         return false;
       }
-      for (unsigned i_page = 0; i_page < m_pageChunkIndices.size(); ++i_page)
+      for (unsigned int pageChunkIndex : m_pageChunkIndices)
       {
-        const ContentChunkReference &pageChunk = m_contentChunks.at(m_pageChunkIndices[i_page]);
+        const ContentChunkReference &pageChunk = m_contentChunks.at(pageChunkIndex);
         input->seek(pageChunk.offset, librevenge::RVNG_SEEK_SET);
         if (!parsePageChunk(input, pageChunk))
         {
@@ -615,9 +612,9 @@ bool MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, const Conte
     }
     else if (info.id == THIS_MASTER_NAME)
     {
-      for (unsigned i = 0; i < info.stringData.size(); ++i)
+      for (unsigned char i : info.stringData)
       {
-        if (info.stringData[i] != 0)
+        if (i != 0)
         {
           m_collector->designateMasterPage(chunk.seqNum);
         }
@@ -2262,13 +2259,12 @@ FOPTValues MSPUBParser::extractFOPTValues(librevenge::RVNGInputStream *input, co
       complexIds.push_back(id);
     }
   }
-  for (unsigned i = 0; i < complexIds.size(); ++i)
+  for (unsigned short id : complexIds)
   {
     if (!stillReading(input, record.contentsOffset + record.contentsLength))
     {
       break;
     }
-    unsigned short id = complexIds[i];
     unsigned length = ret.m_scalarValues[id];
     if (!length)
     {

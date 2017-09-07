@@ -45,9 +45,9 @@ void ShapeGroupElement::setTransform(const VectorTransformation2D &transform)
 void ShapeGroupElement::setup(std::function<void(ShapeGroupElement &self)> visitor)
 {
   visitor(*this);
-  for (unsigned i = 0; i < m_children.size(); ++i)
+  for (auto &i : m_children)
   {
-    m_children[i]->setup(visitor);
+    i->setup(visitor);
   }
 }
 
@@ -67,9 +67,9 @@ void ShapeGroupElement::visit(std::function<
   VectorTransformation2D foldedTransform = VectorTransformation2D::fromTranslate(-offsetX, -offsetY)
                                            * parentFoldedTransform * VectorTransformation2D::fromTranslate(offsetX, offsetY) * m_transform;
   std::function<void(void)> afterOp = visitor(info, relativeTo, foldedTransform, isGroup(), m_transform);
-  for (unsigned i = 0; i < m_children.size(); ++i)
+  for (const auto &i : m_children)
   {
-    m_children[i]->visit(visitor, coord, foldedTransform);
+    i->visit(visitor, coord, foldedTransform);
   }
   afterOp();
 }

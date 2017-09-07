@@ -431,9 +431,9 @@ bool MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
   }
 
 
-  for (unsigned i = 0; i < m_paletteChunkIndices.size(); ++i)
+  for (unsigned int paletteChunkIndex : m_paletteChunkIndices)
   {
-    const ContentChunkReference &chunk = m_contentChunks.at(m_paletteChunkIndices[i]);
+    const ContentChunkReference &chunk = m_contentChunks.at(paletteChunkIndex);
     input->seek(chunk.offset, librevenge::RVNG_SEEK_SET);
     input->seek(0xA0, librevenge::RVNG_SEEK_CUR);
     for (unsigned j = 0; j < 8; ++j)
@@ -444,9 +444,9 @@ bool MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
     }
   }
 
-  for (unsigned i = 0; i < m_imageDataChunkIndices.size(); ++i)
+  for (unsigned int imageDataChunkIndex : m_imageDataChunkIndices)
   {
-    const ContentChunkReference &chunk = m_contentChunks.at(m_imageDataChunkIndices[i]);
+    const ContentChunkReference &chunk = m_contentChunks.at(imageDataChunkIndex);
     input->seek(chunk.offset + 4, librevenge::RVNG_SEEK_SET);
     unsigned toRead = readU32(input);
     librevenge::RVNGBinaryData img;
@@ -460,9 +460,9 @@ bool MSPUBParser2k::parseContents(librevenge::RVNGInputStream *input)
     m_collector->addImage(++m_lastAddedImage, WMF, img);
   }
 
-  for (unsigned i = 0; i < m_shapeChunkIndices.size(); ++i)
+  for (unsigned int shapeChunkIndex : m_shapeChunkIndices)
   {
-    parse2kShapeChunk(m_contentChunks.at(m_shapeChunkIndices[i]), input);
+    parse2kShapeChunk(m_contentChunks.at(shapeChunkIndex), input);
   }
 
   return true;
@@ -515,9 +515,8 @@ bool MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librev
   {
     // ignore non top level shapes
     int i_page = -1;
-    for (unsigned j = 0; j < m_pageChunkIndices.size(); ++j)
+    for (unsigned int pageIndex : m_pageChunkIndices)
     {
-      unsigned pageIndex = m_pageChunkIndices[j];
       if (m_contentChunks.at(pageIndex).seqNum == chunk.parentSeqNum)
       {
         i_page = pageIndex;
@@ -598,9 +597,9 @@ bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqN
   if (it != m_chunkChildIndicesById.end())
   {
     const std::vector<unsigned> &chunkChildIndices = it->second;
-    for (unsigned i = 0; i < chunkChildIndices.size(); ++i)
+    for (unsigned int chunkChildIndex : chunkChildIndices)
     {
-      const ContentChunkReference &childChunk = m_contentChunks.at(chunkChildIndices[i]);
+      const ContentChunkReference &childChunk = m_contentChunks.at(chunkChildIndex);
       if (childChunk.type == SHAPE || childChunk.type == GROUP)
       {
         retVal = retVal && parse2kShapeChunk(childChunk, input, page, false);

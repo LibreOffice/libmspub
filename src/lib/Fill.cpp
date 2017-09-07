@@ -156,15 +156,15 @@ void GradientFill::getProperties(librevenge::RVNGPropertyList *out) const
     out->insert("libmspub:shade", "normal");
     break;
   }
-  for (unsigned i = 0; i < m_stops.size(); ++i)
+  for (const auto &stop : m_stops)
   {
-    Color c = m_stops[i].m_colorReference.getFinalColor(m_owner->m_paletteColors);
+    Color c = stop.m_colorReference.getFinalColor(m_owner->m_paletteColors);
     librevenge::RVNGPropertyList stopProps;
     librevenge::RVNGString sValue;
-    sValue.sprintf("%d%%", m_stops[i].m_offsetPercent);
+    sValue.sprintf("%d%%", stop.m_offsetPercent);
     stopProps.insert("svg:offset", sValue);
     stopProps.insert("svg:stop-color", MSPUBCollector::getColorString(c));
-    sValue.sprintf("%d%%", (int)(m_stops[i].m_opacity * 100));
+    sValue.sprintf("%d%%", (int)(stop.m_opacity * 100));
     stopProps.insert("svg:stop-opacity", sValue);
     ret.append(stopProps);
   }

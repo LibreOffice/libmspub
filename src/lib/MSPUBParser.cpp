@@ -1407,7 +1407,7 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
   boost::optional<double> dTextSize;
   if (textSize1 != -1)
   {
-    dTextSize = (double)(textSize1 * POINTS_IN_INCH) / EMUS_IN_INCH;
+    dTextSize = textSize1 * (double(POINTS_IN_INCH) / EMUS_IN_INCH);
   }
   return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex, sst);
 }

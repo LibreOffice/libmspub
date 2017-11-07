@@ -2307,7 +2307,7 @@ bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input,
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
-  auto type = (MSPUBContentChunkType)0;
+  MSPUBContentChunkType type = UNKNOWN_CHUNK;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;

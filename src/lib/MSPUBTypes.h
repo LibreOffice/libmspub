@@ -65,7 +65,7 @@ struct MSPUBBlockInfo
 
 struct ContentChunkReference
 {
-  ContentChunkReference() : type((MSPUBContentChunkType)0), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
+  ContentChunkReference() : type(UNKNOWN_CHUNK), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
   ContentChunkReference(MSPUBContentChunkType t, unsigned long o, unsigned long e, unsigned sn, unsigned psn) :
     type(t), offset(o), end(e), seqNum(sn), parentSeqNum(psn) {}
   MSPUBContentChunkType type;

@@ -181,8 +181,7 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
     {
       unsigned length = readU8(input);
       unsigned nextOffset = input->tell() + length;
-      unsigned char index = static_cast<unsigned char>(
-                              (input->tell() - 1 - offset) / 2);
+      auto index = static_cast<unsigned char>((input->tell() - 1 - offset) / 2);
       stylesByIndex[index] = readCharacterStyle(input, length);
       input->seek(nextOffset, librevenge::RVNG_SEEK_SET);
     }

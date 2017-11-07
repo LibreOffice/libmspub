@@ -1040,8 +1040,8 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
   {
     input->seek(textChunkReference->offset, librevenge::RVNG_SEEK_SET);
     unsigned bytesRead = 0;
-    std::vector<TextSpanReference>::iterator currentTextSpan = spans.begin();
-    std::vector<TextParagraphReference>::iterator currentTextPara = paras.begin();
+    auto currentTextSpan = spans.begin();
+    auto currentTextPara = paras.begin();
     for (unsigned j = 0; j < textIDs.size() && j < textLengths.size(); ++j)
     {
       MSPUB_DEBUG_MSG(("Parsing a text block.\n"));
@@ -1813,7 +1813,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
             if ((shadowProps & FLAG_USE_FSHADOW) && (shadowProps & FLAG_USE_SHADOW))
             {
               unsigned *ptr_shadowType = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_TYPE);
-              ShadowType shadowType = static_cast<ShadowType>(ptr_shadowType ? *ptr_shadowType : 0);
+              auto shadowType = static_cast<ShadowType>(ptr_shadowType ? *ptr_shadowType : 0);
               unsigned *shadowColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_COLOR);
               unsigned *shadowHColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_HIGHLIGHT);
               unsigned *shadowOpacity = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_OPACITY);
@@ -1997,7 +1997,7 @@ std::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, uns
         {
           unsigned color = gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24);
           offs += 4;
-          int posi = (int)(toFixedPoint(gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24)) * 100);
+          auto posi = (int)(toFixedPoint(gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24)) * 100);
           offs += 4;
           ColorReference sColor(color, color);
           if (fillFocus ==  0)
@@ -2307,7 +2307,7 @@ bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input,
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
-  MSPUBContentChunkType type = (MSPUBContentChunkType)0;
+  auto type = (MSPUBContentChunkType)0;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;

@@ -275,17 +275,17 @@ uint8_t readU8(librevenge::RVNGInputStream *input)
 
 uint16_t readU16(librevenge::RVNGInputStream *input)
 {
-  uint16_t p0 = (uint16_t)readU8(input);
-  uint16_t p1 = (uint16_t)readU8(input);
+  auto p0 = (uint16_t)readU8(input);
+  auto p1 = (uint16_t)readU8(input);
   return (uint16_t)(p0|(p1<<8));
 }
 
 uint32_t readU32(librevenge::RVNGInputStream *input)
 {
-  uint32_t p0 = (uint32_t)readU8(input);
-  uint32_t p1 = (uint32_t)readU8(input);
-  uint32_t p2 = (uint32_t)readU8(input);
-  uint32_t p3 = (uint32_t)readU8(input);
+  auto p0 = (uint32_t)readU8(input);
+  auto p1 = (uint32_t)readU8(input);
+  auto p2 = (uint32_t)readU8(input);
+  auto p3 = (uint32_t)readU8(input);
   return (uint32_t)(p0|(p1<<8)|(p2<<16)|(p3<<24));
 }
 
@@ -306,14 +306,14 @@ int32_t readS32(librevenge::RVNGInputStream *input)
 
 uint64_t readU64(librevenge::RVNGInputStream *input)
 {
-  uint64_t p0 = (uint64_t)readU8(input);
-  uint64_t p1 = (uint64_t)readU8(input);
-  uint64_t p2 = (uint64_t)readU8(input);
-  uint64_t p3 = (uint64_t)readU8(input);
-  uint64_t p4 = (uint64_t)readU8(input);
-  uint64_t p5 = (uint64_t)readU8(input);
-  uint64_t p6 = (uint64_t)readU8(input);
-  uint64_t p7 = (uint64_t)readU8(input);
+  auto p0 = (uint64_t)readU8(input);
+  auto p1 = (uint64_t)readU8(input);
+  auto p2 = (uint64_t)readU8(input);
+  auto p3 = (uint64_t)readU8(input);
+  auto p4 = (uint64_t)readU8(input);
+  auto p5 = (uint64_t)readU8(input);
+  auto p6 = (uint64_t)readU8(input);
+  auto p7 = (uint64_t)readU8(input);
   return (uint64_t)(p0|(p1<<8)|(p2<<16)|(p3<<24)|(p4<<32)|(p5<<40)|(p6<<48)|(p7<<56));
 }
 
@@ -387,11 +387,11 @@ void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned c
   {
     // ICU documentation claims that character-by-character processing is faster "for small amounts of data" and "'normal' charsets"
     // (in any case, it is more convenient :) )
-    const char *src = (const char *)characters.data();
+    const auto *src = (const char *)characters.data();
     const char *srcLimit = (const char *)src + characters.size();
     while (src < srcLimit)
     {
-      uint32_t ucs4Character = (uint32_t)ucnv_getNextUChar(conv, &src, srcLimit, &status);
+      auto ucs4Character = (uint32_t)ucnv_getNextUChar(conv, &src, srcLimit, &status);
       if (U_SUCCESS(status))
       {
         _appendUCS4(text, ucs4Character);

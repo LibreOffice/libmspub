@@ -99,13 +99,13 @@ double doubleModulo(double x, double y);
 
 template <class MapT> typename MapT::mapped_type *getIfExists(MapT &map, const typename MapT::key_type &key)
 {
-  typename MapT::iterator i = map.find(key);
+  auto i = map.find(key);
   return i == map.end() ? nullptr : &(i->second);
 }
 
 template <class MapT> const typename MapT::mapped_type *getIfExists_const(MapT &map, const typename MapT::key_type &key)
 {
-  typename MapT::const_iterator i = map.find(key);
+  auto i = map.find(key);
   return i == map.end() ? nullptr : &(i->second);
 }
 

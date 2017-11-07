@@ -131,7 +131,7 @@ typedef boost::multi_array<TableLayoutCell, 2> TableLayout;
 
 void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLayout)
 {
-  for (std::vector<CellInfo>::const_iterator it = cells.begin(); it != cells.end(); ++it)
+  for (auto it = cells.begin(); it != cells.end(); ++it)
   {
     if ((it->m_endRow >= tableLayout.shape()[0]) || (it->m_endColumn >= tableLayout.shape()[1]))
     {
@@ -529,8 +529,7 @@ std::vector<int> MSPUBCollector::getShapeAdjustValues(const ShapeInfo &info) con
       ret.push_back(ptr_shape->mp_defaultAdjustValues[i]);
     }
   }
-  for (std::map<unsigned, int>::const_iterator i = info.m_adjustValuesByIndex.begin();
-       i != info.m_adjustValuesByIndex.end(); ++i)
+  for (auto i = info.m_adjustValuesByIndex.begin(); i != info.m_adjustValuesByIndex.end(); ++i)
   {
     unsigned index = i->first;
     int adjustVal = i->second;
@@ -620,8 +619,8 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   librevenge::RVNGString fill = graphicsProps["draw:fill"] ? graphicsProps["draw:fill"]->getStr() : "none";
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
-  bool hasText = bool(maybeText);
-  const bool isTable = bool(info.m_tableInfo);
+  auto hasText = bool(maybeText);
+  const auto isTable = bool(info.m_tableInfo);
   bool makeLayer = hasBorderArt ||
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)
@@ -736,16 +735,14 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
       double width = coord.getWidthIn();
       double borderImgWidth =
         static_cast<double>(info.m_lines[0].m_widthInEmu) / EMUS_IN_INCH;
-      unsigned numImagesHoriz = static_cast<unsigned>(width / borderImgWidth);
-      unsigned numImagesVert = static_cast<unsigned>(height / borderImgWidth);
+      auto numImagesHoriz = static_cast<unsigned>(width / borderImgWidth);
+      auto numImagesVert = static_cast<unsigned>(height / borderImgWidth);
       double borderVertTotalPadding = height - numImagesVert * borderImgWidth;
       double borderHorizTotalPadding = width - numImagesHoriz * borderImgWidth;
       if (numImagesHoriz >= 2 && numImagesVert >= 2)
       {
-        unsigned numStretchedImagesVert = static_cast<unsigned>(
-                                            0.5 + (height - 2 * borderImgWidth) / borderImgWidth);
-        unsigned numStretchedImagesHoriz = static_cast<unsigned>(
-                                             0.5 + (width - 2 * borderImgWidth) / borderImgWidth);
+        auto numStretchedImagesVert = static_cast<unsigned>(0.5 + (height - 2 * borderImgWidth) / borderImgWidth);
+        auto numStretchedImagesHoriz = static_cast<unsigned>(0.5 + (width - 2 * borderImgWidth) / borderImgWidth);
         double stretchedImgHeight = stretch ?
                                     (height - 2 * borderImgWidth) / numStretchedImagesVert :
                                     borderImgWidth;
@@ -793,7 +790,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
             leftRectProps.insert("svg:height", height);
             leftRectProps.insert("svg:width", borderImgWidth);
             m_painter->drawRectangle(leftRectProps);
-            std::vector<unsigned>::const_iterator iOffset = ba.m_offsets.begin();
+            auto iOffset = ba.m_offsets.begin();
             boost::optional<Color> oneBitColor;
             if (bool(info.m_lineBackColor))
             {
@@ -1658,7 +1655,7 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
   {
     m_painter->startPage(pageProps);
     boost::optional<unsigned> masterSeqNum = getMasterPageSeqNum(pageSeqNum);
-    bool hasMaster = bool(masterSeqNum);
+    auto hasMaster = bool(masterSeqNum);
     if (hasMaster)
     {
       writePageBackground(masterSeqNum.get());
@@ -1829,7 +1826,7 @@ void MSPUBCollector::setBorderImageOffset(unsigned index, unsigned offset)
   BorderArtInfo &bai = m_borderImages[index];
   bai.m_offsets.push_back(offset);
   bool added = false;
-  for (std::vector<unsigned>::iterator i = bai.m_offsetsOrdered.begin();
+  for (auto i = bai.m_offsetsOrdered.begin();
        i != bai.m_offsetsOrdered.end(); ++i)
   {
     if (*i >= offset)

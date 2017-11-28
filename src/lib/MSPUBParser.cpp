@@ -652,8 +652,6 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
   MSPUB_DEBUG_MSG(("parseShape: seqNum 0x%x\n", chunk.seqNum));
   unsigned long pos = input->tell();
   unsigned length = readU32(input);
-  unsigned width = 0;
-  unsigned height = 0;
   bool isTable = chunk.type == TABLE;
   bool isGroup = chunk.type == GROUP || chunk.type == LOGO;
   if (isTable)
@@ -666,15 +664,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
     while (stillReading(input, pos + length))
     {
       MSPUBBlockInfo info = parseBlock(input, true);
-      if (info.id == TABLE_WIDTH)
-      {
-        width = info.data;
-      }
-      else if (info.id == TABLE_HEIGHT)
-      {
-        height = info.data;
-      }
-      else if (info.id == TABLE_CELLS_SEQNUM)
+      if (info.id == TABLE_CELLS_SEQNUM)
       {
         cellsSeqNum = info.data;
       }
@@ -824,6 +814,8 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
     bool isText = false;
     bool shouldStretchBorderArt = true;
     unsigned textId = 0;
+    unsigned width = 0;
+    unsigned height = 0;
     while (stillReading(input, pos + length))
     {
       MSPUBBlockInfo info = parseBlock(input, true);

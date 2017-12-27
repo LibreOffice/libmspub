@@ -204,7 +204,7 @@ void mapTableTextToCells(
 
   unsigned firstPara = 0;
   unsigned offset = 1;
-  for (unsigned para = 0; para != text.size(); ++para)
+  for (unsigned para = 0; para != text.size() && paraToCellMap.size() < tableCellTextEnds.size(); ++para)
   {
     paraTexts.push_back(SpanTexts_t());
     paraTexts.back().reserve(text[para].spans.size());
@@ -222,16 +222,13 @@ void mapTableTextToCells(
 
     assert(paraTexts.back().size() <= text[para].spans.size());
 
-    if ((paraToCellMap.size() < tableCellTextEnds.size()))
+    if (offset > tableCellTextEnds[paraToCellMap.size()])
     {
-      if (offset > tableCellTextEnds[paraToCellMap.size()])
-      {
-        MSPUB_DEBUG_MSG(("text of cell %u ends in the middle of a paragraph!\n", unsigned(paraToCellMap.size())));
-      }
-
-      paraToCellMap.push_back(std::make_pair(firstPara, para));
-      firstPara = para + 1;
+      MSPUB_DEBUG_MSG(("text of cell %u ends in the middle of a paragraph!\n", unsigned(paraToCellMap.size())));
     }
+
+    paraToCellMap.push_back(std::make_pair(firstPara, para));
+    firstPara = para + 1;
   }
 
   assert(paraTexts.size() == text.size());

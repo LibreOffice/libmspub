@@ -439,7 +439,7 @@ void MSPUBCollector::setShapeClipPath(unsigned seqNum, const std::vector<Vertex>
 
 void MSPUBCollector::beginGroup()
 {
-  auto tmp = std::make_shared<ShapeGroupElement>(m_currentShapeGroup.get());
+  auto tmp = ShapeGroupElement::create(m_currentShapeGroup);
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);
@@ -455,7 +455,7 @@ bool MSPUBCollector::endGroup()
   }
   auto parent = m_currentShapeGroup->getParent();
   if (parent)
-    m_currentShapeGroup = parent->shared_from_this();
+    m_currentShapeGroup = parent;
   return true;
 }
 
@@ -497,7 +497,7 @@ bool MSPUBCollector::setCurrentGroupSeqNum(unsigned seqNum)
 
 void MSPUBCollector::setShapeOrder(unsigned seqNum)
 {
-  auto tmp = std::make_shared<ShapeGroupElement>(m_currentShapeGroup.get(), seqNum);
+  auto tmp = ShapeGroupElement::create(m_currentShapeGroup, seqNum);
   if (!m_currentShapeGroup)
   {
     m_topLevelShapes.push_back(tmp);

@@ -12,24 +12,20 @@
 namespace libmspub
 {
 
-ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(0), m_transform()
+ShapeGroupElement::ShapeGroupElement(const std::shared_ptr<ShapeGroupElement> &parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
 {
-  if (m_parent)
-  {
-    m_parent->m_children.push_back(shared_from_this());
-  }
 }
 
 ShapeGroupElement::~ShapeGroupElement()
 {
 }
 
-ShapeGroupElement::ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum) : m_shapeInfo(), m_parent(parent), m_children(), m_seqNum(seqNum), m_transform()
+std::shared_ptr<ShapeGroupElement> ShapeGroupElement::create(const std::shared_ptr<ShapeGroupElement> &parent, unsigned seqNum)
 {
-  if (m_parent)
-  {
-    m_parent->m_children.push_back(shared_from_this());
-  }
+  auto that = std::shared_ptr<ShapeGroupElement>(new ShapeGroupElement(parent, seqNum));
+  if (parent)
+    parent->m_children.push_back(that);
+  return that;
 }
 
 void ShapeGroupElement::setShapeInfo(const ShapeInfo &shapeInfo)
@@ -89,14 +85,9 @@ bool ShapeGroupElement::isGroup() const
   return !m_children.empty();
 }
 
-ShapeGroupElement *ShapeGroupElement::getParent()
+std::shared_ptr<ShapeGroupElement> ShapeGroupElement::getParent() const
 {
-  return m_parent;
-}
-
-const ShapeGroupElement *ShapeGroupElement::getParent() const
-{
-  return m_parent;
+  return m_parent.lock();
 }
 
 void ShapeGroupElement::setSeqNum(unsigned seqNum)

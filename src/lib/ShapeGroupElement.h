@@ -19,19 +19,21 @@
 
 namespace libmspub
 {
-class ShapeGroupElement : public std::enable_shared_from_this<ShapeGroupElement>
+class ShapeGroupElement
 {
   boost::optional<ShapeInfo> m_shapeInfo;
-  ShapeGroupElement *m_parent;
+  std::weak_ptr<ShapeGroupElement> m_parent;
   std::vector<std::shared_ptr<ShapeGroupElement>> m_children;
   unsigned m_seqNum;
   ShapeGroupElement &operator=(const ShapeGroupElement &); //not implemented
   ShapeGroupElement(const ShapeGroupElement &); //not implemented
   VectorTransformation2D m_transform;
+  ShapeGroupElement(const std::shared_ptr<ShapeGroupElement> &parent, unsigned seqNum);
+
 public:
-  ShapeGroupElement(ShapeGroupElement *parent);
-  ShapeGroupElement(ShapeGroupElement *parent, unsigned seqNum);
   ~ShapeGroupElement();
+  static std::shared_ptr<ShapeGroupElement> create(const std::shared_ptr<ShapeGroupElement> &parent, unsigned seqNum = 0);
+
   void setShapeInfo(const ShapeInfo &shapeInfo);
   void setup(std::function<void(ShapeGroupElement &self)> visitor);
   void visit(std::function<
@@ -42,8 +44,7 @@ public:
              std::function<void(void)>
              (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor) const;
   bool isGroup() const;
-  ShapeGroupElement *getParent();
-  const ShapeGroupElement *getParent() const;
+  std::shared_ptr<ShapeGroupElement> getParent() const;
   void setSeqNum(unsigned seqNum);
   void setTransform(const VectorTransformation2D &transform);
   unsigned getSeqNum() const;

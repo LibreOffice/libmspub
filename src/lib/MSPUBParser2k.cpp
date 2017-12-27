@@ -7,16 +7,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "MSPUBParser2k.h"
+
 #include <algorithm>
 #include <memory>
 
 #include <librevenge-stream/librevenge-stream.h>
 
-#include "MSPUBParser2k.h"
 #include "ColorReference.h"
+#include "MSPUBCollector.h"
 #include "ShapeType.h"
 #include "libmspub_utils.h"
-#include "MSPUBCollector.h"
 
 namespace libmspub
 {

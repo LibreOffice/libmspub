@@ -7,13 +7,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "MSPUBMetaData.h"
+
 #include <cmath>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
 
 #include "libmspub_utils.h"
-#include "MSPUBMetaData.h"
 
 libmspub::MSPUBMetaData::MSPUBMetaData()
   : m_idsAndOffsets(), m_typedPropertyValues(), m_metaData()

@@ -14,8 +14,8 @@
 #include <utility>
 
 #include "MSPUBCollector.h"
-#include "libmspub_utils.h"
 #include "MSPUBTypes.h"
+#include "libmspub_utils.h"
 
 namespace libmspub
 {

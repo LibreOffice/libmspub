@@ -7,15 +7,15 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <stddef.h> // for NULL
+#include "PolygonUtils.h"
+
 #include <math.h>
 
 #include <librevenge/librevenge.h>
 
-#include "ShapeType.h"
-#include "PolygonUtils.h"
-#include "libmspub_utils.h"
 #include "MSPUBCollector.h"
+#include "ShapeType.h"
+#include "libmspub_utils.h"
 
 #define CALCULATED_VALUE(val) (int(unsigned(val) | 0x80000000))
 

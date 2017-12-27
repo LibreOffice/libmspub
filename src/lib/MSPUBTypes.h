@@ -10,14 +10,16 @@
 #ifndef INCLUDED_MSPUBTYPES_H
 #define INCLUDED_MSPUBTYPES_H
 
-#include <vector>
 #include <string>
+#include <vector>
+
 #include <boost/optional.hpp>
-#include "MSPUBBlockType.h"
-#include "MSPUBBlockID.h"
-#include "MSPUBContentChunkType.h"
-#include "MSPUBConstants.h"
+
 #include "ListInfo.h"
+#include "MSPUBBlockID.h"
+#include "MSPUBBlockType.h"
+#include "MSPUBConstants.h"
+#include "MSPUBContentChunkType.h"
 
 namespace libmspub
 {

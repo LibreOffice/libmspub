@@ -9,24 +9,27 @@
 
 #ifndef INCLUDED_SHAPEINFO_H
 #define INCLUDED_SHAPEINFO_H
-#include <boost/optional.hpp>
+
 #include <functional>
 #include <map>
 #include <memory>
 #include <vector>
-#include "ShapeType.h"
-#include "Coordinate.h"
-#include "Line.h"
-#include "Margins.h"
-#include "MSPUBTypes.h"
-#include "Fill.h"
-#include "PolygonUtils.h"
-#include "Dash.h"
-#include "TableInfo.h"
+
+#include <boost/optional.hpp>
+
 #include "Arrow.h"
-#include "VerticalAlign.h"
 #include "ColorReference.h"
+#include "Coordinate.h"
+#include "Dash.h"
+#include "Fill.h"
+#include "Line.h"
+#include "MSPUBTypes.h"
+#include "Margins.h"
+#include "PolygonUtils.h"
 #include "Shadow.h"
+#include "ShapeType.h"
+#include "TableInfo.h"
+#include "VerticalAlign.h"
 
 namespace libmspub
 {

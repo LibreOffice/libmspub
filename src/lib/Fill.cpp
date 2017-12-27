@@ -8,9 +8,10 @@
  */
 
 #include "Fill.h"
+
 #include "FillType.h"
-#include "libmspub_utils.h"
 #include "MSPUBCollector.h"
+#include "libmspub_utils.h"
 
 namespace libmspub
 {

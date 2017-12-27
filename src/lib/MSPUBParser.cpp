@@ -7,38 +7,40 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "MSPUBParser.h"
+
+#include <algorithm>
 #include <cassert>
 #include <memory>
 #include <set>
 #include <sstream>
+#include <string.h>
 #include <string>
 #include <utility>
-#include <algorithm>
-#include <string.h>
 
 #include <boost/numeric/conversion/cast.hpp>
 
 #include <librevenge-stream/librevenge-stream.h>
+
 #include <zlib.h>
 
-#include "MSPUBMetaData.h"
-#include "MSPUBParser.h"
-#include "MSPUBCollector.h"
-#include "MSPUBBlockID.h"
-#include "MSPUBBlockType.h"
-#include "MSPUBContentChunkType.h"
-#include "MSPUBConstants.h"
+#include "Dash.h"
 #include "EscherContainerType.h"
 #include "EscherFieldIds.h"
-#include "libmspub_utils.h"
-#include "ShapeType.h"
-#include "ShapeFlags.h"
 #include "Fill.h"
 #include "FillType.h"
 #include "ListInfo.h"
-#include "Dash.h"
+#include "MSPUBBlockID.h"
+#include "MSPUBBlockType.h"
+#include "MSPUBCollector.h"
+#include "MSPUBConstants.h"
+#include "MSPUBContentChunkType.h"
+#include "MSPUBMetaData.h"
+#include "ShapeFlags.h"
+#include "ShapeType.h"
 #include "TableInfo.h"
 #include "VerticalAlign.h"
+#include "libmspub_utils.h"
 
 namespace libmspub
 {

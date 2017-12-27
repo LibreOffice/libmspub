@@ -12,18 +12,17 @@
 
 #include <map>
 #include <memory>
+#include <memory>
 #include <set>
 #include <vector>
-#include <memory>
 
 #include <boost/optional.hpp>
 
 #include <librevenge/librevenge.h>
-#include <librevenge/librevenge.h>
 
-#include "MSPUBTypes.h"
-#include "Fill.h"
 #include "Coordinate.h"
+#include "Fill.h"
+#include "MSPUBTypes.h"
 #include "PolygonUtils.h"
 
 namespace libmspub

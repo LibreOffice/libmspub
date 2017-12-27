@@ -11,7 +11,9 @@
 #define INCLUDED_BORDERARTINFO_H
 
 #include <vector>
+
 #include <librevenge/librevenge.h>
+
 #include "MSPUBTypes.h"
 
 namespace libmspub

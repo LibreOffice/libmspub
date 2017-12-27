@@ -10,34 +10,33 @@
 #ifndef INCLUDED_MSPUBCOLLECTOR_H
 #define INCLUDED_MSPUBCOLLECTOR_H
 
+#include <algorithm>
 #include <functional>
 #include <list>
-#include <vector>
 #include <map>
 #include <memory>
 #include <set>
 #include <string>
-#include <algorithm>
+#include <vector>
 
 #include <librevenge/librevenge.h>
-#include <librevenge/librevenge.h>
 
-#include "MSPUBTypes.h"
-#include "libmspub_utils.h"
-#include "MSPUBContentChunkType.h"
-#include "ShapeType.h"
-#include "Coordinate.h"
-#include "ShapeGroupElement.h"
-#include "Fill.h"
-#include "ColorReference.h"
-#include "PolygonUtils.h"
-#include "ShapeInfo.h"
-#include "BorderArtInfo.h"
-#include "Dash.h"
 #include "Arrow.h"
-#include "VerticalAlign.h"
+#include "BorderArtInfo.h"
+#include "ColorReference.h"
+#include "Coordinate.h"
+#include "Dash.h"
 #include "EmbeddedFontInfo.h"
+#include "Fill.h"
+#include "MSPUBContentChunkType.h"
+#include "MSPUBTypes.h"
+#include "PolygonUtils.h"
 #include "Shadow.h"
+#include "ShapeGroupElement.h"
+#include "ShapeInfo.h"
+#include "ShapeType.h"
+#include "VerticalAlign.h"
+#include "libmspub_utils.h"
 
 namespace libmspub
 {

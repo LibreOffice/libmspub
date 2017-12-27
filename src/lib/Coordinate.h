@@ -9,7 +9,9 @@
 
 #ifndef INCLUDED_COORDINATE_H
 #define INCLUDED_COORDINATE_H
+
 #include "MSPUBConstants.h"
+
 namespace libmspub
 {
 struct Coordinate

@@ -16,10 +16,10 @@
 
 #include <librevenge/librevenge.h>
 
-#include "ShapeType.h"
-#include "VectorTransformation2D.h"
 #include "Coordinate.h"
 #include "Line.h"
+#include "ShapeType.h"
+#include "VectorTransformation2D.h"
 
 namespace libmspub
 {

@@ -9,8 +9,8 @@
 
 #include <memory>
 #include <sstream>
-#include <string>
 #include <string.h>
+#include <string>
 
 #include <libmspub/libmspub.h>
 

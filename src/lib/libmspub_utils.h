@@ -14,12 +14,13 @@
 #include "config.h"
 #endif
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #include <boost/cstdint.hpp>
 
 #include <librevenge/librevenge.h>
+
 #include <librevenge-stream/librevenge-stream.h>
 
 #include "MSPUBTypes.h"

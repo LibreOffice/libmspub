@@ -9,10 +9,12 @@
 
 #ifndef INCLUDED_SHAPEGROUPELEMENT_H
 #define INCLUDED_SHAPEGROUPELEMENT_H
-#include <boost/optional.hpp>
+
 #include <functional>
 #include <memory>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 #include "ShapeInfo.h"
 #include "VectorTransformation2D.h"

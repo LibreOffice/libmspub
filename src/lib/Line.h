@@ -9,9 +9,11 @@
 
 #ifndef INCLUDED_LINE_H
 #define INCLUDED_LINE_H
-#include "Dash.h"
+
 #include <boost/optional.hpp>
+
 #include "ColorReference.h"
+#include "Dash.h"
 
 namespace libmspub
 {

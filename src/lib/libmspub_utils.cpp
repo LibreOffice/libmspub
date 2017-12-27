@@ -7,16 +7,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "libmspub_utils.h"
+
+#include <cstdarg>
+#include <cstring>
+#include <math.h>
+#include <string.h> // for memcpy
+
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 
-#include <cstdarg>
-#include <string.h> // for memcpy
-#include <math.h>
 #include <zlib.h>
-#include <cstring>
-
-#include "libmspub_utils.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846

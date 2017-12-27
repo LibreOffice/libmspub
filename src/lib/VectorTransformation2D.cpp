@@ -10,6 +10,7 @@
 //TODO : Adjust handles, glue points
 
 #include "VectorTransformation2D.h"
+
 #include <math.h>
 
 namespace libmspub

@@ -10,8 +10,9 @@
 #ifndef INCLUDED_DASH_H
 #define INCLUDED_DASH_H
 
-#include <boost/optional.hpp>
 #include <vector>
+
+#include <boost/optional.hpp>
 
 namespace libmspub
 {

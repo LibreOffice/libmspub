@@ -10,11 +10,14 @@
 #ifndef INCLUDED_MSPUBMETADATA_H
 #define INCLUDED_MSPUBMETADATA_H
 
-#include <vector>
-#include <utility>
 #include <map>
-#include <librevenge-stream/librevenge-stream.h>
+#include <utility>
+#include <vector>
+
 #include <librevenge/librevenge.h>
+
+#include <librevenge-stream/librevenge-stream.h>
+
 #include "libmspub_utils.h"
 
 namespace libmspub

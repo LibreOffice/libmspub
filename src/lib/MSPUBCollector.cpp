@@ -7,18 +7,19 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "MSPUBCollector.h"
+
 #include <math.h>
 
 #include <boost/multi_array.hpp>
 
 #include <unicode/ucsdet.h>
 
-#include "MSPUBCollector.h"
-#include "libmspub_utils.h"
+#include "Coordinate.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
-#include "Coordinate.h"
+#include "libmspub_utils.h"
 
 namespace libmspub
 {

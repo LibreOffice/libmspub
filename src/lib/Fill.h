@@ -11,7 +11,6 @@
 #define INCLUDED_FILL_H
 
 #include <cstddef>
-
 #include <vector>
 
 #include <librevenge/librevenge.h>

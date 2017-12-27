@@ -10,8 +10,8 @@
 #ifndef INCLUDED_SHAPES_H
 #define INCLUDED_SHAPES_H
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #include "Coordinate.h"
 #include "MSPUBConstants.h"

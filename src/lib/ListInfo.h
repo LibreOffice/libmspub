@@ -12,8 +12,8 @@
 
 #include <boost/optional.hpp>
 
-#include "NumberingType.h"
 #include "NumberingDelimiter.h"
+#include "NumberingType.h"
 
 namespace libmspub
 {

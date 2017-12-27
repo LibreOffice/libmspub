@@ -25,6 +25,12 @@
 
 #include "MSPUBTypes.h"
 
+#if defined(HAVE_FUNC_ATTRIBUTE_FORMAT)
+#  define MSPUB_ATTRIBUTE_PRINTF(fmt, arg) __attribute__((__format__(__printf__, fmt, arg)))
+#else
+#  define MSPUB_ATTRIBUTE_PRINTF(fmt, arg)
+#endif
+
 #if defined(HAVE_CLANG_ATTRIBUTE_FALLTHROUGH)
 #  define MSPUB_FALLTHROUGH [[clang::fallthrough]]
 #elif defined(HAVE_GCC_ATTRIBUTE_FALLTHROUGH)
@@ -35,7 +41,11 @@
 
 // do nothing with debug messages in a release compile
 #ifdef DEBUG
-#define MSPUB_DEBUG_MSG(M) printf M
+namespace libmspub
+{
+void debugPrint(const char *format, ...) MSPUB_ATTRIBUTE_PRINTF(1, 2);
+}
+#define MSPUB_DEBUG_MSG(M) libmspub::debugPrint M
 #define MSPUB_DEBUG(M) M
 #else
 #define MSPUB_DEBUG_MSG(M)

@@ -10,6 +10,7 @@
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 
+#include <cstdarg>
 #include <string.h> // for memcpy
 #include <math.h>
 #include <zlib.h>
@@ -25,6 +26,18 @@
 
 namespace libmspub
 {
+
+#ifdef DEBUG
+
+void debugPrint(const char *const format, ...)
+{
+  va_list args;
+  va_start(args, format);
+  std::vfprintf(stderr, format, args);
+  va_end(args);
+}
+
+#endif
 
 using std::strcmp;
 const char *windowsCharsetNameByOriginalCharset(const char *name)

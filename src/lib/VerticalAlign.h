@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __VERTICALALIGN_H__
-#define __VERTICALALIGN_H__
+#ifndef INCLUDED_VERTICALALIGN_H
+#define INCLUDED_VERTICALALIGN_H
 
 namespace libmspub
 {
@@ -20,5 +20,5 @@ enum VerticalAlign
 };
 } // namespace libmspub
 
-#endif /* __VERTICALALIGN_H__ */
+#endif /* INCLUDED_VERTICALALIGN_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBBLOCKTYPE_H__
-#define __MSPUBBLOCKTYPE_H__
+#ifndef INCLUDED_MSPUBBLOCKTYPE_H
+#define INCLUDED_MSPUBBLOCKTYPE_H
 
 namespace libmspub
 {
@@ -22,5 +22,5 @@ enum MSPUBBlockType //Please fill this in and replace magic constants in MSPUBPa
 };
 } // namespace libmspub
 
-#endif /* __MSPUBBLOCKTYPE_H__ */
+#endif /* INCLUDED_MSPUBBLOCKTYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

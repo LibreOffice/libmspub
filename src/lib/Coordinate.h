@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __COORDINATE_H__
-#define __COORDINATE_H__
+#ifndef INCLUDED_COORDINATE_H
+#define INCLUDED_COORDINATE_H
 #include "MSPUBConstants.h"
 namespace libmspub
 {

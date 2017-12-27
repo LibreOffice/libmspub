@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __LIBMSPUB_H__
-#define __LIBMSPUB_H__
+#ifndef INCLUDED_INC_LIBMSPUB_LIBMSPUB_H
+#define INCLUDED_INC_LIBMSPUB_LIBMSPUB_H
 
 #include "MSPUBDocument.h"
 

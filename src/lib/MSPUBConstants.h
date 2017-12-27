@@ -7,12 +7,12 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBCONSTANTS_H__
-#define __MSPUBCONSTANTS_H__
+#ifndef INCLUDED_MSPUBCONSTANTS_H
+#define INCLUDED_MSPUBCONSTANTS_H
 
 #define EMUS_IN_INCH 914400
 #define POINTS_IN_INCH 72
 #define DEFAULT_MARGIN 36576
 
-#endif /* __MSPUBCONSTANTS_H__ */
+#endif /* INCLUDED_MSPUBCONSTANTS_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

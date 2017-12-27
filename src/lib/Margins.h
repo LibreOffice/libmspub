@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MARGINS_H__
-#define __MARGINS_H__
+#ifndef INCLUDED_MARGINS_H
+#define INCLUDED_MARGINS_H
 namespace libmspub
 {
 struct Margins

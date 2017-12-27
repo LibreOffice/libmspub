@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __FILLTYPE_H__
-#define __FILLTYPE_H__
+#ifndef INCLUDED_FILLTYPE_H
+#define INCLUDED_FILLTYPE_H
 
 namespace libmspub
 {
@@ -29,5 +29,5 @@ enum FillType
   BACKGROUND = 0x09
 };
 } // libmspub
-#endif /* __FILLTYPE_H__ */
+#endif /* INCLUDED_FILLTYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

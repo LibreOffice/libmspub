@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __DASH_H__
-#define __DASH_H__
+#ifndef INCLUDED_DASH_H
+#define INCLUDED_DASH_H
 
 #include <boost/optional.hpp>
 #include <vector>
@@ -62,5 +62,5 @@ Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthInEmu,
              DotStyle dotStyle);
 } // namespace libmspub
 
-#endif /* __DASH_H__ */
+#endif /* INCLUDED_DASH_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

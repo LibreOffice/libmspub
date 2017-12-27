@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __SHAPETYPE_H__
-#define __SHAPETYPE_H__
+#ifndef INCLUDED_SHAPETYPE_H
+#define INCLUDED_SHAPETYPE_H
 
 namespace libmspub
 {
@@ -182,5 +182,5 @@ enum ShapeType
   TEXT_BOX            = 202
 };
 } // libmspub
-#endif /* __SHAPETYPE_H__ */
+#endif /* INCLUDED_SHAPETYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

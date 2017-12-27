@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __ESCHERFIELDIDS_H__
-#define __ESCHERFIELDIDS_H__
+#ifndef INCLUDED_ESCHERFIELDIDS_H
+#define INCLUDED_ESCHERFIELDIDS_H
 
 #define FIELDID_XS                     0x2001
 #define FIELDID_YS                     0x2002
@@ -100,5 +100,5 @@
 #define FLAG_USE_FSHADOW   (1 << 17)
 #define FLAG_USE_SHADOW   (1 << 1)
 
-#endif /* __ESCHERFIELDIDS_H__ */
+#endif /* INCLUDED_ESCHERFIELDIDS_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

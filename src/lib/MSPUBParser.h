@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBPARSER_H__
-#define __MSPUBPARSER_H__
+#ifndef INCLUDED_MSPUBPARSER_H
+#define INCLUDED_MSPUBPARSER_H
 
 #include <map>
 #include <memory>
@@ -174,5 +174,5 @@ protected:
 
 } // namespace libmspub
 
-#endif //  __MSPUBRAPHICS_H__
+#endif //  INCLUDED_MSPUBRAPHICS_H
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

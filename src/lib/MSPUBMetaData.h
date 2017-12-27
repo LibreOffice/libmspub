@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBMETADATA_H__
-#define __MSPUBMETADATA_H__
+#ifndef INCLUDED_MSPUBMETADATA_H
+#define INCLUDED_MSPUBMETADATA_H
 
 #include <vector>
 #include <utility>
@@ -48,6 +48,6 @@ private:
 
 } // namespace libmspub
 
-#endif // __MSPUBMETADATA_H__
+#endif // INCLUDED_MSPUBMETADATA_H
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __SHAPEGROUPELEMENT_H__
-#define __SHAPEGROUPELEMENT_H__
+#ifndef INCLUDED_SHAPEGROUPELEMENT_H
+#define INCLUDED_SHAPEGROUPELEMENT_H
 #include <boost/optional.hpp>
 #include <functional>
 #include <memory>

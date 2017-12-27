@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __POLYGONUTILS_H__
-#define __POLYGONUTILS_H__
+#ifndef INCLUDED_POLYGONUTILS_H
+#define INCLUDED_POLYGONUTILS_H
 
 #include <functional>
 #include <memory>
@@ -118,5 +118,5 @@ librevenge::RVNGPropertyList calcClipPath(const std::vector<libmspub::Vertex> &v
 void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
 
 } // libmspub
-#endif /* __POLYGONUTILS_H__ */
+#endif /* INCLUDED_POLYGONUTILS_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

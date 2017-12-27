@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __SHAPES_H__
-#define __SHAPES_H__
+#ifndef INCLUDED_SHAPES_H
+#define INCLUDED_SHAPES_H
 
 #include <vector>
 #include <map>
@@ -114,5 +114,5 @@ public:
   VectorTransformation2D m_foldedTransform;
 };
 } // namespace libmspub
-#endif // __SHAPES_H__
+#endif // INCLUDED_SHAPES_H
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

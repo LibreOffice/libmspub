@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __ESCHERCONTAINERTYPE_H__
-#define __ESCHERCONTAINERTYPE_H__
+#ifndef INCLUDED_ESCHERCONTAINERTYPE_H
+#define INCLUDED_ESCHERCONTAINERTYPE_H
 
 #define OFFICE_ART_DGG_CONTAINER      0xF000
 #define OFFICE_ART_B_STORE_CONTAINER  0xF001
@@ -31,5 +31,5 @@
 #define OFFICE_ART_FSPGR              0xF009
 #define OFFICE_ART_CHILD_ANCHOR       0xF00F
 
-#endif /* __ESCHERCONTAINERTYPE_H__ */
+#endif /* INCLUDED_ESCHERCONTAINERTYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __FILL_H__
-#define __FILL_H__
+#ifndef INCLUDED_FILL_H
+#define INCLUDED_FILL_H
 
 #include <cstddef>
 
@@ -103,5 +103,5 @@ private:
 };
 }
 
-#endif /* __FILL_H__ */
+#endif /* INCLUDED_FILL_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBCHUNKTYPE_H__
-#define __MSPUBCHUNKTYPE_H__
+#ifndef INCLUDED_MSPUBCHUNKTYPE_H
+#define INCLUDED_MSPUBCHUNKTYPE_H
 
 namespace libmspub
 {
@@ -31,5 +31,5 @@ enum MSPUBContentChunkType //Please fill this in and replace magic constants in 
 };
 } // namespace libmspub
 
-#endif /* __MSPUBCHUNKTYPE_H__ */
+#endif /* INCLUDED_MSPUBCHUNKTYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

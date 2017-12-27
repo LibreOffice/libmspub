@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __ARROW_H__
-#define __ARROW_H__
+#ifndef INCLUDED_ARROW_H
+#define INCLUDED_ARROW_H
 
 namespace libmspub
 {
@@ -39,5 +39,5 @@ struct Arrow
 };
 } // namespace libmspub
 
-#endif /* __ARROW_H__ */
+#endif /* INCLUDED_ARROW_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __LINE_H__
-#define __LINE_H__
+#ifndef INCLUDED_LINE_H
+#define INCLUDED_LINE_H
 #include "Dash.h"
 #include <boost/optional.hpp>
 #include "ColorReference.h"

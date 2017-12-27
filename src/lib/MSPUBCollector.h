@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBCOLLECTOR_H__
-#define __MSPUBCOLLECTOR_H__
+#ifndef INCLUDED_MSPUBCOLLECTOR_H
+#define INCLUDED_MSPUBCOLLECTOR_H
 
 #include <functional>
 #include <list>
@@ -203,5 +203,5 @@ public:
 };
 } // namespace libmspub
 
-#endif /* __MSPUBCOLLECTOR_H__ */
+#endif /* INCLUDED_MSPUBCOLLECTOR_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBDOCUMENT_H__
-#define __MSPUBDOCUMENT_H__
+#ifndef INCLUDED_INC_LIBMSPUB_MSPUBDOCUMENT_H
+#define INCLUDED_INC_LIBMSPUB_MSPUBDOCUMENT_H
 
 #include <librevenge/librevenge.h>
 
@@ -39,5 +39,5 @@ public:
 
 } // namespace libmspub
 
-#endif //  __MSPUBDOCUMENT_H__
+#endif //  INCLUDED_INC_LIBMSPUB_MSPUBDOCUMENT_H
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

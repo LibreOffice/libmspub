@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __TABLEINFO_H__
-#define __TABLEINFO_H__
+#ifndef INCLUDED_TABLEINFO_H
+#define INCLUDED_TABLEINFO_H
 
 #include <vector>
 
@@ -46,5 +46,5 @@ struct TableInfo
 };
 } // namespace libmspub
 
-#endif /* __TABLEINFO_H__ */
+#endif /* INCLUDED_TABLEINFO_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

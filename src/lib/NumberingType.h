@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __NUMBERINGTYPE_H__
-#define __NUMBERINGTYPE_H__
+#ifndef INCLUDED_NUMBERINGTYPE_H
+#define INCLUDED_NUMBERINGTYPE_H
 
 namespace libmspub
 {
@@ -26,5 +26,5 @@ enum NumberingType
 };
 } // namespace libmspub
 
-#endif /* __NUMBERINGTYPE_H__ */
+#endif /* INCLUDED_NUMBERINGTYPE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

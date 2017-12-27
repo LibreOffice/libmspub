@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __SHADOW_H__
-#define __SHADOW_H__
+#ifndef INCLUDED_SHADOW_H
+#define INCLUDED_SHADOW_H
 
 #include "ColorReference.h"
 
@@ -48,5 +48,5 @@ struct Shadow
 bool needsEmulation(const Shadow &shadow);
 } // namespace libmspub
 
-#endif /* __SHADOW_H__ */
+#endif /* INCLUDED_SHADOW_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

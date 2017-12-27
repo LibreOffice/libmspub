@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __NUMBERINGDELIMITER_H__
-#define __NUMBERINGDELIMITER_H__
+#ifndef INCLUDED_NUMBERINGDELIMITER_H
+#define INCLUDED_NUMBERINGDELIMITER_H
 
 namespace libmspub
 {
@@ -26,5 +26,5 @@ enum NumberingDelimiter
 };
 } // namespace libmspub
 
-#endif /* __NUMBERINGDELIMITER_H__ */
+#endif /* INCLUDED_NUMBERINGDELIMITER_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

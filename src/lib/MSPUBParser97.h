@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBPARSER97_H__
-#define __MSPUBPARSER97_H__
+#ifndef INCLUDED_MSPUBPARSER97_H
+#define INCLUDED_MSPUBPARSER97_H
 
 #include "MSPUBParser2k.h"
 
@@ -63,6 +63,6 @@ public:
 };
 }
 
-#endif //  __MSPUBPARSER97_H__
+#endif //  INCLUDED_MSPUBPARSER97_H
 
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

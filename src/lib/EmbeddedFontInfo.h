@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __EMBEDDEDFONTINFO_H__
-#define __EMBEDDEDFONTINFO_H__
+#ifndef INCLUDED_EMBEDDEDFONTINFO_H
+#define INCLUDED_EMBEDDEDFONTINFO_H
 
 #include <librevenge/librevenge.h>
 
@@ -25,5 +25,5 @@ struct EmbeddedFontInfo
 };
 } // namespace libmspub
 
-#endif /* __EMBEDDEDFONTINFO_H__ */
+#endif /* INCLUDED_EMBEDDEDFONTINFO_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

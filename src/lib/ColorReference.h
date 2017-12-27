@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __COLORREFERENCE_H__
-#define __COLORREFERENCE_H__
+#ifndef INCLUDED_COLORREFERENCE_H
+#define INCLUDED_COLORREFERENCE_H
 
 #include "MSPUBTypes.h"
 
@@ -32,5 +32,5 @@ public:
 };
 }
 
-#endif /* __COLORREFERENCE_H__ */
+#endif /* INCLUDED_COLORREFERENCE_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

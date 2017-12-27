@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __BORDERARTINFO_H__
-#define __BORDERARTINFO_H__
+#ifndef INCLUDED_BORDERARTINFO_H
+#define INCLUDED_BORDERARTINFO_H
 
 #include <vector>
 #include <librevenge/librevenge.h>

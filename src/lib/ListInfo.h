@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __LISTINFO_H__
-#define __LISTINFO_H__
+#ifndef INCLUDED_LISTINFO_H
+#define INCLUDED_LISTINFO_H
 
 #include <boost/optional.hpp>
 
@@ -48,5 +48,5 @@ struct ListInfo
 };
 } // namespace libmspub
 
-#endif /* __LISTINFO_H__ */
+#endif /* INCLUDED_LISTINFO_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

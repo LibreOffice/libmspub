@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __LIBMSPUB_UTILS_H__
-#define __LIBMSPUB_UTILS_H__
+#ifndef INCLUDED_LIBMSPUB_UTILS_H
+#define INCLUDED_LIBMSPUB_UTILS_H
 
 #include <stdio.h>
 #include <vector>
@@ -127,5 +127,5 @@ librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData);
 
 } // namespace libmspub
 
-#endif // __LIBMSPUB_UTILS_H__
+#endif // INCLUDED_LIBMSPUB_UTILS_H
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

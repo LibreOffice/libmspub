@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __VECTORTRANSFORMATION2D_H__
-#define __VECTORTRANSFORMATION2D_H__
+#ifndef INCLUDED_VECTORTRANSFORMATION2D_H
+#define INCLUDED_VECTORTRANSFORMATION2D_H
 
 namespace libmspub
 {
@@ -42,5 +42,5 @@ public:
 VectorTransformation2D operator*(const VectorTransformation2D &l, const VectorTransformation2D &r);
 } // namespace libmspub
 
-#endif /* __VECTORTRANSFORMATION2D_H__ */
+#endif /* INCLUDED_VECTORTRANSFORMATION2D_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

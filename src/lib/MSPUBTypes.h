@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __MSPUBTYPES_H__
-#define __MSPUBTYPES_H__
+#ifndef INCLUDED_MSPUBTYPES_H
+#define INCLUDED_MSPUBTYPES_H
 
 #include <vector>
 #include <string>
@@ -191,5 +191,5 @@ enum ImgType
 
 } // namespace libmspub
 
-#endif /* __MSPUBTYPES_H__ */
+#endif /* INCLUDED_MSPUBTYPES_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

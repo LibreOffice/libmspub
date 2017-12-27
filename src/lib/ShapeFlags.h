@@ -26,8 +26,8 @@
  * instead of those above.
  */
 
-#ifndef __SHAPEFLAGS_H__
-#define __SHAPEFLAGS_H__
+#ifndef INCLUDED_SHAPEFLAGS_H
+#define INCLUDED_SHAPEFLAGS_H
 
 #define SF_GROUP       (1 << 0)
 #define SF_CHILD       (1 << 1)
@@ -42,5 +42,5 @@
 #define SF_BACKGROUND  (1 << 10)
 #define SF_HAVE_SPT    (1 << 11)
 
-#endif /* __SHAPEFLAGS_H__ */
+#endif /* INCLUDED_SHAPEFLAGS_H */
 /* vim:set shiftwidth=2 softtabstop=2 expandtab: */

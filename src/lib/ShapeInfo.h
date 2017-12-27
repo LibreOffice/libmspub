@@ -7,8 +7,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef __SHAPEINFO_H__
-#define __SHAPEINFO_H__
+#ifndef INCLUDED_SHAPEINFO_H
+#define INCLUDED_SHAPEINFO_H
 #include <boost/optional.hpp>
 #include <functional>
 #include <map>

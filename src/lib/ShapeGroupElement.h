@@ -25,8 +25,8 @@ class ShapeGroupElement
   std::weak_ptr<ShapeGroupElement> m_parent;
   std::vector<std::shared_ptr<ShapeGroupElement>> m_children;
   unsigned m_seqNum;
-  ShapeGroupElement &operator=(const ShapeGroupElement &); //not implemented
-  ShapeGroupElement(const ShapeGroupElement &); //not implemented
+  ShapeGroupElement &operator=(const ShapeGroupElement &) = delete;
+  ShapeGroupElement(const ShapeGroupElement &) = delete;
   VectorTransformation2D m_transform;
   ShapeGroupElement(const std::shared_ptr<ShapeGroupElement> &parent, unsigned seqNum);
 

@@ -90,6 +90,7 @@ AC_SUBST(ZLIB_LIBS)
 # Find required boost headers
 # ===========================
 AC_CHECK_HEADERS(
+	boost/cstdint.hpp \
 	boost/numeric/conversion/cast.hpp \
 	boost/optional.hpp \
 	,

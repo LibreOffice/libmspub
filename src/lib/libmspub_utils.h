@@ -10,47 +10,20 @@
 #ifndef INCLUDED_LIBMSPUB_UTILS_H
 #define INCLUDED_LIBMSPUB_UTILS_H
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <stdio.h>
 #include <vector>
 #include <map>
+
+#include <boost/cstdint.hpp>
+
 #include <librevenge/librevenge.h>
 #include <librevenge-stream/librevenge-stream.h>
 
 #include "MSPUBTypes.h"
-
-#ifdef _MSC_VER
-
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned uint32_t;
-typedef signed char int8_t;
-typedef short int16_t;
-typedef int int32_t;
-typedef unsigned __int64 uint64_t;
-
-#else
-
-#ifdef HAVE_CONFIG_H
-
-#include <config.h>
-
-#ifdef HAVE_STDINT_H
-#include <stdint.h>
-#endif
-
-#ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-#endif
-
-#else
-
-// assume that the headers are there inside LibreOffice build when no HAVE_CONFIG_H is defined
-#include <stdint.h>
-#include <inttypes.h>
-
-#endif
-
-#endif
 
 // debug message includes source file and line number
 //#define VERBOSE_DEBUG 1

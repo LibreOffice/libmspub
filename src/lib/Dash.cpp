@@ -49,6 +49,7 @@ Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthEmu,
   {
   default:
     MSPUB_DEBUG_MSG(("Couldn't match dash style, using solid line.\n"));
+    MSPUB_FALLTHROUGH;
   case MSPUB_DS_SOLID:
     return Dash(0, RECT_DOT);
   case DASH_SYS:

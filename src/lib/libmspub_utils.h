@@ -14,7 +14,6 @@
 #include "config.h"
 #endif
 
-#include <stdio.h>
 #include <vector>
 #include <map>
 

@@ -377,7 +377,7 @@ MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_paletteColors(), m_shapeSeqNumsOrdered(),
   m_pageSeqNumsByShapeSeqNum(), m_bgShapeSeqNumsByPageSeqNum(),
   m_skipIfNotBgSeqNums(),
-  m_currentShapeGroup(nullptr), m_topLevelShapes(),
+  m_currentShapeGroup(), m_topLevelShapes(),
   m_groupsBySeqNum(), m_embeddedFonts(),
   m_shapeInfosBySeqNum(), m_masterPages(),
   m_shapesWithCoordinatesRotated90(),

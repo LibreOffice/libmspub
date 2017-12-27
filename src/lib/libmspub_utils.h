@@ -14,6 +14,7 @@
 #include "config.h"
 #endif
 
+#include <cmath>
 #include <map>
 #include <vector>
 
@@ -24,6 +25,10 @@
 #include <librevenge-stream/librevenge-stream.h>
 
 #include "MSPUBTypes.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #if defined(HAVE_FUNC_ATTRIBUTE_FORMAT)
 #  define MSPUB_ATTRIBUTE_PRINTF(fmt, arg) __attribute__((__format__(__printf__, fmt, arg)))

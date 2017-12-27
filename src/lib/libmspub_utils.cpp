@@ -11,17 +11,12 @@
 
 #include <cstdarg>
 #include <cstring>
-#include <math.h>
 #include <string.h> // for memcpy
 
 #include <unicode/ucnv.h>
 #include <unicode/utypes.h>
 
 #include <zlib.h>
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
 
 #define ZLIB_CHUNK 16384
 

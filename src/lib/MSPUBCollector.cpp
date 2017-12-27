@@ -364,10 +364,6 @@ void MSPUBCollector::setNextPage(unsigned pageSeqNum)
   m_pageSeqNumsOrdered.push_back(pageSeqNum);
 }
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 MSPUBCollector::MSPUBCollector(librevenge::RVNGDrawingInterface *painter) :
   m_painter(painter), m_contentChunkReferences(), m_width(0), m_height(0),
   m_widthSet(false), m_heightSet(false),

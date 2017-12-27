@@ -19,10 +19,6 @@
 
 #define CALCULATED_VALUE(val) (int(unsigned(val) | 0x80000000))
 
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
 namespace libmspub
 {
 

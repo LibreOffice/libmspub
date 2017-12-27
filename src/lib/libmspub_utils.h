@@ -25,18 +25,10 @@
 
 #include "MSPUBTypes.h"
 
-// debug message includes source file and line number
-//#define VERBOSE_DEBUG 1
-
 // do nothing with debug messages in a release compile
 #ifdef DEBUG
-#ifdef VERBOSE_DEBUG
-#define MSPUB_DEBUG_MSG(M) printf("%15s:%5d: ", __FILE__, __LINE__); printf M
-#define MSPUB_DEBUG(M) M
-#else
 #define MSPUB_DEBUG_MSG(M) printf M
 #define MSPUB_DEBUG(M) M
-#endif
 #else
 #define MSPUB_DEBUG_MSG(M)
 #define MSPUB_DEBUG(M)

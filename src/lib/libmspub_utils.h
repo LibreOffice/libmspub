@@ -25,6 +25,14 @@
 
 #include "MSPUBTypes.h"
 
+#if defined(HAVE_CLANG_ATTRIBUTE_FALLTHROUGH)
+#  define MSPUB_FALLTHROUGH [[clang::fallthrough]]
+#elif defined(HAVE_GCC_ATTRIBUTE_FALLTHROUGH)
+#  define MSPUB_FALLTHROUGH __attribute__((fallthrough))
+#else
+#  define MSPUB_FALLTHROUGH ((void) 0)
+#endif
+
 // do nothing with debug messages in a release compile
 #ifdef DEBUG
 #define MSPUB_DEBUG_MSG(M) printf M

@@ -2448,7 +2448,7 @@ MSPUBBlockInfo MSPUBParser::parseBlock(librevenge::RVNGInputStream *input, bool 
     case 24:
       //FIXME: Not doing anything with this data for now.
       skipBlock(input, info);
-    // fall-through intended
+      MSPUB_FALLTHROUGH;
     default:
       info.data = 0;
     }

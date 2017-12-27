@@ -6335,7 +6335,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
         }
         hasUnclosedElements = false;
       }
-      //intentionally no break
+      MSPUB_FALLTHROUGH;
       case ENDSUBPATH:
         MSPUB_DEBUG_MSG(("ENDSUBPATH\n"));
         if (closeEverything && bool(pathBegin))

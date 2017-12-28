@@ -380,7 +380,7 @@ unsigned long getLength(librevenge::RVNGInputStream *const input)
 #define SURROGATE_VALUE(h,l) (((h) - 0xd800) * 0x400 + (l) - 0xdc00 + 0x10000)
 
 
-void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> characters,
+void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> &characters,
                       const char *encoding)
 {
   if (characters.empty())

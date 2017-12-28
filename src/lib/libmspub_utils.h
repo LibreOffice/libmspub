@@ -75,7 +75,7 @@ void readNBytes(librevenge::RVNGInputStream *input, unsigned long length, std::v
 
 unsigned long getLength(librevenge::RVNGInputStream *input);
 
-void appendCharacters(librevenge::RVNGString &text, std::vector<unsigned char> characters, const char *encoding);
+void appendCharacters(librevenge::RVNGString &text, const std::vector<unsigned char> &characters, const char *encoding);
 
 bool stillReading(librevenge::RVNGInputStream *input, unsigned long until);
 

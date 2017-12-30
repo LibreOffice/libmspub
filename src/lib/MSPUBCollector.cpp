@@ -720,7 +720,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   {
     if (info.m_clipPath.size() > 0)
     {
-      const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+      const Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
       double x, y, height, width;
       x = coord.getXIn(m_width);
       y = coord.getYIn(m_height);

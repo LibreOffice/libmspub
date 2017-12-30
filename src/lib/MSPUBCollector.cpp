@@ -1341,7 +1341,7 @@ double MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape 
   }
   if (arg == ASPECT_RATIO)
   {
-    const Coordinate &coord = info.m_coordinates.get_value_or(Coordinate());
+    const Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
     return (double)coord.getWidthIn() / coord.getHeightIn();
   }
   if (arg & OTHER_CALC_VAL)

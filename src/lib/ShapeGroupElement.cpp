@@ -52,7 +52,7 @@ void ShapeGroupElement::visit(std::function<
                               (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
                               > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
 {
-  const ShapeInfo &info = m_shapeInfo.get_value_or(ShapeInfo());
+  const ShapeInfo info = m_shapeInfo.get_value_or(ShapeInfo());
   Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
   double centerX = ((double)coord.m_xs + (double)coord.m_xe) / (2 * EMUS_IN_INCH);
   double centerY = ((double)coord.m_ys + (double)coord.m_ye) / (2 * EMUS_IN_INCH);

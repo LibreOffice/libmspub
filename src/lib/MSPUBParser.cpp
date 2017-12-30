@@ -1476,8 +1476,12 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
   {
     dTextSize = textSize1 * (double(POINTS_IN_INCH) / EMUS_IN_INCH);
   }
-  style.italic = seenItalic1 && seenItalic2;
-  style.bold = seenBold1 && seenBold2;
+  // FIXME: What's this with foo1 && foo2? I've only seen foo1 in 2k2
+  // files and either just foo1 or foo1+foo2 in 2k7 files...
+  style.italic = seenItalic1; // && seenItalic2;
+  style.bold = seenBold1; // && seenBold2;
+  (void) seenItalic2;
+  (void) seenBold2;
   style.textSizeInPt = dTextSize;
   style.colorIndex = getColorIndexByQuillEntry(colorIndex);
   style.fontIndex = fontIndex;

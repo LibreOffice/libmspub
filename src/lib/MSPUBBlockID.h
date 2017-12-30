@@ -37,6 +37,7 @@ enum MSPUBBlockID // Don't be alarmed by multiple elements with the same value; 
   UNDERLINE_ID = 0x1E,
   OUTLINE_ID = 0x4,
   SHADOW_ID = 0x5,
+  LOCALE_ID = 0x12,
   SMALL_CAPS_ID = 0x13,
   ALL_CAPS_ID = 0x14,
   EMBOSS_ID = 0x16,

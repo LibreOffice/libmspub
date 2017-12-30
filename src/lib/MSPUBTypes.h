@@ -121,6 +121,7 @@ struct CharacterStyle
     , emboss(false)
     , engrave(false)
     , textScale()
+    , lcid()
   {
   }
   boost::optional<Underline> underline;
@@ -137,6 +138,7 @@ struct CharacterStyle
   bool emboss;
   bool engrave;
   boost::optional<double> textScale;
+  boost::optional<unsigned> lcid;
 };
 
 enum LineSpacingType

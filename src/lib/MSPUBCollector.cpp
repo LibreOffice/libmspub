@@ -14,6 +14,7 @@
 #include <boost/multi_array.hpp>
 
 #include <unicode/ucsdet.h>
+#include <unicode/uloc.h>
 
 #include "Coordinate.h"
 #include "MSPUBConstants.h"
@@ -312,6 +313,25 @@ void fillUnderline(librevenge::RVNGPropertyList &props, const Underline underlin
     props.insert("style:text-underline-mode", "continuous");
     break;
   }
+}
+
+void fillLocale(librevenge::RVNGPropertyList &props, const unsigned lcid)
+{
+  char locale[ULOC_FULLNAME_CAPACITY];
+  UErrorCode status = U_ZERO_ERROR;
+  uloc_getLocaleForLCID(lcid, locale, ULOC_FULLNAME_CAPACITY, &status);
+  if (!U_SUCCESS(status))
+    return;
+  char component[ULOC_FULLNAME_CAPACITY];
+  int32_t len = uloc_getLanguage(locale, component, ULOC_FULLNAME_CAPACITY, &status);
+  if (U_SUCCESS(status) && len > 0)
+    props.insert("fo:language", component);
+  len = uloc_getCountry(locale, component, ULOC_FULLNAME_CAPACITY, &status);
+  if (U_SUCCESS(status) && len > 0)
+    props.insert("fo:country", component);
+  len = uloc_getScript(locale, component, ULOC_FULLNAME_CAPACITY, &status);
+  if (U_SUCCESS(status) && len > 0)
+    props.insert("fo:script", component);
 }
 
 } // anonymous namespace
@@ -1680,6 +1700,10 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
   default:
     break;
   }
+  if (style.lcid)
+    fillLocale(ret, get(style.lcid));
+  else if (defaultCharStyle.lcid)
+    fillLocale(ret, get(defaultCharStyle.lcid));
   return ret;
 }
 

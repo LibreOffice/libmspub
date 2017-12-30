@@ -1465,6 +1465,9 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
     case SCALING_ID:
       style.textScale = double(info.data) / 10;
       break;
+    case LOCALE_ID:
+      style.lcid = info.data;
+      break;
     default:
       break;
     }

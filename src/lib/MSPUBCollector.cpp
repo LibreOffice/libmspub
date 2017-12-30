@@ -238,6 +238,82 @@ void mapTableTextToCells(
   assert(paraToCellMap.size() <= tableCellTextEnds.size());
 }
 
+void fillUnderline(librevenge::RVNGPropertyList &props, const Underline underline)
+{
+  switch (underline)
+  {
+  case Underline::None:
+    return;
+  case Underline::Single:
+  case Underline::WordsOnly:
+  case Underline::Double:
+  case Underline::Thick:
+    props.insert("style:text-underline-style", "solid");
+    break;
+  case Underline::Dotted:
+  case Underline::ThickDot:
+    props.insert("style:text-underline-style", "dotted");
+    break;
+  case Underline::Dash:
+  case Underline::ThickDash:
+    props.insert("style:text-underline-style", "dash");
+    break;
+  case Underline::DotDash:
+  case Underline::ThickDotDash:
+    props.insert("style:text-underline-style", "dot-dash");
+    break;
+  case Underline::DotDotDash:
+  case Underline::ThickDotDotDash:
+    props.insert("style:text-underline-style", "dot-dot-dash");
+    break;
+  case Underline::Wave:
+  case Underline::ThickWave:
+  case Underline::DoubleWave:
+    props.insert("style:text-underline-style", "wave");
+    break;
+  case Underline::LongDash:
+  case Underline::ThickLongDash:
+    props.insert("style:text-underline-style", "long-dash");
+    break;
+  }
+
+  switch (underline)
+  {
+  case Underline::Double:
+  case Underline::DoubleWave:
+    props.insert("style:text-underline-type", "double");
+    break;
+  default:
+    props.insert("style:text-underline-type", "single");
+    break;
+  }
+
+  switch (underline)
+  {
+  case Underline::Thick:
+  case Underline::ThickWave:
+  case Underline::ThickDot:
+  case Underline::ThickDash:
+  case Underline::ThickDotDash:
+  case Underline::ThickDotDotDash:
+    props.insert("style:text-underline-width", "bold");
+    break;
+  default:
+    props.insert("style:text-underline-width", "auto");
+    break;
+  }
+
+  switch (underline)
+  {
+  case Underline::WordsOnly:
+    props.insert("style:text-underline-mode", "skip-white-space");
+    break;
+  default:
+    props.insert("style:text-underline-mode", "continuous");
+    break;
+  }
+}
+
 } // anonymous namespace
 
 void MSPUBCollector::collectMetaData(const librevenge::RVNGPropertyList &metaData)
@@ -1514,7 +1590,7 @@ librevenge::RVNGPropertyList MSPUBCollector::getParaStyleProps(const ParagraphSt
 
 librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterStyle &style, boost::optional<unsigned> defaultCharStyleIndex) const
 {
-  CharacterStyle _nothing = CharacterStyle(false, false, false);
+  CharacterStyle _nothing;
   if (!defaultCharStyleIndex)
   {
     defaultCharStyleIndex = 0;
@@ -1529,10 +1605,26 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
   {
     ret.insert("fo:font-weight", "bold");
   }
-  if (style.underline ^ defaultCharStyle.underline)
-  {
-    ret.insert("style:text-underline-type", "single");
-  }
+  if (style.outline ^ defaultCharStyle.outline)
+    ret.insert("style:text-outline", "true");
+  if (style.shadow ^ defaultCharStyle.shadow)
+    ret.insert("fo:text-shadow", "1pt 1pt");
+  if (style.smallCaps ^ defaultCharStyle.smallCaps)
+    ret.insert("fo:font-variant", "small-caps");
+  else if (style.allCaps ^ defaultCharStyle.allCaps)
+    ret.insert("fo:text-transform", "uppercase");
+  if (style.emboss ^ defaultCharStyle.emboss)
+    ret.insert("style:font-relief", "embossed");
+  else if (style.engrave ^ defaultCharStyle.engrave)
+    ret.insert("style:font-relief", "engraved");
+  if (style.underline)
+    fillUnderline(ret, get(style.underline));
+  else if (defaultCharStyle.underline)
+    fillUnderline(ret, get(defaultCharStyle.underline));
+  if (style.textScale)
+    ret.insert("fo:text-scale", get(style.textScale), librevenge::RVNG_PERCENT);
+  else if (defaultCharStyle.textScale)
+    ret.insert("fo:text-scale", get(defaultCharStyle.textScale), librevenge::RVNG_PERCENT);
   if (bool(style.textSizeInPt))
   {
     ret.insert("fo:font-size", style.textSizeInPt.get() / POINTS_IN_INCH);

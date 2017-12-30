@@ -197,27 +197,27 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
 CharacterStyle MSPUBParser97::readCharacterStyle(
   librevenge::RVNGInputStream *input, unsigned length)
 {
+  CharacterStyle style;
+
   unsigned begin = input->tell();
-  bool underline = false, italic = false, bold = false;
-  int colorIndex = -1;
-  unsigned fontIndex = 0;
   int textSizeVariationFromDefault = 0;
 
   if (length >= 1)
   {
     unsigned char biFlags = readU8(input);
-    bold = biFlags & 0x1;
-    italic = biFlags & 0x2;
+    style.bold = biFlags & 0x1;
+    style.italic = biFlags & 0x2;
   }
   if (length >= 3)
   {
     input->seek(begin + 0x2, librevenge::RVNG_SEEK_SET);
-    fontIndex = readU8(input);
+    style.fontIndex = readU8(input);
   }
   if (length >= 9)
   {
     input->seek(begin + 0x8, librevenge::RVNG_SEEK_SET);
-    underline = readU8(input) & 0x1;
+    if (readU8(input) & 0x1)
+      style.underline = Underline::Single;
   }
   if (length >= 5)
   {
@@ -228,12 +228,12 @@ CharacterStyle MSPUBParser97::readCharacterStyle(
   if (length >= 16)
   {
     input->seek(begin + 0xC, librevenge::RVNG_SEEK_SET);
-    colorIndex = getColorIndexByQuillEntry(readU32(input));
+    style.colorIndex = getColorIndexByQuillEntry(readU32(input));
   }
-  double textSizeInPt = 10 +
-                        static_cast<double>(textSizeVariationFromDefault) / 2;
-  return CharacterStyle(underline, italic, bold, textSizeInPt, colorIndex,
-                        fontIndex);
+  style.textSizeInPt = 10 +
+                       static_cast<double>(textSizeVariationFromDefault) / 2;
+
+  return style;
 }
 
 MSPUBParser97::TextInfo97 MSPUBParser97::getTextInfo(librevenge::RVNGInputStream *input, unsigned length)

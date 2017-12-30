@@ -45,6 +45,57 @@
 namespace libmspub
 {
 
+namespace
+{
+
+Underline readUnderline(const unsigned value)
+{
+  switch (value & 0xff)
+  {
+  case 0x0:
+    return Underline::None;
+  default:
+    MSPUB_DEBUG_MSG(("unknown underline type %u\n", value & 0xff));
+    MSPUB_FALLTHROUGH;
+  case 0x1:
+    return Underline::Single;
+  case 0x2:
+    return Underline::WordsOnly;
+  case 0x3:
+    return Underline::Double;
+  case 0x4:
+    return Underline::Dotted;
+  case 0x6:
+    return Underline::Thick;
+  case 0x7:
+    return Underline::Dash;
+  case 0x9:
+    return Underline::DotDash;
+  case 0xa:
+    return Underline::DotDotDash;
+  case 0xb:
+    return Underline::Wave;
+  case 0x10:
+    return Underline::ThickWave;
+  case 0x11:
+    return Underline::ThickDot;
+  case 0x12:
+    return Underline::ThickDash;
+  case 0x13:
+    return Underline::ThickDotDash;
+  case 0x14:
+    return Underline::ThickDotDotDash;
+  case 0x15:
+    return Underline::LongDash;
+  case 0x16:
+    return Underline::ThickLongDash;
+  case 0x17:
+    return Underline::DoubleWave;
+  }
+}
+
+}
+
 MSPUBParser::MSPUBParser(librevenge::RVNGInputStream *input, MSPUBCollector *collector)
   : m_input(input),
     m_length(boost::numeric_cast<unsigned>(getLength(input))),
@@ -1348,10 +1399,11 @@ ParagraphStyle MSPUBParser::getParagraphStyle(librevenge::RVNGInputStream *input
 
 CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input)
 {
-  bool seenUnderline = false, seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
+  CharacterStyle style;
+
+  bool seenBold1 = false, seenBold2 = false, seenItalic1 = false, seenItalic2 = false;
   int textSize1 = -1, /* textSize2 = -1,*/ colorIndex = -1;
   boost::optional<unsigned> fontIndex;
-  SuperSubType sst = NO_SUPER_SUB;
   unsigned offset = input->tell();
   unsigned len = readU32(input);
   while (stillReading(input, offset + len))
@@ -1372,7 +1424,7 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
       seenItalic2 = true;
       break;
     case UNDERLINE_ID:
-      seenUnderline = true;
+      style.underline = readUnderline(info.data);
       break;
     case TEXT_SIZE_1_ID:
       textSize1 = info.data;
@@ -1390,7 +1442,28 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
       fontIndex = getFontIndex(input, info);
       break;
     case SUPER_SUB_TYPE_ID:
-      sst = static_cast<SuperSubType>(info.data);
+      style.superSubType = static_cast<SuperSubType>(info.data);
+      break;
+    case OUTLINE_ID:
+      style.outline = true;
+      break;
+    case SHADOW_ID:
+      style.shadow = true;
+      break;
+    case SMALL_CAPS_ID:
+      style.smallCaps = true;
+      break;
+    case ALL_CAPS_ID:
+      style.allCaps = true;
+      break;
+    case EMBOSS_ID:
+      style.emboss = true;
+      break;
+    case ENGRAVE_ID:
+      style.engrave = true;
+      break;
+    case SCALING_ID:
+      style.textScale = double(info.data) / 10;
       break;
     default:
       break;
@@ -1403,7 +1476,13 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
   {
     dTextSize = textSize1 * (double(POINTS_IN_INCH) / EMUS_IN_INCH);
   }
-  return CharacterStyle(seenUnderline, seenItalic1 && seenItalic2, seenBold1 && seenBold2, dTextSize, getColorIndexByQuillEntry(colorIndex), fontIndex, sst);
+  style.italic = seenItalic1 && seenItalic2;
+  style.bold = seenBold1 && seenBold2;
+  style.textSizeInPt = dTextSize;
+  style.colorIndex = getColorIndexByQuillEntry(colorIndex);
+  style.fontIndex = fontIndex;
+
+  return style;
 }
 
 unsigned MSPUBParser::getFontIndex(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)

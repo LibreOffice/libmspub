@@ -37,6 +37,28 @@ enum SuperSubType
   SUBSCRIPT
 };
 
+enum class Underline
+{
+  None,
+  Single,
+  WordsOnly,
+  Double,
+  Dotted,
+  Thick,
+  Dash,
+  DotDash,
+  DotDotDash,
+  Wave,
+  ThickWave,
+  ThickDot,
+  ThickDash,
+  ThickDotDash,
+  ThickDotDotDash,
+  LongDash,
+  ThickLongDash,
+  DoubleWave,
+};
+
 enum Alignment
 {
   LEFT = 0,
@@ -92,21 +114,29 @@ struct CharacterStyle
   CharacterStyle() :
     underline(), italic(), bold(),
     textSizeInPt(), colorIndex(-1), fontIndex(), superSubType(NO_SUPER_SUB)
+    , outline(false)
+    , shadow(false)
+    , smallCaps(false)
+    , allCaps(false)
+    , emboss(false)
+    , engrave(false)
+    , textScale()
   {
   }
-  CharacterStyle(bool u, bool i, bool b,
-                 boost::optional<double> tSIP = boost::optional<double>(),
-                 int cI = -1,
-                 boost::optional<unsigned> fI = boost::optional<unsigned>(),
-                 SuperSubType sst = NO_SUPER_SUB) :
-    underline(u), italic(i), bold(b), textSizeInPt(tSIP), colorIndex(cI), fontIndex(fI), superSubType(sst) { }
-  bool underline;
+  boost::optional<Underline> underline;
   bool italic;
   bool bold;
   boost::optional<double> textSizeInPt;
   int colorIndex;
   boost::optional<unsigned> fontIndex;
   SuperSubType superSubType;
+  bool outline;
+  bool shadow;
+  bool smallCaps;
+  bool allCaps;
+  bool emboss;
+  bool engrave;
+  boost::optional<double> textScale;
 };
 
 enum LineSpacingType

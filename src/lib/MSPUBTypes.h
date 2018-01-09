@@ -77,9 +77,9 @@ struct EscherContainerInfo
 
 struct MSPUBBlockInfo
 {
-  MSPUBBlockInfo() : id((MSPUBBlockID)0), type((MSPUBBlockType)0), startPosition(0), dataOffset(0), dataLength(0), data(0), stringData() { }
-  MSPUBBlockID id;
-  MSPUBBlockType type;
+  MSPUBBlockInfo() : id(0), type(0), startPosition(0), dataOffset(0), dataLength(0), data(0), stringData() { }
+  unsigned id;
+  unsigned type;
   unsigned long startPosition;
   unsigned long dataOffset;
   unsigned long dataLength;
@@ -89,10 +89,10 @@ struct MSPUBBlockInfo
 
 struct ContentChunkReference
 {
-  ContentChunkReference() : type(UNKNOWN_CHUNK), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
-  ContentChunkReference(MSPUBContentChunkType t, unsigned long o, unsigned long e, unsigned sn, unsigned psn) :
+  ContentChunkReference() : type(0), offset(0), end(0), seqNum(0), parentSeqNum(0) { }
+  ContentChunkReference(unsigned t, unsigned long o, unsigned long e, unsigned sn, unsigned psn) :
     type(t), offset(o), end(e), seqNum(sn), parentSeqNum(psn) {}
-  MSPUBContentChunkType type;
+  unsigned type;
   unsigned long offset;
   unsigned long end; //offset of the last element plus one.
   unsigned seqNum;

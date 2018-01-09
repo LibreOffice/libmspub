@@ -2387,7 +2387,7 @@ bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input,
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
-  MSPUBContentChunkType type = UNKNOWN_CHUNK;
+  unsigned type = UNKNOWN_CHUNK;
   unsigned long offset = 0;
   unsigned parentSeqNum = 0;
   bool seenType = false;
@@ -2399,7 +2399,7 @@ bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input,
     //FIXME: Warn if multiple of these blocks seen.
     if (subBlock.id == CHUNK_TYPE)
     {
-      type = (MSPUBContentChunkType)subBlock.data;
+      type = subBlock.data;
       seenType = true;
     }
     else if (subBlock.id == CHUNK_OFFSET)
@@ -2498,8 +2498,8 @@ MSPUBBlockInfo MSPUBParser::parseBlock(librevenge::RVNGInputStream *input, bool 
 {
   MSPUBBlockInfo info;
   info.startPosition = input->tell();
-  info.id = (MSPUBBlockID)readU8(input);
-  info.type = (MSPUBBlockType)readU8(input);
+  info.id = readU8(input);
+  info.type = readU8(input);
   info.dataOffset = input->tell();
   int len = getBlockDataLength(info.type);
   bool varLen = len < 0;

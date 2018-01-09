@@ -819,7 +819,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)
   {
-    if (hasBorderArt)
+    if (hasBorderArt && lines[0].m_widthInEmu > 0)
     {
       bool stretch = info.m_stretchBorderArt;
       double x = coord.getXIn(m_width);

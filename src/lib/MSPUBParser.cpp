@@ -1952,7 +1952,11 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           {
             input->seek(cAnchor.contentsOffset, librevenge::RVNG_SEEK_SET);
             int coordSystemWidth = thisParentCoordinateSystem.m_xe - thisParentCoordinateSystem.m_xs;
+            if (coordSystemWidth == 0)
+              coordSystemWidth = 1;
             int coordSystemHeight = thisParentCoordinateSystem.m_ye - thisParentCoordinateSystem.m_ys;
+            if (coordSystemHeight == 0)
+              coordSystemHeight = 1;
             int groupWidth = parentGroupAbsoluteCoord.m_xe - parentGroupAbsoluteCoord.m_xs;
             int groupHeight = parentGroupAbsoluteCoord.m_ye - parentGroupAbsoluteCoord.m_ys;
             double widthScale = (double)groupWidth / coordSystemWidth;

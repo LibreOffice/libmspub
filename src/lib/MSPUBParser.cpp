@@ -2032,7 +2032,7 @@ std::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, uns
     const unsigned *ptr_fillOpacity = getIfExists_const(foptProperties, FIELDID_FILL_OPACITY);
     const unsigned *ptr_fillBackOpacity = getIfExists_const(foptProperties, FIELDID_FILL_BACK_OPACITY);
     const unsigned *ptr_fillFocus = getIfExists_const(foptProperties, FIELDID_FILL_FOCUS);
-    short fillFocus = ptr_fillFocus ? ((int)(*ptr_fillFocus) << 16) >> 16 : 0;
+    short fillFocus = ptr_fillFocus ? int((*ptr_fillFocus << 16) >> 16) : 0;
     angle = ptr_angle ? *ptr_angle : 0;
     angle >>= 16; //it's actually only 16 bits
     // Don't try to figure out what sense the following switch statement makes.

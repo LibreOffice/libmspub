@@ -1972,8 +1972,8 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           {
             int initialX = absolute.m_xs;
             int initialY = absolute.m_ys;
-            int initialWidth = absolute.m_xe - absolute.m_xs;
-            int initialHeight = absolute.m_ye - absolute.m_ys;
+            int initialWidth = int64_t(absolute.m_xe) - absolute.m_xs;
+            int initialHeight = int64_t(absolute.m_ye) - absolute.m_ys;
             int centerX = initialX + initialWidth / 2;
             int centerY = initialY + initialHeight / 2;
             int xs = centerX - initialHeight / 2;

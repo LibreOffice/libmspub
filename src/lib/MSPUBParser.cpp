@@ -1957,8 +1957,8 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
             int coordSystemHeight = thisParentCoordinateSystem.m_ye - thisParentCoordinateSystem.m_ys;
             if (coordSystemHeight == 0)
               coordSystemHeight = 1;
-            int groupWidth = parentGroupAbsoluteCoord.m_xe - parentGroupAbsoluteCoord.m_xs;
-            int groupHeight = parentGroupAbsoluteCoord.m_ye - parentGroupAbsoluteCoord.m_ys;
+            int groupWidth = int64_t(parentGroupAbsoluteCoord.m_xe) - parentGroupAbsoluteCoord.m_xs;
+            int groupHeight = int64_t(parentGroupAbsoluteCoord.m_ye) - parentGroupAbsoluteCoord.m_ys;
             double widthScale = (double)groupWidth / coordSystemWidth;
             double heightScale = (double)groupHeight / coordSystemHeight;
             int xs = (readU32(input) - thisParentCoordinateSystem.m_xs) * widthScale + parentGroupAbsoluteCoord.m_xs;

@@ -10,7 +10,6 @@
 #ifndef INCLUDED_FILL_H
 #define INCLUDED_FILL_H
 
-#include <cstddef>
 #include <vector>
 
 #include <librevenge/librevenge.h>

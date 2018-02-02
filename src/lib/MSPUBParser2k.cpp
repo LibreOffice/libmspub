@@ -10,11 +10,14 @@
 #include "MSPUBParser2k.h"
 
 #include <algorithm>
+#include <utility>
 #include <memory>
 
 #include <librevenge-stream/librevenge-stream.h>
 
 #include "ColorReference.h"
+#include "Fill.h"
+#include "Line.h"
 #include "MSPUBCollector.h"
 #include "ShapeType.h"
 #include "libmspub_utils.h"

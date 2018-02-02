@@ -10,6 +10,8 @@
 #ifndef INCLUDED_MSPUBPARSER97_H
 #define INCLUDED_MSPUBPARSER97_H
 
+#include <vector>
+
 #include "MSPUBParser2k.h"
 
 namespace libmspub

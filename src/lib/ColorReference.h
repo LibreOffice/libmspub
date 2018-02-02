@@ -10,6 +10,8 @@
 #ifndef INCLUDED_COLORREFERENCE_H
 #define INCLUDED_COLORREFERENCE_H
 
+#include <vector>
+
 #include "MSPUBTypes.h"
 
 namespace libmspub

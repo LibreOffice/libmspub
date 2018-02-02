@@ -8,6 +8,8 @@
  */
 
 #include "Dash.h"
+
+#include "MSPUBConstants.h"
 #include "libmspub_utils.h"
 
 namespace libmspub

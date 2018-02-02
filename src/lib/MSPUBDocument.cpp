@@ -7,12 +7,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <memory>
-#include <sstream>
-#include <string.h>
-#include <string>
-
 #include <libmspub/libmspub.h>
+
+#include <memory>
 
 #include "MSPUBCollector.h"
 #include "MSPUBParser.h"

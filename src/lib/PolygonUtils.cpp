@@ -9,12 +9,16 @@
 
 #include "PolygonUtils.h"
 
+#include <algorithm>
 #include <math.h>
 
 #include <librevenge/librevenge.h>
 
+#include "ColorReference.h"
+#include "Line.h"
 #include "MSPUBCollector.h"
 #include "ShapeType.h"
+#include "VectorTransformation2D.h"
 #include "libmspub_utils.h"
 
 #define CALCULATED_VALUE(val) (int(unsigned(val) | 0x80000000))

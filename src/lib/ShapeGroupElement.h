@@ -21,6 +21,9 @@
 
 namespace libmspub
 {
+
+struct Coordinate;
+
 class ShapeGroupElement
 {
   boost::optional<ShapeInfo> m_shapeInfo;

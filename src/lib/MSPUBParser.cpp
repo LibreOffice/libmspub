@@ -11,10 +11,10 @@
 
 #include <algorithm>
 #include <cassert>
+#include <list>
 #include <memory>
 #include <set>
 #include <sstream>
-#include <string.h>
 #include <string>
 #include <utility>
 
@@ -22,13 +22,15 @@
 
 #include <librevenge-stream/librevenge-stream.h>
 
-#include <zlib.h>
-
+#include "Arrow.h"
+#include "ColorReference.h"
+#include "Coordinate.h"
 #include "Dash.h"
 #include "EscherContainerType.h"
 #include "EscherFieldIds.h"
 #include "Fill.h"
 #include "FillType.h"
+#include "Line.h"
 #include "ListInfo.h"
 #include "MSPUBBlockID.h"
 #include "MSPUBBlockType.h"
@@ -36,6 +38,7 @@
 #include "MSPUBConstants.h"
 #include "MSPUBContentChunkType.h"
 #include "MSPUBMetaData.h"
+#include "Shadow.h"
 #include "ShapeFlags.h"
 #include "ShapeType.h"
 #include "TableInfo.h"

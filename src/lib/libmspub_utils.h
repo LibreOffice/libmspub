@@ -15,7 +15,6 @@
 #endif
 
 #include <cmath>
-#include <map>
 #include <vector>
 
 #include <boost/cstdint.hpp>

@@ -20,14 +20,17 @@
 
 #include <librevenge/librevenge.h>
 
-#include "Coordinate.h"
-#include "Fill.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
 
 namespace libmspub
 {
+
+class Fill;
 class MSPUBCollector;
+
+struct Coordinate;
+
 class FindBySeqNum
 {
   unsigned seqNum;

@@ -9,6 +9,11 @@
 
 #include "ShapeGroupElement.h"
 
+#include <algorithm>
+
+#include "Coordinate.h"
+#include "MSPUBConstants.h"
+
 namespace libmspub
 {
 

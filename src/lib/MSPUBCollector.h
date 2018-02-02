@@ -10,36 +10,37 @@
 #ifndef INCLUDED_MSPUBCOLLECTOR_H
 #define INCLUDED_MSPUBCOLLECTOR_H
 
-#include <algorithm>
-#include <functional>
 #include <list>
 #include <map>
-#include <memory>
 #include <set>
-#include <string>
+#include <utility>
 #include <vector>
 
 #include <librevenge/librevenge.h>
 
-#include "Arrow.h"
 #include "BorderArtInfo.h"
 #include "ColorReference.h"
-#include "Coordinate.h"
-#include "Dash.h"
 #include "EmbeddedFontInfo.h"
-#include "Fill.h"
-#include "MSPUBContentChunkType.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
-#include "Shadow.h"
-#include "ShapeGroupElement.h"
 #include "ShapeInfo.h"
 #include "ShapeType.h"
 #include "VerticalAlign.h"
-#include "libmspub_utils.h"
 
 namespace libmspub
 {
+
+class Fill;
+class ShapeGroupElement;
+class VectorTransformation2D;
+
+struct Arrow;
+struct Coordinate;
+struct Dash;
+struct Line;
+struct Shadow;
+struct TableInfo;
+
 class MSPUBCollector
 {
   friend class Fill;
@@ -200,6 +201,7 @@ private:
 public:
   static librevenge::RVNGString getColorString(const Color &);
 };
+
 } // namespace libmspub
 
 #endif /* INCLUDED_MSPUBCOLLECTOR_H */

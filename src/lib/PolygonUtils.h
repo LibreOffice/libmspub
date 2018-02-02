@@ -17,9 +17,7 @@
 #include <librevenge/librevenge.h>
 
 #include "Coordinate.h"
-#include "Line.h"
 #include "ShapeType.h"
-#include "VectorTransformation2D.h"
 
 namespace libmspub
 {
@@ -33,7 +31,10 @@ const int PROP_GEO_BOTTOM       = 323;
 const int OTHER_CALC_VAL        = 0x400;
 const int ASPECT_RATIO          = 0x600;
 
-class MSPUBCollector;
+class VectorTransformation2D;
+
+struct Color;
+struct Line;
 
 typedef struct
 {

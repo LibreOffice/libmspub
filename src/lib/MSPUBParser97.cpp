@@ -9,9 +9,10 @@
 
 #include "MSPUBParser97.h"
 
+#include <algorithm>
 #include <limits>
+#include <map>
 #include <memory>
-#include <utility>
 
 #include "MSPUBCollector.h"
 #include "MSPUBTypes.h"

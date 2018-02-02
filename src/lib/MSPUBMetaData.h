@@ -18,8 +18,6 @@
 
 #include <librevenge-stream/librevenge-stream.h>
 
-#include "libmspub_utils.h"
-
 namespace libmspub
 {
 

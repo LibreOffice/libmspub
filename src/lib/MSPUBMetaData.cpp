@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <string>
 
 #include "libmspub_utils.h"
 

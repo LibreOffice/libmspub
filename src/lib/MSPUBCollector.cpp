@@ -9,17 +9,29 @@
 
 #include "MSPUBCollector.h"
 
+#include <algorithm>
+#include <functional>
 #include <math.h>
+#include <memory>
 
 #include <boost/multi_array.hpp>
 
 #include <unicode/ucsdet.h>
 #include <unicode/uloc.h>
 
+#include "Arrow.h"
 #include "Coordinate.h"
+#include "Dash.h"
+#include "Fill.h"
+#include "Line.h"
+#include "Margins.h"
 #include "MSPUBConstants.h"
 #include "MSPUBTypes.h"
 #include "PolygonUtils.h"
+#include "Shadow.h"
+#include "ShapeGroupElement.h"
+#include "TableInfo.h"
+#include "VectorTransformation2D.h"
 #include "libmspub_utils.h"
 
 namespace libmspub

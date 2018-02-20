@@ -1954,7 +1954,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           else if (cAnchor.type == OFFICE_ART_CHILD_ANCHOR)
           {
             input->seek(cAnchor.contentsOffset, librevenge::RVNG_SEEK_SET);
-            int coordSystemWidth = thisParentCoordinateSystem.m_xe - thisParentCoordinateSystem.m_xs;
+            int coordSystemWidth = int64_t(thisParentCoordinateSystem.m_xe) - thisParentCoordinateSystem.m_xs;
             if (coordSystemWidth == 0)
               coordSystemWidth = 1;
             int coordSystemHeight = thisParentCoordinateSystem.m_ye - thisParentCoordinateSystem.m_ys;

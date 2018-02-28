@@ -558,9 +558,7 @@ bool MSPUBCollector::endGroup()
   {
     return false;
   }
-  auto parent = m_currentShapeGroup->getParent();
-  if (parent)
-    m_currentShapeGroup = parent;
+  m_currentShapeGroup = m_currentShapeGroup->getParent();
   return true;
 }
 

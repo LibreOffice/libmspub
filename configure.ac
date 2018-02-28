@@ -7,7 +7,7 @@ AC_PREREQ([2.65])
 # ====================
 m4_define([libmspub_version_major],[0])
 m4_define([libmspub_version_minor],[1])
-m4_define([libmspub_version_micro],[4])
+m4_define([libmspub_version_micro],[5])
 m4_define([libmspub_version],[libmspub_version_major.libmspub_version_minor.libmspub_version_micro])
 
 # =============

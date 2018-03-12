@@ -16,6 +16,7 @@ libmspub_@MSPUB_MAJOR_VERSION@_@MSPUB_MINOR_VERSION@_la_SOURCES = \
 	BorderArtInfo.h \
 	ColorReference.cpp \
 	ColorReference.h \
+	Coordinate.cpp \
 	Coordinate.h \
 	Dash.cpp \
 	Dash.h \

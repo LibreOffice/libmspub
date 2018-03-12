@@ -10,14 +10,17 @@
 #ifndef INCLUDED_COORDINATE_H
 #define INCLUDED_COORDINATE_H
 
+#include <boost/cstdint.hpp>
+
 #include "MSPUBConstants.h"
 
 namespace libmspub
 {
 struct Coordinate
 {
-  Coordinate(int xs, int ys, int xe, int ye) : m_xs(xs), m_ys(ys), m_xe(xe), m_ye(ye) { }
+  Coordinate(int xs, int ys, int xe, int ye);
   Coordinate() : m_xs(0), m_ys(0), m_xe(0), m_ye(0) { }
+  void arrange();
   int m_xs, m_ys, m_xe, m_ye;
   double getXIn(double pageWidth) const
   {

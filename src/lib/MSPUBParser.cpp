@@ -1622,6 +1622,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
     parentCoordinateSystem.m_ys = readU32(input);
     parentCoordinateSystem.m_xe = readU32(input);
     parentCoordinateSystem.m_ye = readU32(input);
+    parentCoordinateSystem.arrange();
     definesRelativeCoordinates = true;
   }
   input->seek(sp.contentsOffset, librevenge::RVNG_SEEK_SET);

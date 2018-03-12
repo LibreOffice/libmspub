@@ -459,10 +459,14 @@ Coordinate getFudgedCoordinates(Coordinate coord, const std::vector<Line> &lines
   }
   else
   {
-    fudged.m_xs += leftFudge;
-    fudged.m_xe -= rightFudge;
-    fudged.m_ys += topFudge;
-    fudged.m_ye -= bottomFudge;
+    if (unsigned(fudged.m_xe - fudged.m_xs) > leftFudge)
+      fudged.m_xs += leftFudge;
+    if (unsigned(fudged.m_xe - fudged.m_xs) > rightFudge)
+      fudged.m_xe -= rightFudge;
+    if (unsigned(fudged.m_ye - fudged.m_ys) > topFudge)
+      fudged.m_ys += topFudge;
+    if (unsigned(fudged.m_ye - fudged.m_ys) > bottomFudge)
+      fudged.m_ye -= bottomFudge;
   }
   return fudged;
 }

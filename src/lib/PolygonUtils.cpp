@@ -5680,23 +5680,6 @@ double getSpecialIfNecessary(std::function<double(unsigned index)> calculator, i
   return special ? calculator(val ^ 0x80000000) : val;
 }
 
-Coordinate CustomShape::getTextRectangle(double x, double y, double width, double height, std::function<double(unsigned index)> calculator) const
-{
-  double scaleX = width * m_coordWidth;
-  double scaleY = height * m_coordHeight;
-  if (m_numTextRectangles == 0)
-  {
-    return Coordinate(x, y, x + width, y + height);
-  }
-  const Vertex &start = mp_textRectangles[0].first;
-  const Vertex &end = mp_textRectangles[0].second;
-  double startX = x + scaleX * getSpecialIfNecessary(calculator, start.m_x);
-  double startY = y + scaleY * getSpecialIfNecessary(calculator, start.m_y);
-  double endX = x + scaleX * getSpecialIfNecessary(calculator, end.m_x);
-  double endY = y + scaleY * getSpecialIfNecessary(calculator, end.m_y);
-  return Coordinate(startX, startY, endX, endY);
-}
-
 namespace
 {
 

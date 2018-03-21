@@ -5786,6 +5786,10 @@ void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeT
       }
     }
   }
+
+  if (lineInfos.empty())
+    return;
+
   if (rectangle)
   {
     LineInfo *top = &lineInfos[0];

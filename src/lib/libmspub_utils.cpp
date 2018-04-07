@@ -29,7 +29,7 @@ void debugPrint(const char *const format, ...)
 {
   va_list args;
   va_start(args, format);
-  std::vfprintf(stderr, format, args);
+  vfprintf(stderr, format, args);
   va_end(args);
 }
 

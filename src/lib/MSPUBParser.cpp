@@ -776,7 +776,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
         return false;
       }
       boost::optional<unsigned> index;
-      for (unsigned i = 0; i < m_cellsChunkIndices.size(); ++i)
+      for (size_t i = 0; i < m_cellsChunkIndices.size(); ++i)
       {
         if (m_contentChunks[m_cellsChunkIndices[i]].seqNum == csn)
         {

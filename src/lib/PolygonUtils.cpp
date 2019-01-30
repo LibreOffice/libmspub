@@ -5879,7 +5879,7 @@ librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, doub
   librevenge::RVNGString sValue;
   sValue.sprintf("M %f %f", (double)vector.m_x, (double)vector.m_y);
   clipString.append(sValue);
-  for (unsigned i = 1; i < verts.size(); ++i)
+  for (size_t i = 1; i < verts.size(); ++i)
   {
     Vector2D vector2(x + scaleX * verts[i].m_x, y + scaleY * verts[i].m_y);
     vector2 = transform.transformWithOrigin(vector2, center);

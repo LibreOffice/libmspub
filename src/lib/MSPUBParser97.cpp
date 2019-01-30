@@ -87,7 +87,7 @@ void MSPUBParser97::parseContentsTextIfNecessary(librevenge::RVNGInputStream *in
   unsigned iParaEnd = 0, iSpanEnd = 0;
   unsigned currentParaIndex = 0;
   unsigned currentSpanIndex = 0;
-  for (unsigned iShapeEnd = 0; iShapeEnd < textInfo.m_shapeEnds.size(); ++iShapeEnd)
+  for (size_t iShapeEnd = 0; iShapeEnd < textInfo.m_shapeEnds.size(); ++iShapeEnd)
   {
     unsigned shapeEnd = std::min<unsigned>(textInfo.m_shapeEnds[iShapeEnd], textInfo.m_chars.size());
     std::vector<TextParagraph> shapeParas;
@@ -168,7 +168,7 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
       spanEnds.push_back(readU32(input) - start);
     }
     std::vector<unsigned char> spanStyleIndices;
-    for (unsigned j = 0; j < spanEnds.size(); ++j)
+    for (size_t j = 0; j < spanEnds.size(); ++j)
     {
       spanStyleIndices.push_back(readU8(input));
     }
@@ -186,7 +186,7 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
       stylesByIndex[index] = readCharacterStyle(input, length);
       input->seek(nextOffset, librevenge::RVNG_SEEK_SET);
     }
-    for (unsigned j = 0; j < spanEnds.size(); ++j)
+    for (size_t j = 0; j < spanEnds.size(); ++j)
     {
       ret.push_back(SpanInfo97(spanEnds[j], j < spanStyleIndices.size() ?
                                stylesByIndex[spanStyleIndices[j]] : CharacterStyle()));

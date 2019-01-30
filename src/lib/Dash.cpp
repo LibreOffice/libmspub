@@ -32,7 +32,7 @@ bool operator==(const Dash &lhs, const Dash &rhs)
   {
     return false;
   }
-  for (unsigned i = 0; i < lhs.m_dots.size(); ++i)
+  for (size_t i = 0; i < lhs.m_dots.size(); ++i)
   {
     if (lhs.m_dots[i] != rhs.m_dots[i])
     {

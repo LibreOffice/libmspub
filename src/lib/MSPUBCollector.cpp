@@ -1067,15 +1067,15 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
         default:
           break;
         }
-        for (unsigned i = 0; i < dash.m_dots.size(); ++i)
+        for (size_t i = 0; i < dash.m_dots.size(); ++i)
         {
           librevenge::RVNGString dots;
-          dots.sprintf("draw:dots%d", i + 1);
+          dots.sprintf("draw:dots%ld", i + 1);
           graphicsProps.insert(dots.cstr(), static_cast<int>(dash.m_dots[i].m_count));
           if (bool(dash.m_dots[i].m_length))
           {
             librevenge::RVNGString length;
-            length.sprintf("draw:dots%d-length", i + 1);
+            length.sprintf("draw:dots%ld-length", i + 1);
             graphicsProps.insert(length.cstr(), dash.m_dots[i].m_length.get(), librevenge::RVNG_INCH);
           }
         }
@@ -1165,7 +1165,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
                 librevenge::RVNGPropertyList paraProps = getParaStyleProps(text[para].style, text[para].style.m_defaultCharStyleIndex);
                 m_painter->openParagraph(paraProps);
 
-                for (unsigned i_spans = 0; i_spans < paraTexts[para].size(); ++i_spans)
+                for (size_t i_spans = 0; i_spans < paraTexts[para].size(); ++i_spans)
                 {
                   librevenge::RVNGPropertyList charProps = getCharStyleProps(text[para].spans[i_spans].style, text[para].style.m_defaultCharStyleIndex);
                   m_painter->openSpan(charProps);
@@ -1226,7 +1226,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
       {
         librevenge::RVNGPropertyList paraProps = getParaStyleProps(line.style, line.style.m_defaultCharStyleIndex);
         m_painter->openParagraph(paraProps);
-        for (unsigned i_spans = 0; i_spans < line.spans.size(); ++i_spans)
+        for (size_t i_spans = 0; i_spans < line.spans.size(); ++i_spans)
         {
           librevenge::RVNGString textString;
           appendCharacters(textString, line.spans[i_spans].chars,
@@ -1893,7 +1893,7 @@ void MSPUBCollector::ponderStringEncoding(
 {
   for (const auto &i : str)
   {
-    for (unsigned j = 0; j < i.spans.size(); ++j)
+    for (size_t j = 0; j < i.spans.size(); ++j)
     {
       const std::vector<unsigned char> &chars = i.spans[j].chars;
       m_allText.insert(m_allText.end(), chars.begin(), chars.end());

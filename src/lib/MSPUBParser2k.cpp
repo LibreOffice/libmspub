@@ -617,7 +617,7 @@ bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqN
 void MSPUBParser2k::assignShapeImgIndex(unsigned seqNum)
 {
   int i_dataIndex = -1;
-  for (unsigned j = 0; j < m_imageDataChunkIndices.size(); ++j)
+  for (size_t j = 0; j < m_imageDataChunkIndices.size(); ++j)
   {
     if (m_contentChunks.at(m_imageDataChunkIndices[j]).parentSeqNum == seqNum)
     {

@@ -10,10 +10,10 @@
 #ifndef INCLUDED_MSPUBMETADATA_H
 #define INCLUDED_MSPUBMETADATA_H
 
+#include <cstdint>
 #include <map>
 #include <utility>
 #include <vector>
-#include <stdint.h>
 
 #include <librevenge/librevenge.h>
 

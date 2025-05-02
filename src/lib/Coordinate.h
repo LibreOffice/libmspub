@@ -10,6 +10,8 @@
 #ifndef INCLUDED_COORDINATE_H
 #define INCLUDED_COORDINATE_H
 
+#include <cstdint>
+
 #include <boost/cstdint.hpp>
 
 #include "MSPUBConstants.h"

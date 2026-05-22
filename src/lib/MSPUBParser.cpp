@@ -2079,6 +2079,9 @@ std::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, uns
       {
         unsigned short numEntries = gradientData[0] | (gradientData[1] << 8);
         unsigned offs = 6;
+        const unsigned maxEntries = (gradientData.size() - offs) / 8;
+        if (numEntries > maxEntries)
+          numEntries = maxEntries;
         for (unsigned i = 0; i < numEntries; ++i)
         {
           unsigned color = gradientData[offs] | (unsigned(gradientData[offs + 1]) << 8) | (unsigned(gradientData[offs + 2]) << 16) | (unsigned(gradientData[offs + 3]) << 24);

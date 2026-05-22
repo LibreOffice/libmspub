@@ -51,6 +51,12 @@ namespace libmspub
 namespace
 {
 
+// Well above the ~12 ceiling LibreOffice's PowerPoint Escher exporter
+// applies (sd/source/filter/eppt/escherex.cxx
+// PptEscherEx::CloseContainer notes PPT itself struggles past 16), well
+// below any stack-overflow risk.
+constexpr unsigned MAX_SHAPE_GROUP_DEPTH = 100;
+
 Underline readUnderline(const unsigned value)
 {
   switch (value & 0xff)
@@ -1579,8 +1585,10 @@ bool MSPUBParser::parseEscher(librevenge::RVNGInputStream *input)
   return true;
 }
 
-void MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord)
+void MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord, unsigned depth)
 {
+  if (depth > MAX_SHAPE_GROUP_DEPTH)
+    return;
   EscherContainerInfo shapeOrGroup;
   std::set<unsigned short> types;
   types.insert(OFFICE_ART_SPGR_CONTAINER);
@@ -1591,7 +1599,7 @@ void MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const Esch
     {
     case OFFICE_ART_SPGR_CONTAINER:
       m_collector->beginGroup();
-      parseShapeGroup(input, shapeOrGroup, parentCoordinateSystem, parentGroupAbsoluteCoord);
+      parseShapeGroup(input, shapeOrGroup, parentCoordinateSystem, parentGroupAbsoluteCoord, depth + 1);
       m_collector->endGroup();
       break;
     case OFFICE_ART_SP_CONTAINER:

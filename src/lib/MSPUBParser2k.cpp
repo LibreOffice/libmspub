@@ -28,6 +28,9 @@ namespace libmspub
 namespace
 {
 
+// Matches the parseShapeGroup cap in MSPUBParser.cpp; see comment there.
+constexpr unsigned MAX_SHAPE_GROUP_DEPTH = 100;
+
 class ChunkNestingGuard
 {
 public:
@@ -511,6 +514,8 @@ bool MSPUBParser2k::parse2kShapeChunk(const ContentChunkReference &chunk, librev
     MSPUB_DEBUG_MSG(("chunk %u is nested in itself", chunk.seqNum));
     return false;
   }
+  if (m_chunksBeingRead.size() >= MAX_SHAPE_GROUP_DEPTH)
+    return false;
   const ChunkNestingGuard guard(m_chunksBeingRead, chunk.seqNum);
 
   unsigned page = pageSeqNum.get_value_or(chunk.parentSeqNum);

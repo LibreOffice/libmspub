@@ -57,6 +57,24 @@ namespace
 // below any stack-overflow risk.
 constexpr unsigned MAX_SHAPE_GROUP_DEPTH = 100;
 
+Alignment readAlignment(const unsigned value)
+{
+  switch (value & 0xff)
+  {
+  case CENTER:
+    return CENTER;
+  case RIGHT:
+    return RIGHT;
+  case JUSTIFY:
+    return JUSTIFY;
+  default:
+    MSPUB_DEBUG_MSG(("unknown alignment %u\n", value & 0xff));
+    MSPUB_FALLTHROUGH;
+  case LEFT:
+    return LEFT;
+  }
+}
+
 Underline readUnderline(const unsigned value)
 {
   switch (value & 0xff)
@@ -1294,7 +1312,7 @@ ParagraphStyle MSPUBParser::getParagraphStyle(librevenge::RVNGInputStream *input
     switch (info.id)
     {
     case PARAGRAPH_ALIGNMENT:
-      ret.m_align = (Alignment)(info.data & 0xFF); // Is this correct?
+      ret.m_align = readAlignment(info.data); // Is this correct?
       break;
     case PARAGRAPH_DEFAULT_CHAR_STYLE:
       ret.m_defaultCharStyleIndex = info.data;

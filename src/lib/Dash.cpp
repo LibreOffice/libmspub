@@ -42,7 +42,7 @@ bool operator==(const Dash &lhs, const Dash &rhs)
   return true;
 }
 
-Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthEmu,
+Dash getDash(unsigned style, unsigned shapeLineWidthEmu,
              DotStyle dotStyle)
 {
   double shapeLineWidth = static_cast<double>(shapeLineWidthEmu) /

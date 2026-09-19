@@ -1871,7 +1871,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           if (ptr_lineDashing)
           {
             m_collector->setShapeDash(*shapeSeqNum, getDash(
-                                        static_cast<MSPUBDashStyle>(*ptr_lineDashing), lineWidth,
+                                        *ptr_lineDashing, lineWidth,
                                         dotStyle));
           }
 

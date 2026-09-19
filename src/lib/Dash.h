@@ -59,7 +59,7 @@ struct Dash
 bool operator!=(const Dot &lhs, const Dot &rhs);
 bool operator==(const Dot &lhs, const Dot &rhs);
 bool operator==(const Dash &lhs, const Dash &rhs);
-Dash getDash(MSPUBDashStyle style, unsigned shapeLineWidthInEmu,
+Dash getDash(unsigned style, unsigned shapeLineWidthInEmu,
              DotStyle dotStyle);
 } // namespace libmspub
 

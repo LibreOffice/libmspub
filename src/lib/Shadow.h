@@ -25,7 +25,7 @@ enum ShadowType
 };
 struct Shadow
 {
-  ShadowType m_type;
+  unsigned m_type;
   int m_offsetXInEmu;
   int m_offsetYInEmu;
   int m_SecondOffsetXInEmu;
@@ -35,7 +35,7 @@ struct Shadow
   double m_opacity;
   ColorReference m_color;
   ColorReference m_highColor;
-  Shadow(ShadowType type, int offsetXInEmu, int offsetYInEmu, int secondOffsetXInEmu, int secondOffsetYInEmu,
+  Shadow(unsigned type, int offsetXInEmu, int offsetYInEmu, int secondOffsetXInEmu, int secondOffsetYInEmu,
          double originXInEmu, double originYInEmu, double opacity,
          ColorReference color, ColorReference colorH)
     : m_type(type), m_offsetXInEmu(offsetXInEmu), m_offsetYInEmu(offsetYInEmu),

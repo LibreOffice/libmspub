@@ -57,6 +57,56 @@ namespace
 // below any stack-overflow risk.
 constexpr unsigned MAX_SHAPE_GROUP_DEPTH = 100;
 
+ArrowStyle readArrowStyle(const unsigned value)
+{
+  if (value > LINE_ARROW)
+  {
+    MSPUB_DEBUG_MSG(("unknown arrow style %u\n", value));
+    return NO_ARROW;
+  }
+  return ArrowStyle(value);
+}
+
+ArrowSize readArrowSize(const unsigned value)
+{
+  if (value > LARGE)
+  {
+    MSPUB_DEBUG_MSG(("unknown arrow size %u\n", value));
+    return MEDIUM;
+  }
+  return ArrowSize(value);
+}
+
+VerticalAlign readVerticalAlign(const unsigned value)
+{
+  if (value > BOTTOM)
+  {
+    MSPUB_DEBUG_MSG(("unknown vertical alignment %u\n", value));
+    return TOP;
+  }
+  return VerticalAlign(value);
+}
+
+SuperSubType readSuperSubType(const unsigned value)
+{
+  if (value > SUBSCRIPT)
+  {
+    MSPUB_DEBUG_MSG(("unknown super or subscript type %u\n", value));
+    return NO_SUPER_SUB;
+  }
+  return SuperSubType(value);
+}
+
+NumberingType readNumberingType(const unsigned value)
+{
+  if ((value > SPELLED_ORDINALS) && (value != STANDARD_WESTERN_AT_LEAST_TWO_DIGITS))
+  {
+    MSPUB_DEBUG_MSG(("unknown numbering type %u\n", value));
+    return STANDARD_WESTERN;
+  }
+  return NumberingType(value);
+}
+
 Alignment readAlignment(const unsigned value)
 {
   switch (value & 0xff)
@@ -923,7 +973,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       else if (info.id == SHAPE_VALIGN)
       {
         m_collector->setShapeVerticalTextAlign(chunk.seqNum,
-                                               static_cast<VerticalAlign>(info.data));
+                                               readVerticalAlign(info.data));
       }
       else if (info.id == SHAPE_CROP && info.data != 0)
       {
@@ -1384,7 +1434,7 @@ ParagraphStyle MSPUBParser::getParagraphStyle(librevenge::RVNGInputStream *input
         switch (listSubInfo.id)
         {
         case PARAGRAPH_LIST_NUMBERING_TYPE:
-          numberingType = static_cast<NumberingType>(info.data);
+          numberingType = readNumberingType(info.data);
           break;
         case PARAGRAPH_LIST_BULLET_CHAR:
           bulletChar = info.data;
@@ -1469,7 +1519,7 @@ CharacterStyle MSPUBParser::getCharacterStyle(librevenge::RVNGInputStream *input
       fontIndex = getFontIndex(input, info);
       break;
     case SUPER_SUB_TYPE_ID:
-      style.superSubType = static_cast<SuperSubType>(info.data);
+      style.superSubType = readSuperSubType(info.data);
       break;
     case OUTLINE_ID:
       style.outline = true;
@@ -1896,11 +1946,11 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           unsigned *ptr_beginArrowHeight = getIfExists(foptValues.m_scalarValues,
                                                        FIELDID_BEGIN_ARROW_HEIGHT);
           m_collector->setShapeBeginArrow(*shapeSeqNum, Arrow(
-                                            ptr_beginArrowStyle ? (ArrowStyle)(*ptr_beginArrowStyle) :
+                                            ptr_beginArrowStyle ? readArrowStyle(*ptr_beginArrowStyle) :
                                             NO_ARROW,
-                                            ptr_beginArrowWidth ? (ArrowSize)(*ptr_beginArrowWidth) :
+                                            ptr_beginArrowWidth ? readArrowSize(*ptr_beginArrowWidth) :
                                             MEDIUM,
-                                            ptr_beginArrowHeight ? (ArrowSize)(*ptr_beginArrowHeight) :
+                                            ptr_beginArrowHeight ? readArrowSize(*ptr_beginArrowHeight) :
                                             MEDIUM));
           unsigned *ptr_endArrowStyle = getIfExists(foptValues.m_scalarValues,
                                                     FIELDID_END_ARROW_STYLE);
@@ -1909,11 +1959,11 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           unsigned *ptr_endArrowHeight = getIfExists(foptValues.m_scalarValues,
                                                      FIELDID_END_ARROW_HEIGHT);
           m_collector->setShapeEndArrow(*shapeSeqNum, Arrow(
-                                          ptr_endArrowStyle ? (ArrowStyle)(*ptr_endArrowStyle) :
+                                          ptr_endArrowStyle ? readArrowStyle(*ptr_endArrowStyle) :
                                           NO_ARROW,
-                                          ptr_endArrowWidth ? (ArrowSize)(*ptr_endArrowWidth) :
+                                          ptr_endArrowWidth ? readArrowSize(*ptr_endArrowWidth) :
                                           MEDIUM,
-                                          ptr_endArrowHeight ? (ArrowSize)(*ptr_endArrowHeight) :
+                                          ptr_endArrowHeight ? readArrowSize(*ptr_endArrowHeight) :
                                           MEDIUM));
 
           unsigned *shadowBoolProps = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_BOOL_PROPS);
@@ -1923,7 +1973,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
             if ((shadowProps & FLAG_USE_FSHADOW) && (shadowProps & FLAG_USE_SHADOW))
             {
               unsigned *ptr_shadowType = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_TYPE);
-              auto shadowType = static_cast<ShadowType>(ptr_shadowType ? *ptr_shadowType : 0);
+              const unsigned shadowType = ptr_shadowType ? *ptr_shadowType : 0;
               unsigned *shadowColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_COLOR);
               unsigned *shadowHColor = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_HIGHLIGHT);
               unsigned *shadowOpacity = getIfExists(foptValues.m_scalarValues, FIELDID_SHADOW_OPACITY);

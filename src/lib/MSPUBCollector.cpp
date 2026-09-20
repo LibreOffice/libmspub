@@ -1758,7 +1758,8 @@ boost::optional<unsigned> MSPUBCollector::getMasterPageSeqNum(unsigned pageSeqNu
 {
   boost::optional<unsigned> toReturn;
   const unsigned *ptr_masterSeqNum = getIfExists_const(m_masterPagesByPageSeqNum, pageSeqNum);
-  if (ptr_masterSeqNum && m_masterPages.find(*ptr_masterSeqNum) != m_masterPages.end())
+  if (ptr_masterSeqNum && hasPage(*ptr_masterSeqNum) &&
+      m_masterPages.find(*ptr_masterSeqNum) != m_masterPages.end())
   {
     return *ptr_masterSeqNum;
   }

@@ -5870,6 +5870,10 @@ void getRayEllipseIntersection(double initX, double initY, double rx, double ry,
 librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, std::shared_ptr<const CustomShape> shape)
 {
   librevenge::RVNGPropertyList vertices;
+  if (!shape)
+  {
+    return vertices;
+  }
   Vector2D center(x + width / 2, y + height / 2);
   double scaleX = width / shape->m_coordWidth;
   double scaleY = height / shape->m_coordHeight;

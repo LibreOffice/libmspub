@@ -1307,7 +1307,9 @@ const char *MSPUBCollector::getCalculatedEncoding() const
   }
 csd_fail:
   ucsdet_close(ucd);
-  return "windows-1252"; // Pretty likely to give garbage text, but it's the best we can do.
+  // Pretty likely to give garbage text, but it's the best we can do.
+  m_calculatedEncoding = "windows-1252";
+  return m_calculatedEncoding.get();
 }
 
 void MSPUBCollector::setShapeLineBackColor(unsigned shapeSeqNum,

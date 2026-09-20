@@ -36,8 +36,8 @@ namespace libmspub
 void noop(const CustomShape *);
 struct ShapeInfo
 {
-  boost::optional<ShapeType> m_type;
-  boost::optional<ShapeType> m_cropType;
+  boost::optional<unsigned> m_type;
+  boost::optional<unsigned> m_cropType;
   boost::optional<unsigned> m_imgIndex;
   boost::optional<unsigned> m_borderImgIndex;
   boost::optional<Coordinate> m_coordinates;

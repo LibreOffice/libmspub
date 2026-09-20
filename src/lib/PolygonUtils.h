@@ -111,10 +111,10 @@ struct DynamicCustomShape
 
 std::shared_ptr<const CustomShape> getFromDynamicCustomShape(const DynamicCustomShape &dcs);
 
-const CustomShape *getCustomShape(ShapeType type);
-bool isShapeTypeRectangle(ShapeType type);
+const CustomShape *getCustomShape(unsigned type);
+bool isShapeTypeRectangle(unsigned type);
 librevenge::RVNGPropertyList calcClipPath(const std::vector<libmspub::Vertex> &verts, double x, double y, double height, double width, VectorTransformation2D transform, std::shared_ptr<const CustomShape> shape);
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
+void writeCustomShape(unsigned shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape);
 
 } // libmspub
 #endif /* INCLUDED_POLYGONUTILS_H */

@@ -977,8 +977,7 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       }
       else if (info.id == SHAPE_CROP && info.data != 0)
       {
-        m_collector->setShapeCropType(chunk.seqNum,
-                                      static_cast<ShapeType>(info.data));
+        m_collector->setShapeCropType(chunk.seqNum, info.data);
       }
     }
     if (shouldStretchBorderArt)
@@ -1690,7 +1689,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
   EscherContainerInfo cFspgr;
   unsigned shapeFlags = 0;
   bool isGroupLeader = false;
-  ShapeType st = RECTANGLE;
+  unsigned st = RECTANGLE;
   if (findEscherContainer(input, sp, cFspgr, OFFICE_ART_FSPGR))
   {
     input->seek(cFspgr.contentsOffset, librevenge::RVNG_SEEK_SET);
@@ -1704,7 +1703,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
   input->seek(sp.contentsOffset, librevenge::RVNG_SEEK_SET);
   if (findEscherContainer(input, sp, cFsp, OFFICE_ART_FSP))
   {
-    st = (ShapeType)(cFsp.initial >> 4);
+    st = cFsp.initial >> 4;
     std::map<unsigned short, unsigned> fspData = extractEscherValues(input, cFsp);
     input->seek(cFsp.contentsOffset + 4, librevenge::RVNG_SEEK_SET);
     shapeFlags = readU32(input);

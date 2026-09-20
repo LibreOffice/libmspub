@@ -5242,7 +5242,7 @@ const CustomShape CS_ACTION_BUTTON_MOVIE(
   21600, 21600,
   nullptr, 0);
 
-const CustomShape *getCustomShape(ShapeType type)
+const CustomShape *getCustomShape(unsigned type)
 {
   switch (type)
   {
@@ -5708,7 +5708,7 @@ private:
 
 }
 
-void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, ShapeType shapeType, const std::vector<Line> &lines,
+void drawEmulatedLine(std::shared_ptr<const CustomShape> shape, unsigned shapeType, const std::vector<Line> &lines,
                       Vector2D center, VectorTransformation2D transform,
                       double x, double y, double scaleX, double scaleY,
                       bool drawStroke, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter,
@@ -5896,7 +5896,7 @@ librevenge::RVNGPropertyList calcClipPath(const std::vector<Vertex> &verts, doub
   return vertices;
 }
 
-void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape)
+void writeCustomShape(unsigned shapeType, librevenge::RVNGPropertyList &graphicsProps, librevenge::RVNGDrawingInterface *painter, double x, double y, double height, double width, bool closeEverything, VectorTransformation2D transform, std::vector<Line> lines, std::function<double(unsigned index)> calculator, const std::vector<Color> &palette, std::shared_ptr<const CustomShape> shape)
 {
   MSPUB_DEBUG_MSG(("***STARTING CUSTOM SHAPE***\n"));
   if (!shape)
@@ -6363,7 +6363,7 @@ void writeCustomShape(ShapeType shapeType, librevenge::RVNGPropertyList &graphic
   }
 }
 
-bool isShapeTypeRectangle(ShapeType type)
+bool isShapeTypeRectangle(unsigned type)
 {
   return type == RECTANGLE || type == TEXT_BOX;
 }

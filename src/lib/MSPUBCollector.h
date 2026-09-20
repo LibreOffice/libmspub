@@ -67,8 +67,8 @@ public:
 
   void setNextPage(unsigned seqNum);
 
-  void setShapeType(unsigned seqNum, ShapeType type);
-  void setShapeCropType(unsigned seqNum, ShapeType cropType);
+  void setShapeType(unsigned seqNum, unsigned type);
+  void setShapeCropType(unsigned seqNum, unsigned cropType);
   void setShapePictureRecolor(unsigned seqNum, const ColorReference &recolor);
   void setShapePictureBrightness(unsigned seqNum, int brightness);
   void setShapePictureContrast(unsigned seqNum, int contrast);
@@ -151,7 +151,7 @@ private:
   std::vector<std::vector<unsigned char> > m_fonts;
   std::vector<CharacterStyle> m_defaultCharStyles;
   std::vector<ParagraphStyle> m_defaultParaStyles;
-  std::map<unsigned, ShapeType> m_shapeTypesBySeqNum;
+  std::map<unsigned, unsigned> m_shapeTypesBySeqNum;
   std::vector<Color> m_paletteColors;
   std::vector<unsigned> m_shapeSeqNumsOrdered;
   std::map<unsigned, unsigned> m_pageSeqNumsByShapeSeqNum;

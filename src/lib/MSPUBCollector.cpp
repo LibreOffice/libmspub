@@ -749,7 +749,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   const Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
   BorderPosition borderPosition =
     hasBorderArt ? INSIDE_SHAPE : info.m_borderPosition.get_value_or(HALF_INSIDE_SHAPE);
-  ShapeType type;
+  unsigned type;
   if (bool(info.m_cropType))
   {
     type = info.m_cropType.get();
@@ -1475,7 +1475,7 @@ void MSPUBCollector::setShapeFlip(unsigned seqNum, bool flipVertical, bool flipH
   m_shapeInfosBySeqNum[seqNum].m_flips = std::pair<bool, bool>(flipVertical, flipHorizontal);
 }
 
-void MSPUBCollector::setShapeType(unsigned seqNum, ShapeType type)
+void MSPUBCollector::setShapeType(unsigned seqNum, unsigned type)
 {
   m_shapeInfosBySeqNum[seqNum].m_type = type;
 }
@@ -1993,7 +1993,7 @@ void MSPUBCollector::setMasterPage(unsigned seqNum, unsigned masterPageSeqNum)
   m_masterPagesByPageSeqNum[seqNum] = masterPageSeqNum;
 }
 
-void MSPUBCollector::setShapeCropType(unsigned seqNum, ShapeType cropType)
+void MSPUBCollector::setShapeCropType(unsigned seqNum, unsigned cropType)
 {
   m_shapeInfosBySeqNum[seqNum].m_cropType = cropType;
 }

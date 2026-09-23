@@ -2077,8 +2077,8 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
 std::shared_ptr<Fill> MSPUBParser::getNewFill(const std::map<unsigned short, unsigned> &foptProperties,
                                               bool &skipIfNotBg, std::map<unsigned short, std::vector<unsigned char> > &foptValues)
 {
-  const FillType *ptr_fillType = (FillType *)getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
-  FillType fillType = ptr_fillType ? *ptr_fillType : SOLID;
+  const unsigned *ptr_fillType = getIfExists_const(foptProperties, FIELDID_FILL_TYPE);
+  unsigned fillType = ptr_fillType ? *ptr_fillType : unsigned(SOLID);
   switch (fillType)
   {
   case SOLID:

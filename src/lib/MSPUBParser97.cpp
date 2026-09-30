@@ -153,10 +153,10 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
   unsigned prop1Index, unsigned prop2Index, unsigned /* prop3Index */,
   unsigned /* prop3End */)
 {
-  std::vector<unsigned> spanEnds;
   std::vector<SpanInfo97> ret;
   for (unsigned i = prop1Index; i < prop2Index; ++i)
   {
+    std::vector<unsigned> spanEnds;
     unsigned offset = i * 0x200;
     input->seek(offset + 0x1FF, librevenge::RVNG_SEEK_SET);
     unsigned numEntries = readU8(input);

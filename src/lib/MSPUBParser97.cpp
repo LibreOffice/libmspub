@@ -154,6 +154,7 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
   unsigned /* prop3End */)
 {
   std::vector<SpanInfo97> ret;
+  unsigned base = 0;
   for (unsigned i = prop1Index; i < prop2Index; ++i)
   {
     std::vector<unsigned> spanEnds;
@@ -163,9 +164,11 @@ std::vector<MSPUBParser97::SpanInfo97> MSPUBParser97::getSpansInfo(
     input->seek(offset, librevenge::RVNG_SEEK_SET);
     // Skip the first thing; it is not an end
     unsigned start = readU32(input);
+    if (i == prop1Index)
+      base = start;
     for (unsigned j = 0; j < numEntries; ++j)
     {
-      spanEnds.push_back(readU32(input) - start);
+      spanEnds.push_back(readU32(input) - base);
     }
     std::vector<unsigned char> spanStyleIndices;
     for (size_t j = 0; j < spanEnds.size(); ++j)

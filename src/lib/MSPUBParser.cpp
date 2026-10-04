@@ -1296,7 +1296,7 @@ std::vector<MSPUBParser::TextParagraphReference> MSPUBParser::parseParagraphStyl
   std::vector<unsigned> textOffsets;
   textOffsets.reserve(numEntries);
   std::vector<unsigned short> chunkOffsets;
-  textOffsets.reserve(numEntries);
+  chunkOffsets.reserve(numEntries);
   for (unsigned short i = 0; i < numEntries; ++i)
   {
     textOffsets.push_back(readU32(input));

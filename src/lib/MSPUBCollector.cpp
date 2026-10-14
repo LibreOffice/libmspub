@@ -1666,12 +1666,11 @@ librevenge::RVNGPropertyList MSPUBCollector::getCharStyleProps(const CharacterSt
     ret.insert("fo:text-scale", get(defaultCharStyle.textScale), librevenge::RVNG_PERCENT);
   if (bool(style.textSizeInPt))
   {
-    ret.insert("fo:font-size", style.textSizeInPt.get() / POINTS_IN_INCH);
+    ret.insert("fo:font-size", style.textSizeInPt.get(), librevenge::RVNG_POINT);
   }
   else if (bool(defaultCharStyle.textSizeInPt))
   {
-    ret.insert("fo:font-size", defaultCharStyle.textSizeInPt.get()
-               / POINTS_IN_INCH);
+    ret.insert("fo:font-size", defaultCharStyle.textSizeInPt.get(), librevenge::RVNG_POINT);
   }
   if (style.colorIndex >= 0 && (size_t)style.colorIndex < m_textColors.size())
   {

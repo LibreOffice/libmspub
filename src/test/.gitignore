@@ -1,0 +1,8 @@
+.deps
+.libs
+*.log
+*.o
+*.trs
+Makefile
+Makefile.in
+importtest

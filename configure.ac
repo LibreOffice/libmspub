@@ -68,7 +68,22 @@ AC_ARG_ENABLE([fuzzers],
 )
 AM_CONDITIONAL(BUILD_FUZZERS, [test "x$enable_fuzzers" = "xyes"])
 
-AS_IF([test "x$enable_tools" = "xyes" -o "x$enable_fuzzers" = "xyes"], [
+# =====
+# Tests
+# =====
+AC_ARG_ENABLE([tests],
+	[AS_HELP_STRING([--enable-tests], [Build and run unit tests])],
+	[enable_tests="$enableval"],
+	[enable_tests=no]
+)
+AS_IF([test "x$enable_tests" = "xyes"], [
+	PKG_CHECK_MODULES([CPPUNIT],[cppunit])
+])
+AC_SUBST([CPPUNIT_CFLAGS])
+AC_SUBST([CPPUNIT_LIBS])
+AM_CONDITIONAL(ENABLE_TESTS, [test "x$enable_tests" = "xyes"])
+
+AS_IF([test "x$enable_tools" = "xyes" -o "x$enable_fuzzers" = "xyes" -o "x$enable_tests" = "xyes"], [
 	PKG_CHECK_MODULES([REVENGE_STREAM],[
 		librevenge-stream-0.0
 	])
@@ -300,6 +315,7 @@ src/conv/svg/pub2xhtml.rc
 src/fuzz/Makefile
 src/lib/Makefile
 src/lib/libmspub.rc
+src/test/Makefile
 inc/Makefile
 inc/libmspub/Makefile
 build/Makefile
@@ -319,6 +335,7 @@ Build configuration:
 	debug:           ${enable_debug}
 	docs:            ${build_docs}
 	fuzzers:         ${enable_fuzzers}
+	tests:           ${enable_tests}
 	tools:           ${enable_tools}
 	werror:          ${enable_werror}
 ==============================================================================

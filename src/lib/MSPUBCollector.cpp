@@ -1322,6 +1322,9 @@ void MSPUBCollector::writeImage(double x, double y,
                                 double height, double width, ImgType type, const librevenge::RVNGBinaryData &blob,
                                 boost::optional<Color> oneBitColor) const
 {
+  // An image wholly outside the page is never visible.
+  if (x + width < 0 || x > m_width || y + height < 0 || y > m_height)
+    return;
   librevenge::RVNGPropertyList props;
   if (bool(oneBitColor))
   {

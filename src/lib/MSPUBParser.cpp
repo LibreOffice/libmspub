@@ -2049,15 +2049,13 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           }
           if (rotated90)
           {
-            int initialWidth = int64_t(absolute.m_xe) - absolute.m_xs;
-            int initialHeight = int64_t(absolute.m_ye) - absolute.m_ys;
-            int centerX = int64_t(absolute.m_xs) + initialWidth / 2;
-            int centerY = int64_t(absolute.m_ys) + initialHeight / 2;
-            int xs = centerX - initialHeight / 2;
-            int ys = centerY - initialWidth / 2;
-            int xe = xs + initialHeight;
-            int ye = ys + initialWidth;
-            absolute = Coordinate(xs, ys, xe, ye);
+            const int64_t initialWidth = int64_t(absolute.m_xe) - absolute.m_xs;
+            const int64_t initialHeight = int64_t(absolute.m_ye) - absolute.m_ys;
+            const int64_t centerX = absolute.m_xs + initialWidth / 2;
+            const int64_t centerY = absolute.m_ys + initialHeight / 2;
+            const int64_t xs = centerX - initialHeight / 2;
+            const int64_t ys = centerY - initialWidth / 2;
+            absolute = Coordinate(int(xs), int(ys), int(xs + initialHeight), int(ys + initialWidth));
           }
           m_collector->setShapeCoordinatesInEmu(*shapeSeqNum,
                                                 absolute.m_xs,

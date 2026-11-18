@@ -2444,7 +2444,10 @@ FOPTValues MSPUBParser::extractFOPTValues(librevenge::RVNGInputStream *input, co
       entryLength = 4;
     }
     input->seek(-6, librevenge::RVNG_SEEK_CUR);
-    readNBytes(input, static_cast<unsigned long>(entryLength) * numEntries + 6, ret.m_complexValues[id]);
+    const unsigned long complexLength = static_cast<unsigned long>(entryLength) * numEntries + 6;
+    if (complexLength > record.contentsOffset + record.contentsLength - input->tell())
+      break;
+    readNBytes(input, complexLength, ret.m_complexValues[id]);
   }
   return ret;
 }

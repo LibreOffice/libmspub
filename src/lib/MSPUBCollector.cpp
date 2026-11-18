@@ -209,6 +209,13 @@ bool hasDrawableBorderArt(const Coordinate &coord, unsigned borderImageWidthInEm
   return width >= 0 && width <= maxSideLength && height >= 0 && height <= maxSideLength;
 }
 
+const unsigned MAX_TABLE_CELLS = 1 << 20;
+
+bool hasDrawableTable(const TableInfo &tableInfo)
+{
+  return tableInfo.m_numRows == 0 || tableInfo.m_numColumns <= MAX_TABLE_CELLS / tableInfo.m_numRows;
+}
+
 typedef std::vector<std::pair<unsigned, unsigned> > ParagraphToCellMap_t;
 typedef std::vector<librevenge::RVNGString> SpanTexts_t;
 typedef std::vector<SpanTexts_t> ParagraphTexts_t;
@@ -739,7 +746,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   bool hasFill = fill != "none";
   boost::optional<std::vector<TextParagraph> > maybeText = getShapeText(info);
   auto hasText = bool(maybeText);
-  const auto isTable = bool(info.m_tableInfo);
+  const auto isTable = bool(info.m_tableInfo) && hasDrawableTable(get(info.m_tableInfo));
   bool makeLayer = hasBorderArt ||
                    (hasStroke && hasFill) || (hasStroke && hasText) || (hasFill && hasText);
   if (makeLayer)

@@ -13,6 +13,7 @@
 #include <deque>
 #include <vector>
 #include <map>
+#include <set>
 
 #include "MSPUBParser.h"
 #include "ShapeType.h"
@@ -27,6 +28,7 @@ class MSPUBParser2k : public MSPUBParser
   std::vector<unsigned> m_quillColorEntries;
   std::map<unsigned, std::vector<unsigned> > m_chunkChildIndicesById;
   std::deque<unsigned> m_chunksBeingRead;
+  std::set<unsigned> m_expandedGroups;
 
 protected:
   // helper functions

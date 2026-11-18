@@ -56,7 +56,8 @@ MSPUBParser2k::MSPUBParser2k(librevenge::RVNGInputStream *input, MSPUBCollector 
     m_imageDataChunkIndices(),
     m_quillColorEntries(),
     m_chunkChildIndicesById(),
-    m_chunksBeingRead()
+    m_chunksBeingRead(),
+    m_expandedGroups()
 {
 }
 
@@ -599,6 +600,9 @@ void MSPUBParser2k::parseShapeFill(librevenge::RVNGInputStream *input, unsigned 
 
 bool MSPUBParser2k::parseGroup(librevenge::RVNGInputStream *input, unsigned seqNum, unsigned page)
 {
+  // Chunk ids need not be unique, so the children of a group id are read once.
+  if (!m_expandedGroups.insert(seqNum).second)
+    return true;
   bool retVal = true;
   m_collector->beginGroup();
   m_collector->setCurrentGroupSeqNum(seqNum);

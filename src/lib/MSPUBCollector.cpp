@@ -197,6 +197,18 @@ void createTableLayout(const std::vector<CellInfo> &cells, TableLayout &tableLay
   }
 }
 
+const double MAX_BORDER_ART_IMAGES_PER_SIDE = 4096;
+
+bool hasDrawableBorderArt(const Coordinate &coord, unsigned borderImageWidthInEmu)
+{
+  if (borderImageWidthInEmu == 0)
+    return false;
+  const double maxSideLength = MAX_BORDER_ART_IMAGES_PER_SIDE * borderImageWidthInEmu / EMUS_IN_INCH;
+  const double width = coord.getWidthIn();
+  const double height = coord.getHeightIn();
+  return width >= 0 && width <= maxSideLength && height >= 0 && height <= maxSideLength;
+}
+
 typedef std::vector<std::pair<unsigned, unsigned> > ParagraphToCellMap_t;
 typedef std::vector<librevenge::RVNGString> SpanTexts_t;
 typedef std::vector<SpanTexts_t> ParagraphTexts_t;
@@ -833,7 +845,7 @@ std::function<void(void)> MSPUBCollector::paintShape(const ShapeInfo &info, cons
   const std::vector<Line> &lines = info.m_lines;
   if (hasStroke)
   {
-    if (hasBorderArt && lines[0].m_widthInEmu > 0)
+    if (hasBorderArt && hasDrawableBorderArt(coord, lines[0].m_widthInEmu))
     {
       bool stretch = info.m_stretchBorderArt;
       double x = coord.getXIn(m_width);

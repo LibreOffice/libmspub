@@ -33,7 +33,7 @@ AC_PROG_MAKE_SET
 LT_INIT([win32-dll disable-static pic-only])
 AC_CANONICAL_HOST
 
-AX_CXX_COMPILE_STDCXX_11
+AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 AX_GCC_FUNC_ATTRIBUTE([format])
 DLP_FALLTHROUGH
 
@@ -119,7 +119,7 @@ AC_CHECK_HEADERS(
 # ========
 # Find icu
 # ========
-PKG_CHECK_MODULES([ICU], [icu-i18n])
+PKG_CHECK_MODULES([ICU], [icu-i18n icu-uc])
 AC_SUBST(ICU_CFLAGS)
 AC_SUBST(ICU_LIBS)
 

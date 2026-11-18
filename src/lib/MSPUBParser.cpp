@@ -1673,7 +1673,11 @@ void MSPUBParser::parseShapeGroup(librevenge::RVNGInputStream *input, const Esch
       parseEscherShape(input, shapeOrGroup, parentCoordinateSystem, parentGroupAbsoluteCoord);
       break;
     }
-    input->seek(shapeOrGroup.contentsOffset + shapeOrGroup.contentsLength + getEscherElementTailLength(shapeOrGroup.type), librevenge::RVNG_SEEK_SET);
+    unsigned long next = shapeOrGroup.contentsOffset + shapeOrGroup.contentsLength + getEscherElementTailLength(shapeOrGroup.type);
+    // A nested container may claim more than its group holds, and its contents are read once.
+    if (shapeOrGroup.type == OFFICE_ART_SPGR_CONTAINER)
+      next = std::max(next, static_cast<unsigned long>(input->tell()));
+    input->seek(next, librevenge::RVNG_SEEK_SET);
   }
 }
 

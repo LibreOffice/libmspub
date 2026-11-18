@@ -860,8 +860,8 @@ bool MSPUBParser::parseShape(librevenge::RVNGInputStream *input,
       }
 
       TableInfo ti(nr, nc);
-      ti.m_rowHeightsInEmu = rowHeightsInEmu;
-      ti.m_columnWidthsInEmu = columnWidthsInEmu;
+      ti.m_rowHeightsInEmu = std::move(rowHeightsInEmu);
+      ti.m_columnWidthsInEmu = std::move(columnWidthsInEmu);
 
       if (!index)
       {
@@ -1066,7 +1066,7 @@ bool MSPUBParser::parseQuill(librevenge::RVNGInputStream *input)
     for (unsigned i = 0; i < numChunks; ++i)
     {
       QuillChunkReference quillChunkReference = parseQuillChunkReference(input);
-      chunkReferences.push_back(quillChunkReference);
+      chunkReferences.push_back(std::move(quillChunkReference));
     }
   }
   MSPUB_DEBUG_MSG(("Found %u Quill chunks\n", (unsigned)chunkReferences.size()));
@@ -1235,7 +1235,7 @@ void MSPUBParser::parseFonts(librevenge::RVNGInputStream *input, const QuillChun
     {
       std::vector<unsigned char> name;
       readNBytes(input, nameLength * 2, name);
-      m_collector->addFont(name);
+      m_collector->addFont(std::move(name));
     }
     readU32(input);
   }
@@ -1873,7 +1873,7 @@ void MSPUBParser::parseEscherShape(librevenge::RVNGInputStream *input, const Esc
           }
           if (ptr_fill)
           {
-            m_collector->setShapeFill(*shapeSeqNum, ptr_fill, skipIfNotBg);
+            m_collector->setShapeFill(*shapeSeqNum, std::move(ptr_fill), skipIfNotBg);
           }
           int *ptr_adjust1 = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ADJUST_VALUE_1);
           int *ptr_adjust2 = (int *)getIfExists(foptValues.m_scalarValues, FIELDID_ADJUST_VALUE_2);
@@ -2373,7 +2373,7 @@ unsigned MSPUBParser::getEscherElementAdditionalHeaderLength(unsigned short type
   return 0;
 }
 
-bool MSPUBParser::findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, std::set<unsigned short> types)
+bool MSPUBParser::findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, const std::set<unsigned short> &types)
 {
   while (stillReading(input, parent.contentsOffset + parent.contentsLength))
   {
@@ -2567,7 +2567,7 @@ bool MSPUBParser::isBlockDataString(unsigned type)
 {
   return type == STRING_CONTAINER;
 }
-void MSPUBParser::skipBlock(librevenge::RVNGInputStream *input, MSPUBBlockInfo block)
+void MSPUBParser::skipBlock(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block)
 {
   input->seek(block.dataOffset + block.dataLength, librevenge::RVNG_SEEK_SET);
 }

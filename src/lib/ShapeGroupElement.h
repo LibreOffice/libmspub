@@ -41,13 +41,13 @@ public:
 
   void setShapeInfo(const ShapeInfo &shapeInfo);
   void setup(std::function<void(ShapeGroupElement &self)> visitor);
-  void visit(std::function<
+  void visit(const std::function<
              std::function<void(void)>
-             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor,
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> &visitor,
              const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform) const;
-  void visit(std::function<
+  void visit(const std::function<
              std::function<void(void)>
-             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> visitor) const;
+             (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)> &visitor) const;
   bool isGroup() const;
   std::shared_ptr<ShapeGroupElement> getParent() const;
   void setSeqNum(unsigned seqNum);

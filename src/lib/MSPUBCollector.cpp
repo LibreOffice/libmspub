@@ -13,6 +13,7 @@
 #include <functional>
 #include <math.h>
 #include <memory>
+#include <utility>
 
 #include <boost/multi_array.hpp>
 
@@ -572,7 +573,7 @@ void MSPUBCollector::beginGroup()
   {
     m_topLevelShapes.push_back(tmp);
   }
-  m_currentShapeGroup = tmp;
+  m_currentShapeGroup = std::move(tmp);
 }
 
 bool MSPUBCollector::endGroup()
@@ -626,7 +627,7 @@ void MSPUBCollector::setShapeOrder(unsigned seqNum)
   auto tmp = ShapeGroupElement::create(m_currentShapeGroup, seqNum);
   if (!m_currentShapeGroup)
   {
-    m_topLevelShapes.push_back(tmp);
+    m_topLevelShapes.push_back(std::move(tmp));
   }
 }
 
@@ -1546,7 +1547,7 @@ void MSPUBCollector::setShapeDash(unsigned seqNum, const Dash &dash)
 
 void MSPUBCollector::setShapeFill(unsigned seqNum, std::shared_ptr<Fill> fill, bool skipIfNotBg)
 {
-  m_shapeInfosBySeqNum[seqNum].m_fill = fill;
+  m_shapeInfosBySeqNum[seqNum].m_fill = std::move(fill);
   if (skipIfNotBg)
   {
     m_skipIfNotBgSeqNums.insert(seqNum);
@@ -1560,7 +1561,7 @@ void MSPUBCollector::setShapeCoordinatesInEmu(unsigned seqNum, int xs, int ys, i
 
 void MSPUBCollector::addFont(std::vector<unsigned char> name)
 {
-  m_fonts.push_back(name);
+  m_fonts.push_back(std::move(name));
 }
 
 librevenge::RVNGPropertyList MSPUBCollector::getParaStyleProps(const ParagraphStyle &style, boost::optional<unsigned> defaultParaStyleIndex) const
@@ -1846,7 +1847,7 @@ void MSPUBCollector::writePageBackground(unsigned pageSeqNum) const
       Coordinate wholePage(-m_width/2 * EMUS_IN_INCH, -m_height/2 * EMUS_IN_INCH, m_width/2 * EMUS_IN_INCH, m_height/2 * EMUS_IN_INCH);
       bg.m_coordinates = wholePage;
       bg.m_pageSeqNum = pageSeqNum;
-      bg.m_fill = ptr_fill;
+      bg.m_fill = std::move(ptr_fill);
       paintShape(bg, Coordinate(), VectorTransformation2D(), false, VectorTransformation2D());
     }
   }

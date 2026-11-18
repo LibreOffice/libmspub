@@ -52,10 +52,10 @@ void ShapeGroupElement::setup(std::function<void(ShapeGroupElement &self)> visit
   }
 }
 
-void ShapeGroupElement::visit(std::function<
+void ShapeGroupElement::visit(const std::function<
                               std::function<void(void)>
                               (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
-                              > visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
+                              > &visitor, const Coordinate &relativeTo, const VectorTransformation2D &parentFoldedTransform) const
 {
   const ShapeInfo info = m_shapeInfo.get_value_or(ShapeInfo());
   Coordinate coord = info.m_coordinates.get_value_or(Coordinate());
@@ -75,10 +75,10 @@ void ShapeGroupElement::visit(std::function<
   afterOp();
 }
 
-void ShapeGroupElement::visit(std::function<
+void ShapeGroupElement::visit(const std::function<
                               std::function<void(void)>
                               (const ShapeInfo &info, const Coordinate &relativeTo, const VectorTransformation2D &foldedTransform, bool isGroup, const VectorTransformation2D &thisTransform)
-                              > visitor) const
+                              > &visitor) const
 {
   Coordinate origin;
   VectorTransformation2D identity;

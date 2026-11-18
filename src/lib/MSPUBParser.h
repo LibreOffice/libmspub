@@ -117,10 +117,10 @@ protected:
   void parseFonts(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk);
   void parseShapeGroup(librevenge::RVNGInputStream *input, const EscherContainerInfo &spgr, Coordinate parentCoordinateSystem, Coordinate parentGroupAbsoluteCoord, unsigned depth = 0);
-  void skipBlock(librevenge::RVNGInputStream *input, MSPUBBlockInfo block);
+  void skipBlock(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block);
   void parseEscherShape(librevenge::RVNGInputStream *input, const EscherContainerInfo &sp, Coordinate &parentCoordinateSystem, Coordinate &parentGroupAbsoluteCoord);
   bool findEscherContainer(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, unsigned short type);
-  bool findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, std::set<unsigned short> types);
+  bool findEscherContainerWithTypeInSet(librevenge::RVNGInputStream *input, const EscherContainerInfo &parent, EscherContainerInfo &out, const std::set<unsigned short> &types);
   std::map<unsigned short, unsigned> extractEscherValues(librevenge::RVNGInputStream *input, const EscherContainerInfo &record);
   FOPTValues extractFOPTValues(librevenge::RVNGInputStream *input,
                                const libmspub::EscherContainerInfo &record);

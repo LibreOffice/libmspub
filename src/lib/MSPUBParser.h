@@ -101,18 +101,18 @@ protected:
   MSPUBBlockInfo parseBlock(librevenge::RVNGInputStream *input, bool skipHierarchicalData = false);
   EscherContainerInfo parseEscherContainer(librevenge::RVNGInputStream *input);
 
-  bool parseContentChunkReference(librevenge::RVNGInputStream *input, MSPUBBlockInfo block);
+  bool parseContentChunkReference(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block);
   QuillChunkReference parseQuillChunkReference(librevenge::RVNGInputStream *input);
   bool parseDocumentChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk);
   bool parsePageChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk);
   bool parsePaletteChunk(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk);
-  bool parsePageShapeList(librevenge::RVNGInputStream *input, MSPUBBlockInfo block, unsigned pageSeqNum);
+  bool parsePageShapeList(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block, unsigned pageSeqNum);
   bool parseShape(librevenge::RVNGInputStream *input, const ContentChunkReference &chunk);
   bool parseBorderArtChunk(librevenge::RVNGInputStream *input,
                            const ContentChunkReference &chunk);
   bool parseFontChunk(librevenge::RVNGInputStream *input,
                       const ContentChunkReference &chunk);
-  void parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlockInfo block);
+  void parsePaletteEntry(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block);
   void parseColors(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk);
   void parseFonts(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk);
   void parseDefaultStyle(librevenge::RVNGInputStream *input, const QuillChunkReference &chunk);

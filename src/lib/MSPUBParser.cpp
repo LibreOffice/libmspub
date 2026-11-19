@@ -762,7 +762,7 @@ bool MSPUBParser::parsePageChunk(librevenge::RVNGInputStream *input, const Conte
   return true;
 }
 
-bool MSPUBParser::parsePageShapeList(librevenge::RVNGInputStream *input, MSPUBBlockInfo info, unsigned pageSeqNum)
+bool MSPUBParser::parsePageShapeList(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info, unsigned pageSeqNum)
 {
   MSPUB_DEBUG_MSG(("parsePageShapeList: page seqnum 0x%x\n", pageSeqNum));
   while (stillReading(input, info.dataOffset + info.dataLength))
@@ -2472,7 +2472,7 @@ std::map<unsigned short, unsigned> MSPUBParser::extractEscherValues(librevenge::
 }
 
 
-bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input, const MSPUBBlockInfo block)
+bool MSPUBParser::parseContentChunkReference(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &block)
 {
   //input should be at block.dataOffset + 4 , that is, at the beginning of the list of sub-blocks
   MSPUB_DEBUG_MSG(("Parsing chunk reference 0x%x\n", m_lastSeenSeqNum));
@@ -2675,7 +2675,7 @@ bool MSPUBParser::parsePaletteChunk(librevenge::RVNGInputStream *input, const Co
   return true;
 }
 
-void MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, MSPUBBlockInfo info)
+void MSPUBParser::parsePaletteEntry(librevenge::RVNGInputStream *input, const MSPUBBlockInfo &info)
 {
   while (stillReading(input, info.dataOffset + info.dataLength))
   {

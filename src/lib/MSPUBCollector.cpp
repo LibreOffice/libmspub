@@ -1370,7 +1370,7 @@ double MSPUBCollector::getSpecialValue(const ShapeInfo &info, const CustomShape 
     unsigned adjustIndex = arg - PROP_ADJUST_VAL_FIRST;
     if (adjustIndex < adjustValues.size())
     {
-      if ((shape.m_adjustShiftMask >> adjustIndex) & 0x1)
+      if (adjustIndex < 8 * sizeof(shape.m_adjustShiftMask) && ((shape.m_adjustShiftMask >> adjustIndex) & 0x1))
       {
         return adjustValues[adjustIndex] >> 16;
       }

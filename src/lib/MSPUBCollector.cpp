@@ -1792,7 +1792,9 @@ boost::optional<unsigned> MSPUBCollector::getMasterPageSeqNum(unsigned pageSeqNu
 
 void MSPUBCollector::writePage(unsigned pageSeqNum) const
 {
-  const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
+  const PageInfo *pageInfo = getIfExists_const(m_pagesBySeqNum, pageSeqNum);
+  if (!pageInfo)
+    return;
   librevenge::RVNGPropertyList pageProps;
   if (m_widthSet)
   {
@@ -1802,7 +1804,7 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
   {
     pageProps.insert("svg:height", m_height);
   }
-  const auto &shapeGroupsOrdered = pageInfo.m_shapeGroupsOrdered;
+  const auto &shapeGroupsOrdered = pageInfo->m_shapeGroupsOrdered;
   if (!shapeGroupsOrdered.empty())
   {
     m_painter->startPage(pageProps);
@@ -1824,8 +1826,10 @@ void MSPUBCollector::writePage(unsigned pageSeqNum) const
 
 void MSPUBCollector::writePageShapes(unsigned pageSeqNum) const
 {
-  const PageInfo &pageInfo = m_pagesBySeqNum.find(pageSeqNum)->second;
-  for (const auto &shapeGroup : pageInfo.m_shapeGroupsOrdered)
+  const PageInfo *pageInfo = getIfExists_const(m_pagesBySeqNum, pageSeqNum);
+  if (!pageInfo)
+    return;
+  for (const auto &shapeGroup : pageInfo->m_shapeGroupsOrdered)
     shapeGroup->visit(std::bind(&MSPUBCollector::paintShape, this, _1, _2, _3, _4, _5));
 }
 

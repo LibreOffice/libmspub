@@ -110,7 +110,7 @@ class GenericException
 {
 };
 
-librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData);
+librevenge::RVNGBinaryData inflateData(const librevenge::RVNGBinaryData &);
 
 } // namespace libmspub
 

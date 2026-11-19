@@ -164,7 +164,7 @@ unsigned correctModulo(int x, unsigned n) // returns the canonical representatio
   return x % n;
 }
 
-librevenge::RVNGBinaryData inflateData(librevenge::RVNGBinaryData deflated)
+librevenge::RVNGBinaryData inflateData(const librevenge::RVNGBinaryData &deflated)
 {
   librevenge::RVNGBinaryData inflated;
   unsigned char out[ZLIB_CHUNK];
